@@ -1,37 +1,69 @@
-# portfolio
+# Max Pinkert — portfolio
 
-Website to display my work, myself and current projects.
+A designer's portfolio, built in the open.
 
----
+This is the source for my personal site: my work, myself, and whatever I'm in
+the middle of. The focus is **UX and product design**, heading towards
+**children's and education technology**.
 
-## What this project is
+The repo is public on purpose. Most of what's interesting about a design
+project happens before the finished screen exists, and this is where that
+lives — the token system, the decisions, the arguments with myself, and an
+honest record of how much of the code an AI agent wrote.
 
-The personal portfolio of **Max Pinkert** — a designer's site, built to do three
-things: show the work, show the person behind it, and show what is currently
-being worked on. That third one matters: work in progress is meant to be visible
-here, not hidden until it's polished.
+> **Status:** infrastructure done, no case studies yet. The site is a
+> deliberate v0.1 placeholder. Come back for the work; stay for the process.
 
-The focus is **UX and product design**, moving towards **children's and education
-technology**. That direction should be legible from the site without being
-announced — through what the case studies are about and how they're framed.
+## Start here
 
-**The tone to aim for: professional, but not plain.** Restrained is not the same
-as boring. The site should feel considered and deliberate, with one or two
-confident gestures rather than a page competing with itself for attention.
+Depending on why you're here:
+
+**👋 You want to know how I work**
+→ [`behind-the-scenes/`](behind-the-scenes/) — the honest version. Includes
+[what the AI agent actually did](behind-the-scenes/agent-runs/) and
+[the instruction sets I write to keep it in line](behind-the-scenes/skills/).
+
+**🎨 You're a designer**
+→ [`src/styles/tokens.css`](src/styles/tokens.css) — the whole design system on
+one screen. Nature-inspired palette, named in German, two tiers.
+→ [`docs/design-to-code.md`](docs/design-to-code.md) — how a Figma frame becomes
+a page without the values drifting apart.
+
+**⚙️ You're an engineer**
+→ [Quick start](#quick-start), then
+[`docs/content-schema.md`](docs/content-schema.md) for the content model.
+→ [`CLAUDE.md`](CLAUDE.md) is the real style guide — it's written for agents,
+but it's the most direct statement of how this codebase wants to be treated.
+
+**🤖 You're an agent**
+→ [`CLAUDE.md`](CLAUDE.md). Read it before touching anything.
+
+## The idea
+
+Three things the site has to do: show the work, show the person, and show
+what's currently being worked on. That third one is the one most portfolios
+skip — work in progress is meant to be visible here, not hidden until it's
+polished. The content schema has a `status: in-progress` field for exactly that
+reason.
+
+**The tone: professional, but not plain.** Restrained isn't the same as boring.
+One or two confident gestures, not a page competing with itself for attention.
+
+Every case study opens with a **"How might we …"** framing, so the portfolio
+reads as one point of view rather than a pile of deliverables.
 
 ### How work flows through this repo
 
 ```
 Figma (design)  ──MCP──▶  this repo (implementation)  ──Actions──▶  GitHub Pages
                               ▲
-                   Decap CMS ─┘  (case studies, written in the browser or locally)
+                   Decap CMS ─┘  (case studies, written as markdown)
 ```
 
-All visual design is done by Max in Figma and handed to an agent as a Figma URL
-for implementation. **Agents implement designs; they do not invent them.** When
-there is no design yet, build restrained and token-driven so the real design
-drops in cleanly later. Case-study content comes from Max through the CMS — never
-write case studies, client names, metrics, or bio copy on his behalf.
+All visual design is done by me in Figma and handed to an agent as a Figma URL.
+**Agents implement designs; they do not invent them.** Where there's no design
+yet, the rule is: build restrained and token-driven, so the real design drops in
+cleanly later.
 
 ## Stack
 
@@ -65,6 +97,9 @@ Both `check` and `build` run in CI on every pull request.
 ## Repository layout
 
 ```
+behind-the-scenes/      ★ The process, in public
+  skills/               Instruction sets that shape how the agent works
+  agent-runs/           What was delegated, what came back, what I decided
 .github/workflows/
   deploy.yml            Build + deploy to GitHub Pages on push to main
   ci.yml                Type-check + build on every PR
@@ -183,3 +218,19 @@ For Figma work, read [docs/design-to-code.md](docs/design-to-code.md) first:
 `get_variable_defs` for tokens → `get_design_context` last, one frame at a time.
 Never skip the screenshot; the XML gives you structure, the image gives you
 intent.
+
+## On the AI question
+
+A good chunk of the code in here was written by an AI agent working from my
+direction. I'd rather tell you that up front than have you find out.
+
+The short version: I decide *what* and *why*, the agent handles a lot of *how*,
+and I stay close enough to catch it when the *how* starts quietly changing the
+*what*. Every design decision on this site is mine. Most of the lines aren't.
+
+The long version, with the mistakes left in, is in
+[`behind-the-scenes/`](behind-the-scenes/).
+
+---
+
+**Max Pinkert** · UX & Product Design · [max.pinkert@code.berlin](mailto:max.pinkert@code.berlin)
