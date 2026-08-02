@@ -1,0 +1,157 @@
+# Decap CMS configuration.
+#
+# This file MUST stay in sync with the zod schema in src/content.config.ts.
+# If the two drift, the CMS writes frontmatter the Astro build then rejects.
+# Field reference: docs/content-schema.md
+
+backend:
+  name: github
+  repo: max-zwei/portfolio
+  branch: main
+  # Login on the LIVE site is deliberately not set up — editing happens locally
+  # via `npx decap-server` (see local_backend below). Decap's GitHub backend
+  # needs an OAuth relay to complete the handshake and GitHub Pages cannot host
+  # one, so `/admin` loads in production but cannot log in. That is expected.
+  # If that ever needs to change, point base_url at a deployed OAuth client and
+  # uncomment both lines — docs/cms.md has the two routes written up.
+  # base_url: https://<your-oauth-relay>
+  # auth_endpoint: auth
+  commit_messages:
+    create: 'content: create {{collection}} "{{slug}}"'
+    update: 'content: update {{collection}} "{{slug}}"'
+    delete: 'content: delete {{collection}} "{{slug}}"'
+    uploadMedia: 'content: upload "{{path}}"'
+    deleteMedia: 'content: delete "{{path}}"'
+
+# Enables `npx decap-server` for editing without any OAuth setup.
+# Ignored in production builds.
+local_backend: true
+
+# Editorial workflow puts saves into a draft PR instead of committing to main
+# directly, so a half-written case study never goes live by accident.
+publish_mode: editorial_workflow
+
+media_folder: src/content/projects/_media
+public_folder: ./_media
+
+collections:
+  - name: projects
+    label: Projects
+    label_singular: Project
+    folder: src/content/projects
+    extension: md
+    format: frontmatter
+    create: true
+    slug: '{{slug}}'
+    summary: '{{title}} ({{year}}) — {{status}}'
+    sortable_fields: [order, year, title]
+    view_groups:
+      - label: Status
+        field: status
+    fields:
+      - label: Title
+        name: title
+        widget: string
+        hint: Project name. Shown as the page heading and in listings.
+
+      - label: Status
+        name: status
+        widget: select
+        default: in-progress
+        options:
+          - { label: In progress, value: in-progress }
+          - { label: Completed, value: completed }
+        hint: Showing work in progress is intentional — it is not an apology.
+
+      - label: How might we…
+        name: hmw
+        widget: string
+        hint: >-
+          The framing question, WITHOUT the "How might we" prefix — the site adds
+          it. e.g. "make reading practice feel like play?"
+
+      - label: Summary
+        name: summary
+        widget: text
+        pattern: ['^.{1,280}$', 'Keep the summary under 280 characters.']
+        hint: One or two sentences. Used on cards and as the meta description.
+
+      - label: Year
+        name: year
+        widget: number
+        value_type: int
+        min: 2015
+        max: 2100
+        hint: Year the work was done, or started for ongoing work.
+
+      - label: Tags
+        name: tags
+        widget: list
+        required: false
+        default: []
+        hint: Reuse existing tags before inventing new ones, e.g. UX Research, EdTech.
+
+      - label: Cover image
+        name: cover
+        widget: image
+        required: false
+        hint: Stored next to the entry so Astro can optimise it at build time.
+
+      - label: Cover alt text
+        name: coverAlt
+        widget: string
+        required: false
+        hint: >-
+          REQUIRED if a cover image is set — the build fails without it. Describe
+          the image; don't repeat the title.
+
+      - label: Role
+        name: role
+        widget: string
+        required: false
+        hint: Your contribution, e.g. "UX Design, User Research".
+
+      - label: Context
+        name: context
+        widget: string
+        required: false
+        hint: Client, course, or setting the work happened in.
+
+      - label: Duration
+        name: duration
+        widget: string
+        required: false
+        hint: e.g. "6 weeks".
+
+      - label: Sort order
+        name: order
+        widget: number
+        value_type: int
+        default: 0
+        required: false
+        hint: Lower numbers sort first. Ties fall back to year.
+
+      - label: Featured on homepage
+        name: featured
+        widget: boolean
+        default: false
+        required: false
+
+      - label: Draft
+        name: draft
+        widget: boolean
+        default: false
+        required: false
+        hint: Hidden from listings and the sitemap, but still builds so you can preview it.
+
+      - label: External link
+        name: link
+        widget: string
+        required: false
+        pattern: ['^https?://.+', 'Must be a full URL starting with http(s)://']
+        hint: Live product, repo, or prototype.
+
+      - label: Case study
+        name: body
+        widget: markdown
+        hint: The case study itself.

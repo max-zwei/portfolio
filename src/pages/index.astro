@@ -1,0 +1,134 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { SITE, LINKS } from '../config/site';
+
+// v0.1 — deliberately minimal. This page exists to prove the pipeline
+// (Figma -> code -> GitHub Actions -> Pages -> custom domain) works end to end.
+// Real content arrives with the project collection; see docs/design-to-code.md.
+const year = new Date().getFullYear();
+---
+
+<BaseLayout>
+  <main id="main" class="hero">
+    <div class="container hero__inner">
+      <p class="hero__eyebrow">{SITE.role}</p>
+
+      <h1 class="hero__name">{SITE.name}</h1>
+
+      <p class="hero__slogan">
+        I care about <em>experiences</em>.<br />
+        And I&rsquo;m curious to find them.
+      </p>
+
+      <p class="hero__note">
+        Portfolio in progress — case studies on children &amp; education
+        technology are on their way.
+      </p>
+
+      <ul class="hero__links">
+        {
+          LINKS.filter((link) => link.href).map((link) => (
+            <li>
+              <a href={link.href}>{link.label}</a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+
+    <footer class="hero__footer">
+      <div class="container">
+        <p>&copy; {year} {SITE.name}</p>
+      </div>
+    </footer>
+  </main>
+</BaseLayout>
+
+<style>
+  .hero {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    min-height: 100dvh;
+    /* A single quiet gesture: the Yuzu accent bleeding in from the corner. */
+    background-image: radial-gradient(
+      120% 90% at 100% 0%,
+      color-mix(in oklab, var(--brand-primary) 22%, transparent) 0%,
+      transparent 55%
+    );
+  }
+
+  .hero__inner {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    justify-content: center;
+    padding-block: var(--space-2xl);
+  }
+
+  .hero__eyebrow {
+    margin-bottom: var(--space-md);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    letter-spacing: var(--letter-spacing-wide);
+    text-transform: uppercase;
+    color: var(--text-secondary);
+  }
+
+  .hero__name {
+    margin-bottom: var(--space-lg);
+  }
+
+  .hero__slogan {
+    max-width: 22ch;
+    font-family: var(--font-serif);
+    font-size: var(--font-size-2xl);
+    font-weight: var(--font-weight-regular);
+    line-height: var(--line-height-snug);
+    letter-spacing: var(--letter-spacing-normal);
+  }
+
+  .hero__slogan em {
+    font-style: italic;
+    color: var(--text-accent);
+  }
+
+  .hero__note {
+    margin-top: var(--space-lg);
+    max-width: 46ch;
+    color: var(--text-secondary);
+  }
+
+  .hero__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-md);
+    margin-top: var(--space-xl);
+    padding: 0;
+    list-style: none;
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    letter-spacing: var(--letter-spacing-wide);
+    text-transform: uppercase;
+  }
+
+  .hero__links a {
+    padding-bottom: var(--space-3xs);
+    text-decoration: none;
+    border-bottom: 1px solid var(--border-strong);
+    transition:
+      color var(--duration-fast) var(--easing-standard),
+      border-color var(--duration-fast) var(--easing-standard);
+  }
+
+  .hero__links a:hover {
+    border-color: var(--brand-primary);
+  }
+
+  .hero__footer {
+    padding-block: var(--space-md);
+    font-size: var(--font-size-xs);
+    color: var(--text-secondary);
+    border-top: 1px solid var(--border-subtle);
+  }
+</style>
