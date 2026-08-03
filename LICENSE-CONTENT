@@ -1,0 +1,26 @@
+Copyright (c) 2026 Max Pinkert. All rights reserved.
+
+This covers the portfolio *content* in this repository — the part that is the
+work rather than the machinery:
+
+  - Case studies and any written copy in src/content/
+  - Images, media and design files, including public/og/ and
+    src/content/projects/_media/
+  - Biographical copy and the site's written text in src/config/site.ts
+    and src/pages/
+  - The written record in behind-the-scenes/ (the READMEs and agent-run logs)
+  - The specific colour values, type choices and design decisions that make up
+    this site's visual identity, in design/tokens.json and
+    src/styles/tokens.css
+
+You may read it, link to it, and quote short excerpts with attribution.
+You may not republish it, present it as your own, or use it to train
+generative models.
+
+The *structure* is fair game — a two-tier token system, a "How might we"
+content schema, the design-to-code workflow. Those are ideas, and ideas should
+travel. It is the specific expression that stays mine.
+
+The code is separately licensed under MIT. See LICENSE.
+
+Questions, or want to use something here? Ask: max.pinkert@code.berlin

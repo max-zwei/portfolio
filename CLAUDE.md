@@ -19,19 +19,19 @@ deliberate gestures rather than a page full of them.
 
 ## Stack
 
-| Concern    | Choice | Notes |
-| ---------- | ------ | ----- |
-| Framework  | Astro (static output) | No SSR. Zero client JS unless a feature genuinely needs it. |
-| Styling    | Plain CSS + custom properties | No Tailwind, no CSS-in-JS. Scoped `<style>` blocks in `.astro` files. |
-| Content    | Astro content collections | Markdown in `src/content/projects/`, schema in `src/content.config.ts`. |
-| CMS        | Decap CMS | `public/admin/`. Writes markdown back to the repo. Local editing only, by decision — see `docs/cms.md`. |
-| Hosting    | GitHub Pages via Actions | `.github/workflows/deploy.yml`, pushes to `main` only. |
-| Design     | Figma via MCP | `.mcp.json`, workflow in `docs/design-to-code.md`. |
+| Concern   | Choice                        | Notes                                                                                                   |
+| --------- | ----------------------------- | ------------------------------------------------------------------------------------------------------- |
+| Framework | Astro (static output)         | No SSR. Zero client JS unless a feature genuinely needs it.                                             |
+| Styling   | Plain CSS + custom properties | No Tailwind, no CSS-in-JS. Scoped `<style>` blocks in `.astro` files.                                   |
+| Content   | Astro content collections     | Markdown in `src/content/projects/`, schema in `src/content.config.ts`.                                 |
+| CMS       | Decap CMS                     | `public/admin/`. Writes markdown back to the repo. Local editing only, by decision — see `docs/cms.md`. |
+| Hosting   | GitHub Pages via Actions      | `.github/workflows/deploy.yml`, pushes to `main` only.                                                  |
+| Design    | Figma via MCP                 | `.mcp.json`, workflow in `docs/design-to-code.md`.                                                      |
 
 ## Non-negotiables
 
 **Tokens.** Never hardcode a value that exists as a token. No hex colours, no
-`16px`, no `font-family` in components. Use the *semantic* layer
+`16px`, no `font-family` in components. Use the _semantic_ layer
 (`var(--text-secondary)`), never primitives (`var(--color-neutral-500)`) — the
 semantic layer is the only place a value can be changed once and land
 everywhere. If a design needs a value that has no token, add the token; don't
@@ -42,15 +42,23 @@ inline it.
 remap of the semantic tokens — not a change to any component.
 
 **Accessibility is part of "done", not a follow-up.**
+
 - Semantic HTML first. A `<div>` with a click handler is a bug.
 - Every interactive element needs a visible `:focus-visible` state.
 - Every image needs alt text — the content schema fails the build without it.
 - Respect `prefers-reduced-motion`; the global stylesheet already does, so don't
   reintroduce unconditional animation.
 - Check contrast. One scheme means no dark-mode escape hatch for a weak pairing.
+- `npm run lint:html` enforces alt text, heading order and labels against the
+  built output. It runs in CI, so a regression fails the PR.
 
 **Static and fast.** This is a portfolio, not an app. Adding a client-side
 framework, a state library, or an analytics script needs a reason and an ask.
+
+**Keep it small.** No speculative structure — no fields, options or helpers for
+a use case that doesn't exist yet. Max reads this repo to understand and change
+it himself, and every unused abstraction is a thing he has to decode first. A
+content field costs three files to keep in sync; add one when a design needs it.
 
 **No invented content.** Do not write case studies, testimonials, client names,
 metrics, or bio copy on Max's behalf. Placeholder copy must read as placeholder.
@@ -77,14 +85,14 @@ docs/                   Deployment, content schema, design-to-code handoff, CMS.
 
 ```bash
 npm run dev      # local dev server
-npm run check    # astro check — must be 0 errors, 0 warnings before committing
-npm run build    # static build into dist/
-npm run preview  # serve the built output
+npm run verify   # check + build + HTML lint + format check — run before pushing
+npm run format   # prettier, write mode
 npx decap-server # local CMS backend, so /admin works without OAuth
 ```
 
-`npm run check` and `npm run build` both run in CI on every PR. Run them locally
-before pushing; they catch schema mismatches that are otherwise invisible.
+`npm run verify` is the same chain CI runs (CI adds `npm audit`). Run it before
+pushing; it catches schema mismatches and accessibility regressions that are
+otherwise invisible until the build fails.
 
 ## When changing content fields
 
@@ -110,5 +118,5 @@ prerequisite, not a recommendation.
 - Commit messages: `<area>: <what changed>` — e.g. `tokens: add status colours`,
   `content: add lesekiste case study`. Present tense, lowercase.
 - Work on a branch, open a PR, let CI run. `main` deploys straight to production.
-- Comments explain *why*, not *what*. The token files are the exception — there,
+- Comments explain _why_, not _what_. The token files are the exception — there,
   the naming rationale is the useful part.

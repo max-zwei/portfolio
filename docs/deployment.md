@@ -11,7 +11,7 @@ push to main → npm ci → astro check → astro build → upload artifact → 
 
 ## One-time setup in the GitHub UI
 
-The workflow uses the Pages *deployment API*, not the legacy `gh-pages` branch.
+The workflow uses the Pages _deployment API_, not the legacy `gh-pages` branch.
 That needs one setting flipped by hand — the workflow cannot do it for you:
 
 1. **Settings → Pages → Build and deployment → Source: GitHub Actions.**

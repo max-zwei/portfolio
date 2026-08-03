@@ -52,7 +52,7 @@ Three commits, squashed into `main`.
 - **The palette is provisional.** The colour values in the repo are its working
   guesses against names I'd given it (Yuzu, Rote Beete, Tomaten, Lieblingsort).
   They're placeholders until I tune them in Figma. What matters is that the
-  token *names* are fixed, so tuning values doesn't break anything downstream.
+  token _names_ are fixed, so tuning values doesn't break anything downstream.
 
 ## Where it needed correcting
 

@@ -13,11 +13,8 @@ export const SITE = {
   email: 'max.pinkert@code.berlin',
 } as const;
 
-/**
- * Social / professional links rendered in the footer.
- * Add entries as the profiles go live; empty `href` entries are skipped.
- */
+/** Social / professional links. Add entries as the profiles go live. */
 export const LINKS: ReadonlyArray<{ label: string; href: string }> = [
-  { label: 'Email', href: `mailto:max.pinkert@code.berlin` },
+  { label: 'Email', href: `mailto:${SITE.email}` },
   { label: 'GitHub', href: 'https://github.com/max-zwei' },
 ];

@@ -12,13 +12,13 @@ I'd rather say that plainly than have you wonder.
 
 I'm a designer, not an engineer. The design decisions on this site are mine —
 the palette, the type, the layout, the framing of every case study, and every
-judgement call about what the site is *for*. The implementation is largely
+judgement call about what the site is _for_. The implementation is largely
 delegated to [Claude Code](https://claude.com/claude-code), an AI coding agent,
 working from designs I make in Figma and instructions I write.
 
 That's a real shift in how design work gets made, and pretending otherwise
-would be both dishonest and boring. The interesting question isn't *"did you
-use AI?"* — it's *"what does the work look like when you do?"*. So:
+would be both dishonest and boring. The interesting question isn't _"did you
+use AI?"_ — it's _"what does the work look like when you do?"_. So:
 
 - **[`skills/`](./skills/)** — the reusable instruction sets I've written to
   make the agent work the way I want. These are the actual files, not
@@ -45,6 +45,6 @@ halfway through renaming ninety-four design tokens. It is not good at knowing
 what this site should feel like. Every time I've let it decide something
 aesthetic, the result has been competent and forgettable.
 
-The division of labour that works: I decide *what* and *why*, it handles a lot
-of *how*, and I stay close enough to catch it when the *how* quietly changes
-the *what*.
+The division of labour that works: I decide _what_ and _why_, it handles a lot
+of _how_, and I stay close enough to catch it when the _how_ quietly changes
+the _what_.

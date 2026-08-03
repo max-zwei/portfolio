@@ -1,0 +1,12 @@
+{
+  "extends": ["html-validate:recommended", "html-validate:a11y"],
+  "rules": {
+    "no-inline-style": "off",
+    "heading-level": "error",
+    "input-missing-label": "error",
+    "empty-heading": "error",
+    "no-redundant-role": "error",
+    "unique-landmark": "error",
+    "require-sri": ["error", { "target": "crossorigin" }]
+  }
+}

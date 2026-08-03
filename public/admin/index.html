@@ -7,7 +7,25 @@
     <title>Content Manager — Max Pinkert</title>
   </head>
   <body>
-    <!-- Decap CMS mounts here and reads ./config.yml -->
-    <script src="https://unpkg.com/decap-cms@^3.8.4/dist/decap-cms.js"></script>
+    <!--
+      Decap CMS mounts here and reads ./config.yml.
+
+      This page is NOT deployed — astro.config.mjs strips it from the build,
+      because it cannot log in without an OAuth relay. It is served by
+      `npm run dev` for local editing alongside `npx decap-server`.
+
+      The version is pinned exactly (not a ^range) and carries an SRI hash, so
+      a tampered or swapped bundle fails to execute rather than running.
+      Bumping the version means recomputing the hash — see docs/cms.md.
+
+      Caveat worth knowing: Decap is code-split, and SRI only covers this entry
+      file. Its lazy-loaded chunks are not integrity-checked. Not shipping this
+      page to production is what actually contains that risk.
+    -->
+    <script
+      src="https://unpkg.com/decap-cms@3.15.1/dist/decap-cms.js"
+      integrity="sha384-in6eHztHveqQ7uMZ1fDaKlDmacQLFuLH2wWrFTiymyuS8zQ5bixwL8U3AeRi8h/L"
+      crossorigin="anonymous"
+    ></script>
   </body>
 </html>

@@ -8,12 +8,12 @@ backend:
   name: github
   repo: max-zwei/portfolio
   branch: main
-  # Login on the LIVE site is deliberately not set up — editing happens locally
-  # via `npx decap-server` (see local_backend below). Decap's GitHub backend
-  # needs an OAuth relay to complete the handshake and GitHub Pages cannot host
-  # one, so `/admin` loads in production but cannot log in. That is expected.
-  # If that ever needs to change, point base_url at a deployed OAuth client and
-  # uncomment both lines — docs/cms.md has the two routes written up.
+  # Login on the LIVE site is deliberately not set up — and this page is not
+  # even deployed (see astro.config.mjs). Editing happens locally via
+  # `npx decap-server` with local_backend below. Decap's GitHub backend needs
+  # an OAuth relay to complete the handshake and GitHub Pages cannot host one.
+  # If that ever changes, point base_url at the relay and uncomment both lines.
+  # docs/cms.md has the two routes written up.
   # base_url: https://<your-oauth-relay>
   # auth_endpoint: auth
   commit_messages:
@@ -24,11 +24,10 @@ backend:
     deleteMedia: 'content: delete "{{path}}"'
 
 # Enables `npx decap-server` for editing without any OAuth setup.
-# Ignored in production builds.
 local_backend: true
 
-# Editorial workflow puts saves into a draft PR instead of committing to main
-# directly, so a half-written case study never goes live by accident.
+# Saves open a draft PR instead of committing to main directly, so a
+# half-written case study never goes live by accident.
 publish_mode: editorial_workflow
 
 media_folder: src/content/projects/_media
@@ -43,25 +42,13 @@ collections:
     format: frontmatter
     create: true
     slug: '{{slug}}'
-    summary: '{{title}} ({{year}}) — {{status}}'
-    sortable_fields: [order, year, title]
-    view_groups:
-      - label: Status
-        field: status
+    summary: '{{title}} ({{year}})'
+    sortable_fields: [year, title]
     fields:
       - label: Title
         name: title
         widget: string
         hint: Project name. Shown as the page heading and in listings.
-
-      - label: Status
-        name: status
-        widget: select
-        default: in-progress
-        options:
-          - { label: In progress, value: in-progress }
-          - { label: Completed, value: completed }
-        hint: Showing work in progress is intentional — it is not an apology.
 
       - label: How might we…
         name: hmw
@@ -105,51 +92,35 @@ collections:
           REQUIRED if a cover image is set — the build fails without it. Describe
           the image; don't repeat the title.
 
-      - label: Role
-        name: role
-        widget: string
-        required: false
-        hint: Your contribution, e.g. "UX Design, User Research".
-
-      - label: Context
-        name: context
-        widget: string
-        required: false
-        hint: Client, course, or setting the work happened in.
-
-      - label: Duration
-        name: duration
-        widget: string
-        required: false
-        hint: e.g. "6 weeks".
-
-      - label: Sort order
-        name: order
-        widget: number
-        value_type: int
-        default: 0
-        required: false
-        hint: Lower numbers sort first. Ties fall back to year.
-
-      - label: Featured on homepage
-        name: featured
-        widget: boolean
-        default: false
-        required: false
-
-      - label: Draft
-        name: draft
-        widget: boolean
-        default: false
-        required: false
-        hint: Hidden from listings and the sitemap, but still builds so you can preview it.
-
-      - label: External link
-        name: link
+      - label: Figma URL
+        name: figmaUrl
         widget: string
         required: false
         pattern: ['^https?://.+', 'Must be a full URL starting with http(s)://']
-        hint: Live product, repo, or prototype.
+        hint: The Figma file or frame this was designed in.
+
+      - label: GitHub repo URL
+        name: repoUrl
+        widget: string
+        required: false
+        pattern: ['^https?://.+', 'Must be a full URL starting with http(s)://']
+        hint: Where the code lives, if the project has a repo.
+
+      - label: Artefacts
+        name: artefacts
+        widget: list
+        required: false
+        label_singular: Artefact
+        summary: '{{fields.alt}}'
+        hint: >-
+          Sketches, flows, screens, photos. Alt text is required on every one —
+          the build fails without it.
+        fields:
+          - { label: Image, name: src, widget: image }
+          - label: Alt text
+            name: alt
+            widget: string
+            hint: Describe what the image shows. Not optional.
 
       - label: Case study
         name: body

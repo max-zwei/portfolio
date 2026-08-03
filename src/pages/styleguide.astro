@@ -1,0 +1,584 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import {
+  colorScales,
+  semanticGroups,
+  surfaces,
+  fontSizes,
+  spacing,
+  radii,
+  contrast,
+  verdict,
+} from '../lib/tokens';
+
+// Everything here is computed at build time from design/tokens.json.
+// No client JS, and no hand-maintained copy of the palette that could go stale.
+
+const textTokens = semanticGroups.find((g) => g.name === 'text')!.tokens;
+const nonTextTokens = semanticGroups
+  .filter((g) => ['border', 'brand', 'status'].includes(g.name))
+  .flatMap((g) => g.tokens);
+
+/** Text-on-surface pairs: these need 4.5 to carry body copy. */
+const textPairs = textTokens.flatMap((fg) =>
+  surfaces.map((bg) => {
+    const ratio = contrast(fg.value, bg.value);
+    return { fg: fg.name, bg: bg.name, ratio, verdict: verdict(ratio) };
+  }),
+);
+
+/** Everything else against the page background, at the 3.0 non-text bar. */
+const graphicPairs = nonTextTokens.map((fg) => {
+  const bg = surfaces.find((s) => s.name === 'surface/default')!;
+  const ratio = contrast(fg.value, bg.value);
+  return { fg: fg.name, bg: bg.name, ratio, verdict: verdict(ratio) };
+});
+
+const failingText = textPairs.filter((p) => p.ratio < 4.5);
+const shadows = ['sm', 'md', 'lg'];
+---
+
+<BaseLayout
+  title="Styleguide"
+  description="Every design token in the system, rendered, with contrast ratios computed from the token file."
+>
+  <Fragment slot="head">
+    <meta name="robots" content="noindex" />
+  </Fragment>
+
+  <main id="main" class="container guide">
+    <header class="guide__head">
+      <p class="eyebrow">Design system</p>
+      <h1>Styleguide</h1>
+      <p class="lede">
+        Every token in the system, rendered from
+        <code>design/tokens.json</code> at build time. If a value changes there, this
+        page changes with it — including the contrast maths, so the numbers below
+        can&rsquo;t quietly go stale.
+      </p>
+    </header>
+
+    <!-- ------------------------------------------------------------------ -->
+    <section aria-labelledby="h-primitives">
+      <h2 id="h-primitives">Colour primitives</h2>
+      <p class="note">
+        Raw values. Never used directly in a component — they exist so the
+        semantic tokens have something to point at.
+      </p>
+
+      {
+        colorScales.map((scale) => (
+          <div class="scale">
+            <h3 class="scale__name">{scale.name}</h3>
+            <ol class="swatches">
+              {scale.steps.map((s) => (
+                <li class="swatch">
+                  <span class="swatch__chip" style={`background:${s.value}`} />
+                  <span class="swatch__step">{s.step}</span>
+                  <code class="swatch__hex">{s.value}</code>
+                </li>
+              ))}
+            </ol>
+          </div>
+        ))
+      }
+    </section>
+
+    <!-- ------------------------------------------------------------------ -->
+    <section aria-labelledby="h-semantic">
+      <h2 id="h-semantic">Semantic tokens</h2>
+      <p class="note">
+        What components actually consume. Each one is an alias — the hex shown
+        is what it currently resolves to.
+      </p>
+
+      {
+        semanticGroups.map((group) => (
+          <div class="scale">
+            <h3 class="scale__name">{group.name}</h3>
+            <ol class="swatches">
+              {group.tokens.map((t) => (
+                <li class="swatch">
+                  <span class="swatch__chip" style={`background:${t.value}`} />
+                  <span class="swatch__step">
+                    {t.name.split('/').slice(1).join('/')}
+                  </span>
+                  <code class="swatch__hex">{t.value}</code>
+                </li>
+              ))}
+            </ol>
+          </div>
+        ))
+      }
+    </section>
+
+    <!-- ------------------------------------------------------------------ -->
+    <section aria-labelledby="h-contrast">
+      <h2 id="h-contrast">Contrast</h2>
+      <p class="note">
+        One colour scheme means there is no dark-mode escape hatch for a weak
+        pairing — every combination has to hold up here. Thresholds are WCAG
+        2.1:
+        <strong>4.5</strong> for body text, <strong>3.0</strong> for large text and
+        for non-text UI that carries meaning.
+      </p>
+
+      {
+        failingText.length === 0 ? (
+          <p class="callout callout--ok">
+            Every text-on-surface pairing clears 4.5. ✓
+          </p>
+        ) : (
+          <p class="callout callout--warn">
+            {failingText.length} text pairing(s) below 4.5 — see the table.
+          </p>
+        )
+      }
+
+      <h3>Text on surfaces</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr
+              ><th>Foreground</th><th>Background</th><th>Ratio</th><th
+                >Verdict</th
+              ></tr
+            >
+          </thead>
+          <tbody>
+            {
+              textPairs.map((p) => (
+                <tr class={p.ratio < 4.5 ? 'row--fail' : ''}>
+                  <td>
+                    <code>{p.fg}</code>
+                  </td>
+                  <td>
+                    <code>{p.bg}</code>
+                  </td>
+                  <td class="num">{p.ratio.toFixed(2)}</td>
+                  <td>{p.ratio < 4.5 ? 'Not for body text' : p.verdict}</td>
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Non-text, against <code>surface/default</code></h3>
+      <p class="note">
+        Borders, brand colours and status indicators. These need 3.0 only when
+        they carry meaning on their own — a decorative rule doesn&rsquo;t, an
+        input border or a status dot does.
+      </p>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Token</th><th>Ratio</th><th>Safe for</th></tr>
+          </thead>
+          <tbody>
+            {
+              graphicPairs.map((p) => (
+                <tr class={p.ratio < 3 ? 'row--fail' : ''}>
+                  <td>
+                    <code>{p.fg}</code>
+                  </td>
+                  <td class="num">{p.ratio.toFixed(2)}</td>
+                  <td>
+                    {p.ratio >= 4.5
+                      ? 'Text and graphics'
+                      : p.ratio >= 3
+                        ? 'Graphics and large text'
+                        : 'Decoration only — as a large fill, not a line or icon'}
+                  </td>
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout callout--note">
+        <p>
+          <strong>On Yuzu.</strong> No step of the Yuzu scale reaches 3.0 against
+          <code>surface/default</code> — the darkest, <code>yuzu/600</code>,
+          gets to 2.90. That is a property of yellow, not a mistake in the
+          values: darkening it far enough to pass turns it into olive.
+        </p>
+        <p>
+          So Yuzu earns its keep as a <em>large fill</em> — dark text on a Yuzu block
+          is 11.48:1, which is excellent. It does not work as a thin rule, a small
+          icon, a focus ring, or small text. Where a yellow-ish accent needs to be
+          legible at small size, use <code>brand/secondary</code>
+          (Rote Beete, 8.46:1) and let Yuzu carry the area instead of the line.
+        </p>
+      </div>
+    </section>
+
+    <!-- ------------------------------------------------------------------ -->
+    <section aria-labelledby="h-type">
+      <h2 id="h-type">Type scale</h2>
+      <p class="note">
+        Sizes are fluid — each is a <code>clamp()</code>, so what you see
+        depends on the width of this window. Resize it. The value shown is the
+        desktop maximum, which is also what the Figma variable carries.
+      </p>
+      {
+        [...fontSizes].reverse().map((size) => (
+          <div class="type-row">
+            <p class="type-row__sample" style={`font-size:var(${size.cssVar})`}>
+              I care about experiences.
+            </p>
+            <p class="type-row__meta">
+              <code>{size.cssVar}</code> · max {size.value}
+            </p>
+          </div>
+        ))
+      }
+
+      <h3>Families</h3>
+      <p class="sample-serif">
+        Instrument Serif &mdash; display and the slogan. <em
+          >Italic for emphasis.</em
+        >
+      </p>
+      <p class="sample-sans">
+        Inter Variable &mdash; UI and body copy. The workhorse.
+      </p>
+    </section>
+
+    <!-- ------------------------------------------------------------------ -->
+    <section aria-labelledby="h-space">
+      <h2 id="h-space">Spacing</h2>
+      <p class="note">4px base grid.</p>
+      <ol class="bars">
+        {
+          spacing.map((s) => (
+            <li class="bar">
+              <span class="bar__fill" style={`inline-size:var(${s.cssVar})`} />
+              <code>{s.cssVar}</code>
+              <span class="bar__value">{s.value}</span>
+            </li>
+          ))
+        }
+      </ol>
+    </section>
+
+    <!-- ------------------------------------------------------------------ -->
+    <section aria-labelledby="h-radius">
+      <h2 id="h-radius">Radius &amp; elevation</h2>
+      <ol class="tiles">
+        {
+          radii.map((r) => (
+            <li>
+              <span class="tile" style={`border-radius:var(${r.cssVar})`} />
+              <code>{r.cssVar}</code>
+              <span class="bar__value">{r.value}</span>
+            </li>
+          ))
+        }
+      </ol>
+      <ol class="tiles">
+        {
+          shadows.map((s) => (
+            <li>
+              <span
+                class="tile tile--raised"
+                style={`box-shadow:var(--shadow-${s})`}
+              />
+              <code>--shadow-{s}</code>
+            </li>
+          ))
+        }
+      </ol>
+    </section>
+
+    <!-- ------------------------------------------------------------------ -->
+    <section aria-labelledby="h-focus">
+      <h2 id="h-focus">Focus</h2>
+      <p class="note">
+        Tab into these. Every interactive element gets a visible ring — the
+        global stylesheet handles it, so it applies to anything focusable
+        without per-component work.
+      </p>
+      <p class="focus-demo">
+        <a href="#main">A link</a>
+        <button type="button">A button</button>
+        <input type="text" aria-label="A text input" placeholder="An input" />
+      </p>
+    </section>
+
+    <footer class="guide__foot">
+      <p>
+        Source: <code>design/tokens.json</code> ·
+        <code>src/styles/tokens.css</code> · rendered by
+        <code>src/pages/styleguide.astro</code>
+      </p>
+    </footer>
+  </main>
+</BaseLayout>
+
+<style>
+  .guide {
+    padding-block: var(--space-xl) var(--space-2xl);
+  }
+
+  .guide section {
+    padding-block-start: var(--space-xl);
+    margin-block-start: var(--space-xl);
+    border-block-start: 1px solid var(--border-subtle);
+  }
+
+  .eyebrow {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    letter-spacing: var(--letter-spacing-wide);
+    text-transform: uppercase;
+    color: var(--text-secondary);
+  }
+
+  h1 {
+    margin-block: var(--space-xs) var(--space-md);
+    font-size: var(--font-size-2xl);
+  }
+
+  h2 {
+    font-size: var(--font-size-xl);
+    margin-block-end: var(--space-sm);
+  }
+
+  h3 {
+    font-size: var(--font-size-lg);
+    margin-block: var(--space-lg) var(--space-sm);
+  }
+
+  .lede {
+    font-size: var(--font-size-lg);
+    color: var(--text-secondary);
+  }
+
+  .note {
+    color: var(--text-secondary);
+    font-size: var(--font-size-sm);
+    margin-block-end: var(--space-md);
+  }
+
+  code {
+    font-family: var(--font-mono);
+    font-size: 0.9em;
+  }
+
+  /* Swatches ------------------------------------------------------------- */
+
+  .scale {
+    margin-block-end: var(--space-lg);
+  }
+
+  .scale__name {
+    margin-block: 0 var(--space-2xs);
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-semibold);
+  }
+
+  .swatches {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr));
+    gap: var(--space-sm);
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+
+  .swatch {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3xs);
+    font-size: var(--font-size-xs);
+  }
+
+  .swatch__chip {
+    display: block;
+    block-size: var(--space-xl);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+  }
+
+  .swatch__step {
+    font-weight: var(--font-weight-medium);
+  }
+
+  .swatch__hex {
+    color: var(--text-secondary);
+  }
+
+  /* Tables --------------------------------------------------------------- */
+
+  .table-wrap {
+    overflow-x: auto;
+  }
+
+  table {
+    inline-size: 100%;
+    border-collapse: collapse;
+    font-size: var(--font-size-sm);
+  }
+
+  th,
+  td {
+    padding: var(--space-2xs) var(--space-xs);
+    text-align: start;
+    border-block-end: 1px solid var(--border-subtle);
+  }
+
+  th {
+    font-weight: var(--font-weight-semibold);
+    white-space: nowrap;
+  }
+
+  .num {
+    font-variant-numeric: tabular-nums;
+  }
+
+  .row--fail {
+    background: var(--surface-sunken);
+  }
+
+  .row--fail td:first-child::before {
+    content: '⚠ ';
+  }
+
+  /* Callouts ------------------------------------------------------------- */
+
+  .callout {
+    padding: var(--space-sm) var(--space-md);
+    margin-block-end: var(--space-md);
+    border-inline-start: var(--space-3xs) solid var(--border-strong);
+    border-radius: var(--radius-md);
+    background: var(--surface-raised);
+  }
+
+  .callout p + p {
+    margin-block-start: var(--space-2xs);
+  }
+
+  .callout--ok {
+    border-inline-start-color: var(--status-completed);
+  }
+
+  .callout--warn {
+    border-inline-start-color: var(--status-in-progress);
+  }
+
+  .callout--note {
+    border-inline-start-color: var(--brand-secondary);
+  }
+
+  /* Type ----------------------------------------------------------------- */
+
+  .type-row {
+    padding-block: var(--space-xs);
+    border-block-end: 1px solid var(--border-subtle);
+  }
+
+  .type-row__sample {
+    max-width: none;
+    line-height: var(--line-height-tight);
+    letter-spacing: var(--letter-spacing-tight);
+  }
+
+  .type-row__meta {
+    margin-block-start: var(--space-3xs);
+    font-size: var(--font-size-xs);
+    color: var(--text-secondary);
+  }
+
+  .sample-serif {
+    font-family: var(--font-serif);
+    font-size: var(--font-size-xl);
+  }
+
+  .sample-sans {
+    font-family: var(--font-sans);
+    font-size: var(--font-size-lg);
+  }
+
+  /* Spacing bars --------------------------------------------------------- */
+
+  .bars,
+  .tiles {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+
+  .bar {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    padding-block: var(--space-3xs);
+    font-size: var(--font-size-sm);
+  }
+
+  .bar__fill {
+    display: block;
+    block-size: var(--space-sm);
+    background: var(--brand-primary);
+    border-radius: var(--radius-sm);
+    flex: none;
+  }
+
+  .bar__value {
+    color: var(--text-secondary);
+    font-size: var(--font-size-xs);
+  }
+
+  .tiles {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-md);
+    margin-block-start: var(--space-md);
+  }
+
+  .tiles li {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3xs);
+    font-size: var(--font-size-xs);
+  }
+
+  .tile {
+    display: block;
+    inline-size: var(--space-2xl);
+    block-size: var(--space-2xl);
+    background: var(--surface-accent);
+  }
+
+  .tile--raised {
+    background: var(--surface-raised);
+    border-radius: var(--radius-md);
+  }
+
+  /* Focus demo ----------------------------------------------------------- */
+
+  .focus-demo {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-md);
+    align-items: center;
+  }
+
+  .focus-demo button,
+  .focus-demo input {
+    padding: var(--space-2xs) var(--space-sm);
+    background: var(--surface-raised);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-md);
+  }
+
+  .guide__foot {
+    margin-block-start: var(--space-xl);
+    padding-block-start: var(--space-md);
+    border-block-start: 1px solid var(--border-subtle);
+    font-size: var(--font-size-xs);
+    color: var(--text-secondary);
+  }
+</style>

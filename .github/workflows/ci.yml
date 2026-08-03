@@ -13,19 +13,36 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build:
-    name: Type-check and build
+  verify:
+    name: Verify
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version-file: .nvmrc
           cache: npm
 
       - run: npm ci
 
-      - run: npm run check
+      # Fails on a new high or critical advisory. The Astro 5 scaffold shipped
+      # with eight open XSS advisories and was only caught by a manual audit —
+      # this is that check, made automatic.
+      - name: Audit dependencies
+        run: npm audit --audit-level=high
 
-      - run: npm run build
+      - name: Check formatting
+        run: npm run format:check
+
+      - name: Type-check
+        run: npm run check
+
+      - name: Build
+        run: npm run build
+
+      # Accessibility and HTML correctness against the real built output:
+      # missing alt text, skipped heading levels, unlabelled inputs, missing
+      # SRI on anything external.
+      - name: Validate built HTML
+        run: npm run lint:html

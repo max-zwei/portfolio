@@ -43,8 +43,8 @@ but it's the most direct statement of how this codebase wants to be treated.
 Three things the site has to do: show the work, show the person, and show
 what's currently being worked on. That third one is the one most portfolios
 skip — work in progress is meant to be visible here, not hidden until it's
-polished. The content schema has a `status: in-progress` field for exactly that
-reason.
+polished. Case studies can link straight to the Figma file and the repo, so a
+project can be shown mid-flight rather than only once it's been tidied up.
 
 **The tone: professional, but not plain.** Restrained isn't the same as boring.
 One or two confident gestures, not a page competing with itself for attention.
@@ -67,15 +67,15 @@ cleanly later.
 
 ## Stack
 
-| Concern    | Choice | Why |
-| ---------- | ------ | --- |
-| Framework  | [Astro](https://astro.build) 7, static output | Ships HTML, no client JS by default. A portfolio doesn't need a runtime. |
-| Styling    | Plain CSS + custom properties | Tokens map 1:1 to Figma Variables. No build-tool indirection between design and code. |
-| Content    | Astro content collections | Markdown + a zod schema that fails the build on bad data. |
-| CMS        | [Decap CMS](https://decapcms.org) | Writes markdown back into the repo. No database, no vendor. |
-| Fonts      | Inter Variable + Instrument Serif, self-hosted | No third-party requests. |
-| Hosting    | GitHub Pages via GitHub Actions | Free, static, already where the code lives. |
-| Design I/O | Figma MCP server | Lets an agent read the actual design instead of guessing from a screenshot. |
+| Concern    | Choice                                         | Why                                                                                   |
+| ---------- | ---------------------------------------------- | ------------------------------------------------------------------------------------- |
+| Framework  | [Astro](https://astro.build) 7, static output  | Ships HTML, no client JS by default. A portfolio doesn't need a runtime.              |
+| Styling    | Plain CSS + custom properties                  | Tokens map 1:1 to Figma Variables. No build-tool indirection between design and code. |
+| Content    | Astro content collections                      | Markdown + a zod schema that fails the build on bad data.                             |
+| CMS        | [Decap CMS](https://decapcms.org)              | Writes markdown back into the repo. No database, no vendor.                           |
+| Fonts      | Inter Variable + Instrument Serif, self-hosted | No third-party requests.                                                              |
+| Hosting    | GitHub Pages via GitHub Actions                | Free, static, already where the code lives.                                           |
+| Design I/O | Figma MCP server                               | Lets an agent read the actual design instead of guessing from a screenshot.           |
 
 ## Quick start
 
@@ -84,15 +84,18 @@ npm install
 npm run dev        # http://localhost:4321
 ```
 
-| Command | What it does |
-| ------- | ------------ |
-| `npm run dev` | Dev server with hot reload |
-| `npm run check` | `astro check` — **must be 0 errors, 0 warnings before you commit** |
-| `npm run build` | Static build into `dist/` |
-| `npm run preview` | Serve the built output |
-| `npx decap-server` | Local CMS backend so `/admin` works without OAuth |
+| Command             | What it does                                                        |
+| ------------------- | ------------------------------------------------------------------- |
+| `npm run dev`       | Dev server with hot reload                                          |
+| `npm run verify`    | **The one to run before pushing** — check, build, HTML lint, format |
+| `npm run check`     | `astro check` — 0 errors, 0 warnings                                |
+| `npm run build`     | Static build into `dist/`                                           |
+| `npm run preview`   | Serve the built output                                              |
+| `npm run format`    | Prettier, write mode                                                |
+| `npm run lint:html` | Accessibility + HTML validation against `dist/`                     |
+| `npx decap-server`  | Local CMS backend so `/admin` works without OAuth                   |
 
-Both `check` and `build` run in CI on every pull request.
+CI runs the same chain on every pull request, plus `npm audit`.
 
 ## Repository layout
 
@@ -111,7 +114,7 @@ docs/
   design-to-code.md     Figma MCP workflow and the token sync rules
   cms.md                Decap CMS: local editing, and the OAuth caveat
 public/
-  admin/                Decap CMS shell + config.yml
+  admin/                Decap CMS shell — local only, stripped from the build
   og/default.png        Social share image
 src/
   config/site.ts        Name, slogan, links — site-wide constants
@@ -133,8 +136,8 @@ Tokens live in [`src/styles/tokens.css`](src/styles/tokens.css) in two tiers:
 - **Primitives** — raw values, named after the thing: `--color-yuzu-400`,
   `--space-md`. Never used directly in a component.
 - **Semantics** — what components actually consume: `--text-secondary`,
-  `--surface-raised`, `--status-in-progress`. One set, no modes — there is no
-  dark mode, by decision.
+  `--surface-raised`, `--border-focus`. One set, no modes — there is no dark
+  mode, by decision.
 
 The palette is nature-inspired and named in German: **Yuzu** (citrus yellow, the
 signature accent), **Rote Beete** (beetroot, the deep counterweight), **Tomaten**
@@ -151,7 +154,7 @@ These tokens also exist as **Figma Variables** in the portfolio file — 94 of
 them across 7 collections, with names that match the CSS one-for-one
 (`surface/default` in Figma is `--surface-default` in code, and Dev Mode reports
 it that way). Tune the values in Figma; the names don't move. **The token
-*names* are the stable contract, not the hexes.**
+_names_ are the stable contract, not the hexes.**
 
 ## Adding a case study
 
@@ -160,8 +163,9 @@ create `src/content/projects/<slug>.md` with the frontmatter documented in
 [docs/content-schema.md](docs/content-schema.md).
 
 Every project opens with a **"How might we …"** framing (the `hmw` field) so the
-portfolio reads as one point of view rather than a pile of deliverables. And
-`status: in-progress` is a feature — showing current work is the point.
+portfolio reads as one point of view rather than a pile of deliverables. Each
+can also carry `figmaUrl`, `repoUrl` and a list of `artefacts` — the working
+files behind the retelling.
 
 A field lives in three places and all three must agree, or the CMS will save
 frontmatter that the build then rejects:
@@ -176,6 +180,7 @@ Infrastructure is in place; the site is a v0.1 placeholder with no case studies
 yet.
 
 **Done**
+
 - Astro project, static output, type-checking clean
 - Design tokens (CSS custom properties + DTCG JSON), one scheme
 - Project content schema + documentation
@@ -186,18 +191,24 @@ yet.
 - Design tokens written into Figma as Variables, names matched to the CSS
 
 **Needs a human (can't be done from code)**
+
 - Custom domain: DNS records, then `public/CNAME` and `site` in `astro.config.mjs`
   ([docs/deployment.md](docs/deployment.md))
 - Tuning the palette in Figma — the hexes there are a working set, not final
 
 **Decided, so don't "fix" it**
+
 - **No dark mode.** One colour scheme. Don't add `prefers-color-scheme` blocks.
-- **`/admin` logs in locally only**, via `npx decap-server`. On the live site it
-  loads but cannot log in, because GitHub Pages can't run the OAuth exchange.
-  That was judged not worth a deployed service — see [docs/cms.md](docs/cms.md)
-  for the routes if it ever changes.
+- **`/admin` is local-only and is stripped from the production build.** It can't
+  log in without an OAuth relay, so shipping it would put a 5 MB third-party
+  script on the live domain for nothing. Editing happens via `npx decap-server`.
+  See [docs/cms.md](docs/cms.md).
+- **The content schema is deliberately small.** Ten fields. Adding one costs
+  three files to keep in sync, so add them when a design needs them — not in
+  advance.
 
 **Next**
+
 - Real case studies
 - `/work` index and project detail pages, built from the Figma designs
 - An about page
@@ -224,12 +235,24 @@ intent.
 A good chunk of the code in here was written by an AI agent working from my
 direction. I'd rather tell you that up front than have you find out.
 
-The short version: I decide *what* and *why*, the agent handles a lot of *how*,
-and I stay close enough to catch it when the *how* starts quietly changing the
-*what*. Every design decision on this site is mine. Most of the lines aren't.
+The short version: I decide _what_ and _why_, the agent handles a lot of _how_,
+and I stay close enough to catch it when the _how_ starts quietly changing the
+_what_. Every design decision on this site is mine. Most of the lines aren't.
 
 The long version, with the mistakes left in, is in
 [`behind-the-scenes/`](behind-the-scenes/).
+
+## Licence
+
+Split, because the code and the work aren't the same thing:
+
+- **[MIT](LICENSE)** — the site code, the config, the build tooling, and the
+  agent skills in `behind-the-scenes/skills/`. Take them and use them.
+- **[All rights reserved](LICENSE-CONTENT)** — the case studies, images, written
+  copy, and the specific visual identity. Read it, link to it, quote it with
+  attribution; don't republish it as your own.
+
+The structure is fair game. The specific expression isn't.
 
 ---
 

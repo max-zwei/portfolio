@@ -22,9 +22,40 @@ land in your working tree as ordinary file edits for you to commit.
 
 This is the fastest path and the one to use while the schema is still moving.
 
-## Editing on the live site — deliberately not set up
+## The CMS is not deployed
 
-**Decision: `/admin` works locally only. This is a choice, not a gap.**
+**Decision: `/admin` works locally only, and is stripped from the production
+build.** This is a choice, not a gap.
+
+`astro.config.mjs` carries a small `astro:build:done` integration that deletes
+`dist/admin` after every build. Two reasons:
+
+1. It couldn't log in anyway (see below), so a deployed copy is dead weight.
+2. It loads a ~5 MB third-party script from unpkg. Publishing that on the live
+   domain in exchange for a page nobody can use is a bad trade.
+
+`npm run dev` serves `public/` directly and doesn't build, so local editing is
+unaffected. Delete the integration if an OAuth relay is ever added.
+
+### Pinning and integrity
+
+`public/admin/index.html` loads Decap from unpkg at an **exact** version with an
+SRI `integrity` hash — not a `^range`. A range means the browser runs whatever
+the CDN resolves it to, and makes SRI impossible.
+
+Bumping the version means recomputing the hash:
+
+```bash
+npm pack decap-cms@<version> && tar -xzf decap-cms-<version>.tgz
+openssl dgst -sha384 -binary package/dist/decap-cms.js | openssl base64 -A
+```
+
+(unpkg serves the npm tarball byte-for-byte, so this is the same file.)
+
+One honest caveat: Decap is code-split into ~93 lazy-loaded chunks, and SRI only
+covers the entry file. Those chunks aren't integrity-checked. **Not deploying
+this page is what actually contains that risk** — the pinning protects the local
+editing session, where you're the only one loading it.
 
 Everything the CMS does, it does through the local backend above. Wiring up the
 live site would buy exactly one thing: writing case studies from a machine that
@@ -43,7 +74,7 @@ without being handed to everyone who views the page. So the exchange needs a
 server, and **GitHub Pages serves static files only**. One small piece has to
 live somewhere else.
 
-Note this is only ever about *Max logging in to write*. The portfolio itself is
+Note this is only ever about _Max logging in to write_. The portfolio itself is
 fully static and public; no visitor authenticates against anything.
 
 ### Option A — a hosted OAuth relay

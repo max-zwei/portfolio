@@ -8,8 +8,8 @@ how much of this site I actually decided, this is the folder that answers it.
 
 ## The runs
 
-| Date | Run | What it was for |
-| ---- | --- | --------------- |
+| Date       | Run                                                          | What it was for                                                                                                      |
+| ---------- | ------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------- |
 | 2026-08-02 | [Infrastructure setup](./2026-08-02-infrastructure-setup.md) | Taking the repo from an empty README to a deployable site: build tooling, design tokens, content schema, CMS, CI/CD. |
 
 ## How to read these
@@ -32,7 +32,7 @@ Two reasons.
 The obvious one is transparency: this repo is public and linked from my
 portfolio, and you deserve to know what you're looking at.
 
-The less obvious one is that it's useful to *me*. Reading back over a run shows
+The less obvious one is that it's useful to _me_. Reading back over a run shows
 where my instructions were vague — the agent's mistakes are usually a faithful
 execution of something I under-specified. The `token-system` skill exists
 because of things that went sideways before I wrote it down properly.

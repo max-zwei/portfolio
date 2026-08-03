@@ -1,6 +1,6 @@
 # Skills
 
-A *skill* is a markdown file that teaches an AI agent how to do one job
+A _skill_ is a markdown file that teaches an AI agent how to do one job
 properly. It loads when the job comes up and shapes how the agent works —
 what order to do things in, what to validate, what never to do.
 
@@ -13,14 +13,14 @@ These are the real files. Drop one into `.claude/skills/` and it works.
 
 ## In this folder
 
-| Skill | What it does | Used on this project for |
-| ----- | ------------ | ------------------------ |
+| Skill                                  | What it does                                                                                                                                              | Used on this project for                                                                           |
+| -------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
 | [`token-system.md`](./token-system.md) | Builds a two-tier design token system in Figma variables — primitives, then semantic aliases, one collection per category, code syntax on every variable. | Writing the site's 94 design tokens into the Figma file with names that match the CSS one-for-one. |
 
 ## Also used here, but not republished
 
-| Skill | Why not | Where to find it |
-| ----- | ------- | ---------------- |
+| Skill       | Why not                                                                                                                                   | Where to find it                                                                        |
+| ----------- | ----------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
 | `figma-use` | It's Figma's own guidance for their Plugin API, not something I wrote. Republishing it under my name would misrepresent whose work it is. | Ships with the [Figma MCP server](https://developers.figma.com/docs/figma-mcp-server/). |
 
 ## What makes one of these work
@@ -35,8 +35,8 @@ call" prevents more damage than any amount of positive instruction.
 each collection. That's not caution for its own sake — it's so a mistake costs
 one step instead of ninety-four variables.
 
-**Name the failure modes.** A table of *"this error message means you did this
-specific thing"* turns a stuck agent into an agent that fixes itself. Both
+**Name the failure modes.** A table of _"this error message means you did this
+specific thing"_ turns a stuck agent into an agent that fixes itself. Both
 errors hit during the token run were recovered from without me intervening,
 because the skill described them.
 

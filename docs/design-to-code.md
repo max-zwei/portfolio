@@ -14,8 +14,7 @@ Verify the connection with `whoami` before assuming a read failure is a bad node
 ID — most "cannot find node" errors are actually auth or permission errors.
 A working connection returns the account handle and the plan the file lives on.
 
-> Status: verified working. The connected account is `max.pinkert`
-> (`max.pinkert@code.berlin`), plan *Max sein Space*.
+> Status: verified working.
 
 If a read fails:
 
@@ -94,17 +93,17 @@ prerequisite for that tool, not a suggestion.
 The variables exist in the Figma file today — 94 of them across 7 collections,
 every one carrying a `$description` and WEB code syntax.
 
-| Figma collection | Vars | JSON key   | CSS prefix |
-| ---------------- | ---- | ---------- | ---------- |
-| Color            | 35   | `color`    | `--color-*` |
+| Figma collection | Vars | JSON key   | CSS prefix                                                         |
+| ---------------- | ---- | ---------- | ------------------------------------------------------------------ |
+| Color            | 35   | `color`    | `--color-*`                                                        |
 | Semantic         | 19   | `semantic` | `--surface-*`, `--text-*`, `--border-*`, `--brand-*`, `--status-*` |
-| Typography       | 19   | `font`     | `--font-*`, `--line-height-*`, `--letter-spacing-*` |
-| Spacing          | 9    | `space`    | `--space-*` |
-| Radius           | 4    | `radius`   | `--radius-*` |
-| Motion           | 5    | `motion`   | `--duration-*`, `--easing-*` |
-| Elevation        | 3    | —          | `--shadow-*` |
+| Typography       | 19   | `font`     | `--font-*`, `--line-height-*`, `--letter-spacing-*`                |
+| Spacing          | 9    | `space`    | `--space-*`                                                        |
+| Radius           | 4    | `radius`   | `--radius-*`                                                       |
+| Motion           | 5    | `motion`   | `--duration-*`, `--easing-*`                                       |
+| Elevation        | 3    | —          | `--shadow-*`                                                       |
 
-**The variable name *is* the CSS custom property.** Code syntax is set so that
+**The variable name _is_ the CSS custom property.** Code syntax is set so that
 `surface/default` reports as `var(--surface-default)` in Dev Mode — swap `/` for
 `-`, prefix `--`, and you have the token to type. That mechanical correspondence
 is the whole anti-drift mechanism; don't break it when adding tokens.
@@ -126,7 +125,7 @@ every component stay untouched. That is what the two-tier split buys you.
 ## Code Connect
 
 Once components exist in `src/components/`, map them to their Figma counterparts
-with `add_code_connect_map`. After that, `get_design_context` returns *"this is
-`<ProjectCard>`"* instead of a wall of divs, which is the difference between an
+with `add_code_connect_map`. After that, `get_design_context` returns _"this is
+`<ProjectCard>`"_ instead of a wall of divs, which is the difference between an
 agent reusing your component and rebuilding it from scratch. Do this as soon as a
 component is stable — it pays for itself on the second use.

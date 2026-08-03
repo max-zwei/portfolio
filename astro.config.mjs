@@ -1,22 +1,36 @@
 // @ts-check
+import { rm } from 'node:fs/promises';
 import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 
+/**
+ * Keeps the CMS shell out of the production build.
+ *
+ * `/admin` cannot log in on the live site — GitHub Pages has no server to run
+ * Decap's OAuth exchange (see docs/cms.md). Publishing it anyway would put a
+ * 5 MB third-party script from unpkg on the public domain in exchange for
+ * nothing. Editing happens locally, where `npm run dev` serves public/ as-is,
+ * so this costs the actual workflow nothing.
+ *
+ * Delete this integration if an OAuth relay is ever added.
+ */
+const excludeAdminFromBuild = {
+  name: 'exclude-admin-from-build',
+  hooks: {
+    'astro:build:done': async ({ dir }) => {
+      await rm(new URL('admin/', dir), { recursive: true, force: true });
+    },
+  },
+};
+
 // `site` drives canonical URLs, OG tags and the sitemap — update it when the
 // custom domain is attached (see docs/deployment.md).
-// GitHub Pages serves this repo from the root of the domain, so `base` stays '/'.
 export default defineConfig({
   site: 'https://max-zwei.github.io',
-  base: '/',
   output: 'static',
-  trailingSlash: 'ignore',
-  build: {
-    format: 'directory',
-  },
   integrations: [
-    sitemap({
-      // The CMS admin shell is not content.
-      filter: (page) => !page.includes('/admin'),
-    }),
+    // The styleguide is a tool, not content; it shouldn't compete in search.
+    sitemap({ filter: (page) => !page.includes('/styleguide') }),
+    excludeAdminFromBuild,
   ],
 });

@@ -1,0 +1,8 @@
+dist/
+.astro/
+node_modules/
+package-lock.json
+
+# Kept byte-identical to the skill file it was copied from, so it stays
+# drop-in usable. Reformatting would make it diverge for no benefit.
+behind-the-scenes/skills/token-system.md

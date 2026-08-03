@@ -3,13 +3,18 @@
   "type": "module",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": ">=22"
+  },
   "scripts": {
     "dev": "astro dev",
-    "start": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
     "check": "astro check",
-    "astro": "astro"
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "lint:html": "html-validate \"dist/**/*.html\"",
+    "verify": "npm run check && npm run build && npm run lint:html && npm run format:check"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.3",
@@ -20,6 +25,9 @@
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.4",
+    "html-validate": "^11.6.1",
+    "prettier": "^3.9.6",
+    "prettier-plugin-astro": "^0.14.1",
     "typescript": "^5.8.3"
   }
 }
