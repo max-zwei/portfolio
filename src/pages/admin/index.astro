@@ -20,6 +20,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="robots" content="noindex" />
     <title>Content Manager — Max Pinkert</title>
+
+    <!--
+      Points Decap at its config explicitly.
+
+      Without this, Decap resolves "config.yml" relative to the current URL —
+      so /admin (no trailing slash) asks for /config.yml and 404s, while
+      /admin/ works. An absolute path makes it work either way.
+
+      Decap only honours this tag when `type` is exactly "text/yaml" or
+      "application/x-yaml"; any other value is ignored and it silently falls
+      back to the relative lookup.
+    -->
+    <link rel="cms-config-url" type="text/yaml" href="/admin/config.yml" />
   </head>
   <body>
     <!--
