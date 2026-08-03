@@ -103,6 +103,7 @@ CI runs the same chain on every pull request, plus `npm audit`.
 behind-the-scenes/      ★ The process, in public
   skills/               Instruction sets that shape how the agent works
   agent-runs/           What was delegated, what came back, what I decided
+coding/                 Coding challenges, one folder each. Not type-checked.
 .github/workflows/
   deploy.yml            Build + deploy to GitHub Pages on push to main
   ci.yml                Type-check + build on every PR
