@@ -1,0 +1,44 @@
+---
+// The Decap CMS shell.
+//
+// This is an Astro route rather than a plain file in public/ for one reason:
+// Astro's dev server serves public/ by exact path and does not resolve
+// directory indexes, so public/admin/index.html was only ever reachable at
+// /admin/index.html — never at /admin. As a route, /admin works.
+//
+// It is NOT deployed. astro.config.mjs deletes dist/admin after every build,
+// because it cannot log in without an OAuth relay (see docs/cms.md) and would
+// otherwise put a 5 MB third-party script on the public domain for nothing.
+//
+// The config it reads still lives at public/admin/config.yml, served verbatim.
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>Content Manager — Max Pinkert</title>
+  </head>
+  <body>
+    <!--
+      is:inline is required. Without it Astro would process and bundle this
+      script, dropping the integrity and crossorigin attributes — which would
+      silently undo the SRI pinning.
+
+      The version is pinned exactly (not a ^range) and carries an SRI hash, so
+      a tampered or swapped bundle fails to execute rather than running.
+      Bumping the version means recomputing the hash — see docs/cms.md.
+
+      Caveat: Decap is code-split, and SRI only covers this entry file. Its
+      lazy-loaded chunks are not integrity-checked. Not deploying this page is
+      what actually contains that risk.
+    -->
+    <script
+      is:inline
+      src="https://unpkg.com/decap-cms@3.15.1/dist/decap-cms.js"
+      integrity="sha384-in6eHztHveqQ7uMZ1fDaKlDmacQLFuLH2wWrFTiymyuS8zQ5bixwL8U3AeRi8h/L"
+      crossorigin="anonymous"></script>
+  </body>
+</html>

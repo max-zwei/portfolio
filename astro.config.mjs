@@ -29,8 +29,9 @@ export default defineConfig({
   site: 'https://max-zwei.github.io',
   output: 'static',
   integrations: [
-    // The styleguide is a tool, not content; it shouldn't compete in search.
-    sitemap({ filter: (page) => !page.includes('/styleguide') }),
+    // Tools, not content. /admin isn't even deployed (see below); the
+    // styleguide is, but shouldn't compete in search.
+    sitemap({ filter: (page) => !/\/(admin|styleguide)/.test(page) }),
     excludeAdminFromBuild,
   ],
 });

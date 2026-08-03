@@ -34,12 +34,19 @@ build.** This is a choice, not a gap.
 2. It loads a ~5 MB third-party script from unpkg. Publishing that on the live
    domain in exchange for a page nobody can use is a bad trade.
 
-`npm run dev` serves `public/` directly and doesn't build, so local editing is
-unaffected. Delete the integration if an OAuth relay is ever added.
+`npm run dev` still serves it, so local editing is unaffected. Delete the
+integration if an OAuth relay is ever added.
+
+**Why it's an Astro route and not a file in `public/`:** Astro's dev server
+serves `public/` by exact path and does not resolve directory indexes, so
+`public/admin/index.html` was only ever reachable at `/admin/index.html` —
+never at `/admin`. As a route it works at both. The `is:inline` on the script
+tag is load-bearing: without it Astro bundles the script and drops the
+`integrity` and `crossorigin` attributes, silently undoing the SRI pinning.
 
 ### Pinning and integrity
 
-`public/admin/index.html` loads Decap from unpkg at an **exact** version with an
+`src/pages/admin/index.astro` loads Decap from unpkg at an **exact** version with an
 SRI `integrity` hash — not a `^range`. A range means the browser runs whatever
 the CDN resolves it to, and makes SRI impossible.
 
@@ -104,8 +111,8 @@ Option A.
 
 ### What happens meanwhile
 
-`/admin` is deployed and loads on the live site, but the login button cannot
-complete. That is expected. Local editing is unaffected.
+`/admin` returns a 404 on the live site, because it isn't deployed at all. That
+is expected — see "The CMS is not deployed" above. Local editing is unaffected.
 
 ## Keeping the CMS and the schema in step
 

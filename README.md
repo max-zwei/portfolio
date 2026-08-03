@@ -114,14 +114,14 @@ docs/
   design-to-code.md     Figma MCP workflow and the token sync rules
   cms.md                Decap CMS: local editing, and the OAuth caveat
 public/
-  admin/                Decap CMS shell — local only, stripped from the build
+  admin/config.yml      Decap CMS config (the shell is src/pages/admin/)
   og/default.png        Social share image
 src/
   config/site.ts        Name, slogan, links — site-wide constants
   content.config.ts     Project schema (zod). The enforcer.
   content/projects/     Case studies as markdown; images in _media/
   layouts/BaseLayout.astro   <head>, meta, OG tags, skip link
-  pages/                File-based routes
+  pages/                File-based routes; admin/ is local-only, never deployed
   styles/
     tokens.css          Design tokens — primitives, then semantics. Start here.
     global.css          Reset, type defaults, a11y helpers, .container
