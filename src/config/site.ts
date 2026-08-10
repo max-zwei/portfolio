@@ -17,4 +17,5 @@ export const SITE = {
 export const LINKS: ReadonlyArray<{ label: string; href: string }> = [
   { label: 'Email', href: `mailto:${SITE.email}` },
   { label: 'GitHub', href: 'https://github.com/max-zwei' },
+  { label: 'Résumé', href: '/resume' },
 ];

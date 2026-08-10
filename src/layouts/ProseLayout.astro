@@ -1,0 +1,162 @@
+---
+import type { MarkdownLayoutProps } from 'astro';
+import BaseLayout from './BaseLayout.astro';
+
+/**
+ * Layout for standalone markdown pages — documents rather than case studies.
+ *
+ * The markdown owns everything from `##` down; the `<h1>` and the standfirst
+ * come from frontmatter, so the document reads the same whether it is rendered
+ * here or opened as a plain file.
+ */
+type Props = MarkdownLayoutProps<{
+  title: string;
+  description: string;
+  /** One line under the title. Optional — leave it out and nothing renders. */
+  lede?: string;
+}>;
+
+const { frontmatter } = Astro.props as Props;
+---
+
+<BaseLayout title={frontmatter.title} description={frontmatter.description}>
+  <main id="main" class="container doc">
+    <header class="doc__head">
+      <p class="doc__back">
+        <a href="/">&larr; Portfolio</a>
+      </p>
+      <h1>{frontmatter.title}</h1>
+      {frontmatter.lede && <p class="doc__lede">{frontmatter.lede}</p>}
+    </header>
+
+    <div class="prose">
+      <slot />
+    </div>
+  </main>
+</BaseLayout>
+
+<style>
+  .doc {
+    padding-block: var(--space-2xl) var(--space-xl);
+  }
+
+  .doc__head {
+    max-width: var(--measure);
+  }
+
+  /* The site has no nav, and these documents get linked to directly. */
+  .doc__back {
+    margin-bottom: var(--space-lg);
+    font-size: var(--font-size-sm);
+    color: var(--text-secondary);
+  }
+
+  h1 {
+    font-size: var(--font-size-2xl);
+  }
+
+  .doc__lede {
+    margin-top: var(--space-md);
+    font-family: var(--font-serif);
+    font-size: var(--font-size-lg);
+    line-height: var(--line-height-snug);
+    color: var(--text-secondary);
+  }
+
+  /* The body comes in through <slot> from the markdown page, so it is out of
+     reach of Astro's scoping — :global is the only way to style it. */
+  .prose {
+    max-width: var(--measure);
+    margin-top: var(--space-xl);
+  }
+
+  .prose :global(h2) {
+    margin-top: var(--space-xl);
+    font-size: var(--font-size-lg);
+  }
+
+  .prose :global(h3) {
+    margin-top: var(--space-lg);
+    font-size: var(--font-size-base);
+  }
+
+  .prose :global(p),
+  .prose :global(ul),
+  .prose :global(ol) {
+    margin-top: var(--space-sm);
+  }
+
+  .prose :global(ul),
+  .prose :global(ol) {
+    padding-left: var(--space-md);
+  }
+
+  .prose :global(li + li) {
+    margin-top: var(--space-2xs);
+  }
+
+  .prose :global(strong) {
+    font-weight: var(--font-weight-semibold);
+  }
+
+  .prose :global(a) {
+    text-decoration-color: var(--border-strong);
+  }
+
+  /* Wide on a narrow screen: let the table scroll rather than the page. */
+  .prose :global(.table-wrap) {
+    margin-top: var(--space-lg);
+    overflow-x: auto;
+  }
+
+  .prose :global(table) {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--font-size-sm);
+  }
+
+  .prose :global(th),
+  .prose :global(td) {
+    padding: var(--space-2xs) var(--space-sm);
+    text-align: left;
+    vertical-align: top;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+
+  .prose :global(th) {
+    font-weight: var(--font-weight-medium);
+    letter-spacing: var(--letter-spacing-wide);
+    text-transform: uppercase;
+    font-size: var(--font-size-xs);
+    color: var(--text-secondary);
+  }
+
+  /* These documents get printed and handed over, so the sheet is part of the
+     design. Same reason as /resume: @page cannot read custom properties. */
+  @page {
+    size: A4;
+    margin: 18mm 16mm;
+  }
+
+  @media print {
+    .doc {
+      padding-block: 0;
+      padding-inline: 0;
+      max-width: none;
+    }
+
+    .doc__back {
+      display: none;
+    }
+
+    :global(body) {
+      background: var(--surface-raised);
+      font-size: var(--font-size-sm);
+    }
+
+    .prose :global(h2),
+    .prose :global(h3) {
+      break-after: avoid;
+    }
+  }
+</style>

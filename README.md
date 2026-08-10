@@ -87,6 +87,7 @@ npm run dev        # http://localhost:4321
 | Command             | What it does                                                        |
 | ------------------- | ------------------------------------------------------------------- |
 | `npm run dev`       | Dev server with hot reload                                          |
+| `npm run cv`        | Re-prints `/resume` to `public/cv/max-pinkert-cv.pdf`               |
 | `npm run verify`    | **The one to run before pushing** — check, build, HTML lint, format |
 | `npm run check`     | `astro check` — 0 errors, 0 warnings                                |
 | `npm run build`     | Static build into `dist/`                                           |
@@ -114,14 +115,20 @@ docs/
   deployment.md         Pages setup, custom domain, DNS, rollback
   design-to-code.md     Figma MCP workflow and the token sync rules
   cms.md                Decap CMS: local editing, and the OAuth caveat
+  resume-and-handshake.md   The CV pipeline and the pro bono agreement
 public/
   admin/config.yml      Decap CMS config (the shell is src/pages/admin/)
+  cv/                   The CV as PDF — a build artefact of /resume, committed
   og/default.png        Social share image
+scripts/
+  render-cv.mjs         Prints the built /resume page to that PDF
 src/
   config/site.ts        Name, slogan, links — site-wide constants
+  config/resume.ts      CV intro + timeline. The only place a position is written
   content.config.ts     Project schema (zod). The enforcer.
   content/projects/     Case studies as markdown; images in _media/
   layouts/BaseLayout.astro   <head>, meta, OG tags, skip link
+  layouts/ProseLayout.astro  Markdown document pages (the handshake)
   pages/                File-based routes; admin/ is local-only, never deployed
   styles/
     tokens.css          Design tokens — primitives, then semantics. Start here.
@@ -187,6 +194,8 @@ yet.
 - Project content schema + documentation
 - Decap CMS wired to the schema, editorial workflow on
 - v0.1 homepage — name, role, slogan, one brand gesture
+- `/resume` — the CV as a timeline, and `npm run cv` to print it to PDF
+- `/handshake` — the pro bono agreement, as a page I can send a client
 - GitHub Actions: deploy on `main`, CI on PRs
 - Figma MCP connection verified, handoff workflow documented
 - Design tokens written into Figma as Variables, names matched to the CSS
@@ -196,6 +205,9 @@ yet.
 - Custom domain: DNS records, then `public/CNAME` and `site` in `astro.config.mjs`
   ([docs/deployment.md](docs/deployment.md))
 - Tuning the palette in Figma — the hexes there are a working set, not final
+- The actual CV: positions, education and the intro paragraph are
+  `[placeholders]` in [`src/config/resume.ts`](src/config/resume.ts) until I write
+  them ([docs/resume-and-handshake.md](docs/resume-and-handshake.md))
 
 **Decided, so don't "fix" it**
 

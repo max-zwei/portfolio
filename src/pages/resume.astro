@@ -1,0 +1,331 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { SITE, LINKS } from '../config/site';
+import { RESUME } from '../config/resume';
+
+// This page is the CV. The PDF is a print of it, rendered by `npm run cv` —
+// so anything added here has to survive A4 as well as a browser window.
+// See docs/resume-and-handshake.md.
+
+/** Written by scripts/render-cv.mjs. Kept in one place so page and script agree. */
+const CV_PDF = '/cv/max-pinkert-cv.pdf';
+
+const MONTHS = [
+  'Jan',
+  'Feb',
+  'Mar',
+  'Apr',
+  'May',
+  'Jun',
+  'Jul',
+  'Aug',
+  'Sep',
+  'Oct',
+  'Nov',
+  'Dec',
+];
+
+/** `2024-09` → `Sep 2024`. A bare year passes through untouched. */
+function formatMonth(value: string): string {
+  const [year, month] = value.split('-');
+  return month ? `${MONTHS[Number(month) - 1]} ${year}` : year;
+}
+
+const timeline = [...RESUME.timeline].sort((a, b) =>
+  b.start.localeCompare(a.start),
+);
+
+// On paper nobody can click "GitHub", so the link text is the address itself.
+const contact = [
+  { label: SITE.email, href: `mailto:${SITE.email}` },
+  ...LINKS.filter((link) => link.href.startsWith('http')).map((link) => ({
+    label: link.href.replace(/^https?:\/\//, ''),
+    href: link.href,
+  })),
+];
+---
+
+<BaseLayout
+  title="Résumé"
+  description={`Curriculum vitae of ${SITE.name} — ${SITE.role}. Positions and education, with a PDF to download.`}
+>
+  <main id="main" class="container cv">
+    <header class="cv__head">
+      <p class="cv__back no-print">
+        <a href="/">&larr; Portfolio</a>
+      </p>
+      <p class="eyebrow">Curriculum vitae</p>
+      <h1 class="cv__name">{SITE.name}</h1>
+      <p class="cv__role">{SITE.role}</p>
+
+      <p class="cv__intro">{RESUME.intro}</p>
+
+      <ul class="cv__contact">
+        {
+          contact.map((item) => (
+            <li>
+              <a href={item.href}>{item.label}</a>
+            </li>
+          ))
+        }
+      </ul>
+
+      <p class="cv__download no-print">
+        <a href={CV_PDF} download>Download as PDF</a>
+      </p>
+    </header>
+
+    <section aria-labelledby="h-timeline">
+      <h2 id="h-timeline" class="cv__section">Positions &amp; education</h2>
+
+      <ol class="timeline">
+        {
+          timeline.map((entry) => (
+            <li class:list={['entry', `entry--${entry.kind}`]}>
+              <p class="entry__period">
+                <time datetime={entry.start}>{formatMonth(entry.start)}</time>
+                {' – '}
+                {entry.end ? (
+                  <time datetime={entry.end}>{formatMonth(entry.end)}</time>
+                ) : (
+                  'present'
+                )}
+              </p>
+
+              <div class="entry__body">
+                <p class="entry__kind">
+                  {entry.kind === 'work' ? 'Position' : 'Education'}
+                </p>
+                <h3 class="entry__title">{entry.title}</h3>
+                <p class="entry__org">
+                  {entry.organisation}
+                  {entry.location ? `, ${entry.location}` : ''}
+                </p>
+                <p class="entry__summary">{entry.summary}</p>
+              </div>
+            </li>
+          ))
+        }
+      </ol>
+    </section>
+  </main>
+</BaseLayout>
+
+<style>
+  .cv {
+    padding-block: var(--space-2xl) var(--space-xl);
+  }
+
+  /* The site has no nav, and a CV is a page people arrive at from outside. */
+  .cv__back {
+    margin-bottom: var(--space-lg);
+    font-size: var(--font-size-sm);
+    color: var(--text-secondary);
+  }
+
+  .eyebrow {
+    margin-bottom: var(--space-md);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    letter-spacing: var(--letter-spacing-wide);
+    text-transform: uppercase;
+    color: var(--text-secondary);
+  }
+
+  .cv__name {
+    font-size: var(--font-size-2xl);
+  }
+
+  .cv__role {
+    margin-top: var(--space-2xs);
+    font-family: var(--font-serif);
+    font-size: var(--font-size-lg);
+    color: var(--text-accent);
+  }
+
+  .cv__intro {
+    margin-top: var(--space-md);
+    max-width: var(--measure);
+  }
+
+  .cv__contact,
+  .cv__download {
+    margin-top: var(--space-md);
+    padding: 0;
+    list-style: none;
+    font-size: var(--font-size-sm);
+  }
+
+  .cv__contact {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2xs) var(--space-md);
+    color: var(--text-secondary);
+  }
+
+  .cv__download a {
+    display: inline-block;
+    padding: var(--space-2xs) var(--space-sm);
+    font-weight: var(--font-weight-medium);
+    text-decoration: none;
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-full);
+    transition:
+      color var(--duration-fast) var(--easing-standard),
+      border-color var(--duration-fast) var(--easing-standard);
+  }
+
+  .cv__download a:hover {
+    border-color: var(--brand-primary);
+  }
+
+  .cv__section {
+    margin-top: var(--space-2xl);
+    margin-bottom: var(--space-lg);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    letter-spacing: var(--letter-spacing-wide);
+    text-transform: uppercase;
+    color: var(--text-secondary);
+  }
+
+  /* ---------------------------------------------------------------
+   * Timeline. One list, both kinds of entry, newest first — a career
+   * reads as one line, not as two competing tables.
+   * ------------------------------------------------------------- */
+
+  .timeline {
+    padding: 0;
+    list-style: none;
+  }
+
+  .entry {
+    display: grid;
+    gap: var(--space-2xs);
+    padding-bottom: var(--space-lg);
+  }
+
+  .entry__period {
+    font-size: var(--font-size-sm);
+    font-variant-numeric: tabular-nums;
+    color: var(--text-secondary);
+    white-space: nowrap;
+  }
+
+  .entry__body {
+    position: relative;
+    padding-left: var(--space-md);
+    border-left: 1px solid var(--border-subtle);
+  }
+
+  /* The one gesture on this page: a Yuzu dot per position, a green one per
+     qualification. Colour never carries the meaning alone — .entry__kind
+     spells it out for anyone who can't see the difference. */
+  .entry__body::before {
+    content: '';
+    position: absolute;
+    top: 0.5em;
+    left: calc(var(--space-2xs) / -2);
+    width: var(--space-2xs);
+    height: var(--space-2xs);
+    background: var(--brand-primary);
+    border-radius: var(--radius-full);
+    print-color-adjust: exact;
+  }
+
+  .entry--education .entry__body::before {
+    background: var(--brand-calm);
+  }
+
+  .entry__kind {
+    font-size: var(--font-size-xs);
+    letter-spacing: var(--letter-spacing-wide);
+    text-transform: uppercase;
+    color: var(--text-secondary);
+  }
+
+  .entry__title {
+    margin-top: var(--space-3xs);
+    font-size: var(--font-size-lg);
+  }
+
+  .entry__org {
+    margin-top: var(--space-3xs);
+    color: var(--text-accent);
+  }
+
+  .entry__summary {
+    margin-top: var(--space-2xs);
+    max-width: var(--measure);
+    color: var(--text-secondary);
+  }
+
+  @media (min-width: 48rem) {
+    .entry {
+      grid-template-columns: 10rem minmax(0, 1fr);
+      gap: var(--space-md);
+    }
+
+    .entry__period {
+      padding-top: 0.15em;
+      text-align: right;
+    }
+  }
+
+  /* ---------------------------------------------------------------
+   * Print — this is the PDF. `npm run cv` renders exactly these rules.
+   * ------------------------------------------------------------- */
+
+  /* Sheet geometry is literal: @page sits outside the document tree and
+     cannot read custom properties, so there is no token to use here. */
+  @page {
+    size: A4;
+    margin: 16mm 15mm;
+  }
+
+  @media print {
+    .cv {
+      padding-block: 0;
+      max-width: none;
+      padding-inline: 0;
+    }
+
+    .no-print {
+      display: none;
+    }
+
+    /* Warm off-white is a screen decision; a CV prints on white. */
+    :global(body) {
+      background: var(--surface-raised);
+      font-size: var(--font-size-sm);
+    }
+
+    .cv__name {
+      font-size: var(--font-size-xl);
+    }
+
+    .cv__role,
+    .entry__title {
+      font-size: var(--font-size-base);
+    }
+
+    .cv__section {
+      margin-top: var(--space-lg);
+      margin-bottom: var(--space-md);
+    }
+
+    .entry {
+      padding-bottom: var(--space-md);
+      break-inside: avoid;
+    }
+
+    .entry__summary,
+    .cv__intro {
+      max-width: none;
+    }
+
+    a {
+      text-decoration: none;
+    }
+  }
+</style>
