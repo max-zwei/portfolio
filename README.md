@@ -114,6 +114,7 @@ docs/
   content-schema.md     Every project field, what it's for, how to add one
   deployment.md         Pages setup, custom domain, DNS, rollback
   design-to-code.md     Figma MCP workflow and the token sync rules
+  design-system.md      What the tokens are for — colour, type, space, motion
   cms.md                Decap CMS: local editing, and the OAuth caveat
   resume-and-handshake.md   The CV pipeline and the pro bono agreement
 public/
@@ -245,11 +246,15 @@ Read [CLAUDE.md](CLAUDE.md) before making changes. The short version:
 4. **Static and fast.** Adding client-side JS needs a reason and an ask.
 5. **Run `npm run check` before committing.** Zero warnings.
 
-For Figma work, read [docs/design-to-code.md](docs/design-to-code.md) first:
-`get_metadata` to orient → `get_screenshot` to actually look at it →
-`get_variable_defs` for tokens → `get_design_context` last, one frame at a time.
-Never skip the screenshot; the XML gives you structure, the image gives you
-intent.
+For Figma work, read
+[behind-the-scenes/skills/figma-implement.md](behind-the-scenes/skills/figma-implement.md)
+— the procedure for turning one frame into a page. Behind it:
+[docs/design-to-code.md](docs/design-to-code.md) is the contract and
+[docs/design-system.md](docs/design-system.md) is what the tokens are for. The
+read order is `get_metadata` to orient → `get_screenshot` to actually look at it
+→ `get_variable_defs` for tokens → `get_design_context` last, one frame at a
+time. Never skip the screenshot; the XML gives you structure, the image gives
+you intent.
 
 ## On the AI question
 

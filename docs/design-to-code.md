@@ -25,6 +25,12 @@ If a read fails:
 
 ## The workflow
 
+This is the contract. The step-by-step procedure for actually building a frame —
+including the token-diff decision table, the motion ceiling and the checks
+before a page is done — is
+[`behind-the-scenes/skills/figma-implement.md`](../behind-the-scenes/skills/figma-implement.md).
+What the tokens are _for_ is [`design-system.md`](./design-system.md).
+
 Designs are handed over as a Figma URL pointing at a **specific frame**, not a
 whole file. From that URL:
 

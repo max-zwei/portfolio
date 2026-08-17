@@ -11,11 +11,16 @@ producing garbage.
 
 These are the real files. Drop one into `.claude/skills/` and it works.
 
+On this repo they aren't installed there — `CLAUDE.md` points at the one that
+has to load on every Figma session instead, which keeps a single copy and no
+drift between an installed version and a published one.
+
 ## In this folder
 
-| Skill                                  | What it does                                                                                                                                              | Used on this project for                                                                           |
-| -------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
-| [`token-system.md`](./token-system.md) | Builds a two-tier design token system in Figma variables — primitives, then semantic aliases, one collection per category, code syntax on every variable. | Writing the site's 94 design tokens into the Figma file with names that match the CSS one-for-one. |
+| Skill                                        | What it does                                                                                                                                                                  | Used on this project for                                                                                                                                                              |
+| -------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [`token-system.md`](./token-system.md)       | Builds a two-tier design token system in Figma variables — primitives, then semantic aliases, one collection per category, code syntax on every variable.                     | Writing the site's 94 design tokens into the Figma file with names that match the CSS one-for-one.                                                                                    |
+| [`figma-implement.md`](./figma-implement.md) | Turns one Figma frame into a static Astro page — read order, token diff, component reuse via Code Connect, a hard ceiling on motion, and an accessibility gate before "done". | Written for the run of page builds starting now, so the rules survive being repeated fifteen times. No page has been built with it yet — this row gets an honest update when one has. |
 
 ## Also used here, but not republished
 

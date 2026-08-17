@@ -127,10 +127,24 @@ frontmatter the build rejects:
 
 ## Working with Figma
 
-Read `docs/design-to-code.md` first. The short version: `get_metadata` to orient,
-`get_screenshot` to actually look at it, `get_variable_defs` to get the tokens,
-`get_design_context` last and one frame at a time. Never skip the screenshot —
-the XML tells you structure, the image tells you intent.
+**Implementing a frame? Read `behind-the-scenes/skills/figma-implement.md`
+first, in full.** It is the step-by-step procedure — read order, token diff,
+component reuse, the motion ceiling, and the checks that make a page done. It
+lives in `behind-the-scenes/` rather than `.claude/skills/`, so this pointer is
+what loads it. Not optional.
+
+The two documents behind it: `docs/design-to-code.md` is the contract (token
+sync, the Figma collections, the three things Figma cannot express faithfully),
+and `docs/design-system.md` is the rule book for what the tokens are _for_ —
+read it before choosing any colour. The short version of the read order:
+`get_metadata` to orient, `get_screenshot` to actually look at it,
+`get_variable_defs` to get the tokens, `get_design_context` last and one frame at
+a time. Never skip the screenshot — the XML tells you structure, the image tells
+you intent.
+
+Motion stops at CSS transitions and keyframes. Scroll-driven animation, View
+Transitions and anything needing client JS are a stop-and-ask, and a prototype
+interaction must never be quietly downgraded to a fade.
 
 Before any `use_figma` call, load the `figma-use` skill. It is a hard
 prerequisite, not a recommendation.
