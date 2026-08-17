@@ -163,10 +163,17 @@ accepted consequence of the flat structure, not an oversight.
 All three faces are self-hosted. No CDN link and no third-party `@import`: the
 site makes no third-party requests, by decision.
 
-Satoshi and Erode are used under the **ITF Free Font Licence**; JetBrains Mono is
-SIL OFL, and its licence travels with the npm package. Since this repo is public,
-the two Fontshare files are being redistributed — the licence text from the
-Fontshare download belongs next to them in `public/fonts/`.
+Since this repo is public, the two Fontshare files are being redistributed, so
+provenance and terms for all three faces live in
+[`public/fonts/LICENSE`](../public/fonts/LICENSE) — copyright, foundry,
+designers, trademarks, and the licence notice quoted from the font binaries'
+own name table.
+
+One clause is worth knowing before you touch the type: the ITF notice requires
+that you _"identify the ITF fonts by name and credit the ITF's ownership of the
+trademarks and copyrights in any design or production credits."_ That is met by
+the Typefaces section of the README and the Families block on `/styleguide`. If
+either is rewritten, keep the attribution.
 
 | Token        | Family registered         | Axis           | Where it comes from                      |
 | ------------ | ------------------------- | -------------- | ---------------------------------------- |

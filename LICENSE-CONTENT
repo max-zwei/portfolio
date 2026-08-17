@@ -17,9 +17,13 @@ You may read it, link to it, and quote short excerpts with attribution.
 You may not republish it, present it as your own, or use it to train
 generative models.
 
-The *structure* is fair game — a two-tier token system, a "How might we"
-content schema, the design-to-code workflow. Those are ideas, and ideas should
-travel. It is the specific expression that stays mine.
+The *structure* is fair game — a flat token system named one-for-one with the
+Figma variables, a "How might we" content schema, the design-to-code workflow.
+Those are ideas, and ideas should travel. It is the specific expression that
+stays mine.
+
+The typefaces are neither mine nor covered here: Satoshi and Erode belong to the
+Indian Type Foundry, JetBrains Mono to its authors. See public/fonts/LICENSE.
 
 The code is separately licensed under MIT. See LICENSE.
 

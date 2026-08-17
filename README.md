@@ -272,8 +272,23 @@ Split, because the code and the work aren't the same thing:
 - **[All rights reserved](LICENSE-CONTENT)** — the case studies, images, written
   copy, and the specific visual identity. Read it, link to it, quote it with
   attribution; don't republish it as your own.
+- **[Third-party fonts](public/fonts/LICENSE)** — neither of the above covers
+  the typefaces. See below.
 
 The structure is fair game. The specific expression isn't.
+
+### Typefaces
+
+**Satoshi** (Deni Anggara) and **Erode** (Nikhil Ranganathan, Jeremie Hornus)
+are © 2017–2021 [Indian Type Foundry](https://www.indiantypefoundry.com), both
+trademarks of the Indian Type Foundry, obtained through
+[Fontshare](https://www.fontshare.com) and self-hosted from `public/fonts/`
+under the ITF Free Font Licence.
+
+**JetBrains Mono** is © 2020 the JetBrains Mono Project Authors, under the SIL
+Open Font License 1.1, installed from npm.
+
+Terms and provenance for all three: [`public/fonts/LICENSE`](public/fonts/LICENSE).
 
 ---
 

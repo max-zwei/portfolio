@@ -1,10 +1,13 @@
 /*
  * Self-hosted webfonts.
  *
- * Satoshi and Erode are Fontshare (Indian Type Foundry) faces. The files live
- * in public/fonts/, so the URLs are absolute and survive any build change.
- * JetBrains Mono is not here — it comes from npm and is imported in
- * BaseLayout.astro, which lets the bundler hash and subset it.
+ * Satoshi (Deni Anggara) and Erode (Nikhil Ranganathan, Jeremie Hornus) are
+ * © 2017–2021 Indian Type Foundry, obtained through Fontshare and used under
+ * the ITF Free Font Licence. Provenance and terms: public/fonts/LICENSE.
+ *
+ * The files live in public/fonts/, so the URLs are absolute and survive any
+ * build change. JetBrains Mono is not here — it comes from npm and is imported
+ * in BaseLayout.astro, which lets the bundler hash and subset it.
  *
  * Both faces are variable with a single weight axis. The ranges below are the
  * real axis limits read out of the files (Satoshi 300–900, Erode 300–700), not
