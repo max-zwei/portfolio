@@ -25,7 +25,7 @@ Depending on why you're here:
 
 **🎨 You're a designer**
 → [`src/styles/tokens.css`](src/styles/tokens.css) — the whole design system on
-one screen. Nature-inspired palette, named in German, two tiers.
+one screen. Nature-inspired palette, two tiers.
 → [`docs/design-to-code.md`](docs/design-to-code.md) — how a Figma frame becomes
 a page without the values drifting apart.
 
@@ -67,15 +67,15 @@ cleanly later.
 
 ## Stack
 
-| Concern    | Choice                                         | Why                                                                                   |
-| ---------- | ---------------------------------------------- | ------------------------------------------------------------------------------------- |
-| Framework  | [Astro](https://astro.build) 7, static output  | Ships HTML, no client JS by default. A portfolio doesn't need a runtime.              |
-| Styling    | Plain CSS + custom properties                  | Tokens map 1:1 to Figma Variables. No build-tool indirection between design and code. |
-| Content    | Astro content collections                      | Markdown + a zod schema that fails the build on bad data.                             |
-| CMS        | [Decap CMS](https://decapcms.org)              | Writes markdown back into the repo. No database, no vendor.                           |
-| Fonts      | Inter Variable + Instrument Serif, self-hosted | No third-party requests.                                                              |
-| Hosting    | GitHub Pages via GitHub Actions                | Free, static, already where the code lives.                                           |
-| Design I/O | Figma MCP server                               | Lets an agent read the actual design instead of guessing from a screenshot.           |
+| Concern    | Choice                                               | Why                                                                                         |
+| ---------- | ---------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| Framework  | [Astro](https://astro.build) 7, static output        | Ships HTML, no client JS by default. A portfolio doesn't need a runtime.                    |
+| Styling    | Plain CSS + custom properties                        | Tokens map 1:1 to Figma Variables. No build-tool indirection between design and code.       |
+| Content    | Astro content collections                            | Markdown + a zod schema that fails the build on bad data.                                   |
+| CMS        | [Decap CMS](https://decapcms.org)                    | Writes markdown back into the repo. No database, no vendor.                                 |
+| Fonts      | Satoshi Variable + Erode Variable (not yet vendored) | Designed in Figma; system fallbacks until the licensed files land. No third-party requests. |
+| Hosting    | GitHub Pages via GitHub Actions                      | Free, static, already where the code lives.                                                 |
+| Design I/O | Figma MCP server                                     | Lets an agent read the actual design instead of guessing from a screenshot.                 |
 
 ## Quick start
 
@@ -141,16 +141,18 @@ CLAUDE.md               Working rules for agents. Read before changing anything.
 
 Tokens live in [`src/styles/tokens.css`](src/styles/tokens.css) in two tiers:
 
-- **Primitives** — raw values, named after the thing: `--color-yuzu-400`,
+- **Primitives** — raw values, named after the thing: `--color-lemon-500`,
   `--space-md`. Never used directly in a component.
 - **Semantics** — what components actually consume: `--text-secondary`,
   `--surface-raised`, `--border-focus`. One set, no modes — there is no dark
   mode, by decision.
 
-The palette is nature-inspired and named in German: **Yuzu** (citrus yellow, the
-signature accent), **Rote Beete** (beetroot, the deep counterweight), **Tomaten**
-(tomato, used sparingly as a signal), **Lieblingsort** (a grounded green), plus
-warm-tinted neutrals so nothing sits coldly against them.
+The palette is nature-inspired: **Lemon** (citrus yellow, the signature accent),
+**Pickled** (a sharp pink-red counterweight), **Tomato** (used sparingly as a
+signal), **Herbs** (a grounded green), plus warm-tinted neutrals so nothing sits
+coldly against them. The neutral ends are named rather than numbered —
+`--color-neutral-white` is `#fdfcf8` and `--color-neutral-black` is `#040302`,
+because neither is a pure white or black.
 
 **The one rule that matters:** components use semantics, never primitives. A
 component wired straight to `--color-neutral-500` can only be changed by hunting

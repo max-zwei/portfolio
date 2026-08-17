@@ -2,17 +2,17 @@
  * Design tokens — single source of truth for the visual language.
  *
  * Two tiers:
- *   1. Primitives (--color-yuzu-500)  — raw values, never used directly in components.
+ *   1. Primitives (--color-lemon-500)  — raw values, never used directly in components.
  *   2. Semantics  (--surface-default)  — what components consume. Always use these.
  *
- * These mirror the Figma Variable collections of the same name. When a value
- * changes in Figma, change it here (and in tokens.json) — never hardcode a hex
- * value in a component. See docs/design-to-code.md for the sync workflow.
+ * These mirror the Figma Variable collections of the same name, one for one:
+ * `color/lemon/500` there is `--color-lemon-500` here, and every Figma variable
+ * carries that CSS name as its WEB code syntax. Swap `/` for `-`, prefix `--`.
+ * That mechanical correspondence is the whole anti-drift mechanism.
  *
- * The Figma file now carries these same tokens as Variables, named identically
- * (`surface/default` there is `--surface-default` here). The hex values are a
- * working palette and are expected to change once Max tunes them in Figma —
- * the token *names* are the stable contract, not the hexes.
+ * Values come from Figma. See docs/design-to-code.md for the sync workflow and
+ * for the three things Figma cannot express faithfully (fluid type, elevation,
+ * letter-spacing units).
  */
 
 :root {
@@ -21,70 +21,82 @@
    * Nature-inspired palette. Named after the thing, not the usage.
    * ------------------------------------------------------------- */
 
-  /* Yuzu — citrus yellow. The signature accent. */
-  --color-yuzu-100: #fdf6dd;
-  --color-yuzu-200: #f9e9a8;
-  --color-yuzu-300: #f4d968;
-  --color-yuzu-400: #edc734;
-  --color-yuzu-500: #e0b21a;
-  --color-yuzu-600: #b78d10;
+  /* Lemon — citrus yellow. The signature accent. */
+  --color-lemon-100: #faf9c8;
+  --color-lemon-200: #fdfab3;
+  --color-lemon-300: #faf587;
+  --color-lemon-400: #fdf56b;
+  --color-lemon-500: #f0e511;
 
-  /* Rote Beete — beetroot. Deep, earthy counterweight to Yuzu. */
-  --color-rote-beete-100: #f7e8ee;
-  --color-rote-beete-200: #e7bccd;
-  --color-rote-beete-300: #cd82a3;
-  --color-rote-beete-400: #a44a75;
-  --color-rote-beete-500: #7d2b52;
-  --color-rote-beete-600: #551a37;
+  /* Pickled — pink-red. Sharp counterweight to Lemon. */
+  --color-pickled-100: #fee8e9;
+  --color-pickled-200: #fdc5c8;
+  --color-pickled-300: #ff99a2;
+  --color-pickled-400: #ee687a;
+  --color-pickled-500: #d73457;
+  --color-pickled-600: #b02546;
 
-  /* Tomaten — tomato. Warm signal colour, used sparingly. */
-  --color-tomaten-100: #fdeae4;
-  --color-tomaten-200: #f9c2b1;
-  --color-tomaten-300: #f29075;
-  --color-tomaten-400: #e5624a;
-  --color-tomaten-500: #cf4429;
-  --color-tomaten-600: #a3311c;
+  /* Herbs — calm, grounded green. */
+  --color-herbs-100: #d2e5d0;
+  --color-herbs-200: #a0ce9c;
+  --color-herbs-300: #69b764;
+  --color-herbs-400: #41993d;
+  --color-herbs-500: #1a8d1a;
+  --color-herbs-600: #006c00;
 
-  /* Lieblingsort — "favourite place". Calm, grounded green. */
-  --color-lieblingsort-100: #e9f0e8;
-  --color-lieblingsort-200: #c3d8c0;
-  --color-lieblingsort-300: #93b78f;
-  --color-lieblingsort-400: #5f8f5c;
-  --color-lieblingsort-500: #3f6d3f;
-  --color-lieblingsort-600: #2b4b2c;
+  /* Tomato — warm signal colour, used sparingly. */
+  --color-tomato-100: #f2d6d0;
+  --color-tomato-200: #eba99b;
+  --color-tomato-300: #e57663;
+  --color-tomato-400: #ca4f3d;
+  --color-tomato-500: #c22e1c;
+  --color-tomato-600: #9b0a00;
 
-  /* Neutrals — warm-tinted greys so they sit with the palette, not against it. */
-  --color-neutral-000: #ffffff;
-  --color-neutral-050: #faf8f4;
-  --color-neutral-100: #f1eee7;
-  --color-neutral-200: #e2ddd3;
-  --color-neutral-300: #c5bdae;
-  --color-neutral-400: #9a9084;
-  --color-neutral-500: #6f665c;
-  --color-neutral-600: #4d463f;
-  --color-neutral-700: #332e29;
-  --color-neutral-800: #211d1a;
-  --color-neutral-900: #14110f;
+  /*
+   * Neutrals — warm-tinted greys so they sit with the palette, not against it.
+   * The ends are named, not numbered, because neither is a pure white or black:
+   * `white` is #fdfcf8 and `black` is #040302.
+   */
+  --color-neutral-white: #fdfcf8;
+  --color-neutral-100: #efeeea;
+  --color-neutral-200: #dfdeda;
+  --color-neutral-300: #cfceca;
+  --color-neutral-400: #bfbeba;
+  --color-neutral-500: #9f9e9b;
+  --color-neutral-600: #81807d;
+  --color-neutral-700: #484844;
+  --color-neutral-800: #171613;
+  --color-neutral-black: #040302;
 
   /* ---------------------------------------------------------------
    * 2. PRIMITIVES — Typography
    * ------------------------------------------------------------- */
 
+  /*
+   * Satoshi and Erode are the designed typefaces (Fontshare). They are not
+   * vendored yet, so the stacks fall through to system faces until the licensed
+   * files land in public/fonts/. See docs/design-to-code.md.
+   */
   --font-sans:
-    'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto,
-    'Helvetica Neue', Arial, sans-serif;
-  --font-serif: 'Instrument Serif', ui-serif, Georgia, 'Times New Roman', serif;
+    'Satoshi Variable', Satoshi, ui-sans-serif, system-ui, -apple-system,
+    'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-serif:
+    'Erode Variable', Erode, ui-serif, Georgia, 'Times New Roman', serif;
   --font-mono:
-    ui-monospace, 'SFMono-Regular', 'JetBrains Mono', Menlo, Consolas, monospace;
+    'JetBrains Mono', ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
 
-  /* Fluid type scale — clamp(min, preferred, max). Ratio ~1.25 (major third). */
-  --font-size-xs: clamp(0.75rem, 0.73rem + 0.1vw, 0.8rem);
-  --font-size-sm: clamp(0.875rem, 0.85rem + 0.12vw, 0.95rem);
-  --font-size-base: clamp(1rem, 0.96rem + 0.2vw, 1.125rem);
-  --font-size-lg: clamp(1.25rem, 1.18rem + 0.35vw, 1.45rem);
-  --font-size-xl: clamp(1.55rem, 1.4rem + 0.75vw, 2rem);
-  --font-size-2xl: clamp(2rem, 1.7rem + 1.5vw, 3rem);
-  --font-size-3xl: clamp(2.5rem, 1.9rem + 3vw, 4.5rem);
+  /*
+   * Type scale. Figma carries the desktop end of each step: 8 / 12 / 16 / 24 /
+   * 32 / 48 / 72px. The small steps are fixed — shrinking 16px body copy on a
+   * phone costs more than it buys — and only the display steps are fluid.
+   */
+  --font-size-xs: 0.5rem; /*  8px */
+  --font-size-sm: 0.75rem; /* 12px */
+  --font-size-base: 1rem; /* 16px */
+  --font-size-lg: clamp(1.25rem, 1.15rem + 0.5vw, 1.5rem); /* 20 → 24px */
+  --font-size-xl: clamp(1.55rem, 1.4rem + 0.75vw, 2rem); /* 24.8 → 32px */
+  --font-size-2xl: clamp(2rem, 1.7rem + 1.5vw, 3rem); /* 32 → 48px */
+  --font-size-3xl: clamp(2.5rem, 1.9rem + 3vw, 4.5rem); /* 40 → 72px */
 
   --font-weight-regular: 400;
   --font-weight-medium: 500;
@@ -94,9 +106,15 @@
   --line-height-snug: 1.3;
   --line-height-normal: 1.6;
 
+  /*
+   * Figma applies FLOAT letter-spacing variables in px, so it cannot hold an em
+   * value. These are the em equivalents: `wide` is Figma's 0.08, `extra-wide`
+   * is its 3px at the base size, which is the wide-tracked mono label.
+   */
   --letter-spacing-tight: -0.02em;
   --letter-spacing-normal: 0;
   --letter-spacing-wide: 0.08em;
+  --letter-spacing-extra-wide: 0.19em;
 
   /* ---------------------------------------------------------------
    * 3. PRIMITIVES — Space, radius, elevation, motion
@@ -141,26 +159,26 @@
    * no component has to change. That is the whole point of the two tiers.
    * ------------------------------------------------------------- */
 
-  --surface-default: var(--color-neutral-050);
-  --surface-raised: var(--color-neutral-000);
-  --surface-sunken: var(--color-neutral-100);
-  --surface-inverse: var(--color-neutral-900);
-  --surface-accent: var(--color-yuzu-300);
+  --surface-default: var(--color-neutral-100);
+  --surface-raised: var(--color-neutral-white);
+  --surface-sunken: var(--color-neutral-200);
+  --surface-inverse: var(--color-neutral-black);
+  --surface-accent: var(--color-lemon-300);
 
-  --text-primary: var(--color-neutral-900);
-  --text-secondary: var(--color-neutral-500);
-  --text-inverse: var(--color-neutral-050);
-  --text-accent: var(--color-rote-beete-500);
-  --text-on-accent: var(--color-neutral-900);
+  --text-primary: var(--color-neutral-black);
+  --text-secondary: var(--color-neutral-700);
+  --text-inverse: var(--color-neutral-white);
+  --text-accent: var(--color-pickled-600);
+  --text-on-accent: var(--color-neutral-black);
 
   --border-subtle: var(--color-neutral-200);
   --border-strong: var(--color-neutral-300);
-  --border-focus: var(--color-rote-beete-400);
+  --border-focus: var(--color-pickled-500);
 
-  --brand-primary: var(--color-yuzu-400);
-  --brand-secondary: var(--color-rote-beete-500);
-  --brand-highlight: var(--color-tomaten-400);
-  --brand-calm: var(--color-lieblingsort-400);
+  --brand-primary: var(--color-lemon-500);
+  --brand-secondary: var(--color-pickled-500);
+  --brand-highlight: var(--color-tomato-400);
+  --brand-calm: var(--color-herbs-400);
 
   /*
    * Status. No content field drives these any more — the `status` field was
@@ -168,8 +186,8 @@
    * still a distinction the site makes, and a design will likely want to show
    * it some other way. Delete them if that turns out not to be true.
    */
-  --status-in-progress: var(--color-tomaten-400);
-  --status-completed: var(--color-lieblingsort-400);
+  --status-in-progress: var(--color-tomato-400);
+  --status-completed: var(--color-herbs-400);
 
   --focus-ring: 2px solid var(--border-focus);
   --focus-ring-offset: 2px;

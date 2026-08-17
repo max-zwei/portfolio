@@ -90,37 +90,79 @@ prerequisite for that tool, not a suggestion.
 
 ### The collections, as built
 
-The variables exist in the Figma file today — 94 of them across 7 collections,
-every one carrying a `$description` and WEB code syntax.
+93 variables across 7 collections, verified against the file on 17 Aug 2026.
+Every one carries a description and WEB code syntax, and no two variables emit
+the same code syntax.
 
 | Figma collection | Vars | JSON key   | CSS prefix                                                         |
 | ---------------- | ---- | ---------- | ------------------------------------------------------------------ |
-| Color            | 35   | `color`    | `--color-*`                                                        |
+| Color            | 33   | `color`    | `--color-*`                                                        |
 | Semantic         | 19   | `semantic` | `--surface-*`, `--text-*`, `--border-*`, `--brand-*`, `--status-*` |
-| Typography       | 19   | `font`     | `--font-*`, `--line-height-*`, `--letter-spacing-*`                |
+| Typography       | 20   | `font`     | `--font-*`, `--line-height-*`, `--letter-spacing-*`                |
 | Spacing          | 9    | `space`    | `--space-*`                                                        |
 | Radius           | 4    | `radius`   | `--radius-*`                                                       |
 | Motion           | 5    | `motion`   | `--duration-*`, `--easing-*`                                       |
-| Elevation        | 3    | —          | `--shadow-*`                                                       |
+| Elevation        | 3    | `shadow`   | `--shadow-*`                                                       |
+
+The colour ramps are `lemon`, `pickled`, `herbs`, `tomato` and `neutral`. Lemon
+stops at 500; the others run to 600. The neutral ends are **named, not
+numbered** — `color/neutral/white` and `color/neutral/black`, because neither is
+a pure white (`#fdfcf8`) or a pure black (`#040302`).
 
 **The variable name _is_ the CSS custom property.** Code syntax is set so that
 `surface/default` reports as `var(--surface-default)` in Dev Mode — swap `/` for
 `-`, prefix `--`, and you have the token to type. That mechanical correspondence
 is the whole anti-drift mechanism; don't break it when adding tokens.
 
-Two things Figma can't hold faithfully, so they live in code:
+> **Definition of done for a new variable:** a value, a description that matches
+> its _current_ name, scopes, **WEB code syntax**, and matching entries in
+> `design/tokens.json` and `src/styles/tokens.css`. Code syntax is the one that
+> gets forgotten, and forgetting it makes the MCP emit `var(--color\/lemon\/500)`,
+> which is not valid CSS.
+
+Three things Figma can't hold faithfully, so they live in code:
 
 - **Fluid type.** `--font-size-*` is a `clamp()` in CSS. Figma is a fixed-size
   medium, so `font/size/*` carries the desktop (maximum) end of each clamp. The
-  browser interpolates below it.
+  scale is 8 / 12 / 16 / 24 / 32 / 48 / 72px. `xs`, `sm` and `base` ship as fixed
+  values rather than clamps — shrinking 16px body copy on a phone costs more than
+  it buys — so only `lg` and up interpolate.
 - **Elevation.** Figma variables have no shadow type, so `shadow/*` are STRING
   variables holding the CSS value, paired with matching `Elevation / sm|md|lg`
-  effect styles for actually applying them on canvas. Change one, change both.
+  effect styles for actually applying them on canvas. The MCP reads the _effect_,
+  not the string, so it emits a literal `drop-shadow-[...]`. **Treat the effect
+  style name as the contract**: `Elevation / md` means `var(--shadow-md)`. The
+  two currently agree exactly; if you change one, change both.
+- **Letter-spacing units.** Figma applies FLOAT letter-spacing variables in
+  **px**, so it cannot express an em value. `letter-spacing/wide` reads `0.08`
+  there and means `0.08em` here; `letter-spacing/extra-wide` reads `3` (px) and
+  ships as `0.19em`, the em equivalent at the base size. `letter-spacing/tight`
+  cannot be applied in Figma at all, which is why the heading text styles bind
+  `normal` — the `-0.02em` on `h1`–`h4` is a code-side refinement, not drift.
+  **Do not read Figma's letter-spacing bindings as design intent.**
 
 **Every collection has exactly one mode**, named `Value`. There is no light/dark
 split — one colour scheme, by decision. If a dark scheme is ever wanted, it is
 added as a second mode on the **Semantic** collection only; the primitives and
 every component stay untouched. That is what the two-tier split buys you.
+
+### Fonts
+
+`font/sans` is **Satoshi Variable** and `font/serif` is **Erode Variable** (both
+Fontshare); `font/mono` is JetBrains Mono. `--font-sans` and `--font-serif` name
+them first, but **none of the three is vendored yet** — the stacks fall through
+to system faces, so the built site is currently rendering in fallbacks.
+
+Two things to know before picking this up:
+
+1. Neither face is on npm or Fontsource. They have to be downloaded from
+   Fontshare and self-hosted from `public/fonts/`, under their licence. No CDN
+   link — the site makes no third-party requests, by decision.
+2. Neither face is available to the Figma MCP runtime either. It reports
+   _"the font family Satoshi Variable does not exist"_, which means they are
+   installed locally on Max's machine rather than shared with the file. Anyone
+   opening the file without them sees substituted type, and any script that has
+   to load a font before editing a text node or style will fail.
 
 ## Code Connect
 

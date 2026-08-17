@@ -13,7 +13,7 @@ type TokenLeaf = { $value: string | number | string[] | number[] };
 const isLeaf = (v: unknown): v is TokenLeaf =>
   typeof v === 'object' && v !== null && '$value' in v;
 
-/** Walks a `{color.neutral.050}` style reference to its raw value. */
+/** Walks a `{color.neutral.white}` style reference to its raw value. */
 function resolve(value: string, depth = 0): string {
   if (depth > 10) throw new Error(`Token alias loop at "${value}"`);
   const match = /^\{([^}]+)\}$/.exec(value);

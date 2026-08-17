@@ -199,17 +199,17 @@ const shadows = ['sm', 'md', 'lg'];
 
       <div class="callout callout--note">
         <p>
-          <strong>On Yuzu.</strong> No step of the Yuzu scale reaches 3.0 against
-          <code>surface/default</code> — the darkest, <code>yuzu/600</code>,
-          gets to 2.90. That is a property of yellow, not a mistake in the
+          <strong>On Lemon.</strong> No step of the Lemon scale reaches 3.0 against
+          <code>surface/default</code> — the darkest, <code>lemon/500</code>,
+          gets to 1.14. That is a property of yellow, not a mistake in the
           values: darkening it far enough to pass turns it into olive.
         </p>
         <p>
-          So Yuzu earns its keep as a <em>large fill</em> — dark text on a Yuzu block
-          is 11.48:1, which is excellent. It does not work as a thin rule, a small
-          icon, a focus ring, or small text. Where a yellow-ish accent needs to be
-          legible at small size, use <code>brand/secondary</code>
-          (Rote Beete, 8.46:1) and let Yuzu carry the area instead of the line.
+          So Lemon earns its keep as a <em>large fill</em> — dark text on a Lemon
+          block is 18.13:1, which is excellent. It does not work as a thin rule, a
+          small icon, a focus ring, or small text. Where an accent needs to be legible
+          at small size, use <code>text/accent</code>
+          (Pickled 600, 5.65:1) and let Lemon carry the area instead of the line.
         </p>
       </div>
     </section>
@@ -236,13 +236,18 @@ const shadows = ['sm', 'md', 'lg'];
       }
 
       <h3>Families</h3>
+      <p class="note">
+        Erode and Satoshi are the designed faces, but they are not vendored yet
+        &mdash; until the licensed files land in <code>public/fonts/</code>,
+        both samples below fall through to a system face.
+      </p>
       <p class="sample-serif">
-        Instrument Serif &mdash; display and the slogan. <em
+        Erode Variable &mdash; display and the slogan. <em
           >Italic for emphasis.</em
         >
       </p>
       <p class="sample-sans">
-        Inter Variable &mdash; UI and body copy. The workhorse.
+        Satoshi Variable &mdash; UI and body copy. The workhorse.
       </p>
     </section>
 
@@ -392,7 +397,7 @@ const shadows = ['sm', 'md', 'lg'];
     display: flex;
     flex-direction: column;
     gap: var(--space-3xs);
-    font-size: var(--font-size-xs);
+    font-size: var(--font-size-sm);
   }
 
   .swatch__chip {
@@ -487,7 +492,7 @@ const shadows = ['sm', 'md', 'lg'];
 
   .type-row__meta {
     margin-block-start: var(--space-3xs);
-    font-size: var(--font-size-xs);
+    font-size: var(--font-size-sm);
     color: var(--text-secondary);
   }
 
@@ -528,7 +533,7 @@ const shadows = ['sm', 'md', 'lg'];
 
   .bar__value {
     color: var(--text-secondary);
-    font-size: var(--font-size-xs);
+    font-size: var(--font-size-sm);
   }
 
   .tiles {
@@ -542,7 +547,7 @@ const shadows = ['sm', 'md', 'lg'];
     display: flex;
     flex-direction: column;
     gap: var(--space-3xs);
-    font-size: var(--font-size-xs);
+    font-size: var(--font-size-sm);
   }
 
   .tile {
@@ -578,7 +583,7 @@ const shadows = ['sm', 'md', 'lg'];
     margin-block-start: var(--space-xl);
     padding-block-start: var(--space-md);
     border-block-start: 1px solid var(--border-subtle);
-    font-size: var(--font-size-xs);
+    font-size: var(--font-size-sm);
     color: var(--text-secondary);
   }
 </style>
