@@ -79,15 +79,14 @@
    * ------------------------------------------------------------- */
 
   /*
-   * Satoshi and Erode are the designed typefaces (Fontshare). They are NOT
-   * vendored, so these two stacks fall through to system faces — see the Fonts
-   * section of docs/design-to-code.md for what it takes to finish them.
+   * All three faces are self-hosted: Satoshi and Erode from public/fonts/ via
+   * fonts.css, JetBrains Mono from npm via BaseLayout.
    *
-   * JetBrains Mono is vendored, via @fontsource-variable/jetbrains-mono in
-   * BaseLayout. Note the family name: the variable build registers itself as
-   * "JetBrains Mono Variable", so naming only "JetBrains Mono" would silently
-   * fall through to the system monospace for everyone who hasn't installed the
-   * static font locally.
+   * Every family name here ends in "Variable" because that is what the files
+   * actually register — "Satoshi Variable", not "Satoshi". Naming the plain
+   * form would silently fall through to a system face for everyone who has not
+   * installed the static font locally, with no error anywhere. The static names
+   * follow as a second chance for people who do have them.
    */
   --font-sans:
     'Satoshi Variable', Satoshi, ui-sans-serif, system-ui, -apple-system,

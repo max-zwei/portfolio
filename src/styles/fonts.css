@@ -1,0 +1,35 @@
+/*
+ * Self-hosted webfonts.
+ *
+ * Satoshi and Erode are Fontshare (Indian Type Foundry) faces. The files live
+ * in public/fonts/, so the URLs are absolute and survive any build change.
+ * JetBrains Mono is not here — it comes from npm and is imported in
+ * BaseLayout.astro, which lets the bundler hash and subset it.
+ *
+ * Both faces are variable with a single weight axis. The ranges below are the
+ * real axis limits read out of the files (Satoshi 300–900, Erode 300–700), not
+ * a guess: declaring a wider range than the font carries invites the browser to
+ * synthesise weights outside it, which is where variable fonts start to look
+ * wrong.
+ *
+ * Neither file carries an italic. Fontshare ships italics as separate
+ * `*-VariableItalic` files, so until those land, `font-style: italic` — which
+ * the homepage slogan uses — is a browser-synthesised slant rather than the
+ * drawn italic. See docs/design-to-code.md.
+ */
+
+@font-face {
+  font-family: 'Satoshi Variable';
+  src: url('/fonts/Satoshi-Variable.woff2') format('woff2');
+  font-weight: 300 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Erode Variable';
+  src: url('/fonts/Erode-Variable.woff2') format('woff2');
+  font-weight: 300 700;
+  font-style: normal;
+  font-display: swap;
+}
