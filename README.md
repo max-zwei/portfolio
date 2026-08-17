@@ -67,15 +67,15 @@ cleanly later.
 
 ## Stack
 
-| Concern    | Choice                                               | Why                                                                                         |
-| ---------- | ---------------------------------------------------- | ------------------------------------------------------------------------------------------- |
-| Framework  | [Astro](https://astro.build) 7, static output        | Ships HTML, no client JS by default. A portfolio doesn't need a runtime.                    |
-| Styling    | Plain CSS + custom properties                        | Tokens map 1:1 to Figma Variables. No build-tool indirection between design and code.       |
-| Content    | Astro content collections                            | Markdown + a zod schema that fails the build on bad data.                                   |
-| CMS        | [Decap CMS](https://decapcms.org)                    | Writes markdown back into the repo. No database, no vendor.                                 |
-| Fonts      | Satoshi Variable + Erode Variable (not yet vendored) | Designed in Figma; system fallbacks until the licensed files land. No third-party requests. |
-| Hosting    | GitHub Pages via GitHub Actions                      | Free, static, already where the code lives.                                                 |
-| Design I/O | Figma MCP server                                     | Lets an agent read the actual design instead of guessing from a screenshot.                 |
+| Concern    | Choice                                               | Why                                                                                           |
+| ---------- | ---------------------------------------------------- | --------------------------------------------------------------------------------------------- |
+| Framework  | [Astro](https://astro.build) 7, static output        | Ships HTML, no client JS by default. A portfolio doesn't need a runtime.                      |
+| Styling    | Plain CSS + custom properties                        | Tokens map 1:1 to Figma Variables. No build-tool indirection between design and code.         |
+| Content    | Astro content collections                            | Markdown + a zod schema that fails the build on bad data.                                     |
+| CMS        | [Decap CMS](https://decapcms.org)                    | Writes markdown back into the repo. No database, no vendor.                                   |
+| Fonts      | JetBrains Mono, self-hosted; Satoshi + Erode pending | Self-hosted, no third-party requests. The two Fontshare faces still fall back to system type. |
+| Hosting    | GitHub Pages via GitHub Actions                      | Free, static, already where the code lives.                                                   |
+| Design I/O | Figma MCP server                                     | Lets an agent read the actual design instead of guessing from a screenshot.                   |
 
 ## Quick start
 

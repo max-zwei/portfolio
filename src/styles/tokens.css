@@ -79,9 +79,15 @@
    * ------------------------------------------------------------- */
 
   /*
-   * Satoshi and Erode are the designed typefaces (Fontshare). They are not
-   * vendored yet, so the stacks fall through to system faces until the licensed
-   * files land in public/fonts/. See docs/design-to-code.md.
+   * Satoshi and Erode are the designed typefaces (Fontshare). They are NOT
+   * vendored, so these two stacks fall through to system faces — see the Fonts
+   * section of docs/design-to-code.md for what it takes to finish them.
+   *
+   * JetBrains Mono is vendored, via @fontsource-variable/jetbrains-mono in
+   * BaseLayout. Note the family name: the variable build registers itself as
+   * "JetBrains Mono Variable", so naming only "JetBrains Mono" would silently
+   * fall through to the system monospace for everyone who hasn't installed the
+   * static font locally.
    */
   --font-sans:
     'Satoshi Variable', Satoshi, ui-sans-serif, system-ui, -apple-system,
@@ -89,7 +95,8 @@
   --font-serif:
     'Erode Variable', Erode, ui-serif, Georgia, 'Times New Roman', serif;
   --font-mono:
-    'JetBrains Mono', ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+    'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, 'SFMono-Regular',
+    Menlo, Consolas, monospace;
 
   /*
    * Type scale. Figma carries the desktop end of each step: 8 / 12 / 16 / 24 /

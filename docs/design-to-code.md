@@ -160,21 +160,48 @@ accepted consequence of the flat structure, not an oversight.
 
 ### Fonts
 
-`font/sans` is **Satoshi Variable** and `font/serif` is **Erode Variable** (both
-Fontshare); `font/mono` is JetBrains Mono. `--font-sans` and `--font-serif` name
-them first, but **none of the three is vendored yet** — the stacks fall through
-to system faces, so the built site is currently rendering in fallbacks.
+| Token        | Figma            | Vendored?                                       |
+| ------------ | ---------------- | ----------------------------------------------- |
+| `font/mono`  | JetBrains Mono   | **Yes** — `@fontsource-variable/jetbrains-mono` |
+| `font/sans`  | Satoshi Variable | No — falls back to a system sans                |
+| `font/serif` | Erode Variable   | No — falls back to a system serif               |
 
-Two things to know before picking this up:
+**Family names matter more than they look.** A Fontsource _variable_ package
+registers itself under a different family name than the static one:
+`@fontsource-variable/jetbrains-mono` is `'JetBrains Mono Variable'`, not
+`'JetBrains Mono'`. Name only the latter in `--font-mono` and every visitor
+without the static font installed silently gets the system monospace, with no
+error anywhere. The stack names both, variable first.
 
-1. Neither face is on npm or Fontsource. They have to be downloaded from
-   Fontshare and self-hosted from `public/fonts/`, under their licence. No CDN
-   link — the site makes no third-party requests, by decision.
-2. Neither face is available to the Figma MCP runtime either. It reports
-   _"the font family Satoshi Variable does not exist"_, which means they are
-   installed locally on Max's machine rather than shared with the file. Anyone
-   opening the file without them sees substituted type, and any script that has
-   to load a font before editing a text node or style will fail.
+Only `wght.css` is imported, not the package root — the mono face is never
+italic here, and that halves the emitted font files. Subsets are
+`unicode-range`-scoped, so a latin page fetches one file.
+
+#### Finishing Satoshi and Erode
+
+Both are Fontshare (Indian Type Foundry) faces. They are **not on npm or
+Fontsource**, and cannot be fetched from a sandboxed agent session —
+`fontshare.com` is not reachable through the agent proxy. So this is a step a
+human has to do:
+
+1. Download the Satoshi and Erode webfont bundles from
+   [fontshare.com](https://www.fontshare.com), accepting the ITF Free Font
+   Licence.
+2. Put the `.woff2` files in `public/fonts/`.
+3. Add `@font-face` blocks for them. Give them the family names the tokens
+   already expect — `Satoshi Variable` and `Erode Variable` — with
+   `font-display: swap` and the variable weight range, e.g.
+   `font-weight: 300 900`.
+
+No CDN link, and no `@import` from a third party: the site makes no third-party
+requests, by decision. Self-host or don't ship it.
+
+**One more thing worth knowing:** neither face is available to the Figma MCP
+runtime either. It reports _"the font family Satoshi Variable does not exist"_,
+which means they are installed locally on Max's machine rather than shared with
+the file. Anyone opening the file without them sees substituted type, and any
+script that has to load a font before editing a text node or style will fail
+outright.
 
 ## Code Connect
 

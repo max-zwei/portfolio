@@ -186,9 +186,10 @@ const shadows = ['sm', 'md', 'lg'];
 
       <h3>Families</h3>
       <p class="note">
-        Erode and Satoshi are the designed faces, but they are not vendored yet
-        &mdash; until the licensed files land in <code>public/fonts/</code>,
-        both samples below fall through to a system face.
+        Only the mono face is vendored. Erode and Satoshi are the designed
+        faces, but until the licensed files land in <code>public/fonts/</code>
+        the first two samples below fall through to a system face &mdash; so what
+        you see there is the fallback, not the design.
       </p>
       <p class="sample-serif">
         Erode Variable &mdash; display and the slogan. <em
@@ -197,6 +198,9 @@ const shadows = ['sm', 'md', 'lg'];
       </p>
       <p class="sample-sans">
         Satoshi Variable &mdash; UI and body copy. The workhorse.
+      </p>
+      <p class="sample-mono">
+        JetBrains Mono &mdash; code, labels and tabular figures. 0123456789
       </p>
     </section>
 
@@ -505,6 +509,12 @@ const shadows = ['sm', 'md', 'lg'];
   .sample-sans {
     font-family: var(--font-sans);
     font-size: var(--font-size-lg);
+  }
+
+  .sample-mono {
+    font-family: var(--font-mono);
+    font-size: var(--font-size-base);
+    letter-spacing: var(--letter-spacing-extra-wide);
   }
 
   /* Spacing bars --------------------------------------------------------- */
