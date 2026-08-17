@@ -1,0 +1,53 @@
+FONTS IN THIS DIRECTORY
+
+Third-party typefaces, redistributed here so the site can self-host them and
+make no third-party requests.
+
+Neither the repository's MIT licence (../../LICENSE) nor its content licence
+(../../LICENSE-CONTENT) applies to these files. They are covered by their own
+terms, set out below.
+
+--------------------------------------------------------------------------
+
+  Satoshi-Variable.woff2   Satoshi Variable, version 2.000, wght 300-900
+  Erode-Variable.woff2     Erode Variable, version 1.022, wght 300-700
+
+  Copyright    Copyright 2017-2021 Indian Type Foundry. All rights reserved.
+  Foundry      Indian Type Foundry - https://www.indiantypefoundry.com
+  Designers    Satoshi - Deni Anggara
+               Erode   - Nikhil Ranganathan, Jeremie Hornus
+  Distributor  Fontshare - https://www.fontshare.com
+  Full terms   https://fontshare.com/terms
+
+  Trademarks   "Satoshi is a trademark of the Indian Type Foundry."
+               "Erode is a trademark of the Indian Type Foundry."
+
+  Licence notice, quoted verbatim from the name table of both font binaries
+  (name ID 13), which is the foundry's own statement travelling with the file:
+
+      This Font Software is protected under domestic and international
+      trademark and copyright law. You agree to identify the ITF fonts by
+      name and credit the ITF's ownership of the trademarks and copyrights
+      in any design or production credits.
+
+  That crediting requirement is met in README.md and on the /styleguide page,
+  both of which name the typefaces and the foundry.
+
+  SCOPE OF THIS FILE. The notice above is what the foundry embeds in the
+  binaries. It is not the full ITF Free Font Licence, which lives at the URL
+  above and in the Fontshare download bundle. If a verbatim in-repo copy is
+  wanted, add it here from the Satoshi_Complete / Erode_Complete download —
+  fontshare.com is not reachable from the agent sandbox that assembled this
+  directory, so the full text could not be fetched and was deliberately not
+  reconstructed from memory.
+
+--------------------------------------------------------------------------
+
+  JetBrains Mono is the third face in the type system but is NOT in this
+  directory. It comes from npm (@fontsource-variable/jetbrains-mono) and is
+  imported in src/layouts/BaseLayout.astro, so the bundler emits it.
+
+  Copyright    Copyright 2020 The JetBrains Mono Project Authors
+               https://github.com/JetBrains/JetBrainsMono
+  Licence      SIL Open Font License, Version 1.1
+  Full text    node_modules/@fontsource-variable/jetbrains-mono/LICENSE

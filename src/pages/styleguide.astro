@@ -202,6 +202,17 @@ const shadows = ['sm', 'md', 'lg'];
       <p class="sample-mono">
         JetBrains Mono &mdash; code, labels and tabular figures. 0123456789
       </p>
+      <p class="note credit">
+        <strong>Satoshi</strong> (Deni Anggara) and <strong>Erode</strong>
+        (Nikhil Ranganathan, Jeremie Hornus) are &copy; 2017&ndash;2021
+        <a href="https://www.indiantypefoundry.com">Indian Type Foundry</a>,
+        both ITF trademarks, via <a href="https://www.fontshare.com"
+          >Fontshare</a
+        >.
+        <strong>JetBrains Mono</strong> is &copy; 2020 the JetBrains Mono Project
+        Authors, SIL OFL 1.1. Terms and provenance:
+        <code>public/fonts/LICENSE</code>.
+      </p>
     </section>
 
     <!-- ------------------------------------------------------------------ -->
@@ -515,6 +526,12 @@ const shadows = ['sm', 'md', 'lg'];
     font-family: var(--font-mono);
     font-size: var(--font-size-base);
     letter-spacing: var(--letter-spacing-extra-wide);
+  }
+
+  /* The ITF licence requires the faces and the foundry be credited. */
+  .credit {
+    margin-block-start: var(--space-md);
+    max-width: var(--measure);
   }
 
   /* Spacing bars --------------------------------------------------------- */
