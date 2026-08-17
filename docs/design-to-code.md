@@ -44,7 +44,7 @@ https://figma.com/design/<fileKey>/<name>?node-id=<int>-<int>
 4. **`get_design_context`** — the detailed spec for the frame. Pull it last and
    for one frame at a time; it is by far the largest response.
 
-Then implement the frame in Astro using **semantic tokens only** (see below), and
+Then implement the frame in Astro using the token names directly (see below), and
 compare against the screenshot before calling it done.
 
 ## Rules that keep design and code in sync
@@ -55,13 +55,22 @@ every agent session picks them up.
 1. **Never hardcode a value that exists as a token.** No hex colours, no `16px`,
    no `font-family` declarations in components. If the design uses a value that
    has no token, that is a signal — add the token, don't inline the value.
-2. **Components consume semantic tokens, not primitives.** Use
-   `var(--text-secondary)`, never `var(--color-neutral-500)`. Primitives exist so
-   semantics have something to point at; the semantic layer is the only place a
-   value can be changed once and land everywhere it belongs.
-3. **A Figma variable and a CSS custom property with the same meaning must have
-   the same name.** `semantic/text/secondary` ↔ `--text-secondary`. When names
-   match, drift is visible; when they don't, it's invisible.
+2. **One flat tier — no role layer.** Components use `var(--color-neutral-700)`
+   directly. There is no `--text-secondary`. This was tried and deliberately
+   removed: the design is done in terms of the palette, not in terms of roles,
+   so role names only added a translation step in both directions. Don't
+   reintroduce them.
+
+   What this costs, stated plainly: changing a colour is a decision at every
+   site that uses it, and nothing enforces contrast. `/styleguide` renders every
+   colour against every background it sits on — that is the check, and it is
+   worth actually reading before picking a colour for text.
+
+3. **A Figma variable and a CSS custom property must have the same name.**
+   `color/neutral/700` ↔ `--color-neutral-700`. Since there is only one tier,
+   this is now a pure mechanical transform with nothing in between: swap `/` for
+   `-`, prefix `--`. When names match, drift is visible; when they don't, it's
+   invisible.
 4. **New token → three files.** `design/tokens.json` (Figma exchange format),
    `src/styles/tokens.css` (what ships), and the Figma variable collection. A
    token that exists in only two of the three is a bug waiting to happen.
@@ -90,19 +99,21 @@ prerequisite for that tool, not a suggestion.
 
 ### The collections, as built
 
-93 variables across 7 collections, verified against the file on 17 Aug 2026.
+74 variables across 6 collections, verified against the file on 17 Aug 2026.
 Every one carries a description and WEB code syntax, and no two variables emit
 the same code syntax.
 
-| Figma collection | Vars | JSON key   | CSS prefix                                                         |
-| ---------------- | ---- | ---------- | ------------------------------------------------------------------ |
-| Color            | 33   | `color`    | `--color-*`                                                        |
-| Semantic         | 19   | `semantic` | `--surface-*`, `--text-*`, `--border-*`, `--brand-*`, `--status-*` |
-| Typography       | 20   | `font`     | `--font-*`, `--line-height-*`, `--letter-spacing-*`                |
-| Spacing          | 9    | `space`    | `--space-*`                                                        |
-| Radius           | 4    | `radius`   | `--radius-*`                                                       |
-| Motion           | 5    | `motion`   | `--duration-*`, `--easing-*`                                       |
-| Elevation        | 3    | `shadow`   | `--shadow-*`                                                       |
+| Figma collection | Vars | JSON key | CSS prefix                                          |
+| ---------------- | ---- | -------- | --------------------------------------------------- |
+| Color            | 33   | `color`  | `--color-*`                                         |
+| Typography       | 20   | `font`   | `--font-*`, `--line-height-*`, `--letter-spacing-*` |
+| Spacing          | 9    | `space`  | `--space-*`                                         |
+| Radius           | 4    | `radius` | `--radius-*`                                        |
+| Motion           | 5    | `motion` | `--duration-*`, `--easing-*`                        |
+| Elevation        | 3    | `shadow` | `--shadow-*`                                        |
+
+There is no Semantic collection. One existed briefly and was deleted — see rule
+2 above.
 
 The colour ramps are `lemon`, `pickled`, `herbs`, `tomato` and `neutral`. Lemon
 stops at 500; the others run to 600. The neutral ends are **named, not
@@ -110,9 +121,10 @@ numbered** — `color/neutral/white` and `color/neutral/black`, because neither 
 a pure white (`#fdfcf8`) or a pure black (`#040302`).
 
 **The variable name _is_ the CSS custom property.** Code syntax is set so that
-`surface/default` reports as `var(--surface-default)` in Dev Mode — swap `/` for
-`-`, prefix `--`, and you have the token to type. That mechanical correspondence
-is the whole anti-drift mechanism; don't break it when adding tokens.
+`color/neutral/700` reports as `var(--color-neutral-700)` in Dev Mode — swap `/`
+for `-`, prefix `--`, and you have the token to type. That mechanical
+correspondence is the whole anti-drift mechanism; don't break it when adding
+tokens.
 
 > **Definition of done for a new variable:** a value, a description that matches
 > its _current_ name, scopes, **WEB code syntax**, and matching entries in
@@ -142,9 +154,9 @@ Three things Figma can't hold faithfully, so they live in code:
   **Do not read Figma's letter-spacing bindings as design intent.**
 
 **Every collection has exactly one mode**, named `Value`. There is no light/dark
-split — one colour scheme, by decision. If a dark scheme is ever wanted, it is
-added as a second mode on the **Semantic** collection only; the primitives and
-every component stay untouched. That is what the two-tier split buys you.
+split — one colour scheme, by decision. With no role tier there is nothing to
+remap, so a dark scheme would mean touching every component. That is a known and
+accepted consequence of the flat structure, not an oversight.
 
 ### Fonts
 

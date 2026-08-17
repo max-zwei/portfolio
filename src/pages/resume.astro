@@ -120,7 +120,7 @@ const contact = [
   .cv__back {
     margin-bottom: var(--space-lg);
     font-size: var(--font-size-sm);
-    color: var(--text-secondary);
+    color: var(--color-neutral-700);
   }
 
   .eyebrow {
@@ -129,7 +129,7 @@ const contact = [
     font-weight: var(--font-weight-medium);
     letter-spacing: var(--letter-spacing-wide);
     text-transform: uppercase;
-    color: var(--text-secondary);
+    color: var(--color-neutral-700);
   }
 
   .cv__name {
@@ -140,7 +140,7 @@ const contact = [
     margin-top: var(--space-2xs);
     font-family: var(--font-serif);
     font-size: var(--font-size-lg);
-    color: var(--text-accent);
+    color: var(--color-pickled-600);
   }
 
   .cv__intro {
@@ -160,7 +160,7 @@ const contact = [
     display: flex;
     flex-wrap: wrap;
     gap: var(--space-2xs) var(--space-md);
-    color: var(--text-secondary);
+    color: var(--color-neutral-700);
   }
 
   .cv__download a {
@@ -168,7 +168,7 @@ const contact = [
     padding: var(--space-2xs) var(--space-sm);
     font-weight: var(--font-weight-medium);
     text-decoration: none;
-    border: 1px solid var(--border-strong);
+    border: 1px solid var(--color-neutral-300);
     border-radius: var(--radius-full);
     transition:
       color var(--duration-fast) var(--easing-standard),
@@ -176,7 +176,7 @@ const contact = [
   }
 
   .cv__download a:hover {
-    border-color: var(--brand-primary);
+    border-color: var(--color-lemon-500);
   }
 
   .cv__section {
@@ -186,7 +186,7 @@ const contact = [
     font-weight: var(--font-weight-medium);
     letter-spacing: var(--letter-spacing-wide);
     text-transform: uppercase;
-    color: var(--text-secondary);
+    color: var(--color-neutral-700);
   }
 
   /* ---------------------------------------------------------------
@@ -208,14 +208,14 @@ const contact = [
   .entry__period {
     font-size: var(--font-size-sm);
     font-variant-numeric: tabular-nums;
-    color: var(--text-secondary);
+    color: var(--color-neutral-700);
     white-space: nowrap;
   }
 
   .entry__body {
     position: relative;
     padding-left: var(--space-md);
-    border-left: 1px solid var(--border-subtle);
+    border-left: 1px solid var(--color-neutral-200);
   }
 
   /* The one gesture on this page: a Lemon dot per position, a green one per
@@ -228,20 +228,20 @@ const contact = [
     left: calc(var(--space-2xs) / -2);
     width: var(--space-2xs);
     height: var(--space-2xs);
-    background: var(--brand-primary);
+    background: var(--color-lemon-500);
     border-radius: var(--radius-full);
     print-color-adjust: exact;
   }
 
   .entry--education .entry__body::before {
-    background: var(--brand-calm);
+    background: var(--color-herbs-400);
   }
 
   .entry__kind {
     font-size: var(--font-size-sm);
     letter-spacing: var(--letter-spacing-wide);
     text-transform: uppercase;
-    color: var(--text-secondary);
+    color: var(--color-neutral-700);
   }
 
   .entry__title {
@@ -251,13 +251,13 @@ const contact = [
 
   .entry__org {
     margin-top: var(--space-3xs);
-    color: var(--text-accent);
+    color: var(--color-pickled-600);
   }
 
   .entry__summary {
     margin-top: var(--space-2xs);
     max-width: var(--measure);
-    color: var(--text-secondary);
+    color: var(--color-neutral-700);
   }
 
   @media (min-width: 48rem) {
@@ -296,7 +296,7 @@ const contact = [
 
     /* Warm off-white is a screen decision; a CV prints on white. */
     :global(body) {
-      background: var(--surface-raised);
+      background: var(--color-neutral-white);
       font-size: var(--font-size-sm);
     }
 

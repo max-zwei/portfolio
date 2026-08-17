@@ -25,8 +25,8 @@ body {
   font-family: var(--font-sans);
   font-size: var(--font-size-base);
   line-height: var(--line-height-normal);
-  color: var(--text-primary);
-  background-color: var(--surface-default);
+  color: var(--color-neutral-black);
+  background-color: var(--color-neutral-100);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
@@ -96,7 +96,7 @@ a {
 }
 
 a:hover {
-  color: var(--text-accent);
+  color: var(--color-pickled-600);
 }
 
 /* ---------------------------------------------------------------
@@ -126,7 +126,7 @@ a:hover {
   left: var(--space-2xs);
   z-index: 100;
   padding: var(--space-2xs) var(--space-sm);
-  background: var(--surface-raised);
+  background: var(--color-neutral-white);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-md);
   transform: translateY(-200%);

@@ -1,18 +1,24 @@
 /*
  * Design tokens — single source of truth for the visual language.
  *
- * Two tiers:
- *   1. Primitives (--color-lemon-500)  — raw values, never used directly in components.
- *   2. Semantics  (--surface-default)  — what components consume. Always use these.
+ * One tier. Components use these names directly: `--color-lemon-500`,
+ * `--space-md`, `--font-size-lg`. There is no role layer (`--surface-default`,
+ * `--text-secondary`) and there should not be one — the design is done in
+ * Figma in terms of these tokens, and a second set of names for the same
+ * values only adds a translation step in both directions.
  *
- * These mirror the Figma Variable collections of the same name, one for one:
- * `color/lemon/500` there is `--color-lemon-500` here, and every Figma variable
- * carries that CSS name as its WEB code syntax. Swap `/` for `-`, prefix `--`.
- * That mechanical correspondence is the whole anti-drift mechanism.
+ * These mirror the Figma Variable collections one for one: `color/lemon/500`
+ * there is `--color-lemon-500` here, and every Figma variable carries that CSS
+ * name as its WEB code syntax. Swap `/` for `-`, prefix `--`. That mechanical
+ * correspondence is the whole anti-drift mechanism.
  *
  * Values come from Figma. See docs/design-to-code.md for the sync workflow and
  * for the three things Figma cannot express faithfully (fluid type, elevation,
  * letter-spacing units).
+ *
+ * Contrast is not automatic without a role layer: /styleguide renders every
+ * colour against every background it actually sits on, so check there before
+ * putting a colour behind text.
  */
 
 :root {
@@ -151,44 +157,11 @@
   --content-max: 72rem; /* page container */
 
   /* ---------------------------------------------------------------
-   * 4. SEMANTIC TOKENS
-   * Components consume ONLY these.
-   *
-   * One set, no modes. If a dark scheme is ever wanted, it goes here as
-   * a remap of these semantics — the primitives above stay untouched and
-   * no component has to change. That is the whole point of the two tiers.
+   * 4. FOCUS RING
+   * Not a colour role — a shorthand, so the ring is defined once and every
+   * focusable element gets the same one from global.css.
    * ------------------------------------------------------------- */
 
-  --surface-default: var(--color-neutral-100);
-  --surface-raised: var(--color-neutral-white);
-  --surface-sunken: var(--color-neutral-200);
-  --surface-inverse: var(--color-neutral-black);
-  --surface-accent: var(--color-lemon-300);
-
-  --text-primary: var(--color-neutral-black);
-  --text-secondary: var(--color-neutral-700);
-  --text-inverse: var(--color-neutral-white);
-  --text-accent: var(--color-pickled-600);
-  --text-on-accent: var(--color-neutral-black);
-
-  --border-subtle: var(--color-neutral-200);
-  --border-strong: var(--color-neutral-300);
-  --border-focus: var(--color-pickled-500);
-
-  --brand-primary: var(--color-lemon-500);
-  --brand-secondary: var(--color-pickled-500);
-  --brand-highlight: var(--color-tomato-400);
-  --brand-calm: var(--color-herbs-400);
-
-  /*
-   * Status. No content field drives these any more — the `status` field was
-   * removed from the project schema. Kept because "in progress vs finished" is
-   * still a distinction the site makes, and a design will likely want to show
-   * it some other way. Delete them if that turns out not to be true.
-   */
-  --status-in-progress: var(--color-tomato-400);
-  --status-completed: var(--color-herbs-400);
-
-  --focus-ring: 2px solid var(--border-focus);
+  --focus-ring: 2px solid var(--color-pickled-500);
   --focus-ring-offset: 2px;
 }

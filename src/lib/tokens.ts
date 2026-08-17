@@ -13,23 +13,7 @@ type TokenLeaf = { $value: string | number | string[] | number[] };
 const isLeaf = (v: unknown): v is TokenLeaf =>
   typeof v === 'object' && v !== null && '$value' in v;
 
-/** Walks a `{color.neutral.white}` style reference to its raw value. */
-function resolve(value: string, depth = 0): string {
-  if (depth > 10) throw new Error(`Token alias loop at "${value}"`);
-  const match = /^\{([^}]+)\}$/.exec(value);
-  if (!match) return value;
-
-  let node: unknown = tokens;
-  for (const segment of match[1].split('.')) {
-    node = (node as Record<string, unknown>)?.[segment];
-  }
-  if (!isLeaf(node) || typeof node.$value !== 'string') {
-    throw new Error(`Unresolvable token alias "${value}"`);
-  }
-  return resolve(node.$value, depth + 1);
-}
-
-/** Flattens a token group into [name, rawValue] pairs, following aliases. */
+/** Flattens a token group into [path, value] pairs. */
 function flatten(group: Record<string, unknown>, prefix: string[] = []) {
   const out: Array<{ path: string[]; value: string }> = [];
   for (const [key, node] of Object.entries(group)) {
@@ -38,7 +22,7 @@ function flatten(group: Record<string, unknown>, prefix: string[] = []) {
       const raw = node.$value;
       out.push({
         path: [...prefix, key],
-        value: resolve(Array.isArray(raw) ? String(raw[0]) : String(raw)),
+        value: String(Array.isArray(raw) ? raw[0] : raw),
       });
     } else if (typeof node === 'object' && node !== null) {
       out.push(...flatten(node as Record<string, unknown>, [...prefix, key]));
@@ -46,9 +30,6 @@ function flatten(group: Record<string, unknown>, prefix: string[] = []) {
   }
   return out;
 }
-
-/** Token path -> the CSS custom property that carries it. */
-const cssVar = (path: string[]) => `--${path.join('-')}`;
 
 // --- Colour -----------------------------------------------------------------
 
@@ -58,23 +39,13 @@ export const colorScales = Object.entries(tokens.color)
     name: scale,
     steps: flatten(steps as Record<string, unknown>).map(({ path, value }) => ({
       step: path[0],
+      name: `${scale}/${path[0]}`,
       value,
       cssVar: `--color-${scale}-${path[0]}`,
     })),
   }));
 
-export const semanticGroups = Object.entries(tokens.semantic)
-  .filter(([key]) => !key.startsWith('$'))
-  .map(([group, entries]) => ({
-    name: group,
-    tokens: flatten(entries as Record<string, unknown>).map(
-      ({ path, value }) => ({
-        name: `${group}/${path.join('/')}`,
-        value,
-        cssVar: cssVar([group, ...path]),
-      }),
-    ),
-  }));
+const allColors = colorScales.flatMap((scale) => scale.steps);
 
 // --- Contrast ---------------------------------------------------------------
 
@@ -110,9 +81,45 @@ export function verdict(ratio: number): Verdict {
   return 'Decorative only';
 }
 
-export const surfaces = semanticGroups
-  .find((g) => g.name === 'surface')!
-  .tokens.map((t) => ({ name: t.name, value: t.value }));
+/**
+ * The colours that actually sit behind content. With one token tier there is no
+ * `surface/*` role to enumerate, so this is the honest substitute: the four
+ * neutrals the pages use as backgrounds. Every other colour is checked against
+ * them.
+ */
+const GROUND_NAMES = [
+  'neutral/white',
+  'neutral/100',
+  'neutral/200',
+  'neutral/black',
+];
+
+export const grounds = GROUND_NAMES.map((name) => {
+  const found = allColors.find((c) => c.name === name);
+  if (!found) throw new Error(`Ground colour "${name}" is not in tokens.json`);
+  return found;
+});
+
+/** Every colour against every ground, grouped by ramp. */
+export const contrastMatrix = colorScales.map((scale) => ({
+  name: scale.name,
+  rows: scale.steps.map((step) => ({
+    ...step,
+    cells: grounds.map((ground) => {
+      const ratio = contrast(step.value, ground.value);
+      return { ground: ground.name, ratio, verdict: verdict(ratio) };
+    }),
+  })),
+}));
+
+/** Colours that can carry body text on at least one light ground. */
+export const bodySafeOnLight = contrastMatrix
+  .flatMap((scale) => scale.rows)
+  .filter((row) =>
+    row.cells.some(
+      (cell) => cell.ground !== 'neutral/black' && cell.ratio >= 4.5,
+    ),
+  );
 
 // --- Everything else --------------------------------------------------------
 

@@ -25,7 +25,7 @@ Depending on why you're here:
 
 **🎨 You're a designer**
 → [`src/styles/tokens.css`](src/styles/tokens.css) — the whole design system on
-one screen. Nature-inspired palette, two tiers.
+one screen. Nature-inspired palette, one flat tier.
 → [`docs/design-to-code.md`](docs/design-to-code.md) — how a Figma frame becomes
 a page without the values drifting apart.
 
@@ -131,7 +131,7 @@ src/
   layouts/ProseLayout.astro  Markdown document pages (the handshake)
   pages/                File-based routes; admin/ is local-only, never deployed
   styles/
-    tokens.css          Design tokens — primitives, then semantics. Start here.
+    tokens.css          Design tokens — one flat tier. Start here.
     global.css          Reset, type defaults, a11y helpers, .container
 CLAUDE.md               Working rules for agents. Read before changing anything.
 .mcp.json               Figma MCP server declaration
@@ -139,13 +139,14 @@ CLAUDE.md               Working rules for agents. Read before changing anything.
 
 ## The design system in one screen
 
-Tokens live in [`src/styles/tokens.css`](src/styles/tokens.css) in two tiers:
+Tokens live in [`src/styles/tokens.css`](src/styles/tokens.css) as **one flat
+tier**, named after the thing: `--color-lemon-500`, `--space-md`,
+`--font-size-lg`. Components use those names directly.
 
-- **Primitives** — raw values, named after the thing: `--color-lemon-500`,
-  `--space-md`. Never used directly in a component.
-- **Semantics** — what components actually consume: `--text-secondary`,
-  `--surface-raised`, `--border-focus`. One set, no modes — there is no dark
-  mode, by decision.
+There is no role layer (`--text-secondary`, `--surface-raised`). There was one;
+it was removed on purpose. I design in terms of the palette, not in terms of
+roles, so a second set of names for the same values just meant translating in
+both directions — Figma to code, and back again in my head.
 
 The palette is nature-inspired: **Lemon** (citrus yellow, the signature accent),
 **Pickled** (a sharp pink-red counterweight), **Tomato** (used sparingly as a
@@ -154,15 +155,17 @@ coldly against them. The neutral ends are named rather than numbered —
 `--color-neutral-white` is `#fdfcf8` and `--color-neutral-black` is `#040302`,
 because neither is a pure white or black.
 
-**The one rule that matters:** components use semantics, never primitives. A
-component wired straight to `--color-neutral-500` can only be changed by hunting
-down every place it appears. Wired to `--text-secondary`, it changes once. This
-is also what makes a dark mode a half-hour job rather than a rewrite, should it
+**The one rule that matters:** never hardcode a value that has a token. The
+trade this makes is explicit — with no role layer, changing a colour is a real
+decision at every place it appears rather than a one-line remap, and nothing
+checks contrast for you. [`/styleguide`](src/pages/styleguide.astro) renders
+every colour against every background it actually sits on, which is the check.
+A dark mode would be a genuine refactor rather than a remap, should it
 ever be wanted.
 
-These tokens also exist as **Figma Variables** in the portfolio file — 94 of
-them across 7 collections, with names that match the CSS one-for-one
-(`surface/default` in Figma is `--surface-default` in code, and Dev Mode reports
+These tokens also exist as **Figma Variables** in the portfolio file — 74 of
+them across 6 collections, with names that match the CSS one-for-one
+(`color/lemon/500` in Figma is `--color-lemon-500` in code, and Dev Mode reports
 it that way). Tune the values in Figma; the names don't move. **The token
 _names_ are the stable contract, not the hexes.**
 
@@ -232,7 +235,8 @@ yet.
 
 Read [CLAUDE.md](CLAUDE.md) before making changes. The short version:
 
-1. **Never hardcode a value that has a token.** Semantics, not primitives.
+1. **Never hardcode a value that has a token.** One flat tier — use the token
+   names directly, and don't reintroduce a role layer.
 2. **Accessibility is part of "done"** — semantic HTML, visible focus states, alt
    text, reduced-motion, and contrast that holds up.
 3. **Don't invent content.** Placeholder copy must read as placeholder.

@@ -2,39 +2,17 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import {
   colorScales,
-  semanticGroups,
-  surfaces,
+  grounds,
+  contrastMatrix,
+  bodySafeOnLight,
   fontSizes,
   spacing,
   radii,
-  contrast,
-  verdict,
 } from '../lib/tokens';
 
 // Everything here is computed at build time from design/tokens.json.
 // No client JS, and no hand-maintained copy of the palette that could go stale.
 
-const textTokens = semanticGroups.find((g) => g.name === 'text')!.tokens;
-const nonTextTokens = semanticGroups
-  .filter((g) => ['border', 'brand', 'status'].includes(g.name))
-  .flatMap((g) => g.tokens);
-
-/** Text-on-surface pairs: these need 4.5 to carry body copy. */
-const textPairs = textTokens.flatMap((fg) =>
-  surfaces.map((bg) => {
-    const ratio = contrast(fg.value, bg.value);
-    return { fg: fg.name, bg: bg.name, ratio, verdict: verdict(ratio) };
-  }),
-);
-
-/** Everything else against the page background, at the 3.0 non-text bar. */
-const graphicPairs = nonTextTokens.map((fg) => {
-  const bg = surfaces.find((s) => s.name === 'surface/default')!;
-  const ratio = contrast(fg.value, bg.value);
-  return { fg: fg.name, bg: bg.name, ratio, verdict: verdict(ratio) };
-});
-
-const failingText = textPairs.filter((p) => p.ratio < 4.5);
 const shadows = ['sm', 'md', 'lg'];
 ---
 
@@ -60,10 +38,11 @@ const shadows = ['sm', 'md', 'lg'];
 
     <!-- ------------------------------------------------------------------ -->
     <section aria-labelledby="h-primitives">
-      <h2 id="h-primitives">Colour primitives</h2>
+      <h2 id="h-primitives">Colour</h2>
       <p class="note">
-        Raw values. Never used directly in a component — they exist so the
-        semantic tokens have something to point at.
+        One tier — these names are what components use directly, and they are
+        the same names as the Figma variables. Check the contrast table below
+        before putting any of them behind text.
       </p>
 
       {
@@ -85,131 +64,101 @@ const shadows = ['sm', 'md', 'lg'];
     </section>
 
     <!-- ------------------------------------------------------------------ -->
-    <section aria-labelledby="h-semantic">
-      <h2 id="h-semantic">Semantic tokens</h2>
-      <p class="note">
-        What components actually consume. Each one is an alias — the hex shown
-        is what it currently resolves to.
-      </p>
-
-      {
-        semanticGroups.map((group) => (
-          <div class="scale">
-            <h3 class="scale__name">{group.name}</h3>
-            <ol class="swatches">
-              {group.tokens.map((t) => (
-                <li class="swatch">
-                  <span class="swatch__chip" style={`background:${t.value}`} />
-                  <span class="swatch__step">
-                    {t.name.split('/').slice(1).join('/')}
-                  </span>
-                  <code class="swatch__hex">{t.value}</code>
-                </li>
-              ))}
-            </ol>
-          </div>
-        ))
-      }
-    </section>
-
-    <!-- ------------------------------------------------------------------ -->
     <section aria-labelledby="h-contrast">
       <h2 id="h-contrast">Contrast</h2>
       <p class="note">
-        One colour scheme means there is no dark-mode escape hatch for a weak
-        pairing — every combination has to hold up here. Thresholds are WCAG
-        2.1:
-        <strong>4.5</strong> for body text, <strong>3.0</strong> for large text and
-        for non-text UI that carries meaning.
+        Every colour against every background it actually sits on. One colour
+        scheme means there is no dark-mode escape hatch for a weak pairing, and
+        with a single token tier nothing enforces this for you — so this table
+        is the check. Thresholds are WCAG 2.1: <strong>4.5</strong> for body text,
+        <strong>3.0</strong> for large text and for non-text UI that carries meaning.
       </p>
 
-      {
-        failingText.length === 0 ? (
-          <p class="callout callout--ok">
-            Every text-on-surface pairing clears 4.5. ✓
-          </p>
-        ) : (
-          <p class="callout callout--warn">
-            {failingText.length} text pairing(s) below 4.5 — see the table.
-          </p>
-        )
-      }
+      <p class="callout callout--note">
+        <strong>{bodySafeOnLight.length}</strong> of the{' '}
+        {contrastMatrix.reduce((n, s) => n + s.rows.length, 0)} colours can carry
+        body text on at least one light background. The rest are fills, not ink.
+      </p>
 
-      <h3>Text on surfaces</h3>
+      <ul class="legend">
+        <li><span class="key key--text"></span> ≥ 4.5 — body text</li>
+        <li>
+          <span class="key key--large"></span> ≥ 3.0 — large text, borders, icons
+        </li>
+        <li><span class="key key--deco"></span> below 3.0 — decoration only</li>
+      </ul>
+
       <div class="table-wrap">
         <table>
           <thead>
-            <tr
-              ><th>Foreground</th><th>Background</th><th>Ratio</th><th
-                >Verdict</th
-              ></tr
-            >
+            <tr>
+              <th scope="col">Colour</th>
+              {
+                grounds.map((g) => (
+                  <th class="num" scope="col">
+                    on {g.step}
+                  </th>
+                ))
+              }
+            </tr>
           </thead>
-          <tbody>
-            {
-              textPairs.map((p) => (
-                <tr class={p.ratio < 4.5 ? 'row--fail' : ''}>
-                  <td>
-                    <code>{p.fg}</code>
-                  </td>
-                  <td>
-                    <code>{p.bg}</code>
-                  </td>
-                  <td class="num">{p.ratio.toFixed(2)}</td>
-                  <td>{p.ratio < 4.5 ? 'Not for body text' : p.verdict}</td>
+          {
+            contrastMatrix.map((scale) => (
+              <tbody>
+                <tr class="row--group">
+                  <th colspan={grounds.length + 1} scope="colgroup">
+                    {scale.name}
+                  </th>
                 </tr>
-              ))
-            }
-          </tbody>
-        </table>
-      </div>
-
-      <h3>Non-text, against <code>surface/default</code></h3>
-      <p class="note">
-        Borders, brand colours and status indicators. These need 3.0 only when
-        they carry meaning on their own — a decorative rule doesn&rsquo;t, an
-        input border or a status dot does.
-      </p>
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr><th>Token</th><th>Ratio</th><th>Safe for</th></tr>
-          </thead>
-          <tbody>
-            {
-              graphicPairs.map((p) => (
-                <tr class={p.ratio < 3 ? 'row--fail' : ''}>
-                  <td>
-                    <code>{p.fg}</code>
-                  </td>
-                  <td class="num">{p.ratio.toFixed(2)}</td>
-                  <td>
-                    {p.ratio >= 4.5
-                      ? 'Text and graphics'
-                      : p.ratio >= 3
-                        ? 'Graphics and large text'
-                        : 'Decoration only — as a large fill, not a line or icon'}
-                  </td>
-                </tr>
-              ))
-            }
-          </tbody>
+                {scale.rows.map((row) => (
+                  <tr>
+                    <td>
+                      <span
+                        class="swatch__dot"
+                        style={`background:${row.value}`}
+                      />
+                      <code>{row.name}</code>
+                    </td>
+                    {row.cells.map((cell) => (
+                      <td
+                        class:list={[
+                          'num',
+                          cell.ratio >= 4.5
+                            ? 'cell--text'
+                            : cell.ratio >= 3
+                              ? 'cell--large'
+                              : 'cell--deco',
+                        ]}
+                      >
+                        <span class="visually-hidden">
+                          {row.name} on {cell.ground}:{' '}
+                        </span>
+                        {cell.ratio.toFixed(2)}
+                        <span class="visually-hidden"> — {cell.verdict}</span>
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            ))
+          }
         </table>
       </div>
 
       <div class="callout callout--note">
         <p>
-          <strong>On Lemon.</strong> No step of the Lemon scale reaches 3.0 against
-          <code>surface/default</code> — the darkest, <code>lemon/500</code>,
-          gets to 1.14. That is a property of yellow, not a mistake in the
-          values: darkening it far enough to pass turns it into olive.
+          <strong>On Lemon.</strong> No step of the Lemon scale reaches 3.0 on any
+          light background — the darkest, <code>lemon/500</code>, gets to 1.14
+          on
+          <code>neutral/100</code>. That is a property of yellow, not a mistake
+          in the values: darkening it far enough to pass turns it into olive.
         </p>
         <p>
           So Lemon earns its keep as a <em>large fill</em> — dark text on a Lemon
-          block is 18.13:1, which is excellent. It does not work as a thin rule, a
+          block is 15.62:1, which is excellent. It does not work as a thin rule, a
           small icon, a focus ring, or small text. Where an accent needs to be legible
-          at small size, use <code>text/accent</code>
-          (Pickled 600, 5.65:1) and let Lemon carry the area instead of the line.
+          at small size, use <code>pickled/600</code> (5.65:1) and let Lemon carry
+          the area instead of the line.
         </p>
       </div>
     </section>
@@ -330,7 +279,7 @@ const shadows = ['sm', 'md', 'lg'];
   .guide section {
     padding-block-start: var(--space-xl);
     margin-block-start: var(--space-xl);
-    border-block-start: 1px solid var(--border-subtle);
+    border-block-start: 1px solid var(--color-neutral-200);
   }
 
   .eyebrow {
@@ -338,7 +287,7 @@ const shadows = ['sm', 'md', 'lg'];
     font-weight: var(--font-weight-medium);
     letter-spacing: var(--letter-spacing-wide);
     text-transform: uppercase;
-    color: var(--text-secondary);
+    color: var(--color-neutral-700);
   }
 
   h1 {
@@ -358,11 +307,11 @@ const shadows = ['sm', 'md', 'lg'];
 
   .lede {
     font-size: var(--font-size-lg);
-    color: var(--text-secondary);
+    color: var(--color-neutral-700);
   }
 
   .note {
-    color: var(--text-secondary);
+    color: var(--color-neutral-700);
     font-size: var(--font-size-sm);
     margin-block-end: var(--space-md);
   }
@@ -403,7 +352,7 @@ const shadows = ['sm', 'md', 'lg'];
   .swatch__chip {
     display: block;
     block-size: var(--space-xl);
-    border: 1px solid var(--border-subtle);
+    border: 1px solid var(--color-neutral-200);
     border-radius: var(--radius-md);
   }
 
@@ -412,7 +361,7 @@ const shadows = ['sm', 'md', 'lg'];
   }
 
   .swatch__hex {
-    color: var(--text-secondary);
+    color: var(--color-neutral-700);
   }
 
   /* Tables --------------------------------------------------------------- */
@@ -431,7 +380,7 @@ const shadows = ['sm', 'md', 'lg'];
   td {
     padding: var(--space-2xs) var(--space-xs);
     text-align: start;
-    border-block-end: 1px solid var(--border-subtle);
+    border-block-end: 1px solid var(--color-neutral-200);
   }
 
   th {
@@ -443,12 +392,72 @@ const shadows = ['sm', 'md', 'lg'];
     font-variant-numeric: tabular-nums;
   }
 
-  .row--fail {
-    background: var(--surface-sunken);
+  .row--group th {
+    padding-block-start: var(--space-md);
+    font-size: var(--font-size-base);
+    text-transform: lowercase;
   }
 
-  .row--fail td:first-child::before {
-    content: '⚠ ';
+  /*
+   * The tint is redundant with the number and the visually-hidden verdict —
+   * colour never carries the meaning on its own here.
+   */
+  .cell--text {
+    background: var(--color-herbs-100);
+  }
+
+  .cell--large {
+    background: var(--color-lemon-100);
+  }
+
+  .cell--deco {
+    color: var(--color-neutral-700);
+  }
+
+  .swatch__dot {
+    display: inline-block;
+    inline-size: var(--space-xs);
+    block-size: var(--space-xs);
+    margin-inline-end: var(--space-2xs);
+    vertical-align: -1px;
+    border: 1px solid var(--color-neutral-300);
+    border-radius: var(--radius-sm);
+  }
+
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-sm) var(--space-md);
+    padding: 0;
+    margin-block-end: var(--space-md);
+    list-style: none;
+    font-size: var(--font-size-sm);
+  }
+
+  .legend li {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2xs);
+  }
+
+  .key {
+    display: block;
+    inline-size: var(--space-md);
+    block-size: var(--space-xs);
+    border: 1px solid var(--color-neutral-300);
+    border-radius: var(--radius-sm);
+  }
+
+  .key--text {
+    background: var(--color-herbs-100);
+  }
+
+  .key--large {
+    background: var(--color-lemon-100);
+  }
+
+  .key--deco {
+    background: var(--color-neutral-white);
   }
 
   /* Callouts ------------------------------------------------------------- */
@@ -456,32 +465,24 @@ const shadows = ['sm', 'md', 'lg'];
   .callout {
     padding: var(--space-sm) var(--space-md);
     margin-block-end: var(--space-md);
-    border-inline-start: var(--space-3xs) solid var(--border-strong);
+    border-inline-start: var(--space-3xs) solid var(--color-neutral-300);
     border-radius: var(--radius-md);
-    background: var(--surface-raised);
+    background: var(--color-neutral-white);
   }
 
   .callout p + p {
     margin-block-start: var(--space-2xs);
   }
 
-  .callout--ok {
-    border-inline-start-color: var(--status-completed);
-  }
-
-  .callout--warn {
-    border-inline-start-color: var(--status-in-progress);
-  }
-
   .callout--note {
-    border-inline-start-color: var(--brand-secondary);
+    border-inline-start-color: var(--color-pickled-500);
   }
 
   /* Type ----------------------------------------------------------------- */
 
   .type-row {
     padding-block: var(--space-xs);
-    border-block-end: 1px solid var(--border-subtle);
+    border-block-end: 1px solid var(--color-neutral-200);
   }
 
   .type-row__sample {
@@ -493,7 +494,7 @@ const shadows = ['sm', 'md', 'lg'];
   .type-row__meta {
     margin-block-start: var(--space-3xs);
     font-size: var(--font-size-sm);
-    color: var(--text-secondary);
+    color: var(--color-neutral-700);
   }
 
   .sample-serif {
@@ -526,13 +527,13 @@ const shadows = ['sm', 'md', 'lg'];
   .bar__fill {
     display: block;
     block-size: var(--space-sm);
-    background: var(--brand-primary);
+    background: var(--color-lemon-500);
     border-radius: var(--radius-sm);
     flex: none;
   }
 
   .bar__value {
-    color: var(--text-secondary);
+    color: var(--color-neutral-700);
     font-size: var(--font-size-sm);
   }
 
@@ -554,11 +555,11 @@ const shadows = ['sm', 'md', 'lg'];
     display: block;
     inline-size: var(--space-2xl);
     block-size: var(--space-2xl);
-    background: var(--surface-accent);
+    background: var(--color-lemon-300);
   }
 
   .tile--raised {
-    background: var(--surface-raised);
+    background: var(--color-neutral-white);
     border-radius: var(--radius-md);
   }
 
@@ -574,16 +575,16 @@ const shadows = ['sm', 'md', 'lg'];
   .focus-demo button,
   .focus-demo input {
     padding: var(--space-2xs) var(--space-sm);
-    background: var(--surface-raised);
-    border: 1px solid var(--border-strong);
+    background: var(--color-neutral-white);
+    border: 1px solid var(--color-neutral-300);
     border-radius: var(--radius-md);
   }
 
   .guide__foot {
     margin-block-start: var(--space-xl);
     padding-block-start: var(--space-md);
-    border-block-start: 1px solid var(--border-subtle);
+    border-block-start: 1px solid var(--color-neutral-200);
     font-size: var(--font-size-sm);
-    color: var(--text-secondary);
+    color: var(--color-neutral-700);
   }
 </style>

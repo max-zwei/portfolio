@@ -31,15 +31,25 @@ deliberate gestures rather than a page full of them.
 ## Non-negotiables
 
 **Tokens.** Never hardcode a value that exists as a token. No hex colours, no
-`16px`, no `font-family` in components. Use the _semantic_ layer
-(`var(--text-secondary)`), never primitives (`var(--color-neutral-500)`) — the
-semantic layer is the only place a value can be changed once and land
-everywhere. If a design needs a value that has no token, add the token; don't
-inline it.
+`16px`, no `font-family` in components. Use the token names directly —
+`var(--color-neutral-700)`, `var(--space-md)`. If a design needs a value that
+has no token, add the token; don't inline it.
+
+**One tier, no role layer.** There is no `--text-secondary` / `--surface-default`
+tier and there should not be one. Max designs in terms of the palette, not in
+terms of roles, so a second set of names for the same values only adds a
+translation step in both directions. Don't reintroduce it — this was tried and
+deliberately removed. The token names in `tokens.css` are the same names as the
+Figma variables, and that one-to-one mapping is the whole anti-drift mechanism.
+
+The cost of this is that nothing enforces contrast for you: changing a colour is
+a real decision at every site that uses it. `/styleguide` renders every colour
+against every background it actually sits on — check it.
 
 **One colour scheme.** There is no dark mode, by decision. Don't add
-`prefers-color-scheme` blocks or a theme toggle. If it's ever wanted, it's a
-remap of the semantic tokens — not a change to any component.
+`prefers-color-scheme` blocks or a theme toggle. Without a role layer a dark
+scheme would be a real refactor, not a remap — which is a known and accepted
+consequence of the choice above, not a problem to solve pre-emptively.
 
 **Accessibility is part of "done", not a follow-up.**
 
@@ -76,7 +86,7 @@ src/
                         ProseLayout.astro — markdown document pages.
   pages/                File-based routes. handshake.md is a markdown page.
   styles/
-    tokens.css          Design tokens. Primitives, then semantics. Start here.
+    tokens.css          Design tokens. One flat tier. Start here.
     global.css          Reset, typography defaults, a11y helpers, .container.
 design/tokens.json      DTCG token export — the Figma exchange format.
 public/admin/           Decap CMS shell + config.

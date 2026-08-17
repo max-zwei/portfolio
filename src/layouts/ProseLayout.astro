@@ -48,7 +48,7 @@ const { frontmatter } = Astro.props as Props;
   .doc__back {
     margin-bottom: var(--space-lg);
     font-size: var(--font-size-sm);
-    color: var(--text-secondary);
+    color: var(--color-neutral-700);
   }
 
   h1 {
@@ -60,7 +60,7 @@ const { frontmatter } = Astro.props as Props;
     font-family: var(--font-serif);
     font-size: var(--font-size-lg);
     line-height: var(--line-height-snug);
-    color: var(--text-secondary);
+    color: var(--color-neutral-700);
   }
 
   /* The body comes in through <slot> from the markdown page, so it is out of
@@ -100,7 +100,7 @@ const { frontmatter } = Astro.props as Props;
   }
 
   .prose :global(a) {
-    text-decoration-color: var(--border-strong);
+    text-decoration-color: var(--color-neutral-300);
   }
 
   /* Wide on a narrow screen: let the table scroll rather than the page. */
@@ -120,7 +120,7 @@ const { frontmatter } = Astro.props as Props;
     padding: var(--space-2xs) var(--space-sm);
     text-align: left;
     vertical-align: top;
-    border-bottom: 1px solid var(--border-subtle);
+    border-bottom: 1px solid var(--color-neutral-200);
   }
 
   .prose :global(th) {
@@ -128,7 +128,7 @@ const { frontmatter } = Astro.props as Props;
     letter-spacing: var(--letter-spacing-wide);
     text-transform: uppercase;
     font-size: var(--font-size-sm);
-    color: var(--text-secondary);
+    color: var(--color-neutral-700);
   }
 
   /* These documents get printed and handed over, so the sheet is part of the
@@ -150,7 +150,7 @@ const { frontmatter } = Astro.props as Props;
     }
 
     :global(body) {
-      background: var(--surface-raised);
+      background: var(--color-neutral-white);
       font-size: var(--font-size-sm);
     }
 
