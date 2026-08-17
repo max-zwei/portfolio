@@ -20,12 +20,12 @@
   "dependencies": {
     "@astrojs/sitemap": "^3.7.3",
     "@fontsource-variable/jetbrains-mono": "^5.3.0",
-    "astro": "^7.1.6",
+    "astro": "^7.2.2",
     "zod": "^4.4.3"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.4",
-    "html-validate": "^11.6.1",
+    "html-validate": "^11.6.2",
     "playwright-core": "^1.62.1",
     "prettier": "^3.9.6",
     "prettier-plugin-astro": "^0.14.1",
