@@ -1,7 +1,7 @@
 ---
+import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { SITE, LINKS } from '../config/site';
-import { RESUME } from '../config/resume';
+import { SITE, LINKS, CV_INTRO } from '../config/site';
 
 // This page is the CV. The PDF is a print of it, rendered by `npm run cv` —
 // so anything added here has to survive A4 as well as a browser window.
@@ -31,8 +31,10 @@ function formatMonth(value: string): string {
   return month ? `${MONTHS[Number(month) - 1]} ${year}` : year;
 }
 
-const timeline = [...RESUME.timeline].sort((a, b) =>
-  b.start.localeCompare(a.start),
+// One list, newest first — so the order of the files on disk is a convenience,
+// not the contract.
+const timeline = (await getCollection('resume')).sort((a, b) =>
+  b.data.start.localeCompare(a.data.start),
 );
 
 // On paper nobody can click "GitHub", so the link text is the address itself.
@@ -58,7 +60,7 @@ const contact = [
       <h1 class="cv__name">{SITE.name}</h1>
       <p class="cv__role">{SITE.role}</p>
 
-      <p class="cv__intro">{RESUME.intro}</p>
+      <p class="cv__intro">{CV_INTRO}</p>
 
       <ul class="cv__contact">
         {
@@ -80,13 +82,13 @@ const contact = [
 
       <ol class="timeline">
         {
-          timeline.map((entry) => (
-            <li class:list={['entry', `entry--${entry.kind}`]}>
+          timeline.map(({ data }) => (
+            <li class:list={['entry', `entry--${data.kind}`]}>
               <p class="entry__period">
-                <time datetime={entry.start}>{formatMonth(entry.start)}</time>
+                <time datetime={data.start}>{formatMonth(data.start)}</time>
                 {' – '}
-                {entry.end ? (
-                  <time datetime={entry.end}>{formatMonth(entry.end)}</time>
+                {data.end ? (
+                  <time datetime={data.end}>{formatMonth(data.end)}</time>
                 ) : (
                   'present'
                 )}
@@ -94,14 +96,11 @@ const contact = [
 
               <div class="entry__body">
                 <p class="entry__kind">
-                  {entry.kind === 'work' ? 'Position' : 'Education'}
+                  {data.kind === 'work' ? 'Position' : 'Education'}
                 </p>
-                <h3 class="entry__title">{entry.title}</h3>
-                <p class="entry__org">
-                  {entry.organisation}
-                  {entry.location ? `, ${entry.location}` : ''}
-                </p>
-                <p class="entry__summary">{entry.summary}</p>
+                <h3 class="entry__title">{data.role}</h3>
+                <p class="entry__org">{data.company}</p>
+                <p class="entry__summary">{data.summary}</p>
               </div>
             </li>
           ))

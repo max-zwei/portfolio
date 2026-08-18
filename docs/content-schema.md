@@ -1,83 +1,193 @@
-# Content schema — projects
+# Content schema
 
-The single source of truth is [`src/content.config.ts`](../src/content.config.ts).
-The Decap CMS form in [`public/admin/config.yml`](../public/admin/config.yml) must
-mirror it. This document explains what each field is _for_, which the code cannot.
+Six collections. The single source of truth is
+[`src/content.config.ts`](../src/content.config.ts); the Decap CMS forms in
+[`public/admin/config.yml`](../public/admin/config.yml) must mirror it. This
+document explains what each field is _for_, which the code cannot.
 
-Entries live in `src/content/projects/<slug>.md`. The filename becomes the URL
-slug (`src/content/projects/lesekiste.md` → `/work/lesekiste`).
+| Collection     | Lives in                     | What it is                                |
+| -------------- | ---------------------------- | ----------------------------------------- |
+| `projects`     | `src/content/projects/`      | The case studies                          |
+| `playground`   | `src/content/playground/`    | Small self-directed builds                |
+| `inspiration`  | `src/content/inspiration/`   | Other people's work worth pointing at     |
+| `curiosity`    | `src/content/curiosity/`     | A thought and the question it leaves open |
+| `resume`       | `src/content/resume/`        | The CV, one entry per position            |
+| `releaseNotes` | `src/content/release-notes/` | What changed on the site, and when        |
 
-## Fields
+The filename becomes the URL slug where a collection has a page. Every
+collection ships one `[bracketed placeholder]` entry as a worked example —
+copy it, or create an entry through `/admin`.
 
-| Field       | Type                 | Required    | Purpose                                                                                                       |
-| ----------- | -------------------- | ----------- | ------------------------------------------------------------------------------------------------------------- |
-| `title`     | string               | yes         | Project name. Used as the page `<h1>` and in listings.                                                        |
-| `hmw`       | string               | yes         | The "How might we …" framing, **without** the prefix — the UI adds it. Keep it as a question.                 |
-| `summary`   | string (≤ 280 chars) | yes         | Card copy and meta description. One or two sentences.                                                         |
-| `year`      | number               | yes         | Year the work was done, or started for ongoing work.                                                          |
-| `tags`      | string[]             | no          | Discipline and domain tags, e.g. `["UX Research", "EdTech"]`. Defaults to `[]`.                               |
-| `cover`     | image path           | no          | Cover image, path relative to the markdown file. Astro optimises it at build time.                            |
-| `coverAlt`  | string               | conditional | **Required whenever `cover` is set** — the build fails otherwise. Describe the image, don't repeat the title. |
-| `figmaUrl`  | URL                  | no          | The Figma file or frame the work was designed in.                                                             |
-| `repoUrl`   | URL                  | no          | The GitHub repository, where the project has one.                                                             |
-| `artefacts` | list of images       | no          | Supporting images — sketches, flows, screens, photos. Each needs `src` and `alt`. Defaults to `[]`.           |
+> **Nothing renders these yet except `resume`.** The pages follow the Figma
+> design. The build still validates every entry, so a schema mistake fails
+> `npm run verify` today.
 
-The markdown body below the frontmatter is the case study itself.
+## projects
 
-**That's the whole schema, on purpose.** Every field costs three files to keep
-in sync, so the set stays at what a case study genuinely can't be written
-without. Things like `role`, `duration` or `featured` are
-easy to add — see below — but they should be added when a design calls for
-them, not in advance.
+The case study, told in eight sections. Everything above them is card and
+listing data.
+
+| Field                 | Type           | Required    | Purpose                                                                    |
+| --------------------- | -------------- | ----------- | -------------------------------------------------------------------------- |
+| `title`               | string         | yes         | Project name. Used as the page `<h1>` and in listings.                     |
+| `summary`             | string (≤ 280) | yes         | Card copy and meta description. One or two sentences.                      |
+| `company`             | string         | yes         | Who the work was for.                                                      |
+| `year`                | number         | yes         | Year the work was done, or started for ongoing work.                       |
+| `tags`                | string[]       | no          | Discipline and domain tags, e.g. `["UX Research", "EdTech"]`.              |
+| `teaserVertical`      | image          | no          | Portrait teaser, for tall cards.                                           |
+| `teaserVerticalAlt`   | string         | conditional | **Required whenever `teaserVertical` is set** — the build fails otherwise. |
+| `teaserHorizontal`    | image          | no          | Landscape teaser, for wide cards.                                          |
+| `teaserHorizontalAlt` | string         | conditional | **Required whenever `teaserHorizontal` is set.**                           |
+| `figmaUrl`            | URL            | no          | The Figma file or frame the work was designed in.                          |
+| `repoUrl`             | URL            | no          | The GitHub repository, where the project has one.                          |
+
+Then the eight sections, in narrative order — `context`, `hmw`, `exploration`,
+`definition`, `development`, `feedback`, `learning`, `behindTheScenes`. Each is
+**optional** (not every project earns all eight) and each has the same shape:
+
+| Field         | Type           | Required | Purpose                                                 |
+| ------------- | -------------- | -------- | ------------------------------------------------------- |
+| `subtitle`    | string         | no       | Sits next to the section heading.                       |
+| `description` | markdown       | yes      | The section itself. Required once the section exists.   |
+| `artefacts`   | list of images | no       | Each needs `src` and `alt`. Alt text is never optional. |
+| `keyPoints`   | string[]       | no       | The section in bullets, for a reader in a hurry.        |
+
+There is no markdown body — the eight sections _are_ the case study.
+
+## playground
+
+| Field           | Type           | Required    | Purpose                                               |
+| --------------- | -------------- | ----------- | ----------------------------------------------------- |
+| `title`         | string         | yes         | Name of the experiment.                               |
+| `summary`       | string (≤ 280) | yes         | One or two sentences — this is the whole description. |
+| `teaser`        | image          | no          | Card image.                                           |
+| `teaserAlt`     | string         | conditional | **Required whenever `teaser` is set.**                |
+| `githubUrl`     | URL            | no          | Where the code lives.                                 |
+| `figmaUrl`      | URL            | no          | Where it was designed.                                |
+| `additionalUrl` | URL            | no          | Anything else — a demo, a write-up, a video.          |
+
+## inspiration
+
+| Field       | Type           | Required    | Purpose                                                |
+| ----------- | -------------- | ----------- | ------------------------------------------------------ |
+| `title`     | string         | yes         | Name of the thing.                                     |
+| `url`       | URL            | **yes**     | Where it lives. The point of the entry.                |
+| `summary`   | string (≤ 280) | yes         | Why it's here — what you took from it, not what it is. |
+| `teaser`    | image          | no          | Card image.                                            |
+| `teaserAlt` | string         | conditional | **Required whenever `teaser` is set.**                 |
+
+## curiosity
+
+| Field      | Type   | Required | Purpose                             |
+| ---------- | ------ | -------- | ----------------------------------- |
+| `thought`  | string | yes      | The observation.                    |
+| `question` | string | yes      | What it makes you want to find out. |
+
+Both halves, always. A thought without its question is a status update.
+
+## resume
+
+One entry per position or qualification. **This is the CV** — see
+[`docs/resume-and-handshake.md`](./resume-and-handshake.md), and re-run
+`npm run cv` after editing or the committed PDF goes stale.
+
+| Field         | Type                  | Required    | Purpose                                                            |
+| ------------- | --------------------- | ----------- | ------------------------------------------------------------------ |
+| `role`        | string                | yes         | Job title, or the degree for an education entry.                   |
+| `company`     | string                | yes         | Employer, client or institution.                                   |
+| `kind`        | `work` \| `education` | yes         | Tells the two apart on the printed CV.                             |
+| `start`       | `YYYY-MM`             | yes         | The timeline sorts on this, so the format matters.                 |
+| `end`         | `YYYY-MM`             | no          | Leave it out for anything still running — it renders as "present". |
+| `summary`     | string                | yes         | One or two sentences: what the work was, and what came of it.      |
+| `logo`        | image                 | no          | Company or institution mark.                                       |
+| `logoAlt`     | string                | conditional | **Required whenever `logo` is set.**                               |
+| `projectUrls` | URL[] (max 3)         | no          | Up to three things to point at. Ordered — the first one leads.     |
+
+The CV's opening paragraph is _not_ here. It is bio copy rather than a position,
+so it lives in [`src/config/site.ts`](../src/config/site.ts) as `CV_INTRO`.
+
+## releaseNotes
+
+| Field            | Type           | Required | Purpose                                               |
+| ---------------- | -------------- | -------- | ----------------------------------------------------- |
+| `date`           | date           | yes      | When the release happened.                            |
+| `userExperience` | markdown       | no       | What changed in how the site behaves.                 |
+| `userInterface`  | markdown       | no       | What changed in how it looks.                         |
+| `tools`          | markdown       | no       | What changed under it — build, CMS, tokens, workflow. |
+| `screenshots`    | list of images | no       | Each needs `src` and `alt`.                           |
+| `file`           | path           | no       | An optional attachment, under `/releases`.            |
+
+All three category fields are optional because a release rarely moves all three
+at once. `file` is the **one upload that does not live in `src/`** — it is served
+as-is for download rather than optimised, so it goes to `public/releases/`.
 
 ## Conventions
 
-- **`hmw` is the hook.** Every project opens with the same framing, so the
-  portfolio reads as one point of view rather than a list of deliverables.
-- **Every artefact needs alt text.** Unlike `cover`, there is no way to add one
-  without it — the schema requires `alt` on each. Describe what the image shows;
-  a reader who can't see it should still follow the argument.
-- **`figmaUrl` and `repoUrl` are the receipts.** They let a case study point at
-  the actual working file rather than only the polished retelling.
+- **Every image needs alt text.** Optional images pair with an optional alt
+  field and the schema fails the build if one is set without the other. Images
+  inside a list (`artefacts`, `screenshots`) require `alt` outright — there is no
+  escape there at all.
+- **Images live next to the entry**, in the collection's `_media/` folder,
+  referenced as `./_media/name.jpg`. That keeps them inside `src/` where Astro
+  can optimise and hash them. `public/` is served as-is with no optimisation,
+  which is why they don't go there — the release-note `file` is the deliberate
+  exception, because a download should not be transformed.
 - **Tags are a controlled vocabulary.** Reuse existing tags before inventing new
   ones; the CMS offers the existing set as suggestions.
-- **Images live next to the entry.** Cover images go in
-  `src/content/projects/_media/` and are referenced as `./_media/cover.jpg`, so
-  Astro can optimise and hash them.
+- **`figmaUrl` and `repoUrl` are the receipts.** They let a case study point at
+  the actual working file rather than only the polished retelling.
+
+### Rich text in frontmatter
+
+Section `description`s and the three release-note categories are markdown held in
+**frontmatter**, not in the entry body. Astro's `render()` only renders a body, so
+these need an explicit build-time markdown pass when the pages get built — use
+`createMarkdownProcessor` from `@astrojs/markdown-remark` (already a transitive
+Astro dependency; add it to `package.json` explicitly at that point). Build-time
+only, so it stays zero client JS.
+
+This is the price of a project having eight rich-text sections instead of one
+body, and it is worth knowing before you go looking for `<Content />`.
 
 ## Example
 
 ```markdown
 ---
 title: Lesekiste
-hmw: make reading practice feel like play for six-year-olds?
+company: Selbstständig
 summary: A tangible reading companion that turns daily practice into a shared
   ritual between child and parent.
 year: 2026
 tags:
   - UX Research
   - EdTech
-cover: ./_media/lesekiste-cover.jpg
-coverAlt: A wooden box with illustrated cards spread out on a kitchen table
+teaserVertical: ./_media/lesekiste-tall.jpg
+teaserVerticalAlt: A wooden box with illustrated cards spread on a kitchen table
 figmaUrl: https://figma.com/design/xxxx/Lesekiste
-repoUrl: https://github.com/max-zwei/lesekiste
-artefacts:
-  - src: ./_media/lesekiste-flow.png
-    alt: Service blueprint showing the evening routine from box to bedtime
-  - src: ./_media/lesekiste-cards.jpg
-    alt: Six prototype cards laid out, each with a single word and a drawing
+context:
+  subtitle: Evening reading had become a fight
+  description: |
+    Six-year-olds are asked to read for ten minutes a day. **Most of that time
+    is spent negotiating.**
+  keyPoints:
+    - Ten minutes is the target; nobody enjoys them
+  artefacts:
+    - src: ./_media/lesekiste-flow.png
+      alt: Service blueprint showing the evening routine from box to bedtime
+hmw:
+  description: |
+    How might we make reading practice feel like play?
 ---
-
-## The starting point
-
-…
 ```
 
 ## Adding a field
 
 1. Add it to the zod schema in `src/content.config.ts` (with a doc comment).
 2. Add the matching widget to `public/admin/config.yml`.
-3. Add a row to the table above.
+3. Add a row to the right table above.
 4. Render it wherever it belongs.
 
 Skipping step 2 is the usual cause of "the CMS saved it but the build fails".
+
+**Every field costs those three files.** Keep the set at what an entry genuinely
+can't be written without, and add the rest when a design calls for them.

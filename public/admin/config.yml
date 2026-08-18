@@ -1,6 +1,6 @@
 # Decap CMS configuration.
 #
-# This file MUST stay in sync with the zod schema in src/content.config.ts.
+# This file MUST stay in sync with the zod schemas in src/content.config.ts.
 # If the two drift, the CMS writes frontmatter the Astro build then rejects.
 # Field reference: docs/content-schema.md
 
@@ -30,14 +30,21 @@ local_backend: true
 # half-written case study never goes live by accident.
 publish_mode: editorial_workflow
 
+# Decap requires a global media folder, but every collection below overrides it
+# so uploads land next to the entry that uses them. This is the fallback only.
 media_folder: src/content/projects/_media
 public_folder: ./_media
 
 collections:
+  # ---------------------------------------------------------------------------
+  # Projects — the case studies.
+  # ---------------------------------------------------------------------------
   - name: projects
     label: Projects
     label_singular: Project
     folder: src/content/projects
+    media_folder: _media
+    public_folder: ./_media
     extension: md
     format: frontmatter
     create: true
@@ -50,18 +57,16 @@ collections:
         widget: string
         hint: Project name. Shown as the page heading and in listings.
 
-      - label: How might we…
-        name: hmw
-        widget: string
-        hint: >-
-          The framing question, WITHOUT the "How might we" prefix — the site adds
-          it. e.g. "make reading practice feel like play?"
-
       - label: Summary
         name: summary
         widget: text
         pattern: ['^.{1,280}$', 'Keep the summary under 280 characters.']
         hint: One or two sentences. Used on cards and as the meta description.
+
+      - label: Company
+        name: company
+        widget: string
+        hint: Who the work was for.
 
       - label: Year
         name: year
@@ -78,19 +83,32 @@ collections:
         default: []
         hint: Reuse existing tags before inventing new ones, e.g. UX Research, EdTech.
 
-      - label: Cover image
-        name: cover
+      - label: Teaser (vertical)
+        name: teaserVertical
         widget: image
         required: false
-        hint: Stored next to the entry so Astro can optimise it at build time.
+        hint: Portrait teaser, for tall cards. Stored next to the entry so Astro can optimise it.
 
-      - label: Cover alt text
-        name: coverAlt
+      - label: Teaser (vertical) alt text
+        name: teaserVerticalAlt
         widget: string
         required: false
         hint: >-
-          REQUIRED if a cover image is set — the build fails without it. Describe
-          the image; don't repeat the title.
+          REQUIRED if the vertical teaser is set — the build fails without it.
+          Describe the image; don't repeat the title.
+
+      - label: Teaser (horizontal)
+        name: teaserHorizontal
+        widget: image
+        required: false
+        hint: Landscape teaser, for wide cards.
+
+      - label: Teaser (horizontal) alt text
+        name: teaserHorizontalAlt
+        widget: string
+        required: false
+        hint: >-
+          REQUIRED if the horizontal teaser is set — the build fails without it.
 
       - label: Figma URL
         name: figmaUrl
@@ -106,15 +124,348 @@ collections:
         pattern: ['^https?://.+', 'Must be a full URL starting with http(s)://']
         hint: Where the code lives, if the project has a repo.
 
-      - label: Artefacts
-        name: artefacts
+      # The case study, in narrative order. All eight sections are the same
+      # shape, so the field list is written once here and aliased below —
+      # keeping eight copies in step by hand is how they drift.
+      - label: Context
+        name: context
+        widget: object
+        required: false
+        collapsed: true
+        fields: &case_section
+          - label: Sub-title
+            name: subtitle
+            widget: string
+            required: false
+            hint: Sits next to the section heading.
+
+          - label: Description
+            name: description
+            widget: markdown
+            hint: The section itself. Required once the section exists at all.
+
+          - label: Artefacts
+            name: artefacts
+            widget: list
+            required: false
+            label_singular: Artefact
+            summary: '{{fields.alt}}'
+            hint: >-
+              Sketches, flows, screens, photos. Alt text is required on every one —
+              the build fails without it.
+            fields:
+              - { label: Image, name: src, widget: image }
+              - label: Alt text
+                name: alt
+                widget: string
+                hint: Describe what the image shows. Not optional.
+
+          - label: Key points
+            name: keyPoints
+            widget: list
+            required: false
+            hint: The section in bullets — what a reader in a hurry should take away.
+
+      - label: How might we?
+        name: hmw
+        widget: object
+        required: false
+        collapsed: true
+        fields: *case_section
+
+      - label: Exploration
+        name: exploration
+        widget: object
+        required: false
+        collapsed: true
+        fields: *case_section
+
+      - label: Definition
+        name: definition
+        widget: object
+        required: false
+        collapsed: true
+        fields: *case_section
+
+      - label: Development
+        name: development
+        widget: object
+        required: false
+        collapsed: true
+        fields: *case_section
+
+      - label: Feedback
+        name: feedback
+        widget: object
+        required: false
+        collapsed: true
+        fields: *case_section
+
+      - label: Learning
+        name: learning
+        widget: object
+        required: false
+        collapsed: true
+        fields: *case_section
+
+      - label: Behind the scenes
+        name: behindTheScenes
+        widget: object
+        required: false
+        collapsed: true
+        fields: *case_section
+
+  # ---------------------------------------------------------------------------
+  # Playground — small self-directed builds.
+  # ---------------------------------------------------------------------------
+  - name: playground
+    label: Playground
+    label_singular: Experiment
+    folder: src/content/playground
+    media_folder: _media
+    public_folder: ./_media
+    extension: md
+    format: frontmatter
+    create: true
+    slug: '{{slug}}'
+    summary: '{{title}}'
+    sortable_fields: [title]
+    fields:
+      - label: Title
+        name: title
+        widget: string
+
+      - label: Summary
+        name: summary
+        widget: text
+        pattern: ['^.{1,280}$', 'Keep the summary under 280 characters.']
+        hint: One or two sentences — this is the whole description.
+
+      - label: Teaser
+        name: teaser
+        widget: image
+        required: false
+
+      - label: Teaser alt text
+        name: teaserAlt
+        widget: string
+        required: false
+        hint: REQUIRED if a teaser is set — the build fails without it.
+
+      - label: GitHub URL
+        name: githubUrl
+        widget: string
+        required: false
+        pattern: ['^https?://.+', 'Must be a full URL starting with http(s)://']
+
+      - label: Figma URL
+        name: figmaUrl
+        widget: string
+        required: false
+        pattern: ['^https?://.+', 'Must be a full URL starting with http(s)://']
+
+      - label: Additional URL
+        name: additionalUrl
+        widget: string
+        required: false
+        pattern: ['^https?://.+', 'Must be a full URL starting with http(s)://']
+        hint: Anything that isn't GitHub or Figma — a demo, a write-up, a video.
+
+  # ---------------------------------------------------------------------------
+  # Inspiration — other people's work worth pointing at.
+  # ---------------------------------------------------------------------------
+  - name: inspiration
+    label: Inspiration
+    label_singular: Reference
+    folder: src/content/inspiration
+    media_folder: _media
+    public_folder: ./_media
+    extension: md
+    format: frontmatter
+    create: true
+    slug: '{{slug}}'
+    summary: '{{title}}'
+    sortable_fields: [title]
+    fields:
+      - label: Title
+        name: title
+        widget: string
+
+      - label: URL
+        name: url
+        widget: string
+        pattern: ['^https?://.+', 'Must be a full URL starting with http(s)://']
+        hint: Where it lives. The point of the entry, so it isn't optional.
+
+      - label: Summary
+        name: summary
+        widget: text
+        pattern: ['^.{1,280}$', 'Keep the summary under 280 characters.']
+        hint: Why it's here — what you took from it, not what it is.
+
+      - label: Teaser
+        name: teaser
+        widget: image
+        required: false
+
+      - label: Teaser alt text
+        name: teaserAlt
+        widget: string
+        required: false
+        hint: REQUIRED if a teaser is set — the build fails without it.
+
+  # ---------------------------------------------------------------------------
+  # Curiosity — a thought and the question it leaves open.
+  # ---------------------------------------------------------------------------
+  - name: curiosity
+    label: Curiosity
+    label_singular: Thought
+    folder: src/content/curiosity
+    extension: md
+    format: frontmatter
+    create: true
+    # No title field, so Decap needs telling what names the entry.
+    identifier_field: thought
+    slug: '{{slug}}'
+    summary: '{{thought}}'
+    fields:
+      - label: Thought
+        name: thought
+        widget: text
+        hint: The observation.
+
+      - label: Corresponding question
+        name: question
+        widget: text
+        hint: What it makes you want to find out. Keep it a question.
+
+  # ---------------------------------------------------------------------------
+  # Resume — one entry per position or qualification.
+  # Editing here stales public/cv/max-pinkert-cv.pdf until `npm run cv` is
+  # re-run and the result committed. See docs/resume-and-handshake.md.
+  # ---------------------------------------------------------------------------
+  - name: resume
+    label: Résumé
+    label_singular: Entry
+    folder: src/content/resume
+    media_folder: _media
+    public_folder: ./_media
+    extension: md
+    format: frontmatter
+    create: true
+    identifier_field: role
+    slug: '{{start}}-{{slug}}'
+    summary: '{{start}} — {{role}}, {{company}}'
+    sortable_fields: [start, role, company]
+    fields:
+      - label: Logo
+        name: logo
+        widget: image
+        required: false
+        hint: Company or institution mark.
+
+      - label: Logo alt text
+        name: logoAlt
+        widget: string
+        required: false
+        hint: REQUIRED if a logo is set — the build fails without it.
+
+      - label: Start
+        name: start
+        widget: string
+        pattern: ['^\d{4}-(0[1-9]|1[0-2])$', 'Use YYYY-MM, e.g. 2025-03']
+        hint: 'YYYY-MM. The timeline sorts on this, so the format matters.'
+
+      - label: End
+        name: end
+        widget: string
+        required: false
+        pattern: ['^\d{4}-(0[1-9]|1[0-2])$', 'Use YYYY-MM, e.g. 2025-03']
+        hint: 'YYYY-MM. Leave empty for anything still running — it renders as "present".'
+
+      - label: Role
+        name: role
+        widget: string
+        hint: Job title, or the degree for an education entry.
+
+      - label: Company
+        name: company
+        widget: string
+        hint: Employer, client or institution.
+
+      - label: Kind
+        name: kind
+        widget: select
+        options: [work, education]
+        default: work
+        hint: >-
+          Tells positions and qualifications apart on the printed CV. Not a
+          constraint on how /resume looks.
+
+      - label: Summary
+        name: summary
+        widget: text
+        hint: 'One or two sentences: what the work was, and what came of it.'
+
+      - label: Project URLs
+        name: projectUrls
         widget: list
         required: false
-        label_singular: Artefact
+        max: 3
+        default: []
+        hint: Up to three things to point at. Ordered — the first one leads.
+
+  # ---------------------------------------------------------------------------
+  # Release notes — what changed on the site, and when.
+  # ---------------------------------------------------------------------------
+  - name: release-notes
+    label: Release notes
+    label_singular: Release
+    folder: src/content/release-notes
+    media_folder: _media
+    public_folder: ./_media
+    extension: md
+    format: frontmatter
+    create: true
+    identifier_field: date
+    slug: '{{year}}-{{month}}-{{day}}'
+    summary: '{{date}}'
+    sortable_fields: [date]
+    fields:
+      - label: Date
+        name: date
+        widget: datetime
+        date_format: 'YYYY-MM-DD'
+        time_format: false
+        # Without this a release can slip a day backwards across timezones.
+        picker_utc: true
+
+      # A release rarely moves all three at once, so all three are optional.
+      - label: User experience
+        name: userExperience
+        widget: markdown
+        required: false
+        hint: What changed in how the site behaves.
+
+      - label: User interface
+        name: userInterface
+        widget: markdown
+        required: false
+        hint: What changed in how it looks.
+
+      - label: Tools
+        name: tools
+        widget: markdown
+        required: false
+        hint: What changed under it — build, CMS, tokens, workflow.
+
+      - label: Screenshots
+        name: screenshots
+        widget: list
+        required: false
+        label_singular: Screenshot
         summary: '{{fields.alt}}'
-        hint: >-
-          Sketches, flows, screens, photos. Alt text is required on every one —
-          the build fails without it.
+        hint: Alt text is required on every one — the build fails without it.
         fields:
           - { label: Image, name: src, widget: image }
           - label: Alt text
@@ -122,7 +473,12 @@ collections:
             widget: string
             hint: Describe what the image shows. Not optional.
 
-      - label: Case study
-        name: body
-        widget: markdown
-        hint: The case study itself.
+      - label: File
+        name: file
+        widget: file
+        required: false
+        # The one upload that does NOT go in src/. It is served as-is for
+        # download rather than optimised, so it has to live in public/.
+        media_folder: /public/releases
+        public_folder: /releases
+        hint: An optional attachment. Downloaded as-is, not optimised.

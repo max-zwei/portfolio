@@ -4,7 +4,7 @@
  * The CV is not a second document. It is the /resume page printed to A4 by the
  * same rules that style it on screen (the `@media print` block in
  * src/pages/resume.astro), so there is exactly one place where a position is
- * written down: src/config/resume.ts.
+ * written down: the `resume` content collection in src/content/resume/.
  *
  * Run it with `npm run cv`, which builds first — this script only reads dist/.
  *

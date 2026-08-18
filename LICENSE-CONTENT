@@ -4,8 +4,8 @@ This covers the portfolio *content* in this repository — the part that is the
 work rather than the machinery:
 
   - Case studies and any written copy in src/content/
-  - Images, media and design files, including public/og/ and
-    src/content/projects/_media/
+  - Images, media and design files, including public/og/, public/releases/
+    and every src/content/*/_media/ folder
   - Biographical copy and the site's written text in src/config/site.ts
     and src/pages/
   - The written record in behind-the-scenes/ (the READMEs and agent-run logs)

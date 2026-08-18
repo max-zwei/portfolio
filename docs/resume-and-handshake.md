@@ -1,35 +1,38 @@
 # CV and handshake
 
-Two documents the site hosts alongside the portfolio itself. They are not case
-studies, so neither goes through the content collection or the CMS — each is one
-file you edit directly.
+Two documents the site hosts alongside the portfolio itself. Neither is a case
+study, and they are sourced differently: the CV is a content collection, the
+handshake is a single markdown page you edit directly.
 
-| Document  | URL          | Source                                                | Also                     |
-| --------- | ------------ | ----------------------------------------------------- | ------------------------ |
-| CV        | `/resume`    | [`src/config/resume.ts`](../src/config/resume.ts)     | `/cv/max-pinkert-cv.pdf` |
-| Handshake | `/handshake` | [`src/pages/handshake.md`](../src/pages/handshake.md) | —                        |
+| Document  | URL          | Source                                                     | Also                     |
+| --------- | ------------ | ---------------------------------------------------------- | ------------------------ |
+| CV        | `/resume`    | `src/content/resume/` + `CV_INTRO` in `src/config/site.ts` | `/cv/max-pinkert-cv.pdf` |
+| Handshake | `/handshake` | [`src/pages/handshake.md`](../src/pages/handshake.md)      | —                        |
 
 ## The CV
 
 `/resume` is the CV. The PDF is not a second document — it is that page, printed
 to A4 by the same `@media print` rules that style it on screen. So a position is
-written down exactly once, in `src/config/resume.ts`, and the two can't disagree.
+written down exactly once and the two can't disagree.
 
 ### Editing it
 
-Everything lives in `src/config/resume.ts`:
+Positions and qualifications are a **content collection**, one markdown file per
+entry in `src/content/resume/`, editable in the CMS under **Résumé**. Fields are
+documented in [`docs/content-schema.md`](./content-schema.md); the short version:
 
-- **`intro`** — the paragraph at the top. The only prose on the CV the timeline
-  can't tell you, so it's written by hand rather than derived.
-- **`timeline`** — one array of positions _and_ qualifications. `kind` is
-  `'work'` or `'education'`; the page sorts newest first on `start`, so the order
-  in the file is a convenience, not the contract.
+- `role` + `company` + `summary` — what it was.
+- `kind` is `'work'` or `'education'`. It exists so the printed CV can tell a
+  position from a qualification; it is not a constraint on how `/resume` looks.
+- `start` and `end` are `YYYY-MM` strings. The page sorts newest first on `start`,
+  so the order of the files on disk is a convenience, not the contract. Leave
+  `end` out for anything still running and the entry renders as "present".
 
-Dates are `YYYY-MM` strings. Leave `end` out for anything still running and the
-entry renders as "present".
+The **opening paragraph** is the exception. It is bio copy rather than a position,
+so it stays in code as `CV_INTRO` in [`src/config/site.ts`](../src/config/site.ts).
 
-The file ships full of `[bracketed placeholders]`. That is deliberate — an
-unfinished CV should be obvious in the PDF, not subtle.
+Everything ships as `[bracketed placeholders]`. That is deliberate — an unfinished
+CV should be obvious in the PDF, not subtle.
 
 ### Regenerating the PDF
 
@@ -39,8 +42,12 @@ npm run cv     # builds the site, then prints /resume to public/cv/
 
 The PDF is committed, because GitHub Pages serves `public/` as-is and a build
 can't produce a file that the same build needs to deploy. **Re-run `npm run cv`
-whenever `resume.ts` changes, and commit the result** — nothing checks this for
+whenever a résumé entry changes, and commit the result** — nothing checks this for
 you, and a stale PDF is worse than no PDF.
+
+Moving the CV into the CMS makes this easier to forget, not harder: a save in
+`/admin` now opens a PR that changes the page and leaves the PDF behind. If you
+edit the résumé through the CMS, run `npm run cv` before merging.
 
 [`scripts/render-cv.mjs`](../scripts/render-cv.mjs) serves `dist/` on a random
 port and prints `/resume` with Chromium via `playwright-core`. It needs a browser

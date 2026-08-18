@@ -2,8 +2,12 @@
 
 The CMS lives at `/admin` and is configured in
 [`public/admin/config.yml`](../public/admin/config.yml). It edits the markdown in
-`src/content/projects/` and commits straight back to this repo — there is no
-database and no separate content API.
+`src/content/` and commits straight back to this repo — there is no database and
+no separate content API.
+
+Six collections: **Projects**, **Playground**, **Inspiration**, **Curiosity**,
+**Résumé** and **Release notes**. Field reference:
+[`docs/content-schema.md`](./content-schema.md).
 
 `publish_mode: editorial_workflow` is on, so saving a project opens a **draft pull
 request** rather than committing to `main`. Nothing goes live until that PR is
@@ -124,7 +128,22 @@ Field reference and the change checklist: [`docs/content-schema.md`](./content-s
 
 ## Media
 
-Cover images upload to `src/content/projects/_media/` and are referenced as
-`./_media/<name>`, which keeps them inside `src/` where Astro can optimise and
-hash them. Images in `public/` are served as-is with no optimisation, which is why
-they don't go there.
+Each collection has its own `_media/` folder — `src/content/projects/_media/`,
+`src/content/playground/_media/` and so on. Uploads land next to the entry that
+uses them and are referenced as `./_media/<name>`, which keeps them inside `src/`
+where Astro can optimise and hash them. Images in `public/` are served as-is with
+no optimisation, which is why they don't go there.
+
+`config.yml` still needs a top-level `media_folder`, but every collection
+overrides it, so that global value is a fallback nothing actually uses.
+
+**One deliberate exception:** the **File** attachment on a release note uploads to
+`public/releases/`. That one is a download rather than an image — it should reach
+the reader byte-for-byte, and anything Astro optimises by definition doesn't.
+
+## Editing the résumé here stales the PDF
+
+`public/cv/max-pinkert-cv.pdf` is printed from `/resume`, which now reads the
+`resume` collection. So saving a résumé entry in the CMS changes the page but
+**not** the committed PDF. Re-run `npm run cv` and commit the result — nothing
+checks this for you. See [`docs/resume-and-handshake.md`](./resume-and-handshake.md).

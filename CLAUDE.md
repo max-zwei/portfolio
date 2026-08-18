@@ -23,7 +23,7 @@ deliberate gestures rather than a page full of them.
 | --------- | ----------------------------- | ------------------------------------------------------------------------------------------------------- |
 | Framework | Astro (static output)         | No SSR. Zero client JS unless a feature genuinely needs it.                                             |
 | Styling   | Plain CSS + custom properties | No Tailwind, no CSS-in-JS. Scoped `<style>` blocks in `.astro` files.                                   |
-| Content   | Astro content collections     | Markdown in `src/content/projects/`, schema in `src/content.config.ts`.                                 |
+| Content   | Astro content collections     | Six collections. Markdown in `src/content/`, schemas in `src/content.config.ts`.                        |
 | CMS       | Decap CMS                     | `public/admin/`. Writes markdown back to the repo. Local editing only, by decision — see `docs/cms.md`. |
 | Hosting   | GitHub Pages via Actions      | `.github/workflows/deploy.yml`, pushes to `main` only.                                                  |
 | Design    | Figma via MCP                 | `.mcp.json`, workflow in `docs/design-to-code.md`.                                                      |
@@ -78,10 +78,14 @@ Real content comes from Max, through the CMS or a direct instruction.
 
 ```
 src/
-  config/site.ts        Site-wide constants (name, slogan, links). Edit here, not inline.
-  config/resume.ts      CV intro + timeline. The only place a position is written down.
-  content.config.ts     Project schema (zod). Mirror changes in public/admin/config.yml.
-  content/projects/     Case studies as markdown; images in _media/.
+  config/site.ts        Site-wide constants (name, slogan, links, CV intro). Edit here, not inline.
+  content.config.ts     Collection schemas (zod). Mirror changes in public/admin/config.yml.
+  content/projects/     Case studies as markdown; images in _media/. Eight sections per project.
+  content/playground/   Small self-directed builds.
+  content/inspiration/  Other people's work worth pointing at.
+  content/curiosity/    A thought and the question it leaves open.
+  content/resume/       The CV, one entry per position. Printed to public/cv/.
+  content/release-notes/ What changed on the site, and when.
   layouts/              BaseLayout.astro — head, meta, OG tags, skip link.
                         ProseLayout.astro — markdown document pages.
   pages/                File-based routes. handshake.md is a markdown page.
@@ -98,7 +102,7 @@ scripts/render-cv.mjs   Prints the built /resume page to that PDF.
 docs/                   Deployment, content schema, design-to-code handoff, CMS, CV.
 ```
 
-The CV is `/resume` printed to A4 — one source (`src/config/resume.ts`), two
+The CV is `/resume` printed to A4 — one source (the `resume` collection), two
 outputs. Change the data and re-run `npm run cv`, or the committed PDF goes stale.
 See `docs/resume-and-handshake.md`.
 
@@ -118,7 +122,7 @@ otherwise invisible until the build fails.
 
 ## When changing content fields
 
-A project field lives in three places. Change all three or the CMS will write
+A content field lives in three places. Change all three or the CMS will write
 frontmatter the build rejects:
 
 1. `src/content.config.ts` — the zod schema (the enforcer)
