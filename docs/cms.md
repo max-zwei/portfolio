@@ -21,7 +21,8 @@ npm run dev           # terminal 2
 ```
 
 Then open <http://localhost:4321/admin/>. `local_backend: true` makes the CMS talk
-to the proxy instead of GitHub, so there is no login step and no OAuth. Changes
+to the proxy instead of GitHub, so there is no OAuth. There is still a Login
+button — it asks for nothing, just click it. Changes
 land in your working tree as ordinary file edits for you to commit.
 
 This is the fastest path and the one to use while the schema is still moving.
@@ -125,6 +126,24 @@ enforces that automatically. When they drift, the CMS saves happily and the buil
 fails afterwards — the error surfaces in Actions, not in the CMS.
 
 Field reference and the change checklist: [`docs/content-schema.md`](./content-schema.md).
+
+### `required` is deliberately not symmetric
+
+Two fields are optional in `config.yml` but conditionally required in the zod
+schema. That asymmetry is on purpose, not drift — don't "fix" it:
+
+- **A case-study section's `description`.** Decap validates `required` sub-fields
+  inside an object widget even when the object itself is optional and untouched,
+  so marking it required there made **all eight sections mandatory** — you could
+  not save a project without writing every one. It is `required: false` in the
+  CMS, and zod still rejects a section that exists with no description.
+- **Alt text** (`teaserVerticalAlt`, `teaserHorizontalAlt`, `teaserAlt`,
+  `logoAlt`). The CMS cannot express "required only when the image is set", so
+  the `.refine()` in `src/content.config.ts` is what enforces it. The CMS will let
+  you save an image with no alt text; the build then fails.
+
+The rule of thumb: the CMS blocks what it can express, and zod is the backstop
+for anything conditional.
 
 ## Media
 

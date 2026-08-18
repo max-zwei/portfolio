@@ -49,7 +49,9 @@ collections:
     format: frontmatter
     create: true
     slug: '{{slug}}'
-    summary: '{{title}} ({{year}})'
+    # {{year}} is Decap's reserved date token, not the year field — it renders
+    # empty here, so the field has to be addressed explicitly.
+    summary: '{{title}} ({{fields.year}})'
     sortable_fields: [year, title]
     fields:
       - label: Title
@@ -142,7 +144,10 @@ collections:
           - label: Description
             name: description
             widget: markdown
-            hint: The section itself. Required once the section exists at all.
+            required: false
+            hint: >-
+              The section itself. Leave the whole section empty to omit it; the
+              build rejects a section that has anything else but no description.
 
           - label: Artefacts
             name: artefacts
