@@ -156,9 +156,14 @@ const shadows = ['sm', 'md', 'lg'];
         <p>
           So Lemon earns its keep as a <em>large fill</em> — dark text on a Lemon
           block is 15.62:1, which is excellent. It does not work as a thin rule, a
-          small icon, a focus ring, or small text. Where an accent needs to be legible
-          at small size, use <code>pickled/600</code> (5.65:1) and let Lemon carry
-          the area instead of the line.
+          small icon, a focus ring, or small text.
+        </p>
+        <p>
+          The accent doing the small-text work is <code>pickled/500</code>. It
+          clears 4.5 on <code>neutral/white</code> (4.53) but not on
+          <code>neutral/100</code> (4.00), so on the page background it is a large-text
+          and non-text colour rather than body ink. That is a reading off the table
+          above, not a recommendation — the ramp ends at 500 by design.
         </p>
       </div>
     </section>

@@ -166,7 +166,7 @@ every colour against every background it actually sits on, which is the check.
 A dark mode would be a genuine refactor rather than a remap, should it
 ever be wanted.
 
-These tokens also exist as **Figma Variables** in the portfolio file — 74 of
+These tokens also exist as **Figma Variables** in the portfolio file — 73 of
 them across 6 collections, with names that match the CSS one-for-one
 (`color/lemon/500` in Figma is `--color-lemon-500` in code, and Dev Mode reports
 it that way). Tune the values in Figma; the names don't move. **The token

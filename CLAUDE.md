@@ -30,6 +30,27 @@ deliberate gestures rather than a page full of them.
 
 ## Non-negotiables
 
+**The Figma file is the design decision, not a draft.** If it says
+`color/pickled/500`, that is the answer — including when it fails a contrast
+check, breaks a ramp's symmetry, or looks like an oversight. You may **raise**
+it: in an audit, in a PR description, in the contrast table on `/styleguide`.
+You may not **resolve** it. Do not add a token, darken a value, extend a ramp,
+or substitute a different step because the design appeared to need one.
+
+> **The example this rule came from.** An agent added `color/pickled/600`
+> (`#b02546`) so accent text could clear 4.5:1, because `pickled/500` reaches
+> only 4.00:1 on `neutral/100`. The engineering was sound and the finding was
+> real. The call was still wrong: 500 on that background is a decision Max had
+> made, the replacement hex was invented rather than designed, and it reached
+> the live palette before he saw it. The correct move was to report the ratio
+> and stop.
+
+This does not weaken the accessibility rules below — contrast still gets
+measured and still gets reported. What it settles is who fixes it: the agent
+surfaces the number, Max picks the colour. The long form, with the case that
+produced it, is [Who decides](docs/design-system.md#who-decides) in the design
+system rule book.
+
 **Tokens.** Never hardcode a value that exists as a token. No hex colours, no
 `16px`, no `font-family` in components. Use the token names directly —
 `var(--color-neutral-700)`, `var(--space-md)`. If a design needs a value that
@@ -59,6 +80,8 @@ consequence of the choice above, not a problem to solve pre-emptively.
 - Respect `prefers-reduced-motion`; the global stylesheet already does, so don't
   reintroduce unconditional animation.
 - Check contrast. One scheme means no dark-mode escape hatch for a weak pairing.
+  Report what you measure; don't repaint the design to fix it — see the first
+  non-negotiable.
 - `npm run lint:html` enforces alt text, heading order and labels against the
   built output. It runs in CI, so a regression fails the PR.
 

@@ -105,13 +105,13 @@ prerequisite for that tool, not a suggestion.
 
 ### The collections, as built
 
-74 variables across 6 collections, verified against the file on 17 Aug 2026.
+73 variables across 6 collections, verified against the file on 17 Aug 2026.
 Every one carries a description and WEB code syntax, and no two variables emit
 the same code syntax.
 
 | Figma collection | Vars | JSON key | CSS prefix                                          |
 | ---------------- | ---- | -------- | --------------------------------------------------- |
-| Color            | 33   | `color`  | `--color-*`                                         |
+| Color            | 32   | `color`  | `--color-*`                                         |
 | Typography       | 20   | `font`   | `--font-*`, `--line-height-*`, `--letter-spacing-*` |
 | Spacing          | 9    | `space`  | `--space-*`                                         |
 | Radius           | 4    | `radius` | `--radius-*`                                        |
@@ -122,7 +122,8 @@ There is no Semantic collection. One existed briefly and was deleted — see rul
 2 above.
 
 The colour ramps are `lemon`, `pickled`, `herbs`, `tomato` and `neutral`. Lemon
-stops at 500; the others run to 600. The neutral ends are **named, not
+and pickled stop at 500; herbs and tomato run to 600. Where a ramp ends is a
+design decision — do not extend one to reach a contrast threshold. The neutral ends are **named, not
 numbered** — `color/neutral/white` and `color/neutral/black`, because neither is
 a pure white (`#fdfcf8`) or a pure black (`#040302`).
 

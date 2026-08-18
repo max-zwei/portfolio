@@ -48,6 +48,14 @@ because the skill described them.
 **Don't let it decide anything aesthetic.** Skills should encode process, not
 taste. Taste is the part I'm not delegating.
 
+The clearest case of this so far: an agent found that my accent colour hits
+4.00:1 against the page background, below the 4.5 threshold for body text. Good
+catch. It then invented a darker step, added it to the Figma file and to the
+palette, and shipped it. Every part of that was competent except the part that
+mattered — the colour was mine to choose. The finding was worth having; the fix
+wasn't its to make. `CLAUDE.md` now opens with that rule, because a system that
+can spot a problem will reach for a solution unless you tell it not to.
+
 ## Adding one
 
 Drop the `.md` file in here, add a row to the first table, and say what it was

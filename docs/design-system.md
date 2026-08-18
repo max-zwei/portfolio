@@ -12,15 +12,40 @@ side door. See rule 2 in [`design-to-code.md`](./design-to-code.md).
 Everything below is either **decided** — visible in the code today, with the
 line to prove it — or listed under [Open questions](#open-questions), which is
 where anything not yet decided stays until Max decides it. Nothing in the
-decided sections was invented to fill a gap.
+decided sections was invented to fill a gap — one entry once was, and
+[Who decides](#who-decides) is the rule that came out of it.
+
+## Who decides
+
+**The Figma file is the design decision, not a draft.** Every value in it is a
+decision Max made, including the ones that look like oversights: a ramp that
+stops one step short, a colour that misses a contrast threshold, an asymmetry
+between two scales.
+
+An agent's job when it finds one of those is to **report the number and stop**.
+Say it in the audit, in the PR description, in the contrast table on
+`/styleguide` — all of those are the right channel. What is never the right move
+is resolving it: adding a token, darkening a value, extending a ramp, or
+swapping in a different step because the design appeared to need one.
+
+> **The case this came from.** `pickled/500` scores 4.00:1 on the `neutral/100`
+> page ground, under the 4.5 needed for body text. An agent found that, invented
+> `color/pickled/600` (`#b02546`) to clear it, wrote it into Figma and the
+> palette, and shipped it — and an earlier version of this file then wrote it up
+> as a decided part of the system. The measurement was correct and worth having.
+> Everything after the measurement was someone else's decision to make.
+
+This does not soften the accessibility rules. Contrast still gets measured, and
+a failure still gets reported loudly. It settles only who resolves it: the agent
+supplies the ratio, Max picks the colour.
 
 ## The rule that outranks the rest
 
 **Colour never carries meaning on its own.** Every place the site uses colour to
 say something, the thing is also said in text or shape: the CV timeline dots are
-backed by a written `.entry__kind` label (`src/pages/resume.astro:240`), and the
+backed by a written `.entry__kind` label (`src/pages/resume.astro:239`), and the
 styleguide's contrast tints are backed by the printed ratio and a
-visually-hidden verdict (`src/pages/styleguide.astro:418`). Both carry a comment
+visually-hidden verdict (`src/pages/styleguide.astro:422`). Both carry a comment
 saying so. Keep it that way — a status that exists only as a hue is a bug.
 
 ## Colour
@@ -34,8 +59,8 @@ means ≥ 4.5, "large text and UI" means ≥ 3.0.
 The one colour that says this is Max's site. Used as **atmosphere and marker,
 never as ink**: the radial wash bleeding into the hero corner at 22% opacity
 (`src/pages/index.astro:53-58`), the underline that appears on link hover
-(`index.astro:125`, `resume.astro:179`), the timeline dot for work entries
-(`resume.astro:231`).
+(`index.astro:125`, `resume.astro:178`), the timeline dot for work entries
+(`resume.astro:230`).
 
 **Hard limit:** every lemon step is decorative-only on every light ground —
 `lemon/500` is 1.28:1 on `neutral/white` and 1.14:1 on the `neutral/100` page
@@ -49,23 +74,31 @@ Use it once per view. The hero has one lemon gesture, not three.
 
 Sharp pink-red against the yellow. Two established jobs:
 
-- **The focus ring**, `pickled/500` (`tokens.css:171`). It is a non-text UI
+- **The focus ring**, `pickled/500` (`tokens.css:170`). It is a non-text UI
   indicator, so the 3.45–4.00:1 it scores on the grounds clears the 3.0 bar.
   Don't reuse this colour for decoration that could be mistaken for focus.
-- **Emphasis in running text**, `pickled/600` — the link hover colour
-  (`global.css:100`) and the italic serif emphasis in the hero slogan
-  (`index.astro:93`).
+- **Emphasis**, also `pickled/500` — the link hover colour (`global.css:100`),
+  the italic serif emphasis in the hero slogan (`index.astro:93`), the CV role
+  and organisation lines (`resume.astro:142,253`).
 
-**Limit:** `pickled/600` is the text-safe step (6.39:1 on white, 4.88:1 on
-`neutral/200`). `pickled/500` is AA on white but drops to AA Large on the
-`neutral/100` page background — treat 500 as the ring and large display type,
-600 as the one you set body-sized text in. 100–400 are decorative.
+**Limit:** the ramp ends at 500. `pickled/500` is **4.53:1 on `neutral/white`**
+and **4.00:1 on the `neutral/100` page ground** — so it clears AA for body text
+on a raised white surface, and is large-text-and-UI only on the page itself.
+100–400 are decorative.
+
+That gap is a known and accepted state, not a gap to fill. An earlier agent
+"fixed" it by inventing a `pickled/600` dark enough to clear 4.5 everywhere, and
+this file previously documented that step as decided. It was not: where the ramp
+ends is Max's call, and the hex was extrapolated rather than designed. It has
+been removed from Figma and from the code. **If small pickled text on the page
+ground matters for a future design, that is a question for Max — see
+[Who decides](#who-decides).**
 
 ### Herbs — the settled green
 
 Currently the quiet positive: the education dot in the CV timeline
-(`herbs/400`, `resume.astro:237`) and the "passes for body text" tint in the
-styleguide contrast table (`herbs/100`, `styleguide.astro:420`). Both are
+(`herbs/400`, `resume.astro:236`) and the "passes for body text" tint in the
+styleguide contrast table (`herbs/100`, `styleguide.astro:426`). Both are
 paired with words, per the rule above.
 
 **Limit:** `herbs/600` is the only step that carries body text on light
@@ -74,7 +107,7 @@ tints.
 
 ### Tomato — the warm signal
 
-Declared as "used sparingly" (`tokens.css:53`) and **not yet used anywhere on
+Declared as "used sparingly" (`tokens.css:52`) and **not yet used anywhere on
 the site**. What it is for is an open question below; what is already true is
 the contrast: `tomato/600` is the strongest signal colour available on light
 grounds (8.39:1 on white, AAA), `tomato/500` carries body text on white and
@@ -87,7 +120,7 @@ Warm-tinted, so they sit with the palette rather than against it.
 | Token                 | Job today                                                                                                                                                                                                       |
 | --------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `neutral-100`         | The page ground. `body` background (`global.css:30`).                                                                                                                                                           |
-| `neutral-white`       | The raised ground — things sitting above the page (the skip link, the styleguide callouts) — and the print ground, since the warm off-white is a screen decision and a CV prints on white (`resume.astro:297`). |
+| `neutral-white`       | The raised ground — things sitting above the page (the skip link, the styleguide callouts) — and the print ground, since the warm off-white is a screen decision and a CV prints on white (`resume.astro:296`). |
 | `neutral-200` / `300` | Hairlines. Section rules and borders (`index.astro:118,132`).                                                                                                                                                   |
 | `neutral-700`         | Quiet text — eyebrows, notes, footers, metadata. 7.91:1 on the page ground, so it is genuinely readable, not greyed-out decoration.                                                                             |
 | `neutral-black`       | Body and heading ink (`global.css:29`).                                                                                                                                                                         |
