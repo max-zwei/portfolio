@@ -1,11 +1,8 @@
 FONTS IN THIS DIRECTORY
 
-Third-party typefaces, redistributed here so the site can self-host them and
-make no third-party requests.
+Third-party typefaces, redistributed here so the site can self-host them and make no third-party requests.
 
-Neither the repository's MIT licence (../../LICENSE) nor its content licence
-(../../LICENSE-CONTENT) applies to these files. They are covered by their own
-terms, set out below.
+Neither the repository's MIT licence (../../LICENSE) nor its content licence (../../LICENSE-CONTENT) applies to these files. They are covered by their own terms, set out below.
 
 --------------------------------------------------------------------------
 
@@ -44,8 +41,7 @@ terms, set out below.
 --------------------------------------------------------------------------
 
   JetBrains Mono is the third face in the type system but is NOT in this
-  directory. It comes from npm (@fontsource-variable/jetbrains-mono) and is
-  imported in src/layouts/BaseLayout.astro, so the bundler emits it.
+  directory. It comes from npm (@fontsource-variable/jetbrains-mono) and is imported in src/layouts/BaseLayout.astro, so the bundler emits it.
 
   Copyright    Copyright 2020 The JetBrains Mono Project Authors
                https://github.com/JetBrains/JetBrainsMono
