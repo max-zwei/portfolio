@@ -93,11 +93,6 @@ a {
   color: inherit;
   text-decoration-thickness: 1px;
   text-underline-offset: 0.2em;
-  transition: color var(--duration-fast) var(--easing-standard);
-}
-
-a:hover {
-  color: var(--color-pickled-500);
 }
 
 /* ---------------------------------------------------------------
