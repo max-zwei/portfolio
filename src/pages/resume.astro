@@ -1,14 +1,14 @@
 ---
 import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { SITE, LINKS, CV_INTRO } from '../config/site';
+import { SITE, LINKS, CV_INTRO, withBase } from '../config/site';
 
 // This page is the CV. The PDF is a print of it, rendered by `npm run pdf` —
 // so anything added here has to survive A4 as well as a browser window.
 // See docs/resume.md.
 
 /** Written by scripts/render-pdf.mjs. Kept in one place so page and script agree. */
-const CV_PDF = '/cv/max-pinkert-cv.pdf';
+const CV_PDF = withBase('/cv/max-pinkert-cv.pdf');
 
 const MONTHS = [
   'Jan',
@@ -54,7 +54,7 @@ const contact = [
   <main id="main" class="container cv">
     <header class="cv__head">
       <p class="cv__back no-print">
-        <a href="/">&larr; Portfolio</a>
+        <a href={withBase('/')}>&larr; Portfolio</a>
       </p>
       <p class="eyebrow">Curriculum vitae</p>
       <h1 class="cv__name">{SITE.name}</h1>

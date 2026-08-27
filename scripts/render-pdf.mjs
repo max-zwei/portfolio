@@ -18,9 +18,18 @@ import { createServer } from 'node:http';
 import { dirname, extname, join, normalize, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { chromium } from 'playwright-core';
+import astroConfig from '../astro.config.mjs';
 
 const root = resolve(fileURLToPath(new URL('../', import.meta.url)));
 const dist = join(root, 'dist');
+
+/*
+ * The built pages reference their assets under Astro's `base`, so the server
+ * below has to answer on that prefix or the print silently loses its fonts and
+ * styles. Read from astro.config.mjs rather than restated, so the two cannot
+ * drift.
+ */
+const base = (astroConfig.base ?? '').replace(/\/$/, '');
 const DOCUMENTS = [
   { route: '/resume', output: join('cv', 'max-pinkert-cv.pdf') },
   {
@@ -49,7 +58,15 @@ const MIME = {
 function createStaticServer(directory) {
   return createServer(async (request, response) => {
     const { pathname } = new URL(request.url ?? '/', 'http://localhost');
-    const requested = join(directory, normalize(decodeURIComponent(pathname)));
+    // dist/ is the base, not a folder inside it.
+    const withoutBase =
+      base && pathname.startsWith(base)
+        ? pathname.slice(base.length)
+        : pathname;
+    const requested = join(
+      directory,
+      normalize(decodeURIComponent(withoutBase || '/')),
+    );
 
     if (!requested.startsWith(directory)) {
       response.writeHead(403).end();
@@ -103,7 +120,7 @@ try {
   for (const doc of DOCUMENTS) {
     const output = join(root, 'public', doc.output);
     const page = await browser.newPage();
-    await page.goto(`http://127.0.0.1:${port}${doc.route}`, {
+    await page.goto(`http://127.0.0.1:${port}${base}${doc.route}`, {
       waitUntil: 'networkidle',
     });
     // Self-hosted fonts load late enough to miss the print if we don't wait.

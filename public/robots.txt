@@ -1,6 +1,11 @@
+# Note: crawlers only read robots.txt from the domain root. While the site is a
+# GitHub Pages project page this file is served at /portfolio/robots.txt and is
+# therefore ignored — the root belongs to the max-zwei.github.io user site. The
+# paths below are written for the day a custom domain makes this file live.
+
 User-agent: *
 Allow: /
 Disallow: /admin/
 Disallow: /styleguide
 
-Sitemap: https://max-zwei.github.io/sitemap-index.xml
+Sitemap: https://max-zwei.github.io/portfolio/sitemap-index.xml
