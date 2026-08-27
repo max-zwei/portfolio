@@ -3,6 +3,9 @@ layout: ../layouts/ProseLayout.astro
 title: Handshake
 description: The terms I work under on pro bono design projects. Not a legal document — a handshake, written down.
 lede: This is not a legal document. It is a handshake. Written down so we both remember what we agreed to.
+download:
+  href: /handshake/max-pinkert-handshake.pdf
+  label: Download as PDF
 ---
 
 It describes a pro bono design project: I don't charge you, and you don't pay me. Instead, we're trading something else. You get design work you wouldn't otherwise have. I get a piece for my portfolio and a story to tell about the work we did together.

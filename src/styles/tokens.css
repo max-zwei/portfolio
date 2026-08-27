@@ -1,24 +1,12 @@
 /*
- * Design tokens — single source of truth for the visual language.
+ * Design tokens. One tier, no role layer.
  *
- * One tier. Components use these names directly: `--color-lemon-500`,
- * `--space-md`, `--font-size-lg`. There is no role layer (`--surface-default`,
- * `--text-secondary`) and there should not be one — the design is done in
- * Figma in terms of these tokens, and a second set of names for the same
- * values only adds a translation step in both directions.
+ * Every name here is its Figma variable name with `/` swapped for `-` and `--`
+ * in front: `color/lemon/500` is `--color-lemon-500`. That correspondence is
+ * the anti-drift mechanism — keep it mechanical.
  *
- * These mirror the Figma Variable collections one for one: `color/lemon/500`
- * there is `--color-lemon-500` here, and every Figma variable carries that CSS
- * name as its WEB code syntax. Swap `/` for `-`, prefix `--`. That mechanical
- * correspondence is the whole anti-drift mechanism.
- *
- * Values come from Figma. See docs/design-to-code.md for the sync workflow and
- * for the three things Figma cannot express faithfully (fluid type, elevation,
- * letter-spacing units).
- *
- * Contrast is not automatic without a role layer: /styleguide renders every
- * colour against every background it actually sits on, so check there before
- * putting a colour behind text.
+ * Values come from Figma. Sync workflow, and the three things Figma cannot
+ * express faithfully: behind-the-scenes/skills/figma-implement.md.
  */
 
 :root {
@@ -57,11 +45,7 @@
   --color-tomato-500: #c22e1c;
   --color-tomato-600: #9b0a00;
 
-  /*
-   * Neutrals — warm-tinted greys so they sit with the palette, not against it.
-   * The ends are named, not numbered, because neither is a pure white or black:
-   * `white` is #fdfcf8 and `black` is #040302.
-   */
+  /* Neutrals — the ends are named, not numbered: neither is pure. */
   --color-neutral-white: #fdfcf8;
   --color-neutral-100: #efeeea;
   --color-neutral-200: #dfdeda;
@@ -78,28 +62,18 @@
    * ------------------------------------------------------------- */
 
   /*
-   * All three faces are self-hosted: Satoshi and Erode from public/fonts/ via
-   * fonts.css, JetBrains Mono from npm via BaseLayout.
-   *
-   * Every family name here ends in "Variable" because that is what the files
-   * actually register — "Satoshi Variable", not "Satoshi". Naming the plain
-   * form would silently fall through to a system face for everyone who has not
-   * installed the static font locally, with no error anywhere. The static names
-   * follow as a second chance for people who do have them.
+   * The "Variable" suffix is what the files actually register. Drop it and
+   * every visitor silently gets a system face, with no error anywhere. All
+   * three are declared in fonts.css; the generic behind each is what shows
+   * while they load.
    */
-  --font-sans:
-    'Satoshi Variable', Satoshi, ui-sans-serif, system-ui, -apple-system,
-    'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  --font-serif:
-    'Erode Variable', Erode, ui-serif, Georgia, 'Times New Roman', serif;
-  --font-mono:
-    'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, 'SFMono-Regular',
-    Menlo, Consolas, monospace;
+  --font-sans: 'Satoshi Variable', system-ui, sans-serif;
+  --font-serif: 'Erode Variable', serif;
+  --font-mono: 'JetBrains Mono Variable', monospace;
 
   /*
-   * Type scale. Figma carries the desktop end of each step: 8 / 12 / 16 / 24 /
-   * 32 / 48 / 72px. The small steps are fixed — shrinking 16px body copy on a
-   * phone costs more than it buys — and only the display steps are fluid.
+   * Figma carries the desktop end of each step. Only the display steps are
+   * fluid: shrinking 16px body copy on a phone costs more than it buys.
    */
   --font-size-xs: 0.5rem; /*  8px */
   --font-size-sm: 0.75rem; /* 12px */
@@ -117,11 +91,6 @@
   --line-height-snug: 1.3;
   --line-height-normal: 1.6;
 
-  /*
-   * Figma applies FLOAT letter-spacing variables in px, so it cannot hold an em
-   * value. These are the em equivalents: `wide` is Figma's 0.08, `extra-wide`
-   * is its 3px at the base size, which is the wide-tracked mono label.
-   */
   --letter-spacing-tight: -0.02em;
   --letter-spacing-normal: 0;
   --letter-spacing-wide: 0.08em;
@@ -162,9 +131,7 @@
   --content-max: 72rem; /* page container */
 
   /* ---------------------------------------------------------------
-   * 4. FOCUS RING
-   * Not a colour role — a shorthand, so the ring is defined once and every
-   * focusable element gets the same one from global.css.
+   * 4. FOCUS RING — defined once, applied in global.css.
    * ------------------------------------------------------------- */
 
   --focus-ring: 2px solid var(--color-pickled-500);

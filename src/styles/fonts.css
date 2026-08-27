@@ -1,25 +1,26 @@
 /*
- * Self-hosted webfonts.
+ * Every typeface the site uses is declared here — all three, so there is one
+ * place to look.
  *
  * Satoshi (Deni Anggara) and Erode (Nikhil Ranganathan, Jeremie Hornus) are
  * © 2017–2021 Indian Type Foundry, obtained through Fontshare and used under
  * the ITF Free Font Licence. Provenance and terms: public/fonts/LICENSE.
  *
- * The files live in public/fonts/, so the URLs are absolute and survive any
- * build change. JetBrains Mono is not here — it comes from npm and is imported
- * in BaseLayout.astro, which lets the bundler hash and subset it.
+ * JetBrains Mono comes from npm rather than public/fonts/, so it is an @import
+ * rather than an @font-face: the package ships its own rules, already subset by
+ * unicode-range, and hand-writing them would throw that away. Weight axis only
+ * — the mono face is never italic here.
  *
- * Both faces are variable with a single weight axis. The ranges below are the
- * real axis limits read out of the files (Satoshi 300–900, Erode 300–700), not
- * a guess: declaring a wider range than the font carries invites the browser to
- * synthesise weights outside it, which is where variable fonts start to look
- * wrong.
+ * The weight ranges below are the axis limits read out of the files, not a
+ * guess. A wider range than the file carries invites the browser to synthesise
+ * weights outside it.
  *
- * Neither file carries an italic. Fontshare ships italics as separate
- * `*-VariableItalic` files, so until those land, `font-style: italic` — which
- * the homepage slogan uses — is a browser-synthesised slant rather than the
- * drawn italic. See docs/design-to-code.md.
+ * Neither Fontshare file carries an italic; those ship as separate
+ * `*-VariableItalic` files. Until one lands, `font-style: italic` is a
+ * browser-synthesised slant.
  */
+
+@import '@fontsource-variable/jetbrains-mono/wght.css';
 
 @font-face {
   font-family: 'Satoshi Variable';
