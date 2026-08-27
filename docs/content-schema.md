@@ -23,19 +23,19 @@ copy it, or create an entry through `/admin`.
 The case study, told in eight sections. Everything above them is card and
 listing data.
 
-| Field                 | Type           | Required    | Purpose                                                                    |
-| --------------------- | -------------- | ----------- | -------------------------------------------------------------------------- |
-| `title`               | string         | yes         | Project name. Used as the page `<h1>` and in listings.                     |
-| `summary`             | string (≤ 280) | yes         | Card copy and meta description. One or two sentences.                      |
-| `company`             | string         | yes         | Who the work was for.                                                      |
-| `year`                | number         | yes         | Year the work was done, or started for ongoing work.                       |
-| `tags`                | string[]       | no          | Discipline and domain tags, e.g. `["uxresearch", "edtech"]`.              |
-| `teaserVertical`      | image          | no          | Portrait teaser, for tall cards.                                           |
-| `teaserVerticalAlt`   | string         | conditional | **Required whenever `teaserVertical` is set.** |
-| `teaserHorizontal`    | image          | no          | Landscape teaser, for wide cards.                                          |
-| `teaserHorizontalAlt` | string         | conditional | **Required whenever `teaserHorizontal` is set.**                           |
-| `figmaUrl`            | URL            | no          | The Figma file or frame the work was designed in.                          |
-| `repoUrl`             | URL            | no          | The GitHub repository, where the project has one.                          |
+| Field                 | Type           | Required    | Purpose                                                      |
+| --------------------- | -------------- | ----------- | ------------------------------------------------------------ |
+| `title`               | string         | yes         | Project name. Used as the page `<h1>` and in listings.       |
+| `summary`             | string (≤ 280) | yes         | Card copy and meta description. One or two sentences.        |
+| `company`             | string         | yes         | Who the work was for.                                        |
+| `year`                | number         | yes         | Year the work was done, or started for ongoing work.         |
+| `tags`                | string[]       | no          | Discipline and domain tags, e.g. `["uxresearch", "edtech"]`. |
+| `teaserVertical`      | image          | no          | Portrait teaser, for tall cards.                             |
+| `teaserVerticalAlt`   | string         | conditional | **Required whenever `teaserVertical` is set.**               |
+| `teaserHorizontal`    | image          | no          | Landscape teaser, for wide cards.                            |
+| `teaserHorizontalAlt` | string         | conditional | **Required whenever `teaserHorizontal` is set.**             |
+| `figmaUrl`            | URL            | no          | The Figma file or frame the work was designed in.            |
+| `repoUrl`             | URL            | no          | The GitHub repository, where the project has one.            |
 
 Then the eight sections, in narrative order — `context`, `hmw`, `exploration`,
 `definition`, `development`, `feedback`, `learning`, `behindTheScenes`. Each is
@@ -44,7 +44,7 @@ Then the eight sections, in narrative order — `context`, `hmw`, `exploration`,
 | Field         | Type           | Required | Purpose                                                 |
 | ------------- | -------------- | -------- | ------------------------------------------------------- |
 | `subtitle`    | string         | no       | Sits next to the section heading.                       |
-| `description` | markdown       | no      | The section itself. Required once the section exists.   |
+| `description` | markdown       | no       | The section itself. Required once the section exists.   |
 | `artefacts`   | list of images | no       | Each needs `src` and `alt`. Alt text is never optional. |
 | `keyPoints`   | string[]       | no       | The section in bullets, for a reader in a hurry.        |
 
@@ -67,7 +67,7 @@ There is no markdown body — the eight sections _are_ the case study.
 | Field       | Type           | Required    | Purpose                                                |
 | ----------- | -------------- | ----------- | ------------------------------------------------------ |
 | `title`     | string         | yes         | Name of the thing.                                     |
-| `url`       | URL            | yes          | Where it lives. The point of the entry.                |
+| `url`       | URL            | yes         | Where it lives. The point of the entry.                |
 | `summary`   | string (≤ 280) | yes         | Why it's here — what you took from it, not what it is. |
 | `teaser`    | image          | no          | Card image.                                            |
 | `teaserAlt` | string         | conditional | **Required whenever `teaser` is set.**                 |
@@ -84,20 +84,20 @@ Both halves, always. A thought without its question is a status update. Always c
 ## resume
 
 One entry per position or qualification. **This is the CV** — see
-[`docs/resume-and-handshake.md`](./resume-and-handshake.md), and re-run
-`npm run cv` after editing or the committed PDF goes stale.
+[`docs/resume.md`](./resume.md), and re-run `npm run pdf` after editing or the
+committed PDF goes stale.
 
-| Field         | Type                  | Required    | Purpose                                                            |
-| ------------- | --------------------- | ----------- | ------------------------------------------------------------------ |
-| `role`        | string                | yes         | Job title, or the degree for an education entry.                   |
-| `company`     | string                | yes         | Employer, client or institution.                                   |
-| `kind`        | `work` \| `education` | yes         | Tells the two apart on the printed CV.                             |
-| `start`       | `YYYY-MM`             | yes         | The timeline sorts on this, so the format matters.                 |
-| `end`         | `YYYY-MM`             | no          | Leave it out for anything still active. |
-| `summary`     | string                | yes         | One or two sentences: what the work was, and what came of it.      |
-| `logo`        | image                 | no          | Company or institution mark.                                       |
-| `logoAlt`     | string                | conditional | **Required whenever `logo` is set.**                               |
-| `projectUrls` | URL[] (max 3)         | no          | Up to three things to point at. Ordered — the first one leads.     |
+| Field         | Type                  | Required    | Purpose                                                        |
+| ------------- | --------------------- | ----------- | -------------------------------------------------------------- |
+| `role`        | string                | yes         | Job title, or the degree for an education entry.               |
+| `company`     | string                | yes         | Employer, client or institution.                               |
+| `kind`        | `work` \| `education` | yes         | Tells the two apart on the printed CV.                         |
+| `start`       | `YYYY-MM`             | yes         | The timeline sorts on this, so the format matters.             |
+| `end`         | `YYYY-MM`             | no          | Leave it out for anything still active.                        |
+| `summary`     | string                | yes         | One or two sentences: what the work was, and what came of it.  |
+| `logo`        | image                 | no          | Company or institution mark.                                   |
+| `logoAlt`     | string                | conditional | **Required whenever `logo` is set.**                           |
+| `projectUrls` | URL[] (max 3)         | no          | Up to three things to point at. Ordered — the first one leads. |
 
 The CV's opening paragraph is _not_ here. It is bio copy rather than a position,
 so it lives in [`src/config/site.ts`](../src/config/site.ts) as `CV_INTRO`.
@@ -177,7 +177,9 @@ hmw:
 ```
 
 ## Adding a field
+
 Use this file as source of truth for the fields. Update all others accordingly.
+
 1. Add it to the zod schema in `src/content.config.ts` (with a doc comment).
 2. Add the matching widget to `public/admin/config.yml`.
 3. Add a row to the right table above.

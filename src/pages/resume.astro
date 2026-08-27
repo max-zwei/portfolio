@@ -3,11 +3,11 @@ import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { SITE, LINKS, CV_INTRO } from '../config/site';
 
-// This page is the CV. The PDF is a print of it, rendered by `npm run cv` —
+// This page is the CV. The PDF is a print of it, rendered by `npm run pdf` —
 // so anything added here has to survive A4 as well as a browser window.
-// See docs/resume-and-handshake.md.
+// See docs/resume.md.
 
-/** Written by scripts/render-cv.mjs. Kept in one place so page and script agree. */
+/** Written by scripts/render-pdf.mjs. Kept in one place so page and script agree. */
 const CV_PDF = '/cv/max-pinkert-cv.pdf';
 
 const MONTHS = [
@@ -272,7 +272,7 @@ const contact = [
   }
 
   /* ---------------------------------------------------------------
-   * Print — this is the PDF. `npm run cv` renders exactly these rules.
+   * Print — this is the PDF. `npm run pdf` renders exactly these rules.
    * ------------------------------------------------------------- */
 
   /* Sheet geometry is literal: @page sits outside the document tree and

@@ -14,6 +14,8 @@ type Props = MarkdownLayoutProps<{
   description: string;
   /** One line under the title. Optional — leave it out and nothing renders. */
   lede?: string;
+  /** A copy of this document to take away. Path under public/, plus a label. */
+  download?: { href: string; label: string };
 }>;
 
 const { frontmatter } = Astro.props as Props;
@@ -27,6 +29,15 @@ const { frontmatter } = Astro.props as Props;
       </p>
       <h1>{frontmatter.title}</h1>
       {frontmatter.lede && <p class="doc__lede">{frontmatter.lede}</p>}
+      {
+        frontmatter.download && (
+          <p class="doc__download">
+            <a href={frontmatter.download.href} download>
+              {frontmatter.download.label}
+            </a>
+          </p>
+        )
+      }
     </header>
 
     <div class="prose">
@@ -53,6 +64,13 @@ const { frontmatter } = Astro.props as Props;
 
   h1 {
     font-size: var(--font-size-2xl);
+  }
+
+  /* Placeholder until the page is designed: a plain link, no invented styling.
+     Hidden in print — it is the link to the thing being printed. */
+  .doc__download {
+    margin-top: var(--space-md);
+    font-size: var(--font-size-sm);
   }
 
   .doc__lede {
@@ -145,7 +163,8 @@ const { frontmatter } = Astro.props as Props;
       max-width: none;
     }
 
-    .doc__back {
+    .doc__back,
+    .doc__download {
       display: none;
     }
 

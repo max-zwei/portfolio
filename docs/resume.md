@@ -1,14 +1,17 @@
-# CV
+# Printed documents
 
-The CV is a content collection rendered as page and downloadable .pdf
+Two pages are also downloadable PDFs. Neither PDF is a second document — each is
+its page printed to A4 by the same `@media print` rules that style it on screen,
+so nothing is written down twice and the two cannot disagree.
 
-| Document  | URL          | Source                                                     | Also                     |
-| --------- | ------------ | ---------------------------------------------------------- | ------------------------ |
-| CV        | `/resume`    | `src/content/resume/` + `CV_INTRO` in `src/config/site.ts` | `/cv/max-pinkert-cv.pdf` |
+| Document  | URL          | Source                                                     | PDF                                    |
+| --------- | ------------ | ---------------------------------------------------------- | -------------------------------------- |
+| CV        | `/resume`    | `src/content/resume/` + `CV_INTRO` in `src/config/site.ts` | `/cv/max-pinkert-cv.pdf`               |
+| Handshake | `/handshake` | `src/pages/handshake.md`                                   | `/handshake/max-pinkert-handshake.pdf` |
 
-`/resume` is the CV. The PDF is not a second document, it is that page, printed
-to A4 by the same `@media print` rules that style it on screen. So a position is
-written down exactly once and the two can't disagree.
+Both are produced by one command, `npm run pdf`. The rest of this file is about
+the CV, which is the one with moving parts; the handshake is a single markdown
+file and needs nothing explained.
 
 ## Editing it
 
@@ -25,26 +28,29 @@ CV should be obvious in the PDF, not subtle.
 ## Regenerating the PDF
 
 ```bash
-npm run cv     # builds the site, then prints /resume to public/cv/
+npm run pdf    # builds the site, then prints both PDFs into public/
 ```
 
-The PDF is committed, because GitHub Pages serves `public/` as-is and a build
-can't produce a file that the same build needs to deploy. Re-run `npm run cv`
-whenever a résumé entry changes, and commit the result.
+Both PDFs are committed, because GitHub Pages serves `public/` as-is and a build
+can't produce a file that the same build needs to deploy. Re-run `npm run pdf`
+whenever a résumé entry or the handshake changes, and commit the result.
 
-Always run `npm run cv` before merging.
+Always run `npm run pdf` before merging.
 
-[`scripts/render-cv.mjs`](../scripts/render-cv.mjs) serves `dist/` on a random
-port and prints `/resume` with Chromium via `playwright-core`. It needs a browser
+[`scripts/render-pdf.mjs`](../scripts/render-pdf.mjs) serves `dist/` on a random
+port and prints `/resume` and `/handshake` with Chromium via `playwright-core`. It needs a browser
 to print with:
 
 ```bash
 npx playwright install chromium     # once
-CHROME_PATH=/path/to/chrome npm run cv   # or point it at a Chrome you already have
+CHROME_PATH=/path/to/chrome npm run pdf   # or point it at a Chrome you already have
 ```
 
 `playwright-core` is a devDependency and is never shipped — CI doesn't run this
-script, it only builds the site the PDF was already made from.
+script, it only builds the site the PDFs were already made from.
+
+The handshake's print rules live in `src/layouts/ProseLayout.astro`, so any
+markdown page using that layout prints the same way.
 
 ## Changing how it looks
 

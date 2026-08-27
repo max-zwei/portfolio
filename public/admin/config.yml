@@ -346,8 +346,8 @@ collections:
 
   # ---------------------------------------------------------------------------
   # Resume — one entry per position or qualification.
-  # Editing here stales public/cv/max-pinkert-cv.pdf until `npm run cv` is
-  # re-run and the result committed. See docs/resume-and-handshake.md.
+  # Editing here stales public/cv/max-pinkert-cv.pdf until `npm run pdf` is
+  # re-run and the result committed. See docs/resume.md.
   # ---------------------------------------------------------------------------
   - name: resume
     label: Résumé

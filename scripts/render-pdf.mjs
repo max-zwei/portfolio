@@ -1,12 +1,11 @@
 /**
- * Renders the built /resume page to public/cv/max-pinkert-cv.pdf.
+ * Prints built pages to the PDFs in public/.
  *
- * The CV is not a second document. It is the /resume page printed to A4 by the
- * same rules that style it on screen (the `@media print` block in
- * src/pages/resume.astro), so there is exactly one place where a position is
- * written down: the `resume` content collection in src/content/resume/.
+ * Neither PDF is a second document. Each is its page printed to A4 by the same
+ * `@media print` rules that style it on screen, so nothing is written down
+ * twice and the two cannot disagree.
  *
- * Run it with `npm run cv`, which builds first — this script only reads dist/.
+ * Run it with `npm run pdf`, which builds first — this script only reads dist/.
  *
  * It needs a Chromium to print with, in this order:
  *   1. $CHROME_PATH, if set
@@ -22,8 +21,13 @@ import { chromium } from 'playwright-core';
 
 const root = resolve(fileURLToPath(new URL('../', import.meta.url)));
 const dist = join(root, 'dist');
-const output = join(root, 'public', 'cv', 'max-pinkert-cv.pdf');
-const route = '/resume';
+const DOCUMENTS = [
+  { route: '/resume', output: join('cv', 'max-pinkert-cv.pdf') },
+  {
+    route: '/handshake',
+    output: join('handshake', 'max-pinkert-handshake.pdf'),
+  },
+];
 
 const MIME = {
   '.css': 'text/css',
@@ -83,9 +87,11 @@ async function launchBrowser() {
   }
 }
 
-if (!existsSync(join(dist, 'resume', 'index.html'))) {
-  console.error(`No built ${route} page in dist/. Run \`npm run cv\` instead.`);
-  process.exit(1);
+for (const { route } of DOCUMENTS) {
+  if (!existsSync(join(dist, route.slice(1), 'index.html'))) {
+    console.error(`No built ${route} page in dist/. Run \`npm run pdf\`.`);
+    process.exit(1);
+  }
 }
 
 const server = createStaticServer(dist);
@@ -94,27 +100,30 @@ const { port } = server.address();
 
 const browser = await launchBrowser();
 try {
-  const page = await browser.newPage();
-  await page.goto(`http://127.0.0.1:${port}${route}`, {
-    waitUntil: 'networkidle',
-  });
-  // Self-hosted fonts load late enough to miss the print if we don't wait.
-  await page.evaluate(() => document.fonts.ready);
-  await page.emulateMedia({ media: 'print' });
+  for (const doc of DOCUMENTS) {
+    const output = join(root, 'public', doc.output);
+    const page = await browser.newPage();
+    await page.goto(`http://127.0.0.1:${port}${doc.route}`, {
+      waitUntil: 'networkidle',
+    });
+    // Self-hosted fonts load late enough to miss the print if we don't wait.
+    await page.evaluate(() => document.fonts.ready);
+    await page.emulateMedia({ media: 'print' });
 
-  await mkdir(dirname(output), { recursive: true });
-  await page.pdf({
-    path: output,
-    printBackground: true,
-    // Honour the @page rule in resume.astro rather than restating A4 here.
-    preferCSSPageSize: true,
-  });
+    await mkdir(dirname(output), { recursive: true });
+    await page.pdf({
+      path: output,
+      printBackground: true,
+      // Honour each page's own @page rule rather than restating A4 here.
+      preferCSSPageSize: true,
+    });
+
+    const { size } = await stat(output);
+    console.log(
+      `Wrote ${output.replace(`${root}/`, '')} (${Math.round(size / 1024)} kB)`,
+    );
+  }
 } finally {
   await browser.close();
   server.close();
 }
-
-const { size } = await stat(output);
-console.log(
-  `Wrote ${output.replace(`${root}/`, '')} (${Math.round(size / 1024)} kB)`,
-);
