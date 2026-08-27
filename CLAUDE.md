@@ -46,7 +46,7 @@ Numbered so they can be cited. `MUST` / `NEVER` are literal.
 | --------- | ----------------------------- | ------------------------------------------------------------------------------- |
 | Framework | Astro, static output          | No SSR.                                                                         |
 | Styling   | Plain CSS + custom properties | No Tailwind, no CSS-in-JS. Scoped `<style>` in `.astro` files.                  |
-| Content   | Astro content collections     | Six. Markdown in `src/content/`, schemas in `src/content.config.ts`.            |
+| Content   | Astro content collections     | Seven. Markdown in `src/content/`, schemas in `src/content.config.ts`.          |
 | CMS       | Decap                         | `public/admin/`. Writes markdown back to the repo.                              |
 | Hosting   | GitHub Pages via Actions      | `.github/workflows/deploy.yml`. Every push to `main` deploys. PRs run `ci.yml`. |
 | Design    | Figma via MCP                 | `.mcp.json`. Procedure: `behind-the-scenes/skills/figma-implement.md`.          |
@@ -60,7 +60,8 @@ src/
   content/projects/      Case studies. Eight sections each; images in _media/.
   content/playground/    Small self-directed builds.
   content/inspiration/   Other people's work worth pointing at.
-  content/curiosity/     A thought and the question it leaves open.
+  content/questions/     The open questions thoughts hang off. Filename is the id.
+  content/curiosity/     A thought, and the question it belongs to.
   content/resume/        The CV, one entry per position.
   content/release-notes/ What changed on the site, and when.
   layouts/               BaseLayout — head, meta, OG, skip link.
@@ -78,7 +79,7 @@ public/fonts/            Satoshi + Erode woff2 + LICENSE. Third-party type.
 public/certificates/     Scanned qualifications. public/letters/ — references.
 scripts/render-pdf.mjs   Prints /resume and /handshake to those PDFs.
 behind-the-scenes/skills/ Agent skills. figma-implement.md is the main one.
-docs/                    content-schema, cms, design-system, resume, aeo.
+docs/                    cms (fields + editor), design-system, resume, aeo.
 ```
 
 ## 5. Commands
@@ -117,7 +118,7 @@ the build rejects:
 
 1. `src/content.config.ts` — the zod schema (the enforcer)
 2. `public/admin/config.yml` — the CMS form
-3. `docs/content-schema.md` — the explanation
+3. `docs/cms.md` — the explanation
 
 ### Adding a token
 
