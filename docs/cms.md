@@ -1,168 +1,81 @@
 # Decap CMS
 
-The CMS lives at `/admin` and is configured in
-[`public/admin/config.yml`](../public/admin/config.yml). It edits the markdown in
-`src/content/` and commits straight back to this repo — there is no database and
-no separate content API.
+The CMS is the editing surface for `src/content/`. It writes markdown straight
+back into the repo — no database, no content API. What the fields mean is
+[`docs/content-schema.md`](./content-schema.md); this file is only about running
+the thing.
 
-Six collections: **Projects**, **Playground**, **Inspiration**, **Curiosity**,
-**Résumé** and **Release notes**. Field reference:
-[`docs/content-schema.md`](./content-schema.md).
+Configured in [`public/admin/config.yml`](../public/admin/config.yml), served by
+[`src/pages/admin/index.astro`](../src/pages/admin/index.astro). Six collections:
+Projects, Playground, Inspiration, Curiosity, Résumé, Release notes.
 
-`publish_mode: editorial_workflow` is on, so saving a project opens a **draft pull
-request** rather than committing to `main`. Nothing goes live until that PR is
-merged, at which point the deploy workflow rebuilds the site.
-
-## Editing locally (no setup needed)
+## Editing
 
 ```bash
-npx decap-server      # terminal 1 — proxy that writes to your local files
-npm run dev           # terminal 2
+npx decap-server   # terminal 1 — proxy that writes to your local files
+npm run dev        # terminal 2
 ```
 
-Then open <http://localhost:4321/admin/>. `local_backend: true` makes the CMS talk
-to the proxy instead of GitHub, so there is no OAuth. There is still a Login
-button — it asks for nothing, just click it. Changes
-land in your working tree as ordinary file edits for you to commit.
+Open <http://localhost:4321/admin/>. `local_backend: true` points the CMS at the
+proxy instead of GitHub, so there is no OAuth — the Login button asks for
+nothing, just click it. Edits land in the working tree as ordinary file changes
+for you to commit.
 
-This is the fastest path and the one to use while the schema is still moving.
+`publish_mode: editorial_workflow` is on, so against the GitHub backend a save
+opens a draft pull request rather than committing to `main`.
 
-## The CMS is not deployed
+## /admin is local-only, by decision
 
-**Decision: `/admin` works locally only, and is stripped from the production
-build.** This is a choice, not a gap.
+`astro.config.mjs` deletes `dist/admin` after every build. Two reasons:
 
-`astro.config.mjs` carries a small `astro:build:done` integration that deletes
-`dist/admin` after every build. Two reasons:
+1. It could not log in on the live site anyway. Decap exchanges a GitHub code
+   for a token, that exchange needs a client secret, and GitHub Pages serves
+   static files only — so it would need a relay that does not exist.
+2. It pulls a ~5 MB third-party script from unpkg. Publishing that for a page
+   nobody can use is a bad trade.
 
-1. It couldn't log in anyway (see below), so a deployed copy is dead weight.
-2. It loads a ~5 MB third-party script from unpkg. Publishing that on the live
-   domain in exchange for a page nobody can use is a bad trade.
+`npm run dev` still serves it, so local editing is unaffected. If an OAuth relay
+is ever added, delete the integration and uncomment `base_url` /
+`auth_endpoint` in `config.yml`.
 
-`npm run dev` still serves it, so local editing is unaffected. Delete the
-integration if an OAuth relay is ever added.
+Two details that look incidental and are not:
 
-**Why it's an Astro route and not a file in `public/`:** Astro's dev server
-serves `public/` by exact path and does not resolve directory indexes, so
-`public/admin/index.html` was only ever reachable at `/admin/index.html` —
-never at `/admin`. As a route it works at both. The `is:inline` on the script
-tag is load-bearing: without it Astro bundles the script and drops the
-`integrity` and `crossorigin` attributes, silently undoing the SRI pinning.
+- **It is an Astro route, not a file in `public/`.** Astro's dev server serves
+  `public/` by exact path and does not resolve directory indexes, so
+  `public/admin/index.html` was only ever reachable at `/admin/index.html`.
+- **`is:inline` on the script tag is load-bearing.** Without it Astro bundles
+  the script and drops `integrity` and `crossorigin`, silently undoing the SRI
+  pinning.
 
-### Pinning and integrity
-
-`src/pages/admin/index.astro` loads Decap from unpkg at an **exact** version with an
-SRI `integrity` hash — not a `^range`. A range means the browser runs whatever
-the CDN resolves it to, and makes SRI impossible.
-
-Bumping the version means recomputing the hash:
+Decap is loaded at an **exact** version with an SRI hash, never a `^range` — a
+range means the browser runs whatever the CDN resolves to, which makes SRI
+impossible. Bumping the version means recomputing the hash:
 
 ```bash
 npm pack decap-cms@<version> && tar -xzf decap-cms-<version>.tgz
 openssl dgst -sha384 -binary package/dist/decap-cms.js | openssl base64 -A
 ```
 
-(unpkg serves the npm tarball byte-for-byte, so this is the same file.)
+SRI only covers the entry file; Decap lazy-loads ~93 further chunks that are not
+integrity-checked. Not deploying the page is what contains that.
 
-One honest caveat: Decap is code-split into ~93 lazy-loaded chunks, and SRI only
-covers the entry file. Those chunks aren't integrity-checked. **Not deploying
-this page is what actually contains that risk** — the pinning protects the local
-editing session, where you're the only one loading it.
+## Two things the CMS cannot enforce
 
-Everything the CMS does, it does through the local backend above. Wiring up the
-live site would buy exactly one thing: writing case studies from a machine that
-isn't Max's. That isn't worth a permanently deployed service and a rotating
-secret today. Revisit it if and when writing from a phone or a borrowed laptop
-actually comes up.
+**`required` is deliberately not symmetric with the zod schema. Don't "fix" it.**
 
-The rest of this section is the map for that day. Nothing below is required now.
+- A case-study section's `description`. Decap validates `required` sub-fields
+  inside an object widget even when the object is optional and untouched, so
+  marking it required made all eight sections mandatory. It is `required: false`
+  in the CMS; zod rejects a section that exists without one.
+- Alt text (`teaserVerticalAlt`, `teaserHorizontalAlt`, `teaserAlt`, `logoAlt`).
+  The CMS cannot express "required only when the image is set", so the
+  `.refine()` calls in `src/content.config.ts` are the enforcement. The CMS lets
+  you save; the build then fails.
 
-### Why the live site can't just work
+The CMS blocks what it can express. zod is the backstop for anything
+conditional.
 
-Decap authenticates you against GitHub so the commits it makes are genuinely
-yours. GitHub hands back a temporary code that has to be exchanged for a token,
-and that exchange needs a client secret — which cannot live in the browser
-without being handed to everyone who views the page. So the exchange needs a
-server, and **GitHub Pages serves static files only**. One small piece has to
-live somewhere else.
-
-Note this is only ever about _Max logging in to write_. The portfolio itself is
-fully static and public; no visitor authenticates against anything.
-
-### Option A — a hosted OAuth relay
-
-Deploy one of the ready-made Decap OAuth clients (Netlify Function, Vercel
-serverless function, Cloudflare Worker — all are a few lines and free at this
-scale), then:
-
-1. GitHub → **Settings → Developer settings → OAuth Apps → New OAuth App**
-   - Homepage URL: your site's URL
-   - Authorization callback URL: `https://<your-relay>/callback`
-2. Put the client ID and secret in the relay's environment. **Never commit the
-   secret** — it is not a build-time value and does not belong in this repo.
-3. Uncomment `base_url` and `auth_endpoint` in `config.yml` and point `base_url`
-   at the relay.
-
-### Option B — move to a host with built-in auth
-
-Netlify ships the OAuth endpoint itself (Decap started life as Netlify CMS), so
-there is no relay, no OAuth app and no secret to rotate — connect the repo and
-it works. It is the least machinery by some distance. The cost is that it drops
-GitHub Pages and [`docs/deployment.md`](./deployment.md) stops applying. The
-Astro build itself is host-agnostic, so the move is mostly deleting a workflow.
-
-If browser editing ever becomes the priority, start here rather than with
-Option A.
-
-### What happens meanwhile
-
-`/admin` returns a 404 on the live site, because it isn't deployed at all. That
-is expected — see "The CMS is not deployed" above. Local editing is unaffected.
-
-## Keeping the CMS and the schema in step
-
-`config.yml` and `src/content.config.ts` describe the same fields, and nothing
-enforces that automatically. When they drift, the CMS saves happily and the build
-fails afterwards — the error surfaces in Actions, not in the CMS.
-
-Field reference and the change checklist: [`docs/content-schema.md`](./content-schema.md).
-
-### `required` is deliberately not symmetric
-
-Two fields are optional in `config.yml` but conditionally required in the zod
-schema. That asymmetry is on purpose, not drift — don't "fix" it:
-
-- **A case-study section's `description`.** Decap validates `required` sub-fields
-  inside an object widget even when the object itself is optional and untouched,
-  so marking it required there made **all eight sections mandatory** — you could
-  not save a project without writing every one. It is `required: false` in the
-  CMS, and zod still rejects a section that exists with no description.
-- **Alt text** (`teaserVerticalAlt`, `teaserHorizontalAlt`, `teaserAlt`,
-  `logoAlt`). The CMS cannot express "required only when the image is set", so
-  the `.refine()` in `src/content.config.ts` is what enforces it. The CMS will let
-  you save an image with no alt text; the build then fails.
-
-The rule of thumb: the CMS blocks what it can express, and zod is the backstop
-for anything conditional.
-
-## Media
-
-Each collection has its own `_media/` folder — `src/content/projects/_media/`,
-`src/content/playground/_media/` and so on. Uploads land next to the entry that
-uses them and are referenced as `./_media/<name>`, which keeps them inside `src/`
-where Astro can optimise and hash them. Images in `public/` are served as-is with
-no optimisation, which is why they don't go there.
-
-`config.yml` still needs a top-level `media_folder`, but every collection
-overrides it, so that global value is a fallback nothing actually uses.
-
-**One deliberate exception:** the **File** attachment on a release note uploads to
-`public/releases/`. That one is a download rather than an image — it should reach
-the reader byte-for-byte, and anything Astro optimises by definition doesn't.
-
-## Editing the résumé here stales the PDF
-
-`public/cv/max-pinkert-cv.pdf` is printed from `/resume`, which now reads the
-`resume` collection. So saving a résumé entry in the CMS changes the page but
-**not** the committed PDF. Re-run `npm run cv` and commit the result — nothing
-checks this for you. See [`docs/resume-and-handshake.md`](./resume-and-handshake.md).
+**Saving a résumé entry stales the committed PDF.**
+`public/cv/max-pinkert-cv.pdf` is printed from `/resume`. Re-run `npm run pdf`
+and commit the result — nothing checks this for you. See
+[`docs/resume.md`](./resume.md).

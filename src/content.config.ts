@@ -189,8 +189,8 @@ const curiosity = defineCollection({
  * The CV, one entry per position or qualification.
  *
  * This is the single source for /resume and for the PDF printed from it, so
- * editing here and re-running `npm run cv` is the whole workflow. See
- * docs/resume-and-handshake.md.
+ * editing here and re-running `npm run pdf` is the whole workflow. See
+ * docs/resume.md.
  */
 const resume = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/resume' }),
@@ -242,7 +242,7 @@ const releaseNotes = defineCollection({
          a release rarely moves all three at once. */
       userExperience: z.string().min(1).optional(),
       userInterface: z.string().min(1).optional(),
-      tools: z.string().min(1).optional(),
+      tech: z.string().min(1).optional(),
 
       screenshots: artefacts(image),
 

@@ -7,244 +7,102 @@ for quiet text — that layer was deliberately removed, and this document is the
 replacement for it. **Prose, not tokens.** Nothing here introduces a name. If
 you find yourself wanting to add `--color-status-error` because this file
 mentions error states, stop: that is the role layer coming back in through the
-side door. See rule 2 in [`design-to-code.md`](./design-to-code.md).
+side door. See L4 in
+[`behind-the-scenes/skills/figma-implement.md`](../behind-the-scenes/skills/figma-implement.md).
 
-Everything below is either **decided** — visible in the code today, with the
-line to prove it — or listed under [Open questions](#open-questions), which is
-where anything not yet decided stays until Max decides it. Nothing in the
-decided sections was invented to fill a gap — one entry once was, and
-[Who decides](#who-decides) is the rule that came out of it.
+## No style without a design
 
-## Who decides
+**Every style declaration has to trace back to a decision in the Figma file** —
+or to `global.css`, or to an accessibility requirement (focus rings,
+reduced-motion, contrast). Nothing else.
+
+If the design does not say what a link does on hover, the answer is that links
+do not do anything on hover yet. Not "pick something sensible", not "pick a
+palette colour so at least it's token-driven". An invented style is harder to
+find later than a missing one, because it looks deliberate.
+
+This applies to hover and focus colours, shadows, transitions, radii, and any
+state the design has not drawn. When a state is genuinely needed before it is
+designed — a focus ring, say — it is an accessibility requirement, it goes in
+`global.css` where it is visible, and it gets flagged.
+
+## Decision Owner
 
 **The Figma file is the design decision, not a draft.** Every value in it is a
 decision Max made, including the ones that look like oversights: a ramp that
 stops one step short, a colour that misses a contrast threshold, an asymmetry
 between two scales.
 
-An agent's job when it finds one of those is to **report the number and stop**.
+An agent's job when it finds one of those is to solely report it.
 Say it in the audit, in the PR description, in the contrast table on
 `/styleguide` — all of those are the right channel. What is never the right move
 is resolving it: adding a token, darkening a value, extending a ramp, or
 swapping in a different step because the design appeared to need one.
 
-> **The case this came from.** `pickled/500` scores 4.00:1 on the `neutral/100`
-> page ground, under the 4.5 needed for body text. An agent found that, invented
-> `color/pickled/600` (`#b02546`) to clear it, wrote it into Figma and the
-> palette, and shipped it — and an earlier version of this file then wrote it up
-> as a decided part of the system. The measurement was correct and worth having.
-> Everything after the measurement was someone else's decision to make.
+## Figma Library
 
-This does not soften the accessibility rules. Contrast still gets measured, and
-a failure still gets reported loudly. It settles only who resolves it: the agent
-supplies the ratio, Max picks the colour.
+### Atoms
 
-## The rule that outranks the rest
+https://www.figma.com/design/8SQOIPl0teOTvoFH1EffaB/Portfolio?node-id=114-14
 
-**Colour never carries meaning on its own.** Every place the site uses colour to
-say something, the thing is also said in text or shape: the CV timeline dots are
-backed by a written `.entry__kind` label (`src/pages/resume.astro:239`), and the
-styleguide's contrast tints are backed by the printed ratio and a
-visually-hidden verdict (`src/pages/styleguide.astro:422`). Both carry a comment
-saying so. Keep it that way — a status that exists only as a hue is a bug.
+### Organisms
+
+https://www.figma.com/design/8SQOIPl0teOTvoFH1EffaB/Portfolio?node-id=114-15
 
 ## Colour
 
-Contrast figures are WCAG 2.1 ratios against the four grounds the site actually
-uses, computed by `src/lib/tokens.ts` and rendered on `/styleguide`. "Body text"
-means ≥ 4.5, "large text and UI" means ≥ 3.0.
+### Lemon
 
-### Lemon — the signature accent
+Primarily used for areas of user input, for example buttons or the custom cursor. And apart from that used as accent color.
 
-The one colour that says this is Max's site. Used as **atmosphere and marker,
-never as ink**: the radial wash bleeding into the hero corner at 22% opacity
-(`src/pages/index.astro:53-58`), the underline that appears on link hover
-(`index.astro:125`, `resume.astro:178`), the timeline dot for work entries
-(`resume.astro:230`).
+### Pickled
 
-**Hard limit:** every lemon step is decorative-only on every light ground —
-`lemon/500` is 1.28:1 on `neutral/white` and 1.14:1 on the `neutral/100` page
-background. Lemon can never carry text, an icon that means something, or a
-border that is the only indication of state. On `neutral/black` it is 15.62:1
-and entirely safe, which is the one place it can be ink.
+Primarily used for text of user input, for example ghost buttons. And as alternative accent color to Lemon.
 
-Use it once per view. The hero has one lemon gesture, not three.
+### Herbs
 
-### Pickled — the counterweight
+"Secondary" color used for the website areas inspiration and curiosity.
 
-Sharp pink-red against the yellow. Two established jobs:
+### Tomato
 
-- **The focus ring**, `pickled/500` (`tokens.css:170`). It is a non-text UI
-  indicator, so the 3.45–4.00:1 it scores on the grounds clears the 3.0 bar.
-  Don't reuse this colour for decoration that could be mistaken for focus.
-- **Emphasis**, also `pickled/500` — the link hover colour (`global.css:100`),
-  the italic serif emphasis in the hero slogan (`index.astro:93`), the CV role
-  and organisation lines (`resume.astro:142,253`).
+"Primary" color used for the talking head, my work and other primary content.
 
-**Limit:** the ramp ends at 500. `pickled/500` is **4.53:1 on `neutral/white`**
-and **4.00:1 on the `neutral/100` page ground** — so it clears AA for body text
-on a raised white surface, and is large-text-and-UI only on the page itself.
-100–400 are decorative.
+### Neutrals
 
-That gap is a known and accepted state, not a gap to fill. An earlier agent
-"fixed" it by inventing a `pickled/600` dark enough to clear 4.5 everywhere, and
-this file previously documented that step as decided. It was not: where the ramp
-ends is Max's call, and the hex was extrapolated rather than designed. It has
-been removed from Figma and from the code. **If small pickled text on the page
-ground matters for a future design, that is a question for Max — see
-[Who decides](#who-decides).**
-
-### Herbs — the settled green
-
-Currently the quiet positive: the education dot in the CV timeline
-(`herbs/400`, `resume.astro:236`) and the "passes for body text" tint in the
-styleguide contrast table (`herbs/100`, `styleguide.astro:426`). Both are
-paired with words, per the rule above.
-
-**Limit:** `herbs/600` is the only step that carries body text on light
-(6.50:1). `herbs/500` and `400` are large-text-and-UI only; `100`–`300` are
-tints.
-
-### Tomato — the warm signal
-
-Declared as "used sparingly" (`tokens.css:52`) and **not yet used anywhere on
-the site**. What it is for is an open question below; what is already true is
-the contrast: `tomato/600` is the strongest signal colour available on light
-grounds (8.39:1 on white, AAA), `tomato/500` carries body text on white and
-`neutral/100`, and `300` and below are decorative.
-
-### Neutrals — ground and ink
-
-Warm-tinted, so they sit with the palette rather than against it.
-
-| Token                 | Job today                                                                                                                                                                                                       |
-| --------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `neutral-100`         | The page ground. `body` background (`global.css:30`).                                                                                                                                                           |
-| `neutral-white`       | The raised ground — things sitting above the page (the skip link, the styleguide callouts) — and the print ground, since the warm off-white is a screen decision and a CV prints on white (`resume.astro:296`). |
-| `neutral-200` / `300` | Hairlines. Section rules and borders (`index.astro:118,132`).                                                                                                                                                   |
-| `neutral-700`         | Quiet text — eyebrows, notes, footers, metadata. 7.91:1 on the page ground, so it is genuinely readable, not greyed-out decoration.                                                                             |
-| `neutral-black`       | Body and heading ink (`global.css:29`).                                                                                                                                                                         |
-
-**Limit:** `neutral-600` and lighter never carry body text — 600 is 3.40:1 on
-the page ground, which is large-text-and-UI only. `neutral-700` is the lightest
-neutral that can hold a sentence. There is no third text weight below it;
-if something needs to recede further, use size or space, not a paler grey.
+| Token                                 | Job today                                                                                                          |
+| ------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| `neutral-white`                       | "Primary background", meaning for example the page ground. `body` background (`global.css:30`).                    |
+| `neutral-100`                         | "Secondary Background", for example the first hierarchy level for the raised ground, things sitting above the page |
+| `neutral-200` up to `-500` and `-700` | Additional shades for secondary text or backgrounds.                                                               |
+| `neutral-600`                         | Quiet text, for example notes, footers, metadata.                                                                  |
+| `neutral-800`                         | Body text.                                                                                                         |
+| `neutral-black`                       | Heading ink                                                                                                        |
 
 ## Type
 
-Two voices, deliberately:
+**Sans (`--font-sans`)**
+Body text, subtitles and captions
 
-- **Sans (`--font-sans`)** — everything by default. Body, UI, headings.
-- **Serif (`--font-serif`)** — the display voice, used for statements rather
-  than paragraphs: the hero slogan is serif, `2xl`, regular weight, snug
-  leading, italic on the emphasised word (`index.astro:82-94`). This is the
-  site's one typographic gesture. It does not belong on body copy or headings.
-  That italic is currently browser-synthesised — Erode ships its italic as a
-  separate file that isn't vendored yet, so the slant is a sheared roman. See
-  the italic gap in [`design-to-code.md`](./design-to-code.md).
+**Serif (`--font-serif`)**
+Headings
 
-Established patterns:
+Erode ships no drawn italic — Fontshare packages italics as separate
+`*-VariableItalic` files. The italicised word in the homepage slogan is a
+browser-synthesised slant until one is added to `public/fonts/`.
 
-- **The small label.** `font-size-sm`, `font-weight-medium`,
-  `letter-spacing-wide`, uppercase, `neutral-700` — eyebrows, link rows, the CV
-  entry kind. Used seven times; it is a pattern, so match it rather than
-  inventing a second one.
-- **Headings** come pre-set from `global.css:64-85` — semibold, tight leading,
-  tight tracking, balanced wrapping. Don't restate those in a page's scoped
-  styles; pick the right level and let the cascade do it.
-- **Paragraphs** are capped at `--measure` (68ch) globally (`global.css:88`).
-  For display text, a tighter explicit `max-width` in `ch` is the established
-  override (`index.astro:83`).
-- `--font-size-xs` (8px) is not body text at any size. It exists for the type
-  scale's bottom end.
-
-Only `lg` and up are fluid; `xs`, `sm` and `base` are fixed on purpose. See
-[`design-to-code.md`](./design-to-code.md) for why, and for what Figma reports.
-
-## Space
-
-4px grid. The steps are not linear — they jump at the top (`lg` 40, `xl` 64,
-`2xl` 96, `3xl` 144), and that jump is the point: small steps for the inside of
-things, big steps for the gaps between them.
-
-| Range         | Job                                                              |
-| ------------- | ---------------------------------------------------------------- |
-| `3xs` – `2xs` | Inside a component. Icon gaps, label offsets, hairline padding.  |
-| `xs` – `md`   | Between related elements. `md` is the workhorse — 27 uses.       |
-| `lg`          | Between blocks within a section.                                 |
-| `xl` – `3xl`  | Section rhythm. `2xl` is the current page-section block padding. |
-
-`--content-max` (72rem) with `.container` is the page frame; `--measure` is the
-prose frame. They are different jobs — don't set a paragraph to `content-max`.
+**Mono (`--font-mono`)**
+Always paired with `--letter-spacing-extra-wide` for readability
+Used for the chat interaction and subtitles.
 
 ## Motion
 
-The vocabulary is small on purpose: three durations, two easings.
-
-| Token               | For                                                                                                       |
-| ------------------- | --------------------------------------------------------------------------------------------------------- |
-| `--duration-fast`   | Hover, focus, and anything responding directly to the pointer. The only duration in use today (six uses). |
-| `--duration-base`   | State changes and elements arriving on screen.                                                            |
-| `--duration-slow`   | Large or ambient movement — something crossing a lot of the viewport.                                     |
-| `--easing-standard` | Anything that starts and ends on screen. Symmetrical.                                                     |
-| `--easing-entrance` | Things arriving from outside. Decelerating, no ease-in.                                                   |
-
-Rules:
-
-1. **Animate `transform`, `opacity`, `color`, `border-color`, `box-shadow`.**
-   Not `width`, `height`, `top` or `margin` — they force layout on every frame.
-2. **Motion is never the only signal.** Same principle as colour. If an
-   animation communicates something, the something must also survive with the
-   animation removed.
-3. **Reduced motion is already handled globally** (`global.css:141-154`) and
-   blankets every transition and animation on the site. Do not add a
-   `prefers-reduced-motion` block to a page — it is noise, and a second
-   implementation is a second thing to get wrong.
-4. **The ceiling is CSS transitions and `@keyframes`.** Scroll-driven
-   animation, View Transitions, and anything needing client JS are a
-   stop-and-ask, not a judgement call. See the skill file for how to raise it.
+Not defined in Figma yet. The motion tokens exist (`--duration-*`,
+`--easing-*`); what each is _for_ is written down in the Figma file's prototype
+interactions or not at all. Until then, see the motion step of
+`figma-implement`.
 
 ## Elevation
-
-Three levels, one real use: the skip link lifts on focus with `--shadow-md`
-(`global.css:132`). This is a flat site — a shadow is for something genuinely
-floating above the page, not for giving a card "definition".
 
 The Figma effect styles `Elevation / sm|md|lg` map to `--shadow-sm|md|lg` by
 name. Read the style name, not the drop-shadow the MCP emits; the two agree
 today and both must change together.
-
-## Radius
-
-`--radius-sm` for small chips and swatches, `--radius-md` for panels,
-`--radius-full` for pills and dots (the CV download button, the timeline dots).
-`--radius-lg` is unused so far.
-
-The focus ring applies `--radius-sm` globally (`global.css:110`), so a focusable
-element with a different radius will show a ring that doesn't match its shape —
-override it in that element's own rule when it happens.
-
-## Open questions
-
-Genuinely undecided. An agent hitting one of these should ask rather than pick.
-
-1. **What is tomato for?** It is described as a warm signal colour and used
-   nowhere. Error and destructive states are the obvious reading, but pickled is
-   also a red and already carries focus and emphasis — so the question is really
-   _tomato vs pickled for anything that means "wrong"_, and it needs answering
-   before the first form or error message ships.
-2. **How far does herbs go?** Two small positive uses so far. Is it the status
-   green generally, or is it the CV/education colour specifically?
-3. **What is `--font-mono` for on the site?** Currently only on the styleguide itself, in its
-   own value display. `--letter-spacing-extra-wide` is documented as the
-   wide-tracked mono label and has no site usage — that pairing looks intended
-   but has never been built.
-4. **`--easing-entrance`, `--duration-base` and `--duration-slow` are unused.**
-   The intent table above is the stated intent, not observed practice. First
-   real entrance animation on the site settles it.
-5. **`--shadow-sm` and `--shadow-lg` are unused,** and so is `--radius-lg`.
-   Three levels may be one more than this site needs.
-6. **Is there a second ground?** `neutral-white` currently lifts small things —
-   the skip link, a callout — and carries print. Whether whole sections alternate
-   white against `neutral-100` is a layout decision that hasn't come up yet, and
-   it changes which contrast column matters for everything on those sections.

@@ -1,8 +1,11 @@
 ---
-// Upright weights only — the mono face is used for code and labels, never italic.
-import '@fontsource-variable/jetbrains-mono/wght.css';
 import '../styles/global.css';
+import tokens from '../../design/tokens.json';
 import { SITE } from '../config/site';
+
+// The browser chrome colour has to be a literal, so read it from the token
+// file rather than retyping the hex.
+const themeColor = tokens.color.neutral['100'].$value;
 
 interface Props {
   title?: string;
@@ -49,7 +52,7 @@ const ogImage = new URL(image, Astro.site ?? 'http://localhost:4321');
     <!-- Twitter falls back to the og:* tags above; only the card type is extra. -->
     <meta name="twitter:card" content="summary_large_image" />
 
-    <meta name="theme-color" content="#faf8f4" />
+    <meta name="theme-color" content={themeColor} />
 
     <slot name="head" />
   </head>
