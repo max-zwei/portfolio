@@ -1,7 +1,7 @@
 ---
 import '../styles/global.css';
 import tokens from '../../design/tokens.json';
-import { SITE } from '../config/site';
+import { SITE, withBase } from '../config/site';
 
 // The browser chrome colour has to be a literal, so read it from the token
 // file rather than retyping the hex.
@@ -27,7 +27,7 @@ const canonical = new URL(
   Astro.url.pathname,
   Astro.site ?? 'http://localhost:4321',
 );
-const ogImage = new URL(image, Astro.site ?? 'http://localhost:4321');
+const ogImage = new URL(withBase(image), Astro.site ?? 'http://localhost:4321');
 ---
 
 <!doctype html>
@@ -35,7 +35,7 @@ const ogImage = new URL(image, Astro.site ?? 'http://localhost:4321');
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href={withBase('/favicon.svg')} type="image/svg+xml" />
     <link rel="canonical" href={canonical} />
 
     <title>{pageTitle}</title>

@@ -1,6 +1,7 @@
 ---
 import type { MarkdownLayoutProps } from 'astro';
 import BaseLayout from './BaseLayout.astro';
+import { withBase } from '../config/site';
 
 /**
  * Layout for standalone markdown pages — documents rather than case studies.
@@ -25,14 +26,14 @@ const { frontmatter } = Astro.props as Props;
   <main id="main" class="container doc">
     <header class="doc__head">
       <p class="doc__back">
-        <a href="/">&larr; Portfolio</a>
+        <a href={withBase('/')}>&larr; Portfolio</a>
       </p>
       <h1>{frontmatter.title}</h1>
       {frontmatter.lede && <p class="doc__lede">{frontmatter.lede}</p>}
       {
         frontmatter.download && (
           <p class="doc__download">
-            <a href={frontmatter.download.href} download>
+            <a href={withBase(frontmatter.download.href)} download>
               {frontmatter.download.label}
             </a>
           </p>

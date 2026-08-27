@@ -2,6 +2,18 @@
  * Site-wide constants. Anything that appears in more than one place —
  * or that you would otherwise be tempted to retype — belongs here.
  */
+
+/**
+ * Prefixes a path in public/ with the deploy base.
+ *
+ * GitHub Pages serves this as a project page, so everything sits under
+ * /portfolio. Astro rewrites the URLs it generates itself, but not the ones
+ * written by hand in a template — those come through here. When a custom
+ * domain lands and `base` goes away, this quietly becomes a no-op.
+ */
+export const withBase = (path: string) =>
+  `${import.meta.env.BASE_URL.replace(/\/$/, '')}${path}`;
+
 export const SITE = {
   name: 'Max Pinkert',
   role: 'UX & Product Design',
@@ -31,5 +43,5 @@ export const CV_INTRO =
 export const LINKS: ReadonlyArray<{ label: string; href: string }> = [
   { label: 'Email', href: `mailto:${SITE.email}` },
   { label: 'GitHub', href: 'https://github.com/max-zwei' },
-  { label: 'Résumé', href: '/resume' },
+  { label: 'Résumé', href: withBase('/resume') },
 ];

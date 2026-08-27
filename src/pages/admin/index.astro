@@ -11,6 +11,8 @@
 // otherwise put a 5 MB third-party script on the public domain for nothing.
 //
 // The config it reads still lives at public/admin/config.yml, served verbatim.
+
+import { withBase } from '../../config/site';
 ---
 
 <!doctype html>
@@ -32,7 +34,11 @@
       "application/x-yaml"; any other value is ignored and it silently falls
       back to the relative lookup.
     -->
-    <link rel="cms-config-url" type="text/yaml" href="/admin/config.yml" />
+    <link
+      rel="cms-config-url"
+      type="text/yaml"
+      href={withBase('/admin/config.yml')}
+    />
   </head>
   <body>
     <!--
