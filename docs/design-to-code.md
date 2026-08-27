@@ -1,7 +1,7 @@
 # Design-to-code handoff
 
 All design happens in Figma. Code implements it. This document is the contract
-between the two — read it before implementing any screen.
+between the two, read it before implementing any screen.
 
 ## Connection
 

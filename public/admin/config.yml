@@ -458,8 +458,8 @@ collections:
         required: false
         hint: What changed in how it looks.
 
-      - label: Tools
-        name: tools
+      - label: Tech
+        name: tech
         widget: markdown
         required: false
         hint: What changed under it — build, CMS, tokens, workflow.

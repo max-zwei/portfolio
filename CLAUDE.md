@@ -8,14 +8,9 @@ Max Pinkert's personal portfolio. A designer's site: it shows the work, the
 person, and what is currently being worked on. The focus is UX and product
 design, moving towards children's and education technology.
 
-**Design happens in Figma. This repo implements it.** You are usually not being
-asked to invent a visual design — you are being asked to build one faithfully.
-When there is no design yet, keep it restrained and token-driven so the real
-design drops in cleanly later.
-
-The bar for the visual result is "professional, but not plain". Restraint is not
-the same as blandness — the site should feel considered, with one or two
-deliberate gestures rather than a page full of them.
+**Design happens in Figma. This repo implements it.** You are never being
+asked to create a visual design or ideate user experiences. You are being asked to build faithfully.
+When there is no design yet, keep it restrained and token-driven so the real design drops in cleanly later.
 
 ## Stack
 
@@ -30,6 +25,15 @@ deliberate gestures rather than a page full of them.
 
 ## Non-negotiables
 
+1. Dsicuss any improvements or changes of this CLAUDE.md with Max first and ask for approval.
+
+1. **Never hardcode a value that has a token.** One flat tier — use the token
+   names directly, and don't reintroduce a role layer.
+2. **Accessibility is part of "done"** — semantic HTML, visible focus states, alt
+   text, reduced-motion, and contrast that holds up.
+3. **Don't invent content.** Placeholder copy must read as placeholder.
+5. **Run `npm run check` before committing.** Zero warnings.
+
 **The Figma file is the design decision, not a draft.** If it says
 `color/pickled/500`, that is the answer — including when it fails a contrast
 check, breaks a ramp's symmetry, or looks like an oversight. You may **raise**
@@ -37,24 +41,20 @@ it: in an audit, in a PR description, in the contrast table on `/styleguide`.
 You may not **resolve** it. Do not add a token, darken a value, extend a ramp,
 or substitute a different step because the design appeared to need one.
 
-> **The example this rule came from.** An agent added `color/pickled/600`
-> (`#b02546`) so accent text could clear 4.5:1, because `pickled/500` reaches
-> only 4.00:1 on `neutral/100`. The engineering was sound and the finding was
-> real. The call was still wrong: 500 on that background is a decision Max had
-> made, the replacement hex was invented rather than designed, and it reached
-> the live palette before he saw it. The correct move was to report the ratio
-> and stop.
-
-This does not weaken the accessibility rules below — contrast still gets
-measured and still gets reported. What it settles is who fixes it: the agent
-surfaces the number, Max picks the colour. The long form, with the case that
-produced it, is [Who decides](docs/design-system.md#who-decides) in the design
-system rule book.
+**Decided, so don't "fix" it**
+- **No dark mode.** One colour scheme. Don't add `prefers-color-scheme` blocks.
+- **`/admin` is local-only and is stripped from the production build.** It can't
+  log in without an OAuth relay, so shipping it would put a 5 MB third-party
+  script on the live domain for nothing. Editing happens via `npx decap-server`.
+  See [docs/cms.md](docs/cms.md).
+- **The content schema is deliberately small.** Ten fields. Adding one costs
+  three files to keep in sync, so add them when a design needs them — not in
+  advance.
 
 **Tokens.** Never hardcode a value that exists as a token. No hex colours, no
 `16px`, no `font-family` in components. Use the token names directly —
 `var(--color-neutral-700)`, `var(--space-md)`. If a design needs a value that
-has no token, add the token; don't inline it.
+has no token, discuss it with Max.
 
 **One tier, no role layer.** There is no `--text-secondary` / `--surface-default`
 tier and there should not be one. Max designs in terms of the palette, not in
@@ -62,15 +62,6 @@ terms of roles, so a second set of names for the same values only adds a
 translation step in both directions. Don't reintroduce it — this was tried and
 deliberately removed. The token names in `tokens.css` are the same names as the
 Figma variables, and that one-to-one mapping is the whole anti-drift mechanism.
-
-The cost of this is that nothing enforces contrast for you: changing a colour is
-a real decision at every site that uses it. `/styleguide` renders every colour
-against every background it actually sits on — check it.
-
-**One colour scheme.** There is no dark mode, by decision. Don't add
-`prefers-color-scheme` blocks or a theme toggle. Without a role layer a dark
-scheme would be a real refactor, not a remap — which is a known and accepted
-consequence of the choice above, not a problem to solve pre-emptively.
 
 **Accessibility is part of "done", not a follow-up.**
 
@@ -80,18 +71,15 @@ consequence of the choice above, not a problem to solve pre-emptively.
 - Respect `prefers-reduced-motion`; the global stylesheet already does, so don't
   reintroduce unconditional animation.
 - Check contrast. One scheme means no dark-mode escape hatch for a weak pairing.
-  Report what you measure; don't repaint the design to fix it — see the first
-  non-negotiable.
+  Report what you measure; don't repaint the design to fix it — see the 
+  non-negotiables.
 - `npm run lint:html` enforces alt text, heading order and labels against the
   built output. It runs in CI, so a regression fails the PR.
-
-**Static and fast.** This is a portfolio, not an app. Adding a client-side
-framework, a state library, or an analytics script needs a reason and an ask.
 
 **Keep it small.** No speculative structure — no fields, options or helpers for
 a use case that doesn't exist yet. Max reads this repo to understand and change
 it himself, and every unused abstraction is a thing he has to decode first. A
-content field costs three files to keep in sync; add one when a design needs it.
+content field costs three files to keep in sync; add one when a design needs it. This applies to inline comments as well. Only use them where the code is more complex than usual or where it creates structure. The token files are the exception — there, the naming rationale is the useful part.
 
 **No invented content.** Do not write case studies, testimonials, client names,
 metrics, or bio copy on Max's behalf. Placeholder copy must read as placeholder.
@@ -125,10 +113,6 @@ scripts/render-cv.mjs   Prints the built /resume page to that PDF.
 docs/                   Deployment, content schema, design-to-code handoff, CMS, CV.
 ```
 
-The CV is `/resume` printed to A4 — one source (the `resume` collection), two
-outputs. Change the data and re-run `npm run cv`, or the committed PDF goes stale.
-See `docs/resume-and-handshake.md`.
-
 ## Commands
 
 ```bash
@@ -154,6 +138,16 @@ frontmatter the build rejects:
 
 ## Working with Figma
 
+For Figma work, read
+[behind-the-scenes/skills/figma-implement.md](behind-the-scenes/skills/figma-implement.md)
+— the procedure for turning one frame into a page. Behind it:
+[docs/design-to-code.md](docs/design-to-code.md) is the contract and
+[docs/design-system.md](docs/design-system.md) is what the tokens are for. The
+read order is `get_metadata` to orient → `get_screenshot` to actually look at it
+→ `get_variable_defs` for tokens → `get_design_context` last, one frame at a
+time. Never skip the screenshot; the XML gives you structure, the image gives
+you intent.
+
 **Implementing a frame? Read `behind-the-scenes/skills/figma-implement.md`
 first, in full.** It is the step-by-step procedure — read order, token diff,
 component reuse, the motion ceiling, and the checks that make a page done. It
@@ -169,10 +163,6 @@ read it before choosing any colour. The short version of the read order:
 a time. Never skip the screenshot — the XML tells you structure, the image tells
 you intent.
 
-Motion stops at CSS transitions and keyframes. Scroll-driven animation, View
-Transitions and anything needing client JS are a stop-and-ask, and a prototype
-interaction must never be quietly downgraded to a fade.
-
 Before any `use_figma` call, load the `figma-use` skill. It is a hard
 prerequisite, not a recommendation.
 
@@ -181,5 +171,3 @@ prerequisite, not a recommendation.
 - Commit messages: `<area>: <what changed>` — e.g. `tokens: add status colours`,
   `content: add lesekiste case study`. Present tense, lowercase.
 - Work on a branch, open a PR, let CI run. `main` deploys straight to production.
-- Comments explain _why_, not _what_. The token files are the exception — there,
-  the naming rationale is the useful part.

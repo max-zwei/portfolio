@@ -242,7 +242,7 @@ const releaseNotes = defineCollection({
          a release rarely moves all three at once. */
       userExperience: z.string().min(1).optional(),
       userInterface: z.string().min(1).optional(),
-      tools: z.string().min(1).optional(),
+      tech: z.string().min(1).optional(),
 
       screenshots: artefacts(image),
 
