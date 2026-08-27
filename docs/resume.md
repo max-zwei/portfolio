@@ -17,7 +17,7 @@ file and needs nothing explained.
 
 Positions and qualifications are a **content collection**, one markdown file per
 entry in `src/content/resume/`, editable in the CMS under **Résumé**. Fields are
-documented in [`docs/content-schema.md`](./content-schema.md).
+documented in [`docs/cms.md`](./cms.md).
 
 The **opening paragraph** is the exception. It is bio copy rather than a position,
 so it stays in code as `CV_INTRO` in [`src/config/site.ts`](../src/config/site.ts).

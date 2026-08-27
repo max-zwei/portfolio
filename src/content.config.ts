@@ -1,13 +1,14 @@
-import { defineCollection, type SchemaContext } from 'astro:content';
+import { defineCollection, reference, type SchemaContext } from 'astro:content';
 import { glob } from 'astro/loaders';
+import { readdirSync } from 'node:fs';
 import { z } from 'zod';
 
 /**
  * Content schemas.
  *
  * Every field here also lives in public/admin/config.yml (the CMS form) and
- * docs/content-schema.md (the explanation). Change one, change all three, or
- * the CMS will write frontmatter the build rejects.
+ * docs/cms.md (the explanation). Change one, change all three, or the CMS
+ * will write frontmatter the build rejects.
  *
  * Deliberately small. Add a field when a design actually needs it — each one
  * costs three files to maintain, so speculative fields are expensive.
@@ -42,7 +43,7 @@ const artefacts = (image: ImageFn) =>
  *
  * `description` is markdown held in frontmatter. Astro's `render()` only
  * renders an entry's body, so this needs a build-time markdown pass whenever
- * the case-study page gets built. See docs/content-schema.md.
+ * the case-study page gets built. See docs/cms.md.
  */
 const caseSection = (image: ImageFn) =>
   z
@@ -173,6 +174,32 @@ const inspiration = defineCollection({
       }),
 });
 
+/**
+ * The question filenames, read fresh on every parse.
+ *
+ * `reference()` on its own does not fail a build on a dangling id — it
+ * resolves to `undefined` and warns only on the page that renders it, which
+ * for an unrendered collection is never. This makes the dangling id a schema
+ * error instead, which is the whole reason the reference exists.
+ */
+const questionIds = () =>
+  readdirSync('./src/content/questions')
+    .filter((file) => file.endsWith('.md'))
+    .map((file) => file.slice(0, -'.md'.length));
+
+/**
+ * The open questions thoughts hang off. One field, because a question is its
+ * text — the *filename* is the identity, and that is the point: rewording a
+ * question leaves every thought still pointing at it.
+ */
+const questions = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/questions' }),
+  schema: z.object({
+    /** The question itself. Keep it a question. */
+    question: z.string().min(1),
+  }),
+});
+
 /** A thought and the question it leaves open. Both halves, always. */
 const curiosity = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/curiosity' }),
@@ -180,8 +207,16 @@ const curiosity = defineCollection({
     /** The observation. */
     thought: z.string().min(1),
 
-    /** What it makes Max want to find out. Keep it a question. */
-    question: z.string().min(1),
+    /* Exactly one question, by filename. A reference rather than free text so
+       the build fails on a typo instead of silently splitting a question in
+       two — which is what makes grouping thoughts by question possible. */
+    question: reference('questions').refine(
+      (ref) => questionIds().includes(ref.id),
+      {
+        error: (issue) =>
+          `No question named "${(issue.input as { id: string }).id}". Add it under src/content/questions/, or point at one that exists.`,
+      },
+    ),
   }),
 });
 
@@ -258,6 +293,7 @@ export const collections = {
   projects,
   playground,
   inspiration,
+  questions,
   curiosity,
   resume,
   releaseNotes,

@@ -102,15 +102,15 @@ ever be wanted."
 
 ## Note to myself: How to add content?
 
-Either through the CMS (`/admin`, see [docs/cms.md](docs/cms.md)) or by hand:
-create `src/content/projects/<slug>.md` with the frontmatter documented in
-[docs/content-schema.md](docs/content-schema.md).
+Either through the CMS (`/admin`) or by hand: create
+`src/content/projects/<slug>.md` with the frontmatter documented in
+[docs/cms.md](docs/cms.md) — one file for both the fields and the editor.
 
 A field lives in three places and all three must agree, or shit will hit the fan:
 
 1. `src/content.config.ts` — the zod schema
 2. `public/admin/config.yml` — the CMS form
-3. `docs/content-schema.md` — the explanation
+3. `docs/cms.md` — the explanation
 
 ## Licence
 

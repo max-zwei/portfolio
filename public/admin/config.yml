@@ -2,7 +2,7 @@
 #
 # This file MUST stay in sync with the zod schemas in src/content.config.ts.
 # If the two drift, the CMS writes frontmatter the Astro build then rejects.
-# Field reference: docs/content-schema.md
+# Field reference: docs/cms.md
 
 backend:
   name: github
@@ -320,6 +320,29 @@ collections:
         hint: REQUIRED if a teaser is set — the build fails without it.
 
   # ---------------------------------------------------------------------------
+  # Questions — the open questions thoughts hang off.
+  # Create the question first; a thought cannot be saved without one.
+  # ---------------------------------------------------------------------------
+  - name: questions
+    label: Questions
+    label_singular: Question
+    folder: src/content/questions
+    extension: md
+    format: frontmatter
+    create: true
+    # No title field, so Decap needs telling what names the entry.
+    identifier_field: question
+    slug: '{{slug}}'
+    summary: '{{question}}'
+    fields:
+      - label: Question
+        name: question
+        widget: text
+        hint: >-
+          The open question. Rewording it later is safe — thoughts point at the
+          filename, not at this text.
+
+  # ---------------------------------------------------------------------------
   # Curiosity — a thought and the question it leaves open.
   # ---------------------------------------------------------------------------
   - name: curiosity
@@ -339,10 +362,19 @@ collections:
         widget: text
         hint: The observation.
 
+      # A relation, not text: it writes the question's filename, so the two
+      # sides cannot drift on a typo or a reword. value_field is the slug
+      # because that is the id `reference('questions')` resolves in zod.
       - label: Corresponding question
         name: question
-        widget: text
-        hint: What it makes you want to find out. Keep it a question.
+        widget: relation
+        collection: questions
+        value_field: '{{slug}}'
+        display_fields: [question]
+        search_fields: [question]
+        hint: >-
+          Pick from the existing questions. Exactly one per thought — add it
+          under Questions first if it isn't there yet.
 
   # ---------------------------------------------------------------------------
   # Resume — one entry per position or qualification.
