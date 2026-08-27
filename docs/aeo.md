@@ -7,25 +7,6 @@ from — and the answer says freelancer.
 This is an action plan, not a description of the site. Nothing here is done yet
 unless it says so.
 
-## How it differs from SEO
-
-A search engine ranks pages. An answer engine extracts **claims** and needs to
-trust them. Three things follow, and they set the order of everything below:
-
-1. **A claim has to exist in extractable text.** A model cannot infer that you
-   take freelance work from a portfolio that never says so. Right now this site
-   does not say so anywhere.
-2. **The same claim has to appear in more than one place the model has seen.**
-   One site saying it is a assertion; the site plus LinkedIn plus a GitHub
-   profile agreeing is an entity.
-3. **Structure decides whether the claim survives extraction.** Prose gets
-   compressed and can be lost. A `<h2>` with a direct answer under it, a
-   definition list, a `Person` JSON-LD block — those survive.
-
-The site's technical baseline is already good for this: static HTML, no client
-JS, real semantics, a sitemap, fast. That is the part most portfolios get wrong
-and it is already done. What is missing is claims and corroboration.
-
 ## Now — low-hanging, no design needed
 
 | #   | Action                                                                                                                                 | Where                                   | Why it matters                                                                  |
@@ -61,13 +42,3 @@ None of this works on placeholders. The bracketed entries currently in
 | 13  | Publish the curiosity and inspiration collections regularly.                                                                                    | Freshness plus topical density, in the exact niche you want to be matched on.                              |
 | 14  | Consider FAQ-shaped headings on the services page — literal questions as `<h2>`, direct answers beneath.                                        | The closest thing to writing the model's answer for it.                                                    |
 | 15  | Re-check quarterly by asking several assistants the questions you want to win, and record what they say.                                        | The only feedback loop that exists; there is no rank tracker for this.                                     |
-
-## What not to do
-
-- **Don't write claims you cannot back.** Answer engines are increasingly
-  cross-checking, and a contradicted claim is worse than a missing one.
-- **Don't add a blog to have a blog.** Thin posts dilute the topical signal.
-- **Don't block the crawlers you want to be read by.** If a licence concern
-  comes up, the answer is `LICENSE-CONTENT`, not `robots.txt`.
-- **Don't stuff keywords into `/styleguide` or `/admin`.** Both are excluded
-  from the sitemap on purpose.
