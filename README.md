@@ -19,8 +19,8 @@ Depending on why you're here:
 First of all, why are you here? You're probably looking for my Figma file:
 https://www.figma.com/design/8SQOIPl0teOTvoFH1EffaB/Portfolio?node-id=29-39&t=TJXfA7cuqJFqoJID-1
 
-I did also put down my thoughts on probably a heavily discussed topic on how to move from Design to Code. Honestly, I keep finding new inspiration on how to tackle this and very tough to keep up with all the updates regarding the infrastructure and tools of this process.
-→ [`docs/design-to-code.md`](docs/design-to-code.md)
+I did also put down my thoughts on probably a heavily discussed topic on how to move from Design to Code. Honestly, I keep finding new inspiration on how to tackle this and very tough to keep up with all the updates regarding the infrastructure and tools of this process. It ended up as a skill rather than a document, because that is what actually gets read by the thing doing the work:
+→ [`behind-the-scenes/skills/figma-implement.md`](behind-the-scenes/skills/figma-implement.md), and [`docs/design-system.md`](docs/design-system.md) for what the tokens are _for_.
 
 **⚙️ You're an engineer**
 Don't judge me and my beautiful repo. If you like my approach of trying to bridge Design and Code, feel free to get in touch and let's work on our next projects together!
@@ -43,12 +43,12 @@ Where there's no design yet, the rule is: build restrained and token-driven, so 
 
 ## Stack
 
-| Concern    | Choice                                        | Why                                                                                   |
-| ---------- | --------------------------------------------- | ------------------------------------------------------------------------------------- |
-| Framework  | [Astro](https://astro.build)                  | Seems like a solid choice. As long as I don't have any specific requirements, I'll stick to it            |
-| Styling    | Plain CSS + custom properties                 | Never really happy with how "Variables & Styles" work in Figma and how to translate this into CSS code. Know of any better solution? |
-| CMS        | [Decap CMS](https://decapcms.org)             | Writes markdown back into the repo. Looks like a nice minimalistic solution                         |
-| Hosting    | GitHub Pages via GitHub Actions               | Honestly can't be bothered to use more and more tools so was hoping to find a solution within the existing tool stack and GitHub pages is also free for my use case                                      |
+| Concern   | Choice                            | Why                                                                                                                                                                 |
+| --------- | --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Framework | [Astro](https://astro.build)      | Seems like a solid choice. As long as I don't have any specific requirements, I'll stick to it                                                                      |
+| Styling   | Plain CSS + custom properties     | Never really happy with how "Variables & Styles" work in Figma and how to translate this into CSS code. Know of any better solution?                                |
+| CMS       | [Decap CMS](https://decapcms.org) | Writes markdown back into the repo. Looks like a nice minimalistic solution                                                                                         |
+| Hosting   | GitHub Pages via GitHub Actions   | Honestly can't be bothered to use more and more tools so was hoping to find a solution within the existing tool stack and GitHub pages is also free for my use case |
 
 ## npm commands
 
@@ -60,7 +60,7 @@ npm run dev        # http://localhost:4321
 | Command             | What it does                                                        |
 | ------------------- | ------------------------------------------------------------------- |
 | `npm run dev`       | Dev server with hot reload                                          |
-| `npm run cv`        | Re-prints `/resume` to `public/cv/max-pinkert-cv.pdf`               |
+| `npm run pdf`       | Re-prints `/resume` and `/handshake` to their PDFs in `public/`     |
 | `npm run verify`    | **The one to run before pushing** — check, build, HTML lint, format |
 | `npm run check`     | `astro check` — 0 errors, 0 warnings                                |
 | `npm run build`     | Static build into `dist/`                                           |

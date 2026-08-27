@@ -1,173 +1,138 @@
 # CLAUDE.md
 
-Guidance for Claude Code (and any other agent) working in this repository.
+Operating rules for any agent working in this repository. Read fully before the
+first edit.
 
-## What this is
+## 0. Context
 
-Max Pinkert's personal portfolio. A designer's site: it shows the work, the
-person, and what is currently being worked on. The focus is UX and product
-design, moving towards children's and education technology.
+Max Pinkert's personal portfolio. UX and product design, moving towards
+children's and education technology.
 
-**Design happens in Figma. This repo implements it.** You are never being
-asked to create a visual design or ideate user experiences. You are being asked to build faithfully.
-When there is no design yet, keep it restrained and token-driven so the real design drops in cleanly later.
+**Design happens in Figma. This repo implements it.** You are never asked to
+create a visual design or ideate an experience. Where no design exists yet,
+build restrained and token-driven so the real one drops in cleanly.
 
-## Stack
+## 1. Rules
 
-| Concern   | Choice                        | Notes                                                                                                   |
-| --------- | ----------------------------- | ------------------------------------------------------------------------------------------------------- |
-| Framework | Astro (static output)         | No SSR. Zero client JS unless a feature genuinely needs it.                                             |
-| Styling   | Plain CSS + custom properties | No Tailwind, no CSS-in-JS. Scoped `<style>` blocks in `.astro` files.                                   |
-| Content   | Astro content collections     | Six collections. Markdown in `src/content/`, schemas in `src/content.config.ts`.                        |
-| CMS       | Decap CMS                     | `public/admin/`. Writes markdown back to the repo. Local editing only, by decision — see `docs/cms.md`. |
-| Hosting   | GitHub Pages via Actions      | `.github/workflows/deploy.yml`, pushes to `main` only.                                                  |
-| Design    | Figma via MCP                 | `.mcp.json`, workflow in `docs/design-to-code.md`.                                                      |
+Numbered so they can be cited. `MUST` / `NEVER` are literal.
 
-## Non-negotiables
+| Rule | Statement                                                                                                                                                                                                                                  |
+| ---- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| R1   | NEVER change this file without Max's explicit approval. Propose, then wait.                                                                                                                                                                |
+| R2   | NEVER write a literal that has a token. No hex, no `px`, no `font-family` in a component. Use `var(--color-neutral-700)`, `var(--space-md)`. A needed value with no token → ask.                                                           |
+| R3   | NEVER introduce a role layer. `--text-secondary`, `--surface-default` and friends were tried and deliberately removed. One flat tier only.                                                                                                 |
+| R4   | NEVER author a style the design has not defined. Every declaration traces to a Figma frame, to `global.css`, or to an accessibility requirement. An invented hover colour is a bug.                                                        |
+| R5   | The Figma file is the decision, not a draft. You MAY report a contrast failure, an asymmetric ramp, an odd value. You MUST NOT resolve one by adding a token, darkening a value, extending a ramp or substituting a step.                  |
+| R6   | NEVER invent content. No case studies, testimonials, client names, metrics or bio copy. Placeholder copy MUST read as placeholder — `[bracketed]`.                                                                                         |
+| R7   | Accessibility is part of done. Semantic HTML, a visible `:focus-visible` on every interactive element, alt text on every image, `prefers-reduced-motion` respected (globally — do not re-add it per page), contrast measured and reported. |
+| R8   | NEVER add speculative structure. No field, option, component or helper for a use case that does not exist. `src/components/` does not exist; extract on the second use, not the first.                                                     |
+| R9   | Comments earn their place: complex code, or structure. NOT narration of the work. `tokens.css` and `fonts.css` are the exception — there the rationale is the useful part.                                                                 |
+| R10  | Run `npm run verify` before pushing. Zero warnings.                                                                                                                                                                                        |
+| R11  | Zero client JS unless a feature genuinely cannot work without it. Ask first.                                                                                                                                                               |
 
-1. Dsicuss any improvements or changes of this CLAUDE.md with Max first and ask for approval.
+## 2. Decided — do not revisit
 
-1. **Never hardcode a value that has a token.** One flat tier — use the token
-   names directly, and don't reintroduce a role layer.
-2. **Accessibility is part of "done"** — semantic HTML, visible focus states, alt
-   text, reduced-motion, and contrast that holds up.
-3. **Don't invent content.** Placeholder copy must read as placeholder.
-5. **Run `npm run check` before committing.** Zero warnings.
+| Decision                                                        | Consequence                                                                                                                       |
+| --------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| No dark mode.                                                   | NEVER add a `prefers-color-scheme` block. With no role tier a dark scheme is a refactor of every component, and that is accepted. |
+| `/admin` is local-only, stripped from the production build.     | It cannot log in without an OAuth relay. Edit via `npx decap-server`. See [docs/cms.md](docs/cms.md).                             |
+| The content schema is deliberately small.                       | A field costs three files to keep in sync. Add one when a design needs it.                                                        |
+| Token names are Figma variable names, mechanically transformed. | `color/lemon/500` ↔ `--color-lemon-500`. This one-to-one mapping is the entire anti-drift mechanism. Do not break it.             |
+| Fonts are self-hosted; the site makes no third-party requests.  | No CDN links, no `@import` from a font host.                                                                                      |
 
-**The Figma file is the design decision, not a draft.** If it says
-`color/pickled/500`, that is the answer — including when it fails a contrast
-check, breaks a ramp's symmetry, or looks like an oversight. You may **raise**
-it: in an audit, in a PR description, in the contrast table on `/styleguide`.
-You may not **resolve** it. Do not add a token, darken a value, extend a ramp,
-or substitute a different step because the design appeared to need one.
+## 3. Stack
 
-**Decided, so don't "fix" it**
-- **No dark mode.** One colour scheme. Don't add `prefers-color-scheme` blocks.
-- **`/admin` is local-only and is stripped from the production build.** It can't
-  log in without an OAuth relay, so shipping it would put a 5 MB third-party
-  script on the live domain for nothing. Editing happens via `npx decap-server`.
-  See [docs/cms.md](docs/cms.md).
-- **The content schema is deliberately small.** Ten fields. Adding one costs
-  three files to keep in sync, so add them when a design needs them — not in
-  advance.
+| Concern   | Choice                        | Constraint                                                                      |
+| --------- | ----------------------------- | ------------------------------------------------------------------------------- |
+| Framework | Astro, static output          | No SSR.                                                                         |
+| Styling   | Plain CSS + custom properties | No Tailwind, no CSS-in-JS. Scoped `<style>` in `.astro` files.                  |
+| Content   | Astro content collections     | Six. Markdown in `src/content/`, schemas in `src/content.config.ts`.            |
+| CMS       | Decap                         | `public/admin/`. Writes markdown back to the repo.                              |
+| Hosting   | GitHub Pages via Actions      | `.github/workflows/deploy.yml`. Every push to `main` deploys. PRs run `ci.yml`. |
+| Design    | Figma via MCP                 | `.mcp.json`. Procedure: `behind-the-scenes/skills/figma-implement.md`.          |
 
-**Tokens.** Never hardcode a value that exists as a token. No hex colours, no
-`16px`, no `font-family` in components. Use the token names directly —
-`var(--color-neutral-700)`, `var(--space-md)`. If a design needs a value that
-has no token, discuss it with Max.
-
-**One tier, no role layer.** There is no `--text-secondary` / `--surface-default`
-tier and there should not be one. Max designs in terms of the palette, not in
-terms of roles, so a second set of names for the same values only adds a
-translation step in both directions. Don't reintroduce it — this was tried and
-deliberately removed. The token names in `tokens.css` are the same names as the
-Figma variables, and that one-to-one mapping is the whole anti-drift mechanism.
-
-**Accessibility is part of "done", not a follow-up.**
-
-- Semantic HTML first. A `<div>` with a click handler is a bug.
-- Every interactive element needs a visible `:focus-visible` state.
-- Every image needs alt text — the content schema fails the build without it.
-- Respect `prefers-reduced-motion`; the global stylesheet already does, so don't
-  reintroduce unconditional animation.
-- Check contrast. One scheme means no dark-mode escape hatch for a weak pairing.
-  Report what you measure; don't repaint the design to fix it — see the 
-  non-negotiables.
-- `npm run lint:html` enforces alt text, heading order and labels against the
-  built output. It runs in CI, so a regression fails the PR.
-
-**Keep it small.** No speculative structure — no fields, options or helpers for
-a use case that doesn't exist yet. Max reads this repo to understand and change
-it himself, and every unused abstraction is a thing he has to decode first. A
-content field costs three files to keep in sync; add one when a design needs it. This applies to inline comments as well. Only use them where the code is more complex than usual or where it creates structure. The token files are the exception — there, the naming rationale is the useful part.
-
-**No invented content.** Do not write case studies, testimonials, client names,
-metrics, or bio copy on Max's behalf. Placeholder copy must read as placeholder.
-Real content comes from Max, through the CMS or a direct instruction.
-
-## Layout
+## 4. Map
 
 ```
 src/
-  config/site.ts        Site-wide constants (name, slogan, links, CV intro). Edit here, not inline.
-  content.config.ts     Collection schemas (zod). Mirror changes in public/admin/config.yml.
-  content/projects/     Case studies as markdown; images in _media/. Eight sections per project.
-  content/playground/   Small self-directed builds.
-  content/inspiration/  Other people's work worth pointing at.
-  content/curiosity/    A thought and the question it leaves open.
-  content/resume/       The CV, one entry per position. Printed to public/cv/.
+  config/site.ts         Site-wide constants. Edit here, never inline.
+  content.config.ts      Collection schemas (zod).
+  content/projects/      Case studies. Eight sections each; images in _media/.
+  content/playground/    Small self-directed builds.
+  content/inspiration/   Other people's work worth pointing at.
+  content/curiosity/     A thought and the question it leaves open.
+  content/resume/        The CV, one entry per position.
   content/release-notes/ What changed on the site, and when.
-  layouts/              BaseLayout.astro — head, meta, OG tags, skip link.
-                        ProseLayout.astro — markdown document pages.
-  pages/                File-based routes. handshake.md is a markdown page.
-  styles/
-    tokens.css          Design tokens. One flat tier. Start here.
-    fonts.css           @font-face for Satoshi and Erode. Mono comes from npm.
-    global.css          Reset, typography defaults, a11y helpers, .container.
-design/tokens.json      DTCG token export — the Figma exchange format.
-public/admin/           Decap CMS shell + config.
-public/cv/              The CV as PDF. Generated by npm run cv — never hand-edited.
-public/fonts/           Satoshi + Erode woff2, self-hosted, plus their LICENSE.
-                        Third-party type — credit the foundry if you touch it.
-scripts/render-cv.mjs   Prints the built /resume page to that PDF.
-docs/                   Deployment, content schema, design-to-code handoff, CMS, CV.
+  layouts/               BaseLayout — head, meta, OG, skip link.
+                         ProseLayout — markdown document pages.
+  lib/tokens.ts          Reads design/tokens.json for /styleguide.
+  pages/                 File-based routes. handshake.md is a markdown page.
+  styles/tokens.css      Design tokens. One flat tier. Start here.
+  styles/fonts.css       All three typefaces.
+  styles/global.css      Reset, typography defaults, a11y helpers, .container.
+design/tokens.json       DTCG export — the Figma exchange format.
+public/admin/            Decap CMS config.
+public/cv/               CV as PDF. Generated. NEVER hand-edit.
+public/handshake/        Handshake as PDF. Generated. NEVER hand-edit.
+public/fonts/            Satoshi + Erode woff2 + LICENSE. Third-party type.
+public/certificates/     Scanned qualifications. public/letters/ — references.
+scripts/render-pdf.mjs   Prints /resume and /handshake to those PDFs.
+behind-the-scenes/skills/ Agent skills. figma-implement.md is the main one.
+docs/                    content-schema, cms, design-system, resume, aeo.
 ```
 
-## Commands
+## 5. Commands
 
 ```bash
 npm run dev      # local dev server
-npm run verify   # check + build + HTML lint + format check — run before pushing
-npm run cv       # rebuild, then re-print /resume to public/cv/max-pinkert-cv.pdf
+npm run verify   # check + build + HTML lint + format check — before every push
+npm run pdf      # rebuild, then re-print /resume and /handshake to public/
 npm run format   # prettier, write mode
 npx decap-server # local CMS backend, so /admin works without OAuth
 ```
 
-`npm run verify` is the same chain CI runs (CI adds `npm audit`). Run it before
-pushing; it catches schema mismatches and accessibility regressions that are
-otherwise invisible until the build fails.
+`npm run verify` is the chain CI runs (CI adds `npm audit`).
 
-## When changing content fields
+## 6. Procedures
 
-A content field lives in three places. Change all three or the CMS will write
-frontmatter the build rejects:
+### Implementing a Figma frame
+
+**Read [behind-the-scenes/skills/figma-implement.md](behind-the-scenes/skills/figma-implement.md)
+in full first. Not optional.** It is the contract and the procedure: read order,
+token diff, component reuse, the motion ceiling, the checks that make a page
+done.
+
+[docs/design-system.md](docs/design-system.md) is what the tokens are _for_.
+Read it before choosing any colour.
+
+Read order, short form: `get_metadata` → `get_screenshot` → `get_variable_defs`
+→ `get_design_context` (one frame, last). NEVER skip the screenshot.
+
+Before any `use_figma` call, load the `figma-use` skill. Hard prerequisite.
+
+### Changing a content field
+
+A field lives in three places. Change all three or the CMS writes frontmatter
+the build rejects:
 
 1. `src/content.config.ts` — the zod schema (the enforcer)
 2. `public/admin/config.yml` — the CMS form
-3. `docs/content-schema.md` — the human explanation
+3. `docs/content-schema.md` — the explanation
 
-## Working with Figma
+### Adding a token
 
-For Figma work, read
-[behind-the-scenes/skills/figma-implement.md](behind-the-scenes/skills/figma-implement.md)
-— the procedure for turning one frame into a page. Behind it:
-[docs/design-to-code.md](docs/design-to-code.md) is the contract and
-[docs/design-system.md](docs/design-system.md) is what the tokens are for. The
-read order is `get_metadata` to orient → `get_screenshot` to actually look at it
-→ `get_variable_defs` for tokens → `get_design_context` last, one frame at a
-time. Never skip the screenshot; the XML gives you structure, the image gives
-you intent.
+Three files, same commit: `design/tokens.json`, `src/styles/tokens.css`, and the
+Figma variable collection. Two of three is a bug. The Figma variable needs WEB
+code syntax set, or the MCP emits invalid CSS.
 
-**Implementing a frame? Read `behind-the-scenes/skills/figma-implement.md`
-first, in full.** It is the step-by-step procedure — read order, token diff,
-component reuse, the motion ceiling, and the checks that make a page done. It
-lives in `behind-the-scenes/` rather than `.claude/skills/`, so this pointer is
-what loads it. Not optional.
+### Editing the résumé or the handshake
 
-The two documents behind it: `docs/design-to-code.md` is the contract (token
-sync, the Figma collections, the three things Figma cannot express faithfully),
-and `docs/design-system.md` is the rule book for what the tokens are _for_ —
-read it before choosing any colour. The short version of the read order:
-`get_metadata` to orient, `get_screenshot` to actually look at it,
-`get_variable_defs` to get the tokens, `get_design_context` last and one frame at
-a time. Never skip the screenshot — the XML tells you structure, the image tells
-you intent.
+Both PDFs are printed from their pages. After editing either, run `npm run pdf`
+and commit the result — nothing checks this for you.
 
-Before any `use_figma` call, load the `figma-use` skill. It is a hard
-prerequisite, not a recommendation.
+## 7. Conventions
 
-## Conventions
-
-- Commit messages: `<area>: <what changed>` — e.g. `tokens: add status colours`,
-  `content: add lesekiste case study`. Present tense, lowercase.
-- Work on a branch, open a PR, let CI run. `main` deploys straight to production.
+- Commits: `<area>: <what changed>`, present tense, lowercase. E.g.
+  `tokens: add status colours`, `content: add lesekiste case study`.
+- Work on a branch, open a PR, let CI run. `main` deploys straight to
+  production.

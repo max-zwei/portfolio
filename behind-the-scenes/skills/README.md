@@ -1,7 +1,7 @@
 # Skills
 
 A _skill_ is a markdown file that teaches an LLM how to do one job
-hopefully reliably and repeatible. 
+hopefully reliably and repeatible.
 
 This folder contains the ones I've used for this project. Feel free to install them with your LLM of choice.
 

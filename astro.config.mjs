@@ -23,8 +23,8 @@ const excludeAdminFromBuild = {
   },
 };
 
-// `site` drives canonical URLs, OG tags and the sitemap — update it when the
-// custom domain is attached (see docs/deployment.md).
+// `site` drives canonical URLs, OG tags and the sitemap — update it when a
+// custom domain is attached, along with the sitemap URL in public/robots.txt.
 export default defineConfig({
   site: 'https://max-zwei.github.io',
   output: 'static',
