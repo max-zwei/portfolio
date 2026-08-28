@@ -9,6 +9,10 @@ way. This is the record of why, and what both sides change before the next page.
 
 Written jointly: Max raised three of the findings, I raised the rest.
 
+The actionable counterpart is
+[`figma-to-code-improvements.md`](./figma-to-code-improvements.md) — this file
+says what happened and why, that one says what changes.
+
 ---
 
 ## What actually shipped
