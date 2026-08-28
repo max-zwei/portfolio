@@ -360,111 +360,113 @@ const STEPS: Step[] = [
     {/* The design draws no page heading; the document still needs one. */}
     <h1 class="visually-hidden">{SITE.name} — {SITE.role}</h1>
 
-    {
-      STEPS.map((s) => (
-        <section
-          id={`step-${s.id}`}
-          class:list={['chat__step', s.id === 'start' && 'chat__step--first']}
-          aria-labelledby={`h-${s.id}`}
-          tabindex="-1"
-        >
-          <h2 id={`h-${s.id}`} class="visually-hidden">
-            {s.heading}
-          </h2>
+    <div class="chat__transcript" data-transcript>
+      {
+        STEPS.map((s) => (
+          <section
+            id={`step-${s.id}`}
+            class:list={['chat__step', s.id === 'start' && 'chat__step--first']}
+            aria-labelledby={`h-${s.id}`}
+            tabindex="-1"
+          >
+            <h2 id={`h-${s.id}`} class="visually-hidden">
+              {s.heading}
+            </h2>
 
-          {s.answers && (
-            <ul class="chat__said" data-said>
-              {s.answers.map((a) => (
-                <li class="chat__answer">{a}</li>
+            {s.answers && (
+              <ul class="chat__said" data-said>
+                {s.answers.map((a) => (
+                  <li class="chat__answer">{a}</li>
+                ))}
+              </ul>
+            )}
+
+            <ol class="chat__thread">
+              {s.messages.map((m, i) => (
+                <li class="chat__row" style={`--i: ${i}`}>
+                  {m.speaker && (
+                    <img
+                      class="chat__avatar"
+                      src={withBase(`/avatars/${m.speaker.avatar}.svg`)}
+                      alt={m.speaker.alt}
+                      width="87"
+                      height="87"
+                    />
+                  )}
+                  <div
+                    class:list={[
+                      'chat__bubble',
+                      m.panel && 'chat__bubble--panel',
+                    ]}
+                  >
+                    {m.paragraphs.map((p) => (
+                      <p class="chat__text" data-type>
+                        {p.map((run) =>
+                          typeof run === 'string' ? (
+                            run
+                          ) : (
+                            <a href={run.href}>{run.text}</a>
+                          ),
+                        )}
+                      </p>
+                    ))}
+                  </div>
+                </li>
               ))}
-            </ul>
-          )}
+            </ol>
 
-          <ol class="chat__thread">
-            {s.messages.map((m, i) => (
-              <li class="chat__row" style={`--i: ${i}`}>
-                {m.speaker && (
-                  <img
-                    class="chat__avatar"
-                    src={withBase(`/avatars/${m.speaker.avatar}.svg`)}
-                    alt={m.speaker.alt}
-                    width="87"
-                    height="87"
-                  />
-                )}
-                <div
-                  class:list={[
-                    'chat__bubble',
-                    m.panel && 'chat__bubble--panel',
-                  ]}
-                >
-                  {m.paragraphs.map((p) => (
-                    <p class="chat__text" data-type>
-                      {p.map((run) =>
-                        typeof run === 'string' ? (
-                          run
-                        ) : (
-                          <a href={run.href}>{run.text}</a>
-                        ),
-                      )}
-                    </p>
-                  ))}
-                </div>
-              </li>
-            ))}
-          </ol>
-
-          {s.questions && (
-            <div class="chat__form" data-quiz>
-              {/* Not a <form>: nothing is submitted. The chips are checkboxes
+            {s.questions && (
+              <div class="chat__form" data-quiz>
+                {/* Not a <form>: nothing is submitted. The chips are checkboxes
                   so a selection is real and reversible, and the fieldsets
                   carry the grouping a form element would have provided. */}
-              {s.questions.map((q, qi) => (
-                <fieldset class="chat__question">
-                  <legend class="chat__bubble chat__bubble--legend">
-                    {q.prompt}
-                  </legend>
-                  <ul class="chat__choices">
-                    {q.options.map((o) => (
-                      <li>
-                        <label class="chat__choice chat__choice--option">
-                          <input
-                            class="visually-hidden"
-                            type="checkbox"
-                            name={`q${qi}[]`}
-                            value={o}
-                          />
-                          <span>{o}</span>
-                        </label>
-                      </li>
-                    ))}
-                  </ul>
-                </fieldset>
-              ))}
-              <ul class="chat__choices">
-                <li>
-                  <a class="chat__choice" href="#step-result">
-                    Run the prototype
-                  </a>
-                </li>
-              </ul>
-            </div>
-          )}
+                {s.questions.map((q, qi) => (
+                  <fieldset class="chat__question">
+                    <legend class="chat__bubble chat__bubble--legend" data-type>
+                      {q.prompt}
+                    </legend>
+                    <ul class="chat__choices">
+                      {q.options.map((o) => (
+                        <li>
+                          <label class="chat__choice chat__choice--option">
+                            <input
+                              class="visually-hidden"
+                              type="checkbox"
+                              name={`q${qi}[]`}
+                              value={o}
+                            />
+                            <span>{o}</span>
+                          </label>
+                        </li>
+                      ))}
+                    </ul>
+                  </fieldset>
+                ))}
+                <ul class="chat__choices">
+                  <li>
+                    <a class="chat__choice" href="#step-result">
+                      Run the prototype
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            )}
 
-          {s.choices && (
-            <ul class="chat__choices">
-              {s.choices.map((c) => (
-                <li>
-                  <a class="chat__choice" href={c.href}>
-                    {c.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          )}
-        </section>
-      ))
-    }
+            {s.choices && (
+              <ul class="chat__choices">
+                {s.choices.map((c) => (
+                  <li>
+                    <a class="chat__choice" href={c.href}>
+                      {c.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </section>
+        ))
+      }
+    </div>
   </main>
 </BaseLayout>
 
@@ -484,15 +486,25 @@ const STEPS: Step[] = [
     background-color: var(--color-neutral-white);
   }
 
-  .chat__step {
-    display: none;
+  /*
+   * Auto margins rather than `justify-content`, so a transcript taller than
+   * the viewport scrolls to its top instead of overflowing out of reach. While
+   * it is short — the opening exchange — this centres it, since the rest of
+   * the page is empty.
+   */
+  .chat__transcript {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
     width: 100%;
     max-width: var(--size-chat-column);
-    /* Auto margin rather than `justify-content`, so a step taller than the
-       viewport still scrolls to its top instead of overflowing out of reach. */
-    margin-block-start: auto;
+    margin-block: auto;
     margin-inline: auto;
     padding-inline: var(--space-md);
+  }
+
+  .chat__step {
+    display: none;
   }
 
   .chat__step:target,
@@ -506,6 +518,33 @@ const STEPS: Step[] = [
     outline: none;
   }
 
+  /*
+   * With the script running the conversation accumulates instead of swapping:
+   * the script moves each visited step into the transcript, in the order it
+   * was actually visited, and every one of them stays visible to scroll back
+   * through. `:target` still drives it without the script.
+   */
+  .chat--live .chat__step {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+  }
+
+  /* Messages fade as they leave the top, rather than being cut off. */
+  .chat--live::before {
+    content: '';
+    position: fixed;
+    inset-block-start: 0;
+    inset-inline: 0;
+    height: var(--space-xl);
+    background-image: linear-gradient(
+      to bottom,
+      var(--color-neutral-white),
+      transparent
+    );
+    pointer-events: none;
+  }
+
   /* --- the conversation ------------------------------------------------ */
 
   .chat__thread,
@@ -514,6 +553,12 @@ const STEPS: Step[] = [
     margin: 0;
     padding: 0;
     list-style: none;
+  }
+
+  /* `display` below beats the UA's `[hidden] { display: none }`, so the
+     withdrawn options need saying explicitly or they stay on screen. */
+  .chat__choices[hidden] {
+    display: none;
   }
 
   .chat__thread {
@@ -539,12 +584,18 @@ const STEPS: Step[] = [
    * The chips are a direct child only: `.chat__choices` also names the option
    * rows inside the questionnaire, and those are not part of the sequence.
    */
-  .chat__step--typed > .chat__choices {
+  .chat__step--typed > .chat__choices,
+  .chat__step--typed .chat__question,
+  .chat__step--typed .chat__form > .chat__choices {
     animation: chat-arrive var(--duration-base) var(--easing-entrance) both;
   }
 
+  /* Order matters: the `animation` shorthand above resets the delay, so this
+     has to come after it. */
   .chat__step--typed .chat__row,
-  .chat__step--typed > .chat__choices {
+  .chat__step--typed > .chat__choices,
+  .chat__step--typed .chat__question,
+  .chat__step--typed .chat__form > .chat__choices {
     animation-delay: var(--row-start, 0ms);
   }
 
@@ -617,6 +668,11 @@ const STEPS: Step[] = [
   .chat__answer,
   .chat__choice {
     display: block;
+    /* Sizes to its text. Narrow screens keep the cap and may wrap; from the
+       breakpoint up a chip holds one line, as the component does on canvas —
+       Figma's own instance of the longest chip is 452px, past the 400 cap,
+       because its text cannot wrap. */
+    width: max-content;
     max-width: var(--size-chat-choice);
     padding: var(--space-xs) var(--space-sm);
     color: var(--color-neutral-800);
@@ -683,8 +739,14 @@ const STEPS: Step[] = [
   }
 
   @media (min-width: 48rem) {
-    .chat__step {
+    .chat__transcript {
       padding-inline: var(--space-lg);
+    }
+
+    .chat__answer,
+    .chat__choice {
+      max-width: 100%;
+      white-space: nowrap;
     }
   }
 </style>
@@ -749,15 +811,23 @@ const STEPS: Step[] = [
 
       stepEl.classList.add('chat__step--typed');
 
-      // Walk rows, not paragraphs: a container appears when its own first
+      // Walk blocks, not paragraphs: a container appears when its own first
       // character is about to, so the conversation arrives one message at a
       // time rather than as a set of empty bubbles that fill in later.
+      //
+      // A questionnaire question is a fieldset rather than a row, and carries
+      // its own options — without it here the whole of `home - 6` landed at
+      // once, with no entrance at all.
       let delay = 0;
-      for (const row of stepEl.querySelectorAll<HTMLElement>('.chat__row')) {
-        row.style.setProperty('--row-start', `${delay}ms`);
+      const blocks = stepEl.querySelectorAll<HTMLElement>(
+        '.chat__row, .chat__question, .chat__form > .chat__choices',
+      );
+      for (const block of blocks) {
+        block.style.setProperty('--row-start', `${delay}ms`);
+        follow(delay + ENTRANCE);
         // Let the bubble settle before its first character lands.
         delay += ENTRANCE;
-        for (const p of row.querySelectorAll<HTMLElement>('[data-type]')) {
+        for (const p of block.querySelectorAll<HTMLElement>('[data-type]')) {
           type(p, delay);
           delay += Array.from(p.textContent ?? '').length * PER_CHAR + BETWEEN;
         }
@@ -768,14 +838,78 @@ const STEPS: Step[] = [
       stepEl
         .querySelector<HTMLElement>(':scope > .chat__choices')
         ?.style.setProperty('--row-start', `${delay}ms`);
+      follow(delay + ENTRANCE);
     };
 
     /** What the visitor last said, and — from the quiz — everything they ticked. */
     let said: string[] = [];
 
-    const enter = (id: string) => {
-      const stepEl = document.getElementById(id);
-      if (!stepEl) return;
+    /*
+     * The conversation is one transcript, the way a messenger thread is: every
+     * visited step is moved into it and stays there to scroll back through.
+     * Steps start detached and are appended in the order they are actually
+     * visited, which is not the order they sit in the document.
+     *
+     * Moving them, rather than rebuilding, is what keeps Astro's scope
+     * attribute — and with it every scoped style — attached to the markup.
+     */
+    const chat = document.querySelector<HTMLElement>('.chat');
+    const transcript = document.querySelector<HTMLElement>('[data-transcript]');
+    const waiting = new Map(
+      [...steps].map((s) => [s.id, s] as [string, HTMLElement]),
+    );
+    chat?.classList.add('chat--live');
+    for (const s of steps) s.remove();
+
+    /** Distance from the bottom still counted as being at the bottom. */
+    const SLACK = 240;
+    const atBottom = () =>
+      innerHeight + scrollY >= document.body.scrollHeight - SLACK;
+
+    /*
+     * Follow the newest message unless the visitor has scrolled away to read
+     * back — yanking them out of the history they asked for would be worse
+     * than not following at all.
+     *
+     * The flag tracks *their* scrolling, not the distance to the bottom: new
+     * messages grow the page without firing a scroll event, so arriving
+     * content never unpins. Our own smooth scroll does fire events on the way,
+     * hence the window in which they are ignored.
+     */
+    let pinned = true;
+    let ours = 0;
+    addEventListener(
+      'scroll',
+      () => {
+        if (performance.now() < ours) return;
+        pinned = atBottom();
+      },
+      { passive: true },
+    );
+
+    const follow = (at: number) => {
+      setTimeout(() => {
+        if (!pinned) return;
+        ours = performance.now() + 900; // long enough to cover the glide
+        scrollTo({
+          top: document.body.scrollHeight,
+          behavior: still.matches ? 'auto' : 'smooth',
+        });
+      }, at);
+    };
+
+    const enter = (id: string, advanced = true) => {
+      const stepEl = waiting.get(id);
+      // Already in the transcript — a back button, or a repeated hash. Leave
+      // the history as it happened rather than moving the step to the end.
+      if (!stepEl || stepEl.parentElement === transcript) return;
+
+      // Once answered, the options that were not taken go away, as a
+      // messenger's quick replies do. The choice itself survives as the
+      // echoed chip on the step being appended.
+      transcript
+        ?.querySelector<HTMLElement>('.chat__step:last-child > .chat__choices')
+        ?.setAttribute('hidden', '');
 
       const echo = stepEl.querySelector('[data-said]');
       // Clone the chip Astro rendered rather than building one. Scoped styles
@@ -795,13 +929,11 @@ const STEPS: Step[] = [
       }
       said = [];
 
+      transcript?.append(stepEl);
       play(stepEl);
-      stepEl.focus({ preventScroll: true });
-      // The frames never scroll: the newest exchange settles low on screen.
-      stepEl.scrollIntoView({
-        block: 'end',
-        behavior: still.matches ? 'auto' : 'smooth',
-      });
+      // Only when the visitor advanced. Taking focus on first load would put
+      // them past the skip link before they have done anything.
+      if (advanced) stepEl.focus({ preventScroll: true });
     };
 
     document.addEventListener('click', (event) => {
@@ -822,8 +954,12 @@ const STEPS: Step[] = [
       enter(location.hash.slice(1) || 'step-start'),
     );
 
-    if (location.hash.startsWith('#step-')) enter(location.hash.slice(1));
-    else play(steps[0]);
+    enter(
+      location.hash.startsWith('#step-')
+        ? location.hash.slice(1)
+        : 'step-start',
+      false,
+    );
   }
 </script>
 
