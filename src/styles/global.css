@@ -36,7 +36,7 @@ body {
   html,
   body,
   body * {
-    cursor: url('/cursor.svg') 20 20, auto;
+    cursor: var(--cursor-url) 20 20, auto;
   }
 
   input,
