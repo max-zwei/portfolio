@@ -778,11 +778,16 @@ const STEPS: Step[] = [
       if (!stepEl) return;
 
       const echo = stepEl.querySelector('[data-said]');
-      if (echo && said.length) {
+      // Clone the chip Astro rendered rather than building one. Scoped styles
+      // compile to `.chat__answer[data-astro-cid-…]`, and only Astro's own
+      // markup carries that attribute — a `createElement` chip matches nothing
+      // and renders as plain text. Cloning also keeps this correct if the
+      // chip's markup changes.
+      const chip = echo?.querySelector('.chat__answer');
+      if (echo && chip && said.length) {
         echo.replaceChildren(
           ...said.map((label) => {
-            const li = document.createElement('li');
-            li.className = 'chat__answer';
+            const li = chip.cloneNode(false) as HTMLElement;
             li.textContent = label;
             return li;
           }),
