@@ -29,9 +29,21 @@ type Step = {
   /** Chips echoed back at the top: what the visitor said to get here. */
   answers?: string[];
   messages: Message[];
-  questions?: { prompt: string; options: string[] }[];
+  /** One of the prototype's four questions: remember what was answered. */
+  question?: true;
   choices?: Choice[];
 };
+
+/** A question's options are ordinary reply chips leading to the next one. */
+const asks = (
+  prompt: string,
+  options: string[],
+  next: string,
+): Pick<Step, 'messages' | 'question' | 'choices'> => ({
+  messages: [{ paragraphs: [[prompt]] }],
+  question: true,
+  choices: options.map((label) => ({ label, href: step(next) })),
+});
 
 const step = (id: string) => `#step-${id}`;
 
@@ -250,55 +262,68 @@ const STEPS: Step[] = [
           ],
         ],
       },
+      { paragraphs: [['What best describes your team?']] },
     ],
-    questions: [
-      {
-        prompt: 'What best describes your team?',
-        options: [
-          'Coporate',
-          'Startup',
-          'Individual',
-          'Pre-Company',
-          'NGO',
-          'Association',
-          'Other ...',
-        ],
-      },
-      {
-        prompt: 'What is the field you need support with?',
-        options: [
-          'Web Design',
-          'Branding',
-          'UX Review',
-          'UI Review',
-          'UX Concept',
-          'Product Management',
-          'Other ...',
-        ],
-      },
-      {
-        prompt: 'What should be Max’ role?',
-        options: [
-          'Volunteer',
-          'Freelancer',
-          'Employee',
-          'Founding Designer',
-          'Other ...',
-        ],
-      },
-      {
-        prompt: 'Any specific tool setup or tech stack your project requires?',
-        options: [
-          'CSS / HTML',
-          'Wordpress',
-          'Framer / Webflow / Wix..',
-          'Python',
-          'Javascript',
-          'Julia',
-          'Other ..',
-        ],
-      },
-    ],
+    question: true,
+    choices: [
+      'Coporate',
+      'Startup',
+      'Individual',
+      'Pre-Company',
+      'NGO',
+      'Association',
+      'Other ...',
+    ].map((label) => ({ label, href: step('field') })),
+  },
+
+  {
+    id: 'field',
+    heading: 'The field',
+    // The frame's own sample pick, until the script puts the real one here.
+    answers: ['Startup'],
+    ...asks(
+      'What is the field you need support with?',
+      [
+        'Web Design',
+        'Branding',
+        'UX Review',
+        'UI Review',
+        'UX Concept',
+        'Product Management',
+        'Other ...',
+      ],
+      'role',
+    ),
+  },
+
+  {
+    id: 'role',
+    heading: 'Max’ role',
+    answers: ['Web Design'],
+    ...asks(
+      'What should be Max’ role?',
+      ['Volunteer', 'Freelancer', 'Employee', 'Founding Designer', 'Other ...'],
+      'stack',
+    ),
+  },
+
+  {
+    id: 'stack',
+    heading: 'Tool setup',
+    answers: ['Freelancer'],
+    ...asks(
+      'Any specific tool setup or tech stack your project requires?',
+      [
+        'CSS / HTML',
+        'Wordpress',
+        'Framer / Webflow / Wix..',
+        'Python',
+        'Javascript',
+        'Julia',
+        'Other ..',
+      ],
+      'result',
+    ),
   },
 
   {
@@ -368,6 +393,7 @@ const STEPS: Step[] = [
             class:list={['chat__step', s.id === 'start' && 'chat__step--first']}
             aria-labelledby={`h-${s.id}`}
             tabindex="-1"
+            data-question={s.question}
           >
             <h2 id={`h-${s.id}`} class="visually-hidden">
               {s.heading}
@@ -414,43 +440,6 @@ const STEPS: Step[] = [
                 </li>
               ))}
             </ol>
-
-            {s.questions && (
-              <div class="chat__form" data-quiz>
-                {/* Not a <form>: nothing is submitted. The chips are checkboxes
-                  so a selection is real and reversible, and the fieldsets
-                  carry the grouping a form element would have provided. */}
-                {s.questions.map((q, qi) => (
-                  <fieldset class="chat__question">
-                    <legend class="chat__bubble chat__bubble--legend" data-type>
-                      {q.prompt}
-                    </legend>
-                    <ul class="chat__choices">
-                      {q.options.map((o) => (
-                        <li>
-                          <label class="chat__choice chat__choice--option">
-                            <input
-                              class="visually-hidden"
-                              type="checkbox"
-                              name={`q${qi}[]`}
-                              value={o}
-                            />
-                            <span>{o}</span>
-                          </label>
-                        </li>
-                      ))}
-                    </ul>
-                  </fieldset>
-                ))}
-                <ul class="chat__choices">
-                  <li>
-                    <a class="chat__choice" href="#step-result">
-                      Run the prototype
-                    </a>
-                  </li>
-                </ul>
-              </div>
-            )}
 
             {s.choices && (
               <ul class="chat__choices">
@@ -584,18 +573,14 @@ const STEPS: Step[] = [
    * The chips are a direct child only: `.chat__choices` also names the option
    * rows inside the questionnaire, and those are not part of the sequence.
    */
-  .chat__step--typed > .chat__choices,
-  .chat__step--typed .chat__question,
-  .chat__step--typed .chat__form > .chat__choices {
+  .chat__step--typed > .chat__choices {
     animation: chat-arrive var(--duration-base) var(--easing-entrance) both;
   }
 
   /* Order matters: the `animation` shorthand above resets the delay, so this
      has to come after it. */
   .chat__step--typed .chat__row,
-  .chat__step--typed > .chat__choices,
-  .chat__step--typed .chat__question,
-  .chat__step--typed .chat__form > .chat__choices {
+  .chat__step--typed > .chat__choices {
     animation-delay: var(--row-start, 0ms);
   }
 
@@ -706,38 +691,6 @@ const STEPS: Step[] = [
     background-color: var(--color-lemon-200);
   }
 
-  /* --- the questionnaire ------------------------------------------------ */
-
-  .chat__form {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-md);
-    margin: 0;
-    border: 0;
-  }
-
-  .chat__question {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-md);
-    margin: 0;
-    padding: 0;
-    border: 0;
-  }
-
-  .chat__bubble--legend {
-    float: left; /* a legend ignores width otherwise */
-  }
-
-  .chat__choice--option:has(:checked) {
-    background-color: var(--color-lemon-200);
-  }
-
-  .chat__choice--option:has(:focus-visible) {
-    outline: var(--focus-ring);
-    outline-offset: var(--focus-ring-offset);
-  }
-
   @media (min-width: 48rem) {
     .chat__transcript {
       padding-inline: var(--space-lg);
@@ -819,9 +772,7 @@ const STEPS: Step[] = [
       // its own options — without it here the whole of `home - 6` landed at
       // once, with no entrance at all.
       let delay = 0;
-      const blocks = stepEl.querySelectorAll<HTMLElement>(
-        '.chat__row, .chat__question, .chat__form > .chat__choices',
-      );
+      const blocks = stepEl.querySelectorAll<HTMLElement>('.chat__row');
       for (const block of blocks) {
         block.style.setProperty('--row-start', `${delay}ms`);
         follow(delay + ENTRANCE);
@@ -841,8 +792,9 @@ const STEPS: Step[] = [
       follow(delay + ENTRANCE);
     };
 
-    /** What the visitor last said, and — from the quiz — everything they ticked. */
+    /** What the visitor last said, and every answer the questions collected. */
     let said: string[] = [];
+    const picks: string[] = [];
 
     /*
      * The conversation is one transcript, the way a messenger thread is: every
@@ -918,9 +870,11 @@ const STEPS: Step[] = [
       // and renders as plain text. Cloning also keeps this correct if the
       // chip's markup changes.
       const chip = echo?.querySelector('.chat__answer');
-      if (echo && chip && said.length) {
+      // The result reports every answer, not only the last one.
+      const words = id === 'step-result' && picks.length ? picks : said;
+      if (echo && chip && words.length) {
         echo.replaceChildren(
-          ...said.map((label) => {
+          ...words.map((label) => {
             const li = chip.cloneNode(false) as HTMLElement;
             li.textContent = label;
             return li;
@@ -942,12 +896,11 @@ const STEPS: Step[] = [
       );
       if (!link) return;
 
-      const quiz = link.closest('[data-quiz]');
-      said = quiz
-        ? [...quiz.querySelectorAll<HTMLInputElement>(':checked')].map(
-            (input) => input.value,
-          )
-        : [link.textContent?.trim() ?? ''];
+      const label = link.textContent?.trim() ?? '';
+      said = [label];
+      // The four prototype questions are ordinary steps now, so each echoes
+      // its own answer; the result needs all four, so they are kept here too.
+      if (link.closest('[data-question]')) picks.push(label);
     });
 
     addEventListener('hashchange', () =>
