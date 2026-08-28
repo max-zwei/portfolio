@@ -17,10 +17,13 @@ import { z } from 'zod';
 /** The `image()` helper Astro hands to each schema. Named so helpers can take it. */
 type ImageFn = SchemaContext['image'];
 
-/** `YYYY-MM`. Sorted as a string, so the zero padding is load-bearing. */
+/** `YYYY` or `YYYY-MM`. Sorted as a string, so the zero padding is load-bearing. */
 const yearMonth = z
   .string()
-  .regex(/^\d{4}-(0[1-9]|1[0-2])$/, 'Use YYYY-MM, e.g. 2025-03');
+  .regex(
+    /^\d{4}(?:-(0[1-9]|1[0-2]))?$/,
+    'Use YYYY or YYYY-MM, e.g. 2025-03',
+  );
 
 /**
  * Supporting images — sketches, flows, screens, photos of the thing.

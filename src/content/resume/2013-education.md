@@ -2,8 +2,8 @@
 role: 'High School Diploma'
 company: '[Institution]'
 kind: education
-start: ''
+start: '2013'
 end: '2013'
-summary: ''
+summary: '[Summary]'
 projectUrls: []
 ---
