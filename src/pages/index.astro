@@ -530,6 +530,24 @@ const STEPS: Step[] = [
     animation-delay: calc(var(--i) * var(--stagger, var(--duration-fast)));
   }
 
+  /*
+   * With the script running, a row arrives when its own first character does,
+   * not on a fixed index stagger — otherwise every bubble and avatar is on
+   * screen inside 600ms while the text is still typing into them. The index
+   * stagger above stays as the no-JS default; nothing there can sequence it.
+   *
+   * The chips are a direct child only: `.chat__choices` also names the option
+   * rows inside the questionnaire, and those are not part of the sequence.
+   */
+  .chat__step--typed > .chat__choices {
+    animation: chat-arrive var(--duration-base) var(--easing-entrance) both;
+  }
+
+  .chat__step--typed .chat__row,
+  .chat__step--typed > .chat__choices {
+    animation-delay: var(--row-start, 0ms);
+  }
+
   @keyframes chat-arrive {
     from {
       opacity: 0;
@@ -689,6 +707,11 @@ const STEPS: Step[] = [
   if (steps.length) {
     const still = matchMedia('(prefers-reduced-motion: reduce)');
 
+    /** Typing pace, in ms. PER_CHAR is the one Max signed off on. */
+    const PER_CHAR = 18;
+    const BETWEEN = 240; // beat between two paragraphs in the same bubble
+    const ENTRANCE = 240; // --duration-base: the bubble's own arrival
+
     /** Rebuild a paragraph as per-character spans, then reveal them in turn. */
     const type = (el: HTMLElement, startDelay: number) => {
       const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
@@ -724,11 +747,27 @@ const STEPS: Step[] = [
         return;
       }
 
+      stepEl.classList.add('chat__step--typed');
+
+      // Walk rows, not paragraphs: a container appears when its own first
+      // character is about to, so the conversation arrives one message at a
+      // time rather than as a set of empty bubbles that fill in later.
       let delay = 0;
-      stepEl.querySelectorAll<HTMLElement>('[data-type]').forEach((p) => {
-        type(p, delay);
-        delay += Array.from(p.textContent ?? '').length * 18 + 240;
-      });
+      for (const row of stepEl.querySelectorAll<HTMLElement>('.chat__row')) {
+        row.style.setProperty('--row-start', `${delay}ms`);
+        // Let the bubble settle before its first character lands.
+        delay += ENTRANCE;
+        for (const p of row.querySelectorAll<HTMLElement>('[data-type]')) {
+          type(p, delay);
+          delay += Array.from(p.textContent ?? '').length * PER_CHAR + BETWEEN;
+        }
+      }
+
+      // The chips come last: offering "Tell me more" before Max has finished
+      // saying anything reads as the page talking over itself.
+      stepEl
+        .querySelector<HTMLElement>(':scope > .chat__choices')
+        ?.style.setProperty('--row-start', `${delay}ms`);
     };
 
     /** What the visitor last said, and — from the quiz — everything they ticked. */
