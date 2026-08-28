@@ -216,20 +216,25 @@ variables directly. Load the `figma-use` skill first.
 
 ### The collections, as built
 
-73 variables across 6 collections, verified against the file on 17 Aug 2026.
+77 variables across 7 collections, verified against the file on 27 Aug 2026.
 Every one carries a description and WEB code syntax, and no two emit the same
 code syntax.
 
 | Figma collection | Vars | JSON key | CSS prefix                                          |
 | ---------------- | ---- | -------- | --------------------------------------------------- |
 | Color            | 32   | `color`  | `--color-*`                                         |
-| Typography       | 20   | `font`   | `--font-*`, `--line-height-*`, `--letter-spacing-*` |
+| Typography       | 21   | `font`   | `--font-*`, `--line-height-*`, `--letter-spacing-*` |
 | Spacing          | 9    | `space`  | `--space-*`                                         |
 | Radius           | 4    | `radius` | `--radius-*`                                        |
+| Size             | 3    | `size`   | `--size-*`                                          |
 | Motion           | 5    | `motion` | `--duration-*`, `--easing-*`                        |
 | Elevation        | 3    | `shadow` | `--shadow-*`                                        |
 
 There is no Semantic collection. One existed briefly and was deleted — see L4.
+Size holds layout widths read off the `/home` chat frames — named for what
+they size (`size/chat-column`) rather than as a scale, because 400/531/866 is
+not one. `--measure` and `--content-max` are the older layout constants and
+live in `tokens.css` alone; the three-file rule has never been applied to them.
 
 Every collection has exactly one mode, named `Value`. No light/dark split, by
 decision. With no role tier there is nothing to remap, so a dark scheme would

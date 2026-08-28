@@ -90,6 +90,8 @@
   --line-height-tight: 1.1;
   --line-height-snug: 1.3;
   --line-height-normal: 1.6;
+  /* Airy enough for wide-tracked mono. Chat bubbles, per the Figma text style. */
+  --line-height-loose: 2;
 
   --letter-spacing-tight: -0.02em;
   --letter-spacing-normal: 0;
@@ -129,6 +131,15 @@
   /* Layout */
   --measure: 68ch; /* readable line length */
   --content-max: 72rem; /* page container */
+
+  /*
+   * Chat widths, from the /home frames. Named for the thing they size rather
+   * than as a scale, because 400/531/866 is not one. If a second layout ever
+   * needs a width, this group is the place to reconsider the naming.
+   */
+  --size-chat-column: 54.125rem; /* 866px */
+  --size-chat-bubble: 33.1875rem; /* 531px */
+  --size-chat-choice: 25rem; /*  400px */
 
   /* ---------------------------------------------------------------
    * 4. FOCUS RING — defined once, applied in global.css.

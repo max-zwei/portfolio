@@ -1,134 +1,802 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { SITE, LINKS } from '../config/site';
+import { SITE, withBase } from '../config/site';
 
-// v0.1 — deliberately minimal. This page exists to prove the pipeline
-// (Figma -> code -> GitHub Actions -> Pages -> custom domain) works end to end.
-// Real content arrives with the project collection.
-const year = new Date().getFullYear();
+// The /home frames in Figma: a branching chat, seven states. `skip` is the
+// fallback for a visitor who would rather just browse.
+//
+// The copy is the design's, transcribed verbatim — typos and all. Where two
+// frames disagree (`Sounds promising` vs `Sounds promisin`), the chip's own
+// label wins, because one string drives both the chip and its echo.
+
+/** A run of text, optionally a link. Only `questions` needs the link form. */
+type Run = string | { text: string; href: string };
+
+type Message = {
+  paragraphs: Run[][];
+  /** Present when the message has a face beside it. */
+  speaker?: { avatar: string; alt: string };
+  /** The tomato panel that carries the prototype's answer, in `result`. */
+  panel?: boolean;
+};
+
+type Choice = { label: string; href: string };
+
+type Step = {
+  id: string;
+  /** Visually hidden — the section needs a real heading to point at. */
+  heading: string;
+  /** Chips echoed back at the top: what the visitor said to get here. */
+  answers?: string[];
+  messages: Message[];
+  questions?: { prompt: string; options: string[] }[];
+  choices?: Choice[];
+};
+
+const step = (id: string) => `#step-${id}`;
+
+const MAX = {
+  avatar: 'max',
+  alt: 'Max — a figure with a dark bob and a red top',
+};
+
+const STEPS: Step[] = [
+  {
+    id: 'start',
+    heading: 'Max says hello',
+    messages: [
+      {
+        speaker: MAX,
+        paragraphs: [['Hi, my name is Max, nice to meet you!'], ['...']],
+      },
+      {
+        paragraphs: [
+          ['Recently I stumbled upon a HMW, you might also question yourself:'],
+          ['How might we come to a decision to hire or not hire Max?'],
+        ],
+      },
+    ],
+    choices: [
+      { label: 'Where do I find the “Skip” button?', href: step('skip') },
+      { label: 'Tell me more', href: step('team') },
+    ],
+  },
+
+  {
+    id: 'skip',
+    heading: 'Explore on your own',
+    answers: ['Let’s skip this'],
+    messages: [
+      {
+        paragraphs: [
+          [
+            'Happy to do that, feel free to explore my portfolio in your own pace and style!',
+          ],
+          ['Here a few links to get your started:'],
+        ],
+      },
+    ],
+    choices: [
+      { label: 'Resume', href: withBase('/resume') },
+      { label: 'My inspiration', href: withBase('/inspiration') },
+      { label: 'Projects', href: withBase('/projects') },
+      { label: 'Playground', href: withBase('/playground') },
+      { label: 'Behind the scenes', href: withBase('/behind-the-scenes') },
+      { label: 'My curiosities', href: withBase('/curiosities') },
+    ],
+  },
+
+  {
+    id: 'team',
+    heading: 'The team behind the question',
+    answers: ['Tell me more'],
+    messages: [
+      {
+        paragraphs: [
+          ['Let me introduce the team who tackled this How-might-we question:'],
+        ],
+      },
+      {
+        speaker: {
+          avatar: 'moritz',
+          alt: 'Moritz — a figure in green, facing a dark triangle',
+        },
+        paragraphs: [
+          [
+            'Hi there, I’m Moritz, a fellow designer, looking for connection or inspiration.',
+          ],
+        ],
+      },
+      {
+        speaker: {
+          avatar: 'karina',
+          alt: 'Karina — a figure in pink with a dark rounded haircut',
+        },
+        paragraphs: [
+          [
+            'Hello dear, my name is Karina, a recruiter, browsing profiles and checking if Max’ profile suits what we are looking for.',
+          ],
+        ],
+      },
+      {
+        speaker: {
+          avatar: 'paula',
+          alt: 'Paula — a figure in yellow, half in shadow',
+        },
+        paragraphs: [
+          [
+            'Nice to meet you, I’m Paula, Max’ future boss, I want to understand the skillset and preferably see his work and projects, Karina already introduced me to his CV.',
+          ],
+        ],
+      },
+      { paragraphs: [['Want to find out how they tackled the question?']] },
+    ],
+    choices: [
+      {
+        label: 'You said something about a “Skip” button?',
+        href: step('skip'),
+      },
+      { label: 'YES!', href: step('questions') },
+    ],
+  },
+
+  {
+    id: 'questions',
+    heading: 'What the team asked first',
+    answers: ['YES!'],
+    messages: [
+      {
+        speaker: {
+          avatar: 'everyone',
+          alt: 'Moritz, Karina and Paula together',
+        },
+        paragraphs: [
+          [
+            'The first question that popped to our mind was, how can we understand who Max is? Which material or research would we need?',
+          ],
+        ],
+      },
+      {
+        paragraphs: [
+          [
+            'Is it a simple ',
+            { text: 'Resume', href: withBase('/resume') },
+            ' ?',
+          ],
+        ],
+      },
+      {
+        paragraphs: [
+          ['Do we browse through his projects, for example'],
+          [
+            {
+              text: 'How might we rebrand our marketing material?',
+              href: withBase('/projects'),
+            },
+          ],
+        ],
+      },
+      {
+        paragraphs: [
+          [
+            'Should we read through ',
+            { text: 'reference letters', href: withBase('/letters') },
+            ' of previous employees?',
+          ],
+        ],
+      },
+      {
+        paragraphs: [
+          [
+            'Or do we get a better picture of him by looking at his ',
+            { text: 'inspiration', href: withBase('/inspiration') },
+            ' ?',
+          ],
+        ],
+      },
+      {
+        paragraphs: [
+          [
+            'How about creating a tool that evaluates Max’ fit to a given role or project?',
+          ],
+        ],
+      },
+    ],
+    choices: [
+      { label: 'Skiiiip', href: step('skip') },
+      { label: 'Sounds promising, tell me more!', href: step('prototype') },
+    ],
+  },
+
+  {
+    id: 'prototype',
+    heading: 'The idea',
+    answers: ['Sounds promising, tell me more!'],
+    messages: [
+      {
+        paragraphs: [
+          [
+            'The idea is to create a kind of questionnaire regarding the desired role and matching the expectations to the skillset and experience.',
+          ],
+        ],
+      },
+      {
+        paragraphs: [
+          ['Resulting in a statement like such:'],
+          [
+            'Max ticks all the boxes except ... You can find prove looking at project x.',
+          ],
+          ['Are you willing to trade off ... against ... ?'],
+        ],
+      },
+      { paragraphs: [['Let’s build a first prototype!']] },
+      { paragraphs: [['Done, you want to give it a try?']] },
+    ],
+    choices: [
+      { label: 'Nope', href: step('skip') },
+      { label: 'Sure, what the hell!', href: step('questionnaire') },
+    ],
+  },
+
+  {
+    id: 'questionnaire',
+    heading: 'A few questions',
+    answers: ['Sure, what the hell!'],
+    messages: [
+      {
+        paragraphs: [
+          [
+            'We have a couple of questions for you regarding the role or support you’re seeking.',
+          ],
+        ],
+      },
+    ],
+    questions: [
+      {
+        prompt: 'What best describes your team?',
+        options: [
+          'Coporate',
+          'Startup',
+          'Individual',
+          'Pre-Company',
+          'NGO',
+          'Association',
+          'Other ...',
+        ],
+      },
+      {
+        prompt: 'What is the field you need support with?',
+        options: [
+          'Web Design',
+          'Branding',
+          'UX Review',
+          'UI Review',
+          'UX Concept',
+          'Product Management',
+          'Other ...',
+        ],
+      },
+      {
+        prompt: 'What should be Max’ role?',
+        options: [
+          'Volunteer',
+          'Freelancer',
+          'Employee',
+          'Founding Designer',
+          'Other ...',
+        ],
+      },
+      {
+        prompt: 'Any specific tool setup or tech stack your project requires?',
+        options: [
+          'CSS / HTML',
+          'Wordpress',
+          'Framer / Webflow / Wix..',
+          'Python',
+          'Javascript',
+          'Julia',
+          'Other ..',
+        ],
+      },
+    ],
+  },
+
+  {
+    id: 'result',
+    heading: 'What the prototype says',
+    // The frame's own sample picks. The script overwrites them with the real
+    // answers; without it these stand, which is what the design shows.
+    answers: [
+      'Startup',
+      'Web Design',
+      'Freelancer',
+      'Framer / Webflow / Wix ...',
+    ],
+    messages: [
+      { paragraphs: [['Let’s run the prototype and see what we get!']] },
+      {
+        panel: true,
+        paragraphs: [
+          ['It depends, are you willing to trade off … to gain … ?'],
+          ['Skill-wise he ticks the boxes for your tool setup of … .'],
+          [
+            'And maybe project x can provide you a clearer understanding of a similar set of deliverables to what you are aiming for.',
+          ],
+        ],
+      },
+      {
+        paragraphs: [
+          [
+            'We hope this helped you in your decision. If you have any feedback regarding our tool, send it our way → ',
+            {
+              text: 'feedback@zwei.berlin',
+              href: 'mailto:feedback@zwei.berlin',
+            },
+          ],
+        ],
+      },
+      {
+        paragraphs: [
+          [
+            'We’ll leave you here and invite you to explore the other sections of this website. See you!',
+          ],
+        ],
+      },
+    ],
+    choices: [
+      { label: 'Resume', href: withBase('/resume') },
+      { label: 'Inspiration', href: withBase('/inspiration') },
+      { label: 'Projects', href: withBase('/projects') },
+      { label: 'Playground', href: withBase('/playground') },
+      { label: 'Behind the scenes', href: withBase('/behind-the-scenes') },
+      { label: 'Curiosities', href: withBase('/curiosities') },
+    ],
+  },
+];
 ---
 
 <BaseLayout>
-  <main id="main" class="hero">
-    <div class="container hero__inner">
-      <p class="hero__eyebrow">{SITE.role}</p>
+  <main id="main" class="chat">
+    {/* The design draws no page heading; the document still needs one. */}
+    <h1 class="visually-hidden">{SITE.name} — {SITE.role}</h1>
 
-      <h1 class="hero__name">{SITE.name}</h1>
+    {
+      STEPS.map((s) => (
+        <section
+          id={`step-${s.id}`}
+          class:list={['chat__step', s.id === 'start' && 'chat__step--first']}
+          aria-labelledby={`h-${s.id}`}
+          tabindex="-1"
+        >
+          <h2 id={`h-${s.id}`} class="visually-hidden">
+            {s.heading}
+          </h2>
 
-      <p class="hero__slogan">
-        I care about <em>experiences</em>.<br />
-        And I&rsquo;m curious to find them.
-      </p>
+          {s.answers && (
+            <ul class="chat__said" data-said>
+              {s.answers.map((a) => (
+                <li class="chat__answer">{a}</li>
+              ))}
+            </ul>
+          )}
 
-      <p class="hero__note">
-        Portfolio in progress — case studies on children &amp; education
-        technology are on their way.
-      </p>
+          <ol class="chat__thread">
+            {s.messages.map((m, i) => (
+              <li class="chat__row" style={`--i: ${i}`}>
+                {m.speaker && (
+                  <img
+                    class="chat__avatar"
+                    src={withBase(`/avatars/${m.speaker.avatar}.svg`)}
+                    alt={m.speaker.alt}
+                    width="87"
+                    height="87"
+                  />
+                )}
+                <div
+                  class:list={[
+                    'chat__bubble',
+                    m.panel && 'chat__bubble--panel',
+                  ]}
+                >
+                  {m.paragraphs.map((p) => (
+                    <p class="chat__text" data-type>
+                      {p.map((run) =>
+                        typeof run === 'string' ? (
+                          run
+                        ) : (
+                          <a href={run.href}>{run.text}</a>
+                        ),
+                      )}
+                    </p>
+                  ))}
+                </div>
+              </li>
+            ))}
+          </ol>
 
-      <ul class="hero__links">
-        {
-          LINKS.map((link) => (
-            <li>
-              <a href={link.href}>{link.label}</a>
-            </li>
-          ))
-        }
-      </ul>
-    </div>
+          {s.questions && (
+            <div class="chat__form" data-quiz>
+              {/* Not a <form>: nothing is submitted. The chips are checkboxes
+                  so a selection is real and reversible, and the fieldsets
+                  carry the grouping a form element would have provided. */}
+              {s.questions.map((q, qi) => (
+                <fieldset class="chat__question">
+                  <legend class="chat__bubble chat__bubble--legend">
+                    {q.prompt}
+                  </legend>
+                  <ul class="chat__choices">
+                    {q.options.map((o) => (
+                      <li>
+                        <label class="chat__choice chat__choice--option">
+                          <input
+                            class="visually-hidden"
+                            type="checkbox"
+                            name={`q${qi}[]`}
+                            value={o}
+                          />
+                          <span>{o}</span>
+                        </label>
+                      </li>
+                    ))}
+                  </ul>
+                </fieldset>
+              ))}
+              <ul class="chat__choices">
+                <li>
+                  <a class="chat__choice" href="#step-result">
+                    Run the prototype
+                  </a>
+                </li>
+              </ul>
+            </div>
+          )}
 
-    <footer class="hero__footer">
-      <div class="container">
-        <p>&copy; {year} {SITE.name}</p>
-      </div>
-    </footer>
+          {s.choices && (
+            <ul class="chat__choices">
+              {s.choices.map((c) => (
+                <li>
+                  <a class="chat__choice" href={c.href}>
+                    {c.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
+      ))
+    }
   </main>
 </BaseLayout>
 
 <style>
-  .hero {
+  /*
+   * One exchange is on screen at a time, which is what the frames show — the
+   * conversation does not accumulate. `:target` carries that with no script;
+   * the `:has()` rule is what keeps the opening step up before any chip is
+   * clicked, and drops it once one is.
+   */
+  .chat {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
     min-height: 100dvh;
-    /* A single quiet gesture: the Lemon accent bleeding in from the corner. */
-    background-image: radial-gradient(
-      120% 90% at 100% 0%,
-      color-mix(in oklab, var(--color-lemon-500) 22%, transparent) 0%,
-      transparent 55%
-    );
+    padding-block: var(--space-2xl) var(--space-3xl);
+    background-color: var(--color-neutral-white);
   }
 
-  .hero__inner {
+  .chat__step {
+    display: none;
+    width: 100%;
+    max-width: var(--size-chat-column);
+    /* Auto margin rather than `justify-content`, so a step taller than the
+       viewport still scrolls to its top instead of overflowing out of reach. */
+    margin-block-start: auto;
+    margin-inline: auto;
+    padding-inline: var(--space-md);
+  }
+
+  .chat__step:target,
+  .chat:not(:has(.chat__step:target)) .chat__step--first {
     display: flex;
-    flex: 1;
     flex-direction: column;
-    justify-content: center;
-    padding-block: var(--space-2xl);
-  }
-
-  .hero__eyebrow {
-    margin-bottom: var(--space-md);
-    font-size: var(--font-size-sm);
-    font-weight: var(--font-weight-medium);
-    letter-spacing: var(--letter-spacing-wide);
-    text-transform: uppercase;
-    color: var(--color-neutral-700);
-  }
-
-  .hero__name {
-    margin-bottom: var(--space-lg);
-  }
-
-  .hero__slogan {
-    max-width: 22ch;
-    font-family: var(--font-serif);
-    font-size: var(--font-size-2xl);
-    font-weight: var(--font-weight-regular);
-    line-height: var(--line-height-snug);
-    letter-spacing: var(--letter-spacing-normal);
-  }
-
-  .hero__slogan em {
-    font-style: italic;
-    color: var(--color-pickled-500);
-  }
-
-  .hero__note {
-    margin-top: var(--space-lg);
-    max-width: 46ch;
-    color: var(--color-neutral-700);
-  }
-
-  .hero__links {
-    display: flex;
-    flex-wrap: wrap;
     gap: var(--space-md);
-    margin-top: var(--space-xl);
+  }
+
+  .chat__step:focus {
+    outline: none;
+  }
+
+  /* --- the conversation ------------------------------------------------ */
+
+  .chat__thread,
+  .chat__said,
+  .chat__choices {
+    margin: 0;
     padding: 0;
     list-style: none;
-    font-size: var(--font-size-sm);
-    font-weight: var(--font-weight-medium);
-    letter-spacing: var(--letter-spacing-wide);
-    text-transform: uppercase;
   }
 
-  .hero__links a {
-    padding-bottom: var(--space-3xs);
+  .chat__thread {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+  }
+
+  .chat__row {
+    display: flex;
+    gap: var(--space-md);
+    align-items: flex-start;
+    animation: chat-arrive var(--duration-base) var(--easing-entrance) both;
+    animation-delay: calc(var(--i) * var(--stagger, var(--duration-fast)));
+  }
+
+  @keyframes chat-arrive {
+    from {
+      opacity: 0;
+      transform: translateY(var(--space-md));
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Sized by the asset's own 87px, on the element — the nearest space step is
+     96, and substituting it would be drift dressed up as a token. */
+  .chat__avatar {
+    flex-shrink: 0;
+  }
+
+  .chat__bubble {
+    /* Hugs its text, as the component does on canvas, up to the bubble width. */
+    width: fit-content;
+    max-width: var(--size-chat-bubble);
+    padding: var(--space-xs) var(--space-sm);
+    color: var(--color-neutral-800);
+    font-family: var(--font-mono);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-regular);
+    line-height: var(--line-height-loose);
+    letter-spacing: var(--letter-spacing-extra-wide);
+    background-color: var(--color-neutral-100);
+    /* Square on the corner nearest the speaker — the tail, without a tail. */
+    border-radius: 0 var(--radius-lg) var(--radius-lg) var(--radius-lg);
+  }
+
+  .chat__text {
+    max-width: none;
+  }
+
+  .chat__bubble a {
+    color: var(--color-tomato-500);
+  }
+
+  .chat__bubble--panel {
+    max-width: none;
+    margin-block: var(--space-xl);
+    padding: var(--space-md);
+    font-size: var(--font-size-base);
+    background-color: var(--color-tomato-100);
+    border-radius: var(--radius-lg);
+  }
+
+  .chat__bubble--panel .chat__text + .chat__text {
+    margin-block-start: var(--space-md);
+    padding-inline-start: var(--space-lg);
+  }
+
+  /* --- what the visitor said, and what they can say next --------------- */
+
+  .chat__said,
+  .chat__choices {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: var(--space-xs);
+    padding-inline-start: var(--space-xl);
+  }
+
+  .chat__answer,
+  .chat__choice {
+    display: block;
+    max-width: var(--size-chat-choice);
+    padding: var(--space-xs) var(--space-sm);
+    color: var(--color-neutral-800);
+    font-family: var(--font-mono);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-regular);
+    line-height: var(--line-height-loose);
+    letter-spacing: var(--letter-spacing-extra-wide);
+    text-align: start;
     text-decoration: none;
-    border-bottom: 1px solid var(--color-neutral-300);
+    border: 2px solid var(--color-lemon-500);
+  }
+
+  /* Already said: filled, and squared off on the corner facing the thread. */
+  .chat__answer {
+    background-color: var(--color-lemon-200);
+    border-radius: var(--radius-lg) 0 var(--radius-lg) var(--radius-lg);
+  }
+
+  .chat__choice {
+    cursor: pointer;
+    background-color: var(--color-neutral-white);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
     transition:
-      color var(--duration-fast) var(--easing-standard),
-      border-color var(--duration-fast) var(--easing-standard);
+      background-color var(--duration-fast) var(--easing-standard),
+      box-shadow var(--duration-fast) var(--easing-standard);
   }
 
-  .hero__links a:hover {
-    border-color: var(--color-lemon-500);
+  .chat__choice:hover {
+    background-color: var(--color-lemon-200);
   }
 
-  .hero__footer {
-    padding-block: var(--space-md);
-    font-size: var(--font-size-sm);
-    color: var(--color-neutral-700);
-    border-top: 1px solid var(--color-neutral-200);
+  /* --- the questionnaire ------------------------------------------------ */
+
+  .chat__form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+    margin: 0;
+    border: 0;
+  }
+
+  .chat__question {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+
+  .chat__bubble--legend {
+    float: left; /* a legend ignores width otherwise */
+  }
+
+  .chat__choice--option:has(:checked) {
+    background-color: var(--color-lemon-200);
+  }
+
+  .chat__choice--option:has(:focus-visible) {
+    outline: var(--focus-ring);
+    outline-offset: var(--focus-ring-offset);
+  }
+
+  @media (min-width: 48rem) {
+    .chat__step {
+      padding-inline: var(--space-lg);
+    }
+  }
+</style>
+
+<script>
+  /*
+   * Progressive enhancement, and nothing more. With this file blocked the page
+   * is still the whole conversation: every chip is a real link, `:target`
+   * moves between steps, and the CSS plays the arrival.
+   *
+   * What it adds is the part the Motion frame asks for and CSS cannot reach:
+   * text arriving letter by letter, and the visitor's own words carried
+   * forward instead of the frames' stand-ins.
+   *
+   * Note it never calls `preventDefault` on a chip. The native jump is what
+   * re-evaluates `:target`; `history.pushState` changes the URL without
+   * re-evaluating it, which leaves every step hidden.
+   */
+  const steps = document.querySelectorAll<HTMLElement>('.chat__step');
+  if (steps.length) {
+    const still = matchMedia('(prefers-reduced-motion: reduce)');
+
+    /** Rebuild a paragraph as per-character spans, then reveal them in turn. */
+    const type = (el: HTMLElement, startDelay: number) => {
+      const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+      const texts: Text[] = [];
+      for (let n = walker.nextNode(); n; n = walker.nextNode()) {
+        texts.push(n as Text);
+      }
+
+      let i = 0;
+      for (const node of texts) {
+        const frag = document.createDocumentFragment();
+        // Array.from, not split(''), so an emoji or accent stays one unit.
+        for (const ch of Array.from(node.data)) {
+          const span = document.createElement('span');
+          span.textContent = ch;
+          span.className = 'chat__char';
+          span.style.setProperty('--c', String(i++));
+          frag.append(span);
+        }
+        node.replaceWith(frag);
+      }
+      el.style.setProperty('--start', `${startDelay}ms`);
+      el.dataset.typed = 'true';
+    };
+
+    const play = (stepEl: HTMLElement) => {
+      if (stepEl.dataset.played) return;
+      stepEl.dataset.played = 'true';
+      if (still.matches) {
+        // The global reduced-motion blanket zeroes animation *duration*, not
+        // *delay*, so the arrival would still play out staggered. Collapse it.
+        stepEl.style.setProperty('--stagger', '0ms');
+        return;
+      }
+
+      let delay = 0;
+      stepEl.querySelectorAll<HTMLElement>('[data-type]').forEach((p) => {
+        type(p, delay);
+        delay += Array.from(p.textContent ?? '').length * 18 + 240;
+      });
+    };
+
+    /** What the visitor last said, and — from the quiz — everything they ticked. */
+    let said: string[] = [];
+
+    const enter = (id: string) => {
+      const stepEl = document.getElementById(id);
+      if (!stepEl) return;
+
+      const echo = stepEl.querySelector('[data-said]');
+      if (echo && said.length) {
+        echo.replaceChildren(
+          ...said.map((label) => {
+            const li = document.createElement('li');
+            li.className = 'chat__answer';
+            li.textContent = label;
+            return li;
+          }),
+        );
+      }
+      said = [];
+
+      play(stepEl);
+      stepEl.focus({ preventScroll: true });
+      // The frames never scroll: the newest exchange settles low on screen.
+      stepEl.scrollIntoView({
+        block: 'end',
+        behavior: still.matches ? 'auto' : 'smooth',
+      });
+    };
+
+    document.addEventListener('click', (event) => {
+      const link = (event.target as Element | null)?.closest<HTMLAnchorElement>(
+        '.chat__choice[href^="#step-"]',
+      );
+      if (!link) return;
+
+      const quiz = link.closest('[data-quiz]');
+      said = quiz
+        ? [...quiz.querySelectorAll<HTMLInputElement>(':checked')].map(
+            (input) => input.value,
+          )
+        : [link.textContent?.trim() ?? ''];
+    });
+
+    addEventListener('hashchange', () =>
+      enter(location.hash.slice(1) || 'step-start'),
+    );
+
+    if (location.hash.startsWith('#step-')) enter(location.hash.slice(1));
+    else play(steps[0]);
+  }
+</script>
+
+<style is:global>
+  /*
+   * Global only because the script creates these spans after the scoped
+   * styles have been hashed — a scoped rule would never match them.
+   */
+  .chat__char {
+    opacity: 0;
+    animation: chat-key 1ms linear forwards;
+    animation-delay: calc(var(--start, 0ms) + var(--c) * 18ms);
+  }
+
+  @keyframes chat-key {
+    to {
+      opacity: 1;
+    }
   }
 </style>
