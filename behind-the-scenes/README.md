@@ -8,3 +8,4 @@ Well, to be honest, at the moment I just have the hope that as my studies progre
 As a designer, I feel offended if Claude Design starts messing with my Figma file. For now it's only allowed to rename layers, as I love structure but renaming layers is a very tiring and low-reward task...
 Except from renaming layers, what else did I use AI for? I'm hoping to also publish a sub-page on this topic, for now I at least added some resources for you to explore:
 **[`skills/`](./skills/)** — the reusable instruction sets I've written to run agents. These are the actual files, not descriptions of them.
+**[`reflections/`](./reflections/)** — what we learned after each job, written down. One file per page translated from Figma, including the parts that went wrong and what they cost.
