@@ -76,7 +76,7 @@
         "icon": ["cursor", "figma-make"]
       },
       "combinations": ["cursor", "figma-make"],
-      "notes": "Two icons only. cursor (109:1373) is 40×40 and already ships as public/cursor.svg; figma-make (140:1095) is 80×80 and has no exported file yet. Scope boundary: the eight marks inside the NavBar frame are NOT part of this set — they are footer data in src/config/site.ts."
+      "notes": "Two icons only. cursor (109:1373) is 40×40 and already ships as public/cursor.svg; figma-make (140:1095) is 80×80 and has no exported file yet. Scope boundary: the eight marks inside the NavBar frame are NOT part of this set — they are footer data in src/config/site.ts. Separately, public/cursor-pointer.svg (16×16) has NO Figma node: it is the same circle re-drawn at pointer size for the site-wide CSS cursor, because a url() cursor renders at the asset's intrinsic size and CSS cannot scale it. The 40×40 mark here is unchanged and is what /styleguide renders. Change the colour and both files need it."
     },
     {
       "figmaName": "post-it",
