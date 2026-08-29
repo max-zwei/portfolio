@@ -2,6 +2,7 @@ import { defineCollection, reference, type SchemaContext } from 'astro:content';
 import { glob } from 'astro/loaders';
 import { existsSync, readdirSync } from 'node:fs';
 import { z } from 'zod';
+import { tagIds } from './config/match';
 
 /**
  * Content schemas.
@@ -61,6 +62,22 @@ const caseSection = (image: ImageFn) =>
     })
     .optional();
 
+/**
+ * What the /home questionnaire matches an entry on. Every option comes from
+ * src/config/match.ts, so a chip and a tag can never drift apart.
+ *
+ * `.prefault({})` lets an untagged entry omit the object entirely and still
+ * parse to four empty arrays, which is what the matcher expects.
+ */
+const match = z
+  .object({
+    teams: z.array(z.enum(tagIds('team'))).default([]),
+    fields: z.array(z.enum(tagIds('field'))).default([]),
+    roles: z.array(z.enum(tagIds('role'))).default([]),
+    tech: z.array(z.enum(tagIds('tech'))).default([]),
+  })
+  .prefault({});
+
 const projects = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/projects' }),
   schema: ({ image }) =>
@@ -106,6 +123,7 @@ const projects = defineCollection({
         feedback: caseSection(image),
         learning: caseSection(image),
         behindTheScenes: caseSection(image),
+        match,
       })
       // An image without alt text is an accessibility bug, so fail the build.
       .refine(
@@ -144,6 +162,8 @@ const playground = defineCollection({
 
         /** Anything that isn't GitHub or Figma — a demo, a write-up, a video. */
         additionalUrl: z.url().optional(),
+
+        match,
       })
       .refine((data) => !data.teaser || Boolean(data.teaserAlt), {
         message: 'teaserAlt is required when teaser is set',
@@ -167,6 +187,8 @@ const inspiration = defineCollection({
 
         teaser: image().optional(),
         teaserAlt: z.string().optional(),
+
+        match,
       })
       .refine((data) => !data.teaser || Boolean(data.teaserAlt), {
         message: 'teaserAlt is required when teaser is set',
@@ -217,6 +239,8 @@ const curiosity = defineCollection({
           `No question named "${(issue.input as { id: string }).id}". Add it under src/content/questions/, or point at one that exists.`,
       },
     ),
+
+    match,
   }),
 });
 
@@ -274,6 +298,8 @@ const resume = defineCollection({
             'Use /letters/name.pdf or /certificates/name.pdf',
           )
           .optional(),
+
+        match,
       })
       .refine((data) => !data.logo || Boolean(data.logoAlt), {
         message: 'logoAlt is required when logo is set',
