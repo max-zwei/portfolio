@@ -2,6 +2,7 @@
 import type { MarkdownLayoutProps } from 'astro';
 import BaseLayout from './BaseLayout.astro';
 import { withBase } from '../config/site';
+import Button from '../components/Button.astro';
 
 /**
  * Layout for standalone markdown pages — documents rather than case studies.
@@ -33,9 +34,13 @@ const { frontmatter } = Astro.props as Props;
       {
         frontmatter.download && (
           <p class="doc__download">
-            <a href={withBase(frontmatter.download.href)} download>
+            <Button
+              type="secondary"
+              href={withBase(frontmatter.download.href)}
+              download
+            >
               {frontmatter.download.label}
-            </a>
+            </Button>
           </p>
         )
       }
@@ -67,8 +72,11 @@ const { frontmatter } = Astro.props as Props;
     font-size: var(--font-size-2xl);
   }
 
-  /* Placeholder until the page is designed: a plain link, no invented styling.
-     Hidden in print — it is the link to the thing being printed. */
+  /*
+   * The link itself is `Button type="secondary"` (Figma `Buttons`,
+   * `109:1382`) — it was a plain undesigned link before the library port.
+   * Hidden in print: it is the link to the thing being printed.
+   */
   .doc__download {
     margin-top: var(--space-md);
     font-size: var(--font-size-sm);

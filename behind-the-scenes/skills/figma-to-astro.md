@@ -196,10 +196,13 @@ continuing if anything is in the last three rows.
 4. Variant properties map to props mechanically — `Type=Primary` → `type="primary"`
    — the same one-to-one rule that keeps tokens honest. A name that does not
    transform cleanly is the finding.
-5. **Code Connect is demoted, not removed.** `get_code_connect_map` needs a
-   Dev/Full seat and silently returned nothing for the whole `/home` session, so
-   it is a convenience after a component is stable, never the inventory
-   mechanism.
+5. **Code Connect is unavailable on this account, not merely demoted.**
+   `get_code_connect_map` and `add_code_connect_map` both answer _"You need a
+   Dev or Full seat on an Organization or Enterprise plan"_ on a student seat —
+   verified 29 Aug 2026, having previously been misread as "silently returned
+   nothing". Do not spend a call on either. `design/components.json` is the
+   replacement and the better one here: it is diffable, it lives in the commit,
+   and it holds the `notes` a mapping table has nowhere to put.
 6. Keep the "build it inline" fallback but restate it against amended R8: a set
    published in the library MAY become a component before its first page use;
    anything not in the library stays inline until its second use.
@@ -551,6 +554,9 @@ Five places where reading Figma literally produces the wrong code.
 - ❌ Re-adding `prefers-reduced-motion` per page
 - ❌ Building a component that is neither a published library set nor already
   used twice
+- ❌ Spending a call on `get_code_connect_map` — the seat cannot use it; read
+  `design/components.json` instead
+- ❌ Porting a set that `design/components.json` already maps to a file
 - ❌ Adding client JS that the page depends on, rather than layers on
 - ❌ Writing placeholder copy that reads as real content — no invented case
   studies, clients, metrics or bio copy, ever
