@@ -452,6 +452,21 @@ collections:
         default: []
         hint: Up to three things to point at. Ordered — the first one leads.
 
+      - label: Document URL
+        name: documentUrl
+        widget: string
+        required: false
+        pattern:
+          [
+            '^/(letters|certificates)/[a-z0-9._-]+\.pdf$',
+            'Use /letters/name.pdf or /certificates/name.pdf',
+          ]
+        hint: >-
+          Path to the scan already in public/ — /letters/… for an Arbeitszeugnis,
+          /certificates/… for a qualification. One per entry; the folder decides
+          the link text. The build fails if no such file exists. Shown on /resume
+          only, never on the printed CV.
+
   # ---------------------------------------------------------------------------
   # Release notes — what changed on the site, and when.
   # ---------------------------------------------------------------------------

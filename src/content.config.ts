@@ -1,6 +1,6 @@
 import { defineCollection, reference, type SchemaContext } from 'astro:content';
 import { glob } from 'astro/loaders';
-import { readdirSync } from 'node:fs';
+import { existsSync, readdirSync } from 'node:fs';
 import { z } from 'zod';
 
 /**
@@ -262,11 +262,34 @@ const resume = defineCollection({
 
         /** Up to three things to point at. Ordered — the first one leads. */
         projectUrls: z.array(z.url()).max(3).default([]),
+
+        /**
+         * The one scan behind this entry — an Arbeitszeugnis under /letters, or
+         * a qualification under /certificates. A path into public/ rather than
+         * an image(): it is served as-is for reading, not optimised, exactly
+         * like `file` on releaseNotes. The folder carries the meaning, so there
+         * is no separate label field to keep in step with it.
+         */
+        documentUrl: z
+          .string()
+          .regex(
+            /^\/(letters|certificates)\/[a-z0-9._-]+\.pdf$/,
+            'Use /letters/name.pdf or /certificates/name.pdf',
+          )
+          .optional(),
       })
       .refine((data) => !data.logo || Boolean(data.logoAlt), {
         message: 'logoAlt is required when logo is set',
         path: ['logoAlt'],
-      }),
+      })
+      .refine(
+        (data) =>
+          __omp_shell("data.documentUrl || existsSync(`./public${data.documentUrl}`),")
+        {
+          message: 'No such file under public/ — check the filename',
+          path: ['documentUrl'],
+        },
+      ),
 });
 
 /** What changed on the site, and when. */

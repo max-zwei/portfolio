@@ -122,17 +122,18 @@ One entry per position or qualification. **This is the CV** — see
 [`docs/resume.md`](./resume.md), and re-run `npm run pdf` after editing or the
 committed PDF goes stale.
 
-| Field         | Type                  | Required    | Purpose                                                        |
-| ------------- | --------------------- | ----------- | -------------------------------------------------------------- |
-| `role`        | string                | yes         | Job title, or the degree for an education entry.               |
-| `company`     | string                | yes         | Employer, client or institution.                               |
-| `kind`        | `work` \| `education` | yes         | Tells the two apart on the printed CV.                         |
-| `start`       | `YYYY-MM`             | yes         | The timeline sorts on this, so the format matters.             |
-| `end`         | `YYYY-MM`             | no          | Leave it out for anything still active.                        |
-| `summary`     | string                | yes         | One or two sentences: what the work was, and what came of it.  |
-| `logo`        | image                 | no          | Company or institution mark.                                   |
-| `logoAlt`     | string                | conditional | **Required whenever `logo` is set.**                           |
-| `projectUrls` | URL[] (max 3)         | no          | Up to three things to point at. Ordered — the first one leads. |
+| Field         | Type                                     | Required    | Purpose                                                                                         |
+| ------------- | ---------------------------------------- | ----------- | ----------------------------------------------------------------------------------------------- |
+| `role`        | string                                   | yes         | Job title, or the degree for an education entry.                                                |
+| `company`     | string                                   | yes         | Employer, client or institution.                                                                |
+| `kind`        | `work` \| `education`                    | yes         | Tells the two apart on the printed CV.                                                          |
+| `start`       | `YYYY-MM`                                | yes         | The timeline sorts on this, so the format matters.                                              |
+| `end`         | `YYYY-MM`                                | no          | Leave it out for anything still active.                                                         |
+| `summary`     | string                                   | yes         | One or two sentences: what the work was, and what came of it.                                   |
+| `logo`        | image                                    | no          | Company or institution mark.                                                                    |
+| `logoAlt`     | string                                   | conditional | **Required whenever `logo` is set.**                                                            |
+| `projectUrls` | URL[] (max 3)                            | no          | Up to three things to point at. Ordered — the first one leads.                                  |
+| `documentUrl` | path (`/letters/…` or `/certificates/…`) | no          | The Arbeitszeugnis or certificate scan for this entry. Shown on /resume, not on the printed CV. |
 
 The CV's opening paragraph is _not_ here. It is bio copy rather than a position,
 so it lives in [`src/config/site.ts`](../src/config/site.ts) as `CV_INTRO`.
