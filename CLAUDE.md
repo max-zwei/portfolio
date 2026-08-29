@@ -66,6 +66,7 @@ src/
   content/release-notes/ What changed on the site, and when.
   layouts/               BaseLayout — head, meta, OG, skip link.
                          ProseLayout — markdown document pages.
+  lib/dates.ts           formatMonth / formatRange, shared by /resume and CvSection.
   lib/tokens.ts          Reads design/tokens.json for /styleguide.
   pages/                 File-based routes. handshake.md is a markdown page.
   styles/tokens.css      Design tokens. One flat tier. Start here.
@@ -78,6 +79,8 @@ public/cv/               CV as PDF. Generated. NEVER hand-edit.
 public/handshake/        Handshake as PDF. Generated. NEVER hand-edit.
 public/fonts/            Satoshi + Erode woff2 + LICENSE. Third-party type.
 public/avatars/          Chat avatars as SVG. One per speaker, plus everyone.svg.
+public/icons/            Footer and Icons-set marks as SVG. Exported from Figma.
+public/logo/             The chat-ground logo variants as SVG. Exported from Figma.
 public/certificates/     Scanned qualifications. public/letters/ — references.
 scripts/render-pdf.mjs   Prints /resume and /handshake to those PDFs.
 behind-the-scenes/skills/ Agent skills. figma-to-astro.md is the main one.

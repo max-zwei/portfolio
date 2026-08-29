@@ -45,3 +45,42 @@ export const LINKS: ReadonlyArray<{ label: string; href: string }> = [
   { label: 'GitHub', href: 'https://github.com/max-zwei' },
   { label: 'Résumé', href: withBase('/resume') },
 ];
+
+/**
+ * The footer's own navigation, from the Figma NavBar. The href is the label
+ * with its `#` stripped — the same mechanical transform the token names use.
+ * None of these routes exists yet; Max supplies the real map.
+ */
+export const NAV = {
+  impressum: { label: '#impressum', href: withBase('/impressum') },
+  sections: [
+    { label: '#projects', href: withBase('/projects') },
+    { label: '#playground', href: withBase('/playground') },
+    { label: '#curiosity', href: withBase('/curiosity') },
+    { label: '#inspiration', href: withBase('/inspiration') },
+  ],
+  about: [
+    { label: '#aboutme', href: withBase('/aboutme') },
+    { label: '#behindthescenes', href: withBase('/behindthescenes') },
+  ],
+} as const;
+
+/** Social marks the footer draws. Only the GitHub URL is known. */
+export const SOCIALS = [
+  { label: 'Figma', href: '#', icon: '/icons/figma.svg' },
+  {
+    label: 'GitHub',
+    href: 'https://github.com/max-zwei',
+    icon: '/icons/github.svg',
+  },
+  { label: 'Dribbble', href: '#', icon: '/icons/dribbble.svg' },
+  { label: 'Behance', href: '#', icon: '/icons/behance.svg' },
+  { label: 'LinkedIn', href: '#', icon: '/icons/linkedin.svg' },
+] as const;
+
+/** The three marks beside "explore with". Decorative: the design draws no link. */
+export const EXPLORE_WITH = [
+  '/icons/explore-claude.svg',
+  '/icons/explore-openai.svg',
+  '/icons/explore-3.svg',
+] as const;

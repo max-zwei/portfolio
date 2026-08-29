@@ -1,0 +1,40 @@
+---
+/**
+ * Figma component set `user` (`117:1308`).
+ *
+ * The Figma set has no `max` variant; `user="max"` is a deliberate code-side
+ * addition for the portrait already used by the site.
+ */
+import { withBase } from '../config/site';
+
+export type AvatarUser = 'moritz' | 'karina' | 'paula' | 'all' | 'max';
+
+interface Props {
+  /** Person or group portrait to render. */
+  user: AvatarUser;
+  /** Additional classes applied to the image. */
+  class?: string;
+}
+
+const ALT: Record<AvatarUser, string> = {
+  max: 'Max — a figure with a dark bob and a red top',
+  moritz: 'Moritz — a figure in green, facing a dark triangle',
+  karina: 'Karina — a figure in pink with a dark rounded haircut',
+  paula: 'Paula — a figure in yellow, half in shadow',
+  all: 'Moritz, Karina and Paula together',
+};
+
+const { user, class: className } = Astro.props;
+const filename = user === 'all' ? 'everyone' : user;
+const src = withBase(`/avatars/${filename}.svg`);
+---
+
+<!-- 87 × 87 is the asset's intrinsic size, so it belongs on the element rather
+     than in a design token. -->
+<img
+  src={src}
+  alt={ALT[user]}
+  width="87"
+  height="87"
+  class:list={['avatar', className]}
+/>

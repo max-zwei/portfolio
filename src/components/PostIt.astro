@@ -1,0 +1,76 @@
+---
+/**
+ * Figma component set `post-it` (`114:581`).
+ *
+ * The note is content supplied by its caller; this component owns only the
+ * paper, pin colour, and Figma typography treatment.
+ */
+interface Props {
+  /** Figma `Color`. */
+  color?: 'herbs' | 'tomato' | 'lemon' | 'pickled';
+  /** Additional class supplied by the composing page. */
+  class?: string;
+}
+
+const { color = 'herbs', class: className } = Astro.props;
+---
+
+<article class:list={['post-it', `post-it--${color}`, className]}>
+  <span class="post-it__dot" aria-hidden="true"></span>
+  <div class="post-it__copy"><slot /></div>
+</article>
+
+<style>
+  .post-it {
+    display: grid;
+    justify-items: start;
+    gap: var(--space-xs);
+    padding: var(--space-sm);
+    background-color: var(--color-neutral-white);
+    box-shadow: var(--shadow-md);
+    color: var(--color-neutral-800);
+  }
+
+  /*
+   * The four variants have distinct drawn rotations in Figma. Their exact
+   * angles are pending a live read of node 114:581, so no rotation is guessed
+   * here. When available, add them as rotate(Ndeg) literals: geometry has no
+   * angle-token tier, and inventing one would be the wrong abstraction.
+   */
+
+  .post-it__dot {
+    /* Token-chosen dimensions while Figma is unreachable; not Figma-read. */
+    inline-size: var(--space-xs);
+    block-size: var(--space-xs);
+    border-radius: var(--radius-full);
+  }
+
+  .post-it--herbs .post-it__dot {
+    background-color: var(--color-herbs-500);
+  }
+
+  .post-it--tomato .post-it__dot {
+    background-color: var(--color-tomato-500);
+  }
+
+  .post-it--lemon .post-it__dot {
+    background-color: var(--color-lemon-500);
+  }
+
+  .post-it--pickled .post-it__dot {
+    background-color: var(--color-pickled-500);
+  }
+
+  /* Typography/Body - Small. */
+  .post-it__copy {
+    font-family: var(--font-sans);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-regular);
+    line-height: var(--line-height-relaxed);
+    letter-spacing: var(--letter-spacing-normal);
+  }
+
+  .post-it__copy :global(p) {
+    max-width: none;
+  }
+</style>

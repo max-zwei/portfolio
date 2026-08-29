@@ -1,0 +1,84 @@
+---
+/** Figma component set `focus areas` (`115:703`). */
+interface Props {
+  /** Section heading; defaults to the heading drawn in Figma. */
+  title?: string;
+  /** Focus-area labels. An empty array intentionally renders no list. */
+  areas: ReadonlyArray<string>;
+  /** Heading depth chosen by the page's document outline. */
+  level?: 2 | 3 | 4;
+  /** Additional class forwarded to the root section. */
+  class?: string;
+}
+
+const {
+  title = 'Focusing on...',
+  areas,
+  level = 2,
+  class: className,
+} = Astro.props;
+
+/*
+ * html-validate enforces `heading-level: error`; letting the page choose the
+ * level prevents a skipped heading as soon as this section sits under an h2.
+ */
+const Tag = `h${level}` as 'h2';
+
+/*
+ * The source prose is markdown held in content-collection frontmatter. The
+ * page renders that markdown through the default slot; this component only
+ * lays the resulting content out.
+ */
+---
+
+<section class:list={['focus-areas', className]}>
+  <Tag>{title}</Tag>
+  <slot />
+  {
+    areas.length > 0 && (
+      <ul class="focus-areas__list">
+        {areas.map((area) => (
+          <li>{area}</li>
+        ))}
+      </ul>
+    )
+  }
+</section>
+
+<style>
+  .focus-areas {
+    display: grid;
+    /* Token-chosen while Figma is unreachable; not a value read from the set. */
+    gap: var(--space-md);
+  }
+
+  .focus-areas__list {
+    display: grid;
+    /* Nearest existing spacing token; the unavailable Figma read left this gap unknown. */
+    gap: var(--space-sm);
+    padding: 0;
+    list-style: none;
+  }
+
+  .focus-areas__list li {
+    display: grid;
+    /* Token-chosen marker track while Figma is unreachable; not Figma-read. */
+    grid-template-columns: var(--space-2xs) 1fr;
+    align-items: center;
+    /* Token-chosen marker-to-label spacing; not a value read from Figma. */
+    gap: var(--space-xs);
+  }
+
+  /*
+   * The disc is a ::before rather than ::marker because marker colour cannot
+   * be controlled reliably across browsers.
+   * Its token-chosen dimensions were not read from Figma.
+   */
+  .focus-areas__list li::before {
+    width: var(--space-2xs);
+    height: var(--space-2xs);
+    content: '';
+    background-color: var(--color-tomato-500);
+    border-radius: var(--radius-full);
+  }
+</style>
