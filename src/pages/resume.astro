@@ -101,6 +101,15 @@ const contact = [
                 <h3 class="entry__title">{data.role}</h3>
                 <p class="entry__org">{data.company}</p>
                 <p class="entry__summary">{data.summary}</p>
+                {data.documentUrl && (
+                  <p class="entry__doc no-print">
+                    <a href={withBase(data.documentUrl)}>
+                      {data.documentUrl.startsWith('/letters/')
+                        ? 'Reference letter (PDF)'
+                        : 'Certificate (PDF)'}
+                    </a>
+                  </p>
+                )}
               </div>
             </li>
           ))
@@ -257,6 +266,12 @@ const contact = [
     margin-top: var(--space-2xs);
     max-width: var(--measure);
     color: var(--color-neutral-700);
+  }
+
+  /* Screen only — the printed CV carries no unclickable URLs. */
+  .entry__doc {
+    margin-top: var(--space-2xs);
+    font-size: var(--font-size-sm);
   }
 
   @media (min-width: 48rem) {
