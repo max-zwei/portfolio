@@ -284,7 +284,7 @@ const resume = defineCollection({
       })
       .refine(
         (data) =>
-          __omp_shell("data.documentUrl || existsSync(`./public${data.documentUrl}`),")
+          !data.documentUrl || existsSync(`./public${data.documentUrl}`),
         {
           message: 'No such file under public/ — check the filename',
           path: ['documentUrl'],
