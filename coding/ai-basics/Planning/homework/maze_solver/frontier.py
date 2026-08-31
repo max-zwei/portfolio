@@ -43,7 +43,6 @@ class Frontier:
             self.frontier.remove(node)
             return node
 
-
     def select_node(self):
         """
             Selects the next node to extend
@@ -55,16 +54,21 @@ class Frontier:
 
         # depth-first search
         if self.search_algorithm == "DFS":
-            # TODO: implement me
-            pass
+            # deepth-first search -> First node in, first node out
+            # select the last node
+            return self.frontier[len(self.frontier) - 1]
         
         # breadth-first search
         if self.search_algorithm == "BFS":
-            # TODO: implement me
-            pass
+            # broadth-first search -> Last node in, first node out
+            # select the first node
+            return self.frontier[0]
         
         # heuristic search
         if self.search_algorithm == "HS":
-            # TODO: implement me
-            pass
+            # heuristic search -> Lowest heuristic node, first node out
+            # use coordinates as the heuristic (tuple of integers)
+            # sort list by heuristic
+            # select the last node
+            heuristic = abs(self.frontier.state - self.goal)
             
