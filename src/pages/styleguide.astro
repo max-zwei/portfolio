@@ -18,12 +18,12 @@ import CvSection from '../components/CvSection.astro';
 import FlipCard from '../components/FlipCard.astro';
 import FocusAreas from '../components/FocusAreas.astro';
 import Icon from '../components/Icon.astro';
+import Logo from '../components/Logo.astro';
 import NavBar from '../components/NavBar.astro';
 import PostIt from '../components/PostIt.astro';
 import ProjectPreview from '../components/ProjectPreview.astro';
 import ProjectSection from '../components/ProjectSection.astro';
 import ReleaseNote from '../components/ReleaseNote.astro';
-import TextSection from '../components/TextSection.astro';
 import ToolBox from '../components/ToolBox.astro';
 
 // Everything here is computed at build time from design/tokens.json.
@@ -39,6 +39,7 @@ const textStyles = [
     weight: '--font-weight-semibold',
     lineHeight: '--line-height-none',
     letterSpacing: '--letter-spacing-normal',
+    derived: false,
   },
   {
     name: 'Typography/H2',
@@ -47,6 +48,7 @@ const textStyles = [
     weight: '--font-weight-semibold',
     lineHeight: '--line-height-none',
     letterSpacing: '--letter-spacing-normal',
+    derived: false,
   },
   {
     name: 'Typography/H3',
@@ -55,6 +57,7 @@ const textStyles = [
     weight: '--font-weight-semibold',
     lineHeight: '--line-height-none',
     letterSpacing: '--letter-spacing-normal',
+    derived: false,
   },
   {
     name: 'Typography/H4',
@@ -63,6 +66,7 @@ const textStyles = [
     weight: '--font-weight-semibold',
     lineHeight: '--line-height-none',
     letterSpacing: '--letter-spacing-normal',
+    derived: false,
   },
   {
     name: 'Typography/H5',
@@ -71,6 +75,7 @@ const textStyles = [
     weight: '--font-weight-semibold',
     lineHeight: '--line-height-none',
     letterSpacing: '--letter-spacing-normal',
+    derived: false,
   },
   {
     name: 'Typography/Body',
@@ -79,6 +84,7 @@ const textStyles = [
     weight: '--font-weight-regular',
     lineHeight: '--line-height-normal',
     letterSpacing: '--letter-spacing-normal',
+    derived: true,
   },
   {
     name: 'Typography/Body - Small',
@@ -87,6 +93,7 @@ const textStyles = [
     weight: '--font-weight-regular',
     lineHeight: '--line-height-relaxed',
     letterSpacing: '--letter-spacing-normal',
+    derived: false,
   },
   {
     name: 'Typography/Body - Large',
@@ -95,14 +102,16 @@ const textStyles = [
     weight: '--font-weight-regular',
     lineHeight: '--line-height-normal',
     letterSpacing: '--letter-spacing-normal',
+    derived: true,
   },
   {
     name: 'Typography/Body - Bold',
     family: '--font-sans',
     size: '--font-size-base',
-    weight: '--font-weight-semibold',
+    weight: '--font-weight-bold',
     lineHeight: '--line-height-normal',
     letterSpacing: '--letter-spacing-normal',
+    derived: true,
   },
   {
     name: 'Typography/Mono',
@@ -111,6 +120,7 @@ const textStyles = [
     weight: '--font-weight-regular',
     lineHeight: '--line-height-loose',
     letterSpacing: '--letter-spacing-extra-wide',
+    derived: true,
   },
   {
     name: 'Typography/Mono - Small',
@@ -119,6 +129,7 @@ const textStyles = [
     weight: '--font-weight-regular',
     lineHeight: '--line-height-loose',
     letterSpacing: '--letter-spacing-extra-wide',
+    derived: false,
   },
   {
     name: 'Typography/Captions',
@@ -127,6 +138,7 @@ const textStyles = [
     weight: '--font-weight-regular',
     lineHeight: '--line-height-relaxed',
     letterSpacing: '--letter-spacing-normal',
+    derived: true,
   },
 ] as const;
 
@@ -309,8 +321,10 @@ const releaseDate = new Date('2026-02-06');
 
       <h3>Text styles</h3>
       <p class="note">
-        All twelve rows are transcribed from the named Figma text styles so this
-        table makes drift between the design and implementation visible.
+        The design defines twelve named text styles, and the repo records none
+        of them. This block is where drift becomes visible: seven rows are
+        transcribed from the design; the five marked <strong>inferred</strong>
+        are inferred from component usage and still need confirming against Figma.
       </p>
       <div class="table-wrap">
         <table class="text-styles">
@@ -327,6 +341,9 @@ const releaseDate = new Date('2026-02-06');
                 <tr>
                   <th scope="row">
                     <code>{style.name}</code>
+                    {style.derived && (
+                      <span class="text-styles__marker">inferred</span>
+                    )}
                   </th>
                   <td>
                     <span
@@ -503,9 +520,16 @@ const releaseDate = new Date('2026-02-06');
         <Avatar user="paula" />
         <Avatar user="all" />
         <Avatar user="max" />
-        <Avatar user="max" variant="neutral" />
-        <Avatar user="max" variant="tomato" />
-        <Avatar user="max" variant="herbs" />
+      </div>
+
+      <h3>Logo</h3>
+      <p class="note">
+        Figma set <code>logo</code>, node <code>108:1372</code>.
+      </p>
+      <div class="demo">
+        <Logo type="favicon" variant="default" alt="Max favicon mark" />
+        <Logo type="chat" variant="tomato" alt="Max chat mark on tomato" />
+        <Logo type="chat" variant="herbs" alt="Max chat mark on herbs" />
       </div>
 
       <h3>Icons</h3>
@@ -532,7 +556,7 @@ const releaseDate = new Date('2026-02-06');
       <p class="note">
         Figma set <code>flipcard</code>, node <code>114:569</code>.
       </p>
-      <div class="demo demo--packed">
+      <div class="demo">
         <FlipCard id="styleguide-flip-front" state="front" title="[project]">
           <p>[project summary]</p>
         </FlipCard>
@@ -546,13 +570,7 @@ const releaseDate = new Date('2026-02-06');
         >
           <p>[project summary]</p>
         </FlipCard>
-        <FlipCard id="styleguide-flip-small-1" state="small" title="[project]">
-          <p>[project summary]</p>
-        </FlipCard>
-        <FlipCard id="styleguide-flip-small-2" state="small" title="[project]">
-          <p>[project summary]</p>
-        </FlipCard>
-        <FlipCard id="styleguide-flip-small-3" state="small" title="[project]">
+        <FlipCard id="styleguide-flip-small" state="small" title="[project]">
           <p>[project summary]</p>
         </FlipCard>
       </div>
@@ -572,20 +590,9 @@ const releaseDate = new Date('2026-02-06');
         Figma set <code>blank section</code>, node <code>114:636</code>.
       </p>
       <div class="demo demo--stack">
-        <BlankSection>
+        <BlankSection level={4}>
           <p>[section body]</p>
         </BlankSection>
-      </div>
-
-      <h3>Text section</h3>
-      <p class="note">
-        No Figma set. The general heading-plus-body layout that
-        <code>blank section</code> (<code>114:636</code>) is one instance of.
-      </p>
-      <div class="demo demo--stack">
-        <TextSection title="[section heading]">
-          <p>[section body]</p>
-        </TextSection>
       </div>
 
       <h3>CV section</h3>
@@ -598,6 +605,7 @@ const releaseDate = new Date('2026-02-06');
           company="[company]"
           start="2026-03"
           end="2026-10"
+          level={4}
         >
           <p>[summary]</p>
         </CvSection>
@@ -636,8 +644,8 @@ const releaseDate = new Date('2026-02-06');
         Figma set <code>tool box</code>, node <code>114:685</code>.
       </p>
       <div class="demo demo--stack">
-        <ToolBox tools={placeholderTools} />
-        <ToolBox tools={[]} />
+        <ToolBox tools={placeholderTools} level={4} />
+        <ToolBox tools={[]} level={4} />
       </div>
 
       <h3>Focus areas</h3>
@@ -645,8 +653,11 @@ const releaseDate = new Date('2026-02-06');
         Figma set <code>focus areas</code>, node <code>115:703</code>.
       </p>
       <div class="demo demo--stack">
-        <FocusAreas areas={['[focus area]', '[focus area]', '[focus area]']} />
-        <FocusAreas areas={[]} />
+        <FocusAreas
+          areas={['[focus area]', '[focus area]', '[focus area]']}
+          level={4}
+        />
+        <FocusAreas areas={[]} level={4} />
       </div>
 
       <h3>Release notes</h3>
@@ -654,12 +665,17 @@ const releaseDate = new Date('2026-02-06');
         Figma set <code>release notes</code>, node <code>115:706</code>.
       </p>
       <div class="demo demo--stack">
-        <ReleaseNote state="active" date={releaseDate} backHref="#h-components">
+        <ReleaseNote
+          state="active"
+          date={releaseDate}
+          backHref="#h-components"
+          level={4}
+        >
           <p slot="userExperience">[user experience]</p>
           <p slot="userInterface">[user interface]</p>
           <p slot="tools">[tools]</p>
         </ReleaseNote>
-        <ReleaseNote state="inactive" date={releaseDate}>
+        <ReleaseNote state="inactive" date={releaseDate} level={4}>
           <p slot="userExperience">[inactive release note]</p>
         </ReleaseNote>
       </div>
@@ -674,6 +690,7 @@ const releaseDate = new Date('2026-02-06');
           title="[case study section]"
           subtitle="[section subtitle]"
           keyPoints={['[key point]', '[key point]']}
+          level={4}
         >
           <p>[section description]</p>
         </ProjectSection>
@@ -682,6 +699,7 @@ const releaseDate = new Date('2026-02-06');
           title="[case study section]"
           subtitle="[section subtitle]"
           keyPoints={['[key point]', '[key point]']}
+          level={4}
         >
           <p>[section description]</p>
         </ProjectSection>
@@ -940,6 +958,20 @@ const releaseDate = new Date('2026-02-06');
     max-width: none;
   }
 
+  .text-styles__marker {
+    display: inline-block;
+    padding: var(--space-3xs) var(--space-2xs);
+    margin-inline-start: var(--space-2xs);
+    border-radius: var(--radius-sm);
+    background: var(--color-lemon-100);
+    color: var(--color-neutral-800);
+    font-family: var(--font-mono);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-regular);
+    line-height: var(--line-height-relaxed);
+    letter-spacing: var(--letter-spacing-normal);
+  }
+
   .text-styles__tokens {
     display: flex;
     flex-wrap: wrap;
@@ -1049,10 +1081,6 @@ const releaseDate = new Date('2026-02-06');
     align-items: flex-start;
     gap: var(--space-lg);
     inline-size: 100%;
-  }
-
-  .demo--packed {
-    gap: 0;
   }
 
   .demo--stack {

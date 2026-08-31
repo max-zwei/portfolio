@@ -67,56 +67,20 @@ export const NAV = {
 
 /** Social marks the footer draws. Only the GitHub URL is known. */
 export const SOCIALS = [
-  {
-    label: 'Figma',
-    href: '#',
-    icon: '/icons/figma.svg',
-    width: 12,
-    height: 16,
-  },
+  { label: 'Figma', href: '#', icon: '/icons/figma.svg' },
   {
     label: 'GitHub',
     href: 'https://github.com/max-zwei',
     icon: '/icons/github.svg',
-    width: 16,
-    height: 16,
   },
-  {
-    label: 'Dribbble',
-    href: '#',
-    icon: '/icons/dribbble.svg',
-    width: 16,
-    height: 16,
-  },
-  {
-    label: 'Behance',
-    href: '#',
-    icon: '/icons/behance.svg',
-    width: 19,
-    height: 16,
-  },
-  {
-    label: 'LinkedIn',
-    href: '#',
-    icon: '/icons/linkedin.svg',
-    width: 16,
-    height: 16,
-  },
+  { label: 'Dribbble', href: '#', icon: '/icons/dribbble.svg' },
+  { label: 'Behance', href: '#', icon: '/icons/behance.svg' },
+  { label: 'LinkedIn', href: '#', icon: '/icons/linkedin.svg' },
 ] as const;
 
-/**
- * The three marks beside "explore with". Each becomes a link. The two hrefs
- * are placeholders on the `SOCIALS` pattern — Max supplies the real
- * conversation URLs. The third mark has no label because Figma's layer name is
- * `image 4 [Vectorized]` (`114:204`) and the brand is not identifiable at
- * 16px, so it stays decorative until Max names it.
- */
-export const EXPLORE_WITH: ReadonlyArray<{
-  label?: string;
-  href?: string;
-  icon: string;
-}> = [
-  { label: 'Claude', href: '#', icon: '/icons/explore-claude.svg' },
-  { label: 'ChatGPT', href: '#', icon: '/icons/explore-openai.svg' },
-  { icon: '/icons/explore-3.svg' },
-];
+/** The three marks beside "explore with". Decorative: the design draws no link. */
+export const EXPLORE_WITH = [
+  '/icons/explore-claude.svg',
+  '/icons/explore-openai.svg',
+  '/icons/explore-3.svg',
+] as const;
