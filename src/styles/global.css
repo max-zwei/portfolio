@@ -32,22 +32,12 @@ body {
   text-rendering: optimizeLegibility;
 }
 
-/*
- * The lemon dot replaces the pointer. It is `cursor-pointer.svg` (16×16), not
- * the Figma `Icons` set's `cursor.svg` (40×40): a `url()` cursor renders at the
- * asset's intrinsic size and CSS cannot scale it, so pointer-sized artwork has
- * to be its own file. `cursor.svg` stays as the set's mark, rendered on
- * /styleguide. Change the colour and both need it.
- *
- * The two numbers are the hotspot — the pixel that actually points — and they
- * must stay the circle's centre, so half the asset's size.
- */
 @media (pointer: fine) {
   html,
   body,
   body * {
     cursor:
-      var(--cursor-url) 8 8,
+      var(--cursor-url) 20 20,
       auto;
   }
 
@@ -91,11 +81,10 @@ h2,
 h3,
 h4,
 h5 {
-  font-family: var(--font-serif);
   font-weight: var(--font-weight-semibold);
   /* The Figma heading styles H1–H5 all bind line-height 1. */
   line-height: var(--line-height-none);
-  letter-spacing: var(--letter-spacing-normal);
+  letter-spacing: var(--letter-spacing-tight);
   text-wrap: balance;
 }
 
