@@ -9,6 +9,11 @@ year: 2026
 tags:
   - '[Discipline]'
   - '[Domain]'
+match:
+  teams: [startup]
+  fields: [web-design]
+  roles: [freelancer]
+  tech: [css-html]
 
 # The case study, in narrative order. Delete the sections a project does not
 # earn — all eight are optional, but a section that exists needs a description.

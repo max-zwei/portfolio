@@ -1,0 +1,155 @@
+---
+/**
+ * Figma component set `project preview` (`114:646`).
+ *
+ * The decorative paper scraps are intentionally absent until their exact
+ * untokenised geometry can be read from Figma. The component still exposes and
+ * progressively enhances the two drawn presentation states.
+ */
+interface Props {
+  /** Required identity for this independently enhanced preview. */
+  id: string;
+  /** Figma `State`; also the state rendered without JavaScript. */
+  state?: 'collapsed' | 'exploded';
+  /** Figma `Size`. */
+  size?: 'default' | 'small';
+  /** Typography/Captions copy, drawn uppercase. */
+  caption: string;
+  /** The serif project line. */
+  title: string;
+  /** Present → makes the text block a link. */
+  href?: string;
+  /** Additional class supplied by the composing page. */
+  class?: string;
+}
+
+const {
+  id,
+  state = 'collapsed',
+  size = 'default',
+  caption,
+  title,
+  href,
+  class: className,
+} = Astro.props;
+---
+
+<article
+  id={id}
+  class:list={['project-preview', `project-preview--${size}`, className]}
+  data-project-preview
+  data-state={state}
+>
+  <!-- The absolutely positioned, aria-hidden white paper-scrap collage is
+       pending an exact read of node 114:646. Its per-scrap offsets, sizes, and
+       rotations are untokenised geometry, so literals are correct only once
+       those exact values are available; no placeholder geometry is invented. -->
+
+  {
+    href ? (
+      <a class="project-preview__text" href={href}>
+        <span class="project-preview__caption">{caption}</span>
+        <span class="project-preview__title">{title}</span>
+      </a>
+    ) : (
+      <div class="project-preview__text">
+        <span class="project-preview__caption">{caption}</span>
+        <span class="project-preview__title">{title}</span>
+      </div>
+    )
+  }
+
+  <!-- This is a toggle, not a disclosure: the exploded state rearranges the
+       same content and reveals nothing new. -->
+  <button
+    type="button"
+    class="project-preview__toggle"
+    aria-pressed={state === 'exploded'}
+  >
+    <span aria-hidden="true">↗</span>
+    <span class="visually-hidden">Toggle the arrangement of {title}</span>
+  </button>
+</article>
+
+<script>
+  document
+    .querySelectorAll<HTMLElement>('[data-project-preview]')
+    .forEach((root) => {
+      const button = root.querySelector<HTMLButtonElement>(
+        '.project-preview__toggle',
+      );
+
+      button?.addEventListener('click', () => {
+        const state =
+          root.dataset.state === 'exploded' ? 'collapsed' : 'exploded';
+        root.dataset.state = state;
+        button.setAttribute('aria-pressed', String(state === 'exploded'));
+      });
+    });
+
+  /* Figma defines no state motion, so the swap is instantaneous; inventing an
+     animation would be a fidelity violation. With scripts blocked, the prop's
+     state remains rendered and the toggle is inert by accepted design. */
+</script>
+
+<style>
+  .project-preview {
+    position: relative;
+    display: inline-grid;
+    align-items: start;
+    justify-items: start;
+    color: var(--color-neutral-800);
+  }
+
+  .project-preview__text {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    gap: var(--space-3xs);
+    padding: var(--space-sm);
+    color: inherit;
+    text-decoration: none;
+    transform-origin: center;
+  }
+
+  /* The exploded state currently has no visual expression. Its drawn
+     difference is the paper-scrap spread, whose geometry is pending a Figma
+     read, so the state is observable only through `data-state` and
+     `aria-pressed`. */
+
+  /* Typography/Captions — the frame draws this line uppercase. */
+  .project-preview__caption {
+    font-family: var(--font-sans);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-regular);
+    line-height: var(--line-height-relaxed);
+    letter-spacing: var(--letter-spacing-normal);
+    text-transform: uppercase;
+  }
+
+  .project-preview__title {
+    font-family: var(--font-serif);
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-semibold);
+    line-height: var(--line-height-snug);
+    letter-spacing: var(--letter-spacing-normal);
+  }
+
+  .project-preview--small .project-preview__title {
+    font-size: var(--font-size-sm);
+  }
+
+  .project-preview__toggle {
+    position: relative;
+    z-index: 2;
+    justify-self: end;
+    padding: var(--space-3xs);
+    border: 0;
+    background: none;
+    color: var(--color-neutral-800);
+    font-family: var(--font-mono);
+    font-size: var(--font-size-base);
+    line-height: var(--line-height-none);
+    cursor: pointer;
+  }
+</style>

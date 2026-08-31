@@ -1,0 +1,23 @@
+---
+/**
+ * Figma component set `blank section` (`114:636`).
+ *
+ * The frame's copy is final copy in Max's voice, not placeholder text. The
+ * layout is `TextSection`; this file is the set's named instance of it.
+ */
+import TextSection from './TextSection.astro';
+
+interface Props {
+  /** Section heading; defaults to the final heading drawn in Figma. */
+  title?: string;
+  /** Optional heading level to match the styleguide examples. */
+  level?: 2 | 3 | 4;
+  /** Additional class forwarded to the root section. */
+  class?: string;
+}
+
+const { title = 'Let’s be honest', level = 2, class: className } = Astro.props;
+---
+
+<TextSection title={title} level={level} class={className}><slot /></TextSection
+>

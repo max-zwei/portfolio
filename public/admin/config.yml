@@ -220,6 +220,54 @@ collections:
         collapsed: true
         fields: *case_section
 
+      # Matched against the /home questionnaire. Options come from
+      # src/config/match.ts — keep the two lists identical or the build
+      # rejects a tag the CMS wrote. Leave empty for anything that is not
+      # evidence of a skill.
+      - label: Match
+        name: match
+        widget: object
+        required: false
+        collapsed: true
+        fields: &match_axes
+          - label: Teams
+            name: teams
+            widget: select
+            multiple: true
+            required: false
+            default: []
+            options:
+              [corporate, startup, individual, pre-company, ngo, association]
+          - label: Fields
+            name: fields
+            widget: select
+            multiple: true
+            required: false
+            default: []
+            options:
+              [
+                web-design,
+                branding,
+                ux-review,
+                ui-review,
+                ux-concept,
+                product-management,
+              ]
+          - label: Roles
+            name: roles
+            widget: select
+            multiple: true
+            required: false
+            default: []
+            options: [volunteer, freelancer, employee, founding-designer]
+          - label: Tech
+            name: tech
+            widget: select
+            multiple: true
+            required: false
+            default: []
+            options: [css-html, wordpress, no-code, python, javascript, julia]
+
   # ---------------------------------------------------------------------------
   # Playground — small self-directed builds.
   # ---------------------------------------------------------------------------
@@ -276,6 +324,13 @@ collections:
         pattern: ['^https?://.+', 'Must be a full URL starting with http(s)://']
         hint: Anything that isn't GitHub or Figma — a demo, a write-up, a video.
 
+      - label: Match
+        name: match
+        widget: object
+        required: false
+        collapsed: true
+        fields: *match_axes
+
   # ---------------------------------------------------------------------------
   # Inspiration — other people's work worth pointing at.
   # ---------------------------------------------------------------------------
@@ -318,6 +373,13 @@ collections:
         widget: string
         required: false
         hint: REQUIRED if a teaser is set — the build fails without it.
+
+      - label: Match
+        name: match
+        widget: object
+        required: false
+        collapsed: true
+        fields: *match_axes
 
   # ---------------------------------------------------------------------------
   # Questions — the open questions thoughts hang off.
@@ -375,6 +437,13 @@ collections:
         hint: >-
           Pick from the existing questions. Exactly one per thought — add it
           under Questions first if it isn't there yet.
+
+      - label: Match
+        name: match
+        widget: object
+        required: false
+        collapsed: true
+        fields: *match_axes
 
   # ---------------------------------------------------------------------------
   # Resume — one entry per position or qualification.
@@ -451,6 +520,28 @@ collections:
         max: 3
         default: []
         hint: Up to three things to point at. Ordered — the first one leads.
+
+      - label: Document URL
+        name: documentUrl
+        widget: string
+        required: false
+        pattern:
+          [
+            '^/(letters|certificates)/[a-z0-9._-]+\.pdf$',
+            'Use /letters/name.pdf or /certificates/name.pdf',
+          ]
+        hint: >-
+          Path to the scan already in public/ — /letters/… for an Arbeitszeugnis,
+          /certificates/… for a qualification. One per entry; the folder decides
+          the link text. The build fails if no such file exists. Shown on /resume
+          only, never on the printed CV.
+
+      - label: Match
+        name: match
+        widget: object
+        required: false
+        collapsed: true
+        fields: *match_axes
 
   # ---------------------------------------------------------------------------
   # Release notes — what changed on the site, and when.

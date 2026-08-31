@@ -1,0 +1,135 @@
+---
+/**
+ * Figma component set `CV section` (node `114:640`).
+ *
+ * The component mirrors one entry in the `resume` content collection. Its
+ * summary remains slotted so markdown content stays owned by the calling page.
+ */
+import ProjectPreview from './ProjectPreview.astro';
+import { formatRange } from '../lib/dates';
+
+interface Props {
+  /** Position or qualification title. */
+  role: string;
+  /** Employer, client, or institution. */
+  company: string;
+  /** Start date as `YYYY` or `YYYY-MM`. */
+  start: string;
+  /** End date as `YYYY` or `YYYY-MM`; absent means “present”. */
+  end?: string;
+  /** Optional heading level to match the styleguide examples. */
+  level?: 2 | 3 | 4;
+  /** Project destinations associated with this CV entry. */
+  projectUrls?: ReadonlyArray<string>;
+  /** Additional class names for the section wrapper. */
+  class?: string;
+}
+
+const {
+  role,
+  company,
+  start,
+  end,
+  level = 3,
+  projectUrls = [],
+  class: className,
+} = Astro.props;
+
+const HeadingTag = `h${level}` as 'h2' | 'h3' | 'h4';
+
+const slugify = (value: string) =>
+  value
+    .normalize('NFKD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '');
+
+const sectionId = slugify(`${company}-${role}-${start}`) || 'cv-section';
+
+const titleFromUrl = (url: string, index: number) => {
+  const path = url.split(/[?#]/)[0].replace(/\/+$/, '');
+  const segment = path.split('/').filter(Boolean).at(-1);
+  return segment ? segment.replace(/[-_]+/g, ' ') : `Project ${index + 1}`;
+};
+---
+
+<section
+  class:list={['cv-section', className]}
+  aria-labelledby={`${sectionId}-role`}
+>
+  <!-- Figma text style: Typography/Mono - Small. -->
+  <p class="cv-section__dates">{formatRange(start, end)}</p>
+
+  <div class="cv-section__position">
+    <!-- Figma text style: Typography/Body - Large, at Body - Bold's weight. -->
+    <HeadingTag id={`${sectionId}-role`} class="cv-section__role"
+      >{role}</HeadingTag
+    >
+    <!-- Figma text style: Typography/Body - Large. -->
+    <p class="cv-section__company">{company}</p>
+  </div>
+
+  {
+    projectUrls.length > 0 && (
+      <div class="cv-section__projects">
+        {projectUrls.map((href, index) => (
+          // The page decides the real project caption and title. This URL-only
+          // interface supplies short, deterministic labels until it does.
+          <ProjectPreview
+            id={`${sectionId}-project-${index + 1}`}
+            caption={`Project ${index + 1}`}
+            title={titleFromUrl(href, index)}
+            href={href}
+          />
+        ))}
+      </div>
+    )
+  }
+
+  <div class="cv-section__summary"><slot /></div>
+</section>
+
+<style>
+  .cv-section__dates {
+    /* Figma text style: Typography/Mono - Small. */
+    font-family: var(--font-mono);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-regular);
+    line-height: var(--line-height-loose);
+    letter-spacing: var(--letter-spacing-extra-wide);
+  }
+
+  .cv-section__position {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    /* Token-chosen while Figma is unreachable; not a value read from the set. */
+    gap: var(--space-2xs);
+  }
+
+  /* Figma text style: Typography/Body - Large, at Body - Bold's weight. */
+  .cv-section__role {
+    font-family: var(--font-sans);
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-semibold);
+    line-height: var(--line-height-normal);
+    letter-spacing: var(--letter-spacing-normal);
+  }
+
+  /* Figma text style: Typography/Body - Large. */
+  .cv-section__company {
+    font-family: var(--font-sans);
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-regular);
+    line-height: var(--line-height-normal);
+    letter-spacing: var(--letter-spacing-normal);
+  }
+
+  .cv-section__projects {
+    display: flex;
+    flex-wrap: wrap;
+    /* Token-chosen while Figma is unreachable; not a value read from the set. */
+    gap: var(--space-sm);
+  }
+</style>

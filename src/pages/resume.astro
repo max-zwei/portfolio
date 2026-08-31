@@ -2,6 +2,8 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { SITE, LINKS, CV_INTRO, withBase } from '../config/site';
+import { formatMonth } from '../lib/dates';
+import Button from '../components/Button.astro';
 
 // This page is the CV. The PDF is a print of it, rendered by `npm run pdf` —
 // so anything added here has to survive A4 as well as a browser window.
@@ -9,27 +11,6 @@ import { SITE, LINKS, CV_INTRO, withBase } from '../config/site';
 
 /** Written by scripts/render-pdf.mjs. Kept in one place so page and script agree. */
 const CV_PDF = withBase('/cv/max-pinkert-cv.pdf');
-
-const MONTHS = [
-  'Jan',
-  'Feb',
-  'Mar',
-  'Apr',
-  'May',
-  'Jun',
-  'Jul',
-  'Aug',
-  'Sep',
-  'Oct',
-  'Nov',
-  'Dec',
-];
-
-/** `2024-09` → `Sep 2024`. A bare year passes through untouched. */
-function formatMonth(value: string): string {
-  const [year, month] = value.split('-');
-  return month ? `${MONTHS[Number(month) - 1]} ${year}` : year;
-}
 
 // One list, newest first — so the order of the files on disk is a convenience,
 // not the contract.
@@ -73,7 +54,7 @@ const contact = [
       </ul>
 
       <p class="cv__download no-print">
-        <a href={CV_PDF} download>Download as PDF</a>
+        <Button type="secondary" href={CV_PDF} download>Download as PDF</Button>
       </p>
     </header>
 
@@ -101,6 +82,15 @@ const contact = [
                 <h3 class="entry__title">{data.role}</h3>
                 <p class="entry__org">{data.company}</p>
                 <p class="entry__summary">{data.summary}</p>
+                {data.documentUrl && (
+                  <p class="entry__doc no-print">
+                    <a href={withBase(data.documentUrl)}>
+                      {data.documentUrl.startsWith('/letters/')
+                        ? 'Reference letter (PDF)'
+                        : 'Certificate (PDF)'}
+                    </a>
+                  </p>
+                )}
               </div>
             </li>
           ))
@@ -162,21 +152,11 @@ const contact = [
     color: var(--color-neutral-700);
   }
 
-  .cv__download a {
-    display: inline-block;
-    padding: var(--space-2xs) var(--space-sm);
-    font-weight: var(--font-weight-medium);
-    text-decoration: none;
-    border: 1px solid var(--color-neutral-300);
-    border-radius: var(--radius-full);
-    transition:
-      color var(--duration-fast) var(--easing-standard),
-      border-color var(--duration-fast) var(--easing-standard);
-  }
-
-  .cv__download a:hover {
-    border-color: var(--color-lemon-500);
-  }
+  /*
+   * The link itself is `Button type="secondary"` (Figma `Buttons`,
+   * `109:1382`). The pill with the neutral border that used to live here was a
+   * page-side invention; the Buttons set decides this treatment.
+   */
 
   .cv__section {
     margin-top: var(--space-2xl);
@@ -257,6 +237,12 @@ const contact = [
     margin-top: var(--space-2xs);
     max-width: var(--measure);
     color: var(--color-neutral-700);
+  }
+
+  /* Screen only — the printed CV carries no unclickable URLs. */
+  .entry__doc {
+    margin-top: var(--space-2xs);
+    font-size: var(--font-size-sm);
   }
 
   @media (min-width: 48rem) {

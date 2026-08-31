@@ -31,7 +31,10 @@ const ogImage = new URL(withBase(image), Astro.site ?? 'http://localhost:4321');
 ---
 
 <!doctype html>
-<html lang={SITE.lang}>
+<html
+  lang={SITE.lang}
+  style={`--cursor-url: url('${withBase('/cursor-pointer.svg')}')`}
+>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />

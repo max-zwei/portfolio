@@ -7,6 +7,9 @@ package-lock.json
 # drop-in usable. Reformatting would make it diverge for no benefit.
 behind-the-scenes/skills/token-system.md
 
+# Designer feedback is source input for the component pass; preserve it verbatim.
+src/components/feedback.md
+
 # Challenge solutions are a record of what was written at the time, not repo
 # code to be tidied up afterwards. The folder README explains this.
 coding/

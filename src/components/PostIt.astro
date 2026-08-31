@@ -1,0 +1,109 @@
+---
+/**
+ * Figma component set `post-it` (`114:581`).
+ *
+ * The note is content supplied by its caller; this component owns only the
+ * paper, pin colour, and Figma typography treatment.
+ */
+interface Props {
+  /** Figma `Color`. */
+  color?: 'herbs' | 'tomato' | 'lemon' | 'pickled';
+  /** Additional class supplied by the composing page. */
+  class?: string;
+}
+
+const { color = 'herbs', class: className } = Astro.props;
+---
+
+<article class:list={['post-it', `post-it--${color}`, className]}>
+  <div class="post-it__paper">
+    <div class="post-it__copy"><slot /></div>
+  </div>
+  <span class="post-it__dot" aria-hidden="true"></span>
+</article>
+
+<style>
+  .post-it {
+    position: relative;
+    /* Figma 114:580: the component box that holds the rotated paper and the
+       pin overlapping its top edge. */
+    inline-size: 218px;
+    block-size: 246px;
+  }
+
+  /*
+   * Figma 114:173: a fixed 200 × 200 square whose centre sits at (109, 137) in
+   * that box — the same centre for all four variants, which is why the offset
+   * is written once and only the angle varies. The drawn copy exactly fills
+   * 200 × 200 minus the padding, so longer copy overflows the paper; the frame
+   * defines no clip, so none is added here.
+   */
+  .post-it__paper {
+    position: absolute;
+    inset-block-start: 37px;
+    inset-inline-start: 9px;
+    inline-size: 200px;
+    block-size: 200px;
+    padding: var(--space-lg) var(--space-sm) var(--space-xs);
+    background-color: var(--color-neutral-white);
+    box-shadow: var(--shadow-md);
+    color: var(--color-neutral-800);
+  }
+
+  /* Figma's rotation is counter-clockwise-positive, CSS's is clockwise, so the
+     sign is inverted from the value the file shows. */
+  .post-it--herbs .post-it__paper {
+    transform: rotate(-5deg);
+  }
+
+  .post-it--tomato .post-it__paper {
+    transform: rotate(3deg);
+  }
+
+  .post-it--lemon .post-it__paper {
+    transform: rotate(-2deg);
+  }
+
+  .post-it--pickled .post-it__paper {
+    transform: rotate(6deg);
+  }
+
+  /* Figma 114:175: 64 × 64, bound to space/xl, at (109, 0) in the box. */
+  .post-it__dot {
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline-start: 109px;
+    inline-size: var(--space-xl);
+    block-size: var(--space-xl);
+    border-radius: var(--radius-full);
+  }
+
+  .post-it--herbs .post-it__dot {
+    background-color: var(--color-herbs-500);
+  }
+
+  .post-it--tomato .post-it__dot {
+    background-color: var(--color-tomato-500);
+  }
+
+  .post-it--lemon .post-it__dot {
+    background-color: var(--color-lemon-500);
+  }
+
+  .post-it--pickled .post-it__dot {
+    background-color: var(--color-pickled-500);
+  }
+
+  /* Typography/Body - Small. */
+  .post-it__copy {
+    font-family: var(--font-sans);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-regular);
+    line-height: var(--line-height-relaxed);
+    letter-spacing: var(--letter-spacing-normal);
+  }
+
+  .post-it__copy :global(p) {
+    max-width: none;
+  }
+</style>

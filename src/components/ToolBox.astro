@@ -1,0 +1,96 @@
+---
+/** Figma component set `tool box` (`114:685`). */
+import { withBase } from '../config/site';
+
+interface Tool {
+  /** Visible tool name. */
+  name: string;
+  /** Optional public asset path; absent intentionally leaves the tile icon-free. */
+  icon?: string;
+}
+
+interface Props {
+  /** Section heading; defaults to the heading drawn in Figma. */
+  title?: string;
+  /** Tool tiles to render. An empty array intentionally renders no list. */
+  tools: ReadonlyArray<Tool>;
+  /** Optional heading level to match the styleguide examples. */
+  level?: 2 | 3 | 4;
+  /** Additional class forwarded to the root section. */
+  class?: string;
+}
+
+const {
+  title = 'Tech & Tools',
+  tools,
+  level = 2,
+  class: className,
+} = Astro.props;
+const HeadingTag = `h${level}` as 'h2' | 'h3' | 'h4';
+
+/*
+ * Source prose is markdown held in content-collection frontmatter. When prose
+ * accompanies this organism, the page renders it through the default slot and
+ * the component only lays it out; tool records remain the component's data.
+ */
+---
+
+<section class:list={['toolbox', className]}>
+  <HeadingTag>{title}</HeadingTag>
+  <slot />
+  {
+    tools.length > 0 && (
+      <ul class="toolbox__tools">
+        {tools.map((tool) => (
+          <li class="toolbox__tool">
+            {tool.icon && <img src={withBase(tool.icon)} alt="" />}
+            <span>{tool.name}</span>
+          </li>
+        ))}
+      </ul>
+    )
+  }
+</section>
+
+<style>
+  .toolbox {
+    display: grid;
+    /* Token-chosen while Figma is unreachable; not a value read from the set. */
+    gap: var(--space-md);
+  }
+
+  .toolbox__tools {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    /* Nearest existing spacing token; the unavailable Figma read left this gap unknown. */
+    gap: var(--space-sm);
+    padding: 0;
+    list-style: none;
+  }
+
+  .toolbox__tool {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    /* Token-chosen internal spacing; not a value read from Figma. */
+    gap: var(--space-xs);
+    padding: var(--space-sm);
+    background-color: var(--color-neutral-white);
+    border-radius: var(--radius-md);
+    /* Figma effect style: Elevation / md. */
+    box-shadow: var(--shadow-md);
+    text-align: center;
+  }
+
+  /*
+   * An explicit rule preserves the set's exact six-column desktop matrix, then
+   * reduces it to two columns at the site's sole breakpoint so tiles stay useful
+   * on narrow screens. The source design has no readable mobile frame.
+   */
+  @media (max-width: 48rem) {
+    .toolbox__tools {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+</style>

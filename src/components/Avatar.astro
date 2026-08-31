@@ -1,0 +1,50 @@
+---
+/**
+ * Figma component set `user` (`117:1308`), plus the three `max` grounds from
+ * the Figma `logo` set (`108:1372`). The `user` set itself has no `max`
+ * variant.
+ */
+import { withBase } from '../config/site';
+
+export type AvatarUser = 'moritz' | 'karina' | 'paula' | 'all' | 'max';
+
+type MaxVariant = 'neutral' | 'tomato' | 'herbs';
+
+interface Props {
+  /** Person or group portrait to render. */
+  user: AvatarUser;
+  /** Ground and body colour for Max's portrait. */
+  variant?: MaxVariant;
+  /** Additional classes applied to the image. */
+  class?: string;
+}
+
+const ALT: Record<Exclude<AvatarUser, 'max'>, string> = {
+  moritz: 'Moritz — a figure in green, facing a dark triangle',
+  karina: 'Karina — a figure in pink with a dark rounded haircut',
+  paula: 'Paula — a figure in yellow, half in shadow',
+  all: 'Moritz, Karina and Paula together',
+};
+
+const MAX_ALT: Record<MaxVariant, string> = {
+  neutral: 'Max — a figure with a dark bob and a red top',
+  tomato: 'Max — a figure with a dark bob and a red top, on a soft red ground',
+  herbs:
+    'Max — a figure with a dark bob and a green top, on a soft green ground',
+};
+
+const { user, variant = 'tomato', class: className } = Astro.props;
+
+if (user !== 'max' && Astro.props.variant !== undefined) {
+  throw new Error(`Avatar variant "${variant}" applies only to user="max".`);
+}
+
+const filename =
+  user === 'max' ? `max-${variant}` : user === 'all' ? 'everyone' : user;
+const src = withBase(`/avatars/${filename}.svg`);
+const alt = user === 'max' ? MAX_ALT[variant] : ALT[user];
+---
+
+<!-- 87 × 87 is the asset's intrinsic size, so it belongs on the element rather
+     than in a design token. -->
+<img src={src} alt={alt} width="87" height="87" class:list={[className]} />

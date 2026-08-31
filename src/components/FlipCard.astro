@@ -1,0 +1,292 @@
+---
+/**
+ * Figma component set `flipcard` (`114:569`).
+ *
+ * The `state` prop is the no-JavaScript rendering contract. The small amount
+ * of progressive enhancement below only swaps the state already drawn by
+ * Figma; it deliberately adds no motion.
+ */
+import type { ImageMetadata } from 'astro';
+import { withBase } from '../config/site';
+import Button from './Button.astro';
+
+interface Props {
+  /** Required identity used to connect both controls to the back face. */
+  id: string;
+  /** Figma `State`; also the face rendered when JavaScript is unavailable. */
+  state?: 'front' | 'back' | 'small';
+  /** Playground-card title on the back face. */
+  title: string;
+  /** Front-face artwork, either an Astro image import or a URL. */
+  teaser?: ImageMetadata | string;
+  /**
+   * Alternative text for the teaser when one is present. Pass an explicit
+   * empty string only when the teaser is genuinely decorative.
+   */
+  teaserAlt?: string;
+  /** Present → renders the GitHub mark as a link. */
+  githubUrl?: string;
+  /** Present → renders the Figma mark as a link. */
+  figmaUrl?: string;
+  /** Present → renders the secondary call to action. */
+  additionalUrl?: string;
+  /** Additional class supplied by the composing page. */
+  class?: string;
+}
+
+const {
+  id,
+  state = 'front',
+  title,
+  teaser,
+  teaserAlt,
+  githubUrl,
+  figmaUrl,
+  additionalUrl,
+  class: className,
+} = Astro.props;
+
+if (teaser !== undefined && teaserAlt === undefined) {
+  throw new Error(
+    `FlipCard "${id}" has a teaser without alternative text; pass teaserAlt; pass an empty string only if the teaser is genuinely decorative.`,
+  );
+}
+
+const teaserSrc = teaser && (typeof teaser === 'string' ? teaser : teaser.src);
+const backId = `${id}-back`;
+---
+
+<article class:list={['flipcard', className]} data-flipcard data-state={state}>
+  <div class="flipcard__face flipcard__front">
+    <!-- `/styleguide` intentionally uses the empty path: the frame's teaser
+         is a Netflix still and must not be committed as site content. -->
+    {
+      teaserSrc ? (
+        <img class="flipcard__teaser" src={teaserSrc} alt={teaserAlt} />
+      ) : (
+        <div
+          class="flipcard__teaser flipcard__teaser--empty"
+          aria-hidden="true"
+        />
+      )
+    }
+
+    <button
+      type="button"
+      class="flipcard__flip"
+      aria-expanded={state === 'back'}
+      aria-controls={backId}
+    >
+      <span aria-hidden="true">↻</span>
+      <span class="visually-hidden">Show the back of {title}</span>
+    </button>
+  </div>
+
+  <div id={backId} class="flipcard__face flipcard__back">
+    <button
+      type="button"
+      class="flipcard__flip"
+      aria-expanded={state === 'back'}
+      aria-controls={backId}
+    >
+      <span aria-hidden="true">↻</span>
+      <span class="visually-hidden">Show the front of {title}</span>
+    </button>
+
+    <h3 class="flipcard__title">{title}</h3>
+    <div class="flipcard__summary"><slot /></div>
+
+    {
+      (figmaUrl || githubUrl) && (
+        <ul class="flipcard__marks" aria-label="Project links">
+          {figmaUrl && (
+            <li>
+              <a href={figmaUrl} aria-label={`${title} on Figma`}>
+                <img
+                  src={withBase('/icons/figma.svg')}
+                  alt=""
+                  width="16"
+                  height="16"
+                />
+              </a>
+            </li>
+          )}
+          {githubUrl && (
+            <li>
+              <a href={githubUrl} aria-label={`${title} on GitHub`}>
+                <img
+                  src={withBase('/icons/github.svg')}
+                  alt=""
+                  width="16"
+                  height="16"
+                />
+              </a>
+            </li>
+          )}
+        </ul>
+      )
+    }
+
+    {
+      additionalUrl && (
+        <Button type="secondary" href={additionalUrl}>
+          Mehr erfahren →
+        </Button>
+      )
+    }
+  </div>
+</article>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-flipcard]').forEach((root) => {
+    const buttons = root.querySelectorAll<HTMLButtonElement>('.flipcard__flip');
+
+    buttons.forEach((button) => {
+      button.addEventListener('click', () => {
+        const state = root.dataset.state === 'back' ? 'front' : 'back';
+        root.dataset.state = state;
+        buttons.forEach((control) => {
+          control.setAttribute('aria-expanded', String(state === 'back'));
+        });
+      });
+    });
+  });
+
+  /* Figma defines no motion for this state change, so inventing a flip
+     animation would violate fidelity: the faces swap instantly. With scripts
+     blocked, the `state` prop remains visible and both controls are inert. */
+</script>
+
+<style>
+  .flipcard {
+    position: relative;
+    display: grid;
+    overflow: hidden;
+    background-color: var(--color-neutral-white);
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-md);
+    color: var(--color-neutral-800);
+  }
+
+  .flipcard__face {
+    grid-area: 1 / 1;
+  }
+
+  /* Exactly one Figma face participates in layout for every drawn state. */
+  .flipcard__front,
+  .flipcard[data-state='back'] .flipcard__back {
+    display: grid;
+  }
+
+  .flipcard__back,
+  .flipcard[data-state='back'] .flipcard__front {
+    display: none;
+  }
+
+  /* Figma's small frame is exactly 87 × 130.5; these are geometry literals,
+     not candidates for the spacing-token ramp. */
+  .flipcard[data-state='small'] {
+    inline-size: 87px;
+    block-size: 130.5px;
+    transition: transform var(--duration-base) var(--easing-standard);
+  }
+
+  /*
+   * Figma draws State=small at exactly 0.435 × State=Front (87/200 and
+   * 130.5/300), so the hover target is the reciprocal — the front card's own
+   * drawn size, not an invented step. The neighbour factor is √2.2989: Max
+   * asked for the surrounding cards to open up "to suit the transition", and
+   * the geometric midpoint ramps the row instead of stepping it. Figma defines
+   * neither, so both numbers are literals with this comment rather than a new
+   * token tier. `:focus-within` is here because the front face carries a
+   * button, so keyboard users reach the same state (R7).
+   */
+  .flipcard[data-state='small']:is(:hover, :focus-within) {
+    z-index: 2;
+    transform: scale(2.2989);
+  }
+
+  .flipcard[data-state='small']:is(:hover, :focus-within)
+    + .flipcard[data-state='small'],
+  .flipcard[data-state='small']:has(
+      + .flipcard[data-state='small']:is(:hover, :focus-within)
+    ) {
+    z-index: 1;
+    transform: scale(1.5162);
+  }
+
+  .flipcard__front {
+    position: relative;
+  }
+
+  .flipcard__teaser {
+    display: block;
+    inline-size: 100%;
+    block-size: auto;
+  }
+
+  .flipcard__teaser--empty {
+    min-block-size: var(--space-3xl);
+    background-color: var(--color-neutral-200);
+  }
+
+  .flipcard[data-state='small'] .flipcard__teaser {
+    block-size: 100%;
+    object-fit: cover;
+  }
+
+  .flipcard__back {
+    align-content: start;
+    gap: var(--space-sm);
+    padding: var(--space-sm);
+  }
+
+  .flipcard__flip {
+    justify-self: end;
+    padding: var(--space-3xs);
+    border: 0;
+    background: none;
+    color: var(--color-neutral-800);
+    font-family: var(--font-mono);
+    font-size: var(--font-size-base);
+    line-height: var(--line-height-none);
+    cursor: pointer;
+  }
+
+  .flipcard__front .flipcard__flip {
+    position: absolute;
+    inset-block-end: var(--space-2xs);
+    inset-inline-end: var(--space-2xs);
+  }
+
+  /* Typography/H5 on an h3. Only the size differs from global.css. */
+  .flipcard__title {
+    font-size: var(--font-size-base);
+  }
+
+  /* Typography/Body - Small. */
+  .flipcard__summary {
+    font-family: var(--font-sans);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-regular);
+    line-height: var(--line-height-relaxed);
+    letter-spacing: var(--letter-spacing-normal);
+  }
+
+  .flipcard__summary :global(p) {
+    max-width: none;
+  }
+
+  .flipcard__marks {
+    display: flex;
+    gap: var(--space-xs);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .flipcard__marks a,
+  .flipcard__marks img {
+    display: block;
+  }
+</style>

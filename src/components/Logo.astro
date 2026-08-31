@@ -1,0 +1,58 @@
+---
+/**
+ * Figma component set `logo` (`108:1372`).
+ *
+ * These are three separate exported assets rather than one recolourable SVG:
+ * both the circular ground and the mark's base rectangle change colour.
+ */
+import { withBase } from '../config/site';
+
+interface Props {
+  /** Figma `Type`. */
+  type?: 'favicon' | 'chat';
+  /** Figma `Variant`. The available combinations are intentionally sparse. */
+  variant?: 'default' | 'tomato' | 'herbs';
+  /** Accessible alternative text for a meaningful logo. */
+  alt?: string;
+  /** Additional classes applied to the image. */
+  class?: string;
+}
+
+type LogoKey = 'favicon/default' | 'chat/tomato' | 'chat/herbs';
+
+const SOURCES: Record<LogoKey, string> = {
+  'favicon/default': withBase('/favicon.svg'),
+  'chat/tomato': withBase('/logo/chat-tomato.svg'),
+  'chat/herbs': withBase('/logo/chat-herbs.svg'),
+};
+
+const {
+  type = 'favicon',
+  variant = 'default',
+  alt: altProp,
+  class: className,
+} = Astro.props;
+const key = `${type}/${variant}`;
+
+const isLogoKey = (value: string): value is LogoKey => value in SOURCES;
+
+if (!isLogoKey(key)) {
+  throw new Error(
+    `Unsupported Logo combination "${key}". Use favicon/default, chat/tomato or chat/herbs.`,
+  );
+}
+
+const src = SOURCES[key];
+/* The browser favicon names its owner by default. Chat logos are decorative
+   grounds, so their default is empty; callers can override either decision. */
+const alt = altProp ?? (type === 'favicon' ? 'Max Pinkert' : '');
+---
+
+<!-- 87 × 87 is the exported asset's intrinsic size. -->
+<img
+  src={src}
+  alt={alt}
+  width="87"
+  height="87"
+  class:list={['logo', className]}
+/>

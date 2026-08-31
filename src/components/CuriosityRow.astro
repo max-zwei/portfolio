@@ -1,0 +1,34 @@
+---
+/**
+ * Figma component set `curiosity` (node `114:610`).
+ *
+ * This composes the library's existing avatar and message bubble without
+ * restyling either one. It maps to the `curiosity` content collection's paired
+ * `thought` and `question` fields.
+ */
+import Avatar, { type AvatarUser } from './Avatar.astro';
+import ChatBubble from './ChatBubble.astro';
+
+interface Props {
+  /** The speaker shown beside the thought or question. */
+  user: AvatarUser;
+  /** Additional class names for the row wrapper. */
+  class?: string;
+}
+
+const { user, class: className } = Astro.props;
+---
+
+<div class:list={['row', className]}>
+  <Avatar user={user} />
+  <ChatBubble type="message"><slot /></ChatBubble>
+</div>
+
+<style>
+  .row {
+    display: flex;
+    align-items: flex-start;
+    /* Token-chosen nearest spacing step: the Figma gap could not be read. */
+    gap: var(--space-sm);
+  }
+</style>

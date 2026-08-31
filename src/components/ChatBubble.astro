@@ -1,0 +1,132 @@
+---
+/**
+ * Figma component set `Chat` (`109:1389`).
+ *
+ * The five drawn combinations have distinct conversational meanings:
+ * - `message/default`: Max speaking; the tail corner is at the top-left.
+ * - `response/text`: the visitor's words; the tail corner is at the top-right.
+ * - `response/selection`: a choice the visitor already took.
+ * - `request/text`: an offered text input or typing indicator.
+ * - `request/selection`: an option chip currently on offer.
+ */
+interface Props {
+  /** Figma `Type`. */
+  type?: 'message' | 'request' | 'response';
+  /** Figma `Variant`. */
+  variant?: 'default' | 'text' | 'selection';
+  /** Present → renders `<a>`; the `request` chips are links. */
+  href?: string;
+  /**
+   * The element to render when there is no `href`. Structural, not visual —
+   * the design draws a standalone box and says nothing about what carries it,
+   * exactly as with `href`.
+   *
+   * `'li'` exists for `/home`'s echoed-answer chip, which IS a list item: the
+   * chat script shallow-clones that element (`cloneNode(false)`) to reuse its
+   * scoped-style attribute, so the styled box and the list item have to be one
+   * and the same node rather than nested.
+   */
+  as?: 'div' | 'li';
+  /** Additional class names applied to the root element. */
+  class?: string;
+}
+
+const {
+  type = 'message',
+  variant = 'default',
+  href,
+  as: Tag = 'div',
+  class: className,
+  ...rest
+} = Astro.props;
+
+const classes = ['bubble', `bubble--${type}`, `bubble--${variant}`, className];
+---
+
+{
+  href !== undefined ? (
+    <a href={href} class:list={classes} {...rest}>
+      <slot />
+    </a>
+  ) : (
+    <Tag class:list={classes} {...rest}>
+      <slot />
+    </Tag>
+  )
+}
+
+<style>
+  .bubble {
+    /*
+     * Not a design decision — the enabling one. Every combination is drawn as
+     * a box with its own width and padding, and `width`/`max-width` do not
+     * apply to a non-replaced inline element, so the `<a>` forms would ignore
+     * their caps without this.
+     */
+    display: block;
+    padding: var(--space-xs) var(--space-sm);
+    color: var(--color-neutral-800);
+    /* The chips sit in a `justify-content: flex-end` row; the copy does not. */
+    text-align: start;
+    text-decoration: none;
+
+    /* Figma text style: Typography/Mono - Small. */
+    font-family: var(--font-mono);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-regular);
+    line-height: var(--line-height-loose);
+    letter-spacing: var(--letter-spacing-extra-wide);
+  }
+
+  .bubble--message {
+    width: fit-content;
+    max-width: var(--size-chat-bubble);
+    background-color: var(--color-neutral-100);
+    border-radius: 0 var(--radius-lg) var(--radius-lg) var(--radius-lg);
+  }
+
+  /*
+   * The set frame's 879px message width is the 921px canvas minus its two 21px
+   * paddings, so it is a canvas artifact rather than a design decision. The
+   * real 400px cap below is `--size-chat-choice`, which is unbound in Figma.
+   */
+  .bubble--response {
+    width: max-content;
+    max-width: var(--size-chat-choice);
+    background-color: var(--color-lemon-200);
+    border-radius: var(--radius-lg) 0 var(--radius-lg) var(--radius-lg);
+  }
+
+  .bubble--response.bubble--selection {
+    border: 2px solid var(--color-lemon-500);
+  }
+
+  /* Figma gives request/text and request/selection one shared style branch.
+     It is keyed on the type alone so every reachable request variant is covered. */
+  .bubble--request {
+    width: max-content;
+    max-width: var(--size-chat-choice);
+    background-color: var(--color-neutral-white);
+    border: 2px solid var(--color-lemon-500);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    transition: background-color var(--duration-fast) var(--easing-standard);
+  }
+
+  /*
+   * Undesigned: this hover is not in the Figma design. It already ships in
+   * index.astro and is carried over as pre-existing behaviour, not invented
+   * for this component.
+   */
+  .bubble--request:hover {
+    background-color: var(--color-lemon-200);
+  }
+
+  /*
+   * global.css caps every paragraph at `var(--measure)`; slotted chat copy must
+   * instead remain governed by the bubble width and must not be measure-capped.
+   */
+  .bubble :global(p) {
+    max-width: none;
+  }
+</style>

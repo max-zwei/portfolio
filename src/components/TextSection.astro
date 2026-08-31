@@ -1,0 +1,46 @@
+---
+/**
+ * The general heading-plus-body section. `BlankSection.astro` is the Figma
+ * `blank section` set (`114:636`) expressed as one instance of it: the set
+ * draws exactly this shape, with its own final copy.
+ */
+interface Props {
+  /** Section heading. */
+  title: string;
+  /** Optional heading level to match the styleguide examples. */
+  level?: 2 | 3 | 4;
+  /** Additional class forwarded to the root section. */
+  class?: string;
+}
+
+const { title, level = 2, class: className } = Astro.props;
+const HeadingTag = `h${level}` as 'h2' | 'h3' | 'h4';
+---
+
+<section class:list={['text-section', className]}>
+  <!-- Figma text style: Typography/H1. -->
+  <HeadingTag class="text-section__title">{title}</HeadingTag>
+  <div class="text-section__body">
+    <slot />
+  </div>
+</section>
+
+<style>
+  .text-section {
+    display: grid;
+    /* Figma 114:636: the set's vertical auto-layout gap is 24. */
+    gap: var(--space-md);
+  }
+
+  /* Typography/H1 on an h2. Only the size differs from global.css. */
+  .text-section__title {
+    font-size: var(--font-size-3xl);
+  }
+
+  .text-section__body {
+    display: grid;
+    /* Token-chosen: the set draws a single body paragraph, so it has no gap
+       to read. Keeps adjacent markdown blocks legible. */
+    gap: var(--space-sm);
+  }
+</style>
