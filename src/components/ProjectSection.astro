@@ -19,6 +19,8 @@ interface Props {
   artefacts?: ReadonlyArray<{ src: ImageMetadata; alt: string }>;
   /** Scannable takeaways from this movement. */
   keyPoints?: ReadonlyArray<string>;
+  /** Optional heading level to match the styleguide examples. */
+  level?: 2 | 3 | 4;
   class?: string;
 }
 
@@ -28,8 +30,11 @@ const {
   subtitle,
   artefacts = [],
   keyPoints = [],
+  level = 2,
   class: className,
 } = Astro.props;
+
+const HeadingTag = `h${level}` as 'h2' | 'h3' | 'h4';
 ---
 
 <section
@@ -39,7 +44,7 @@ const {
 
   <div class="project-section__columns">
     <header class="project-section__header">
-      <h2 class="project-section__title">{title}</h2>
+      <HeadingTag class="project-section__title">{title}</HeadingTag>
       {subtitle && <p class="project-section__subtitle">{subtitle}</p>}
     </header>
 

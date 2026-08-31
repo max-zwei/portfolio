@@ -87,15 +87,11 @@ const { mode = 'default', label = 'Site', class: className } = Astro.props;
     <div class="navbar__explore">
       <p>explore with</p>
       {
-        EXPLORE_WITH.map((mark) =>
-          mark.href && mark.label ? (
-            <a href={mark.href} aria-label={`Explore with ${mark.label}`}>
-              <img src={withBase(mark.icon)} alt="" width="16" height="16" />
-            </a>
-          ) : (
+        EXPLORE_WITH.map((mark) => (
+          <a href={mark.href} aria-label={`Explore with ${mark.label}`}>
             <img src={withBase(mark.icon)} alt="" width="16" height="16" />
-          ),
-        )
+          </a>
+        ))
       }
     </div>
 

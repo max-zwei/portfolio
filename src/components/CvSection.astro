@@ -17,6 +17,8 @@ interface Props {
   start: string;
   /** End date as `YYYY` or `YYYY-MM`; absent means “present”. */
   end?: string;
+  /** Optional heading level to match the styleguide examples. */
+  level?: 2 | 3 | 4;
   /** Project destinations associated with this CV entry. */
   projectUrls?: ReadonlyArray<string>;
   /** Additional class names for the section wrapper. */
@@ -28,9 +30,12 @@ const {
   company,
   start,
   end,
+  level = 3,
   projectUrls = [],
   class: className,
 } = Astro.props;
+
+const HeadingTag = `h${level}` as 'h2' | 'h3' | 'h4';
 
 const slugify = (value: string) =>
   value
@@ -58,7 +63,9 @@ const titleFromUrl = (url: string, index: number) => {
 
   <div class="cv-section__position">
     <!-- Figma text style: Typography/Body - Large, at Body - Bold's weight. -->
-    <h3 id={`${sectionId}-role`} class="cv-section__role">{role}</h3>
+    <HeadingTag id={`${sectionId}-role`} class="cv-section__role"
+      >{role}</HeadingTag
+    >
     <!-- Figma text style: Typography/Body - Large. -->
     <p class="cv-section__company">{company}</p>
   </div>

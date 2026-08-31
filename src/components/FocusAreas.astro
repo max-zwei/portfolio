@@ -5,11 +5,19 @@ interface Props {
   title?: string;
   /** Focus-area labels. An empty array intentionally renders no list. */
   areas: ReadonlyArray<string>;
+  /** Optional heading level to match the styleguide examples. */
+  level?: 2 | 3 | 4;
   /** Additional class forwarded to the root section. */
   class?: string;
 }
 
-const { title = 'Focusing on...', areas, class: className } = Astro.props;
+const {
+  title = 'Focusing on...',
+  areas,
+  level = 2,
+  class: className,
+} = Astro.props;
+const HeadingTag = `h${level}` as 'h2' | 'h3' | 'h4';
 
 /*
  * The source prose is markdown held in content-collection frontmatter. The
@@ -19,7 +27,7 @@ const { title = 'Focusing on...', areas, class: className } = Astro.props;
 ---
 
 <section class:list={['focus-areas', className]}>
-  <h2 class="focus-areas__title">{title}</h2>
+  <HeadingTag class="focus-areas__title">{title}</HeadingTag>
   <slot />
   {
     areas.length > 0 && (
