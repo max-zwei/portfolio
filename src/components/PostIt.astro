@@ -16,32 +16,65 @@ const { color = 'herbs', class: className } = Astro.props;
 ---
 
 <article class:list={['post-it', `post-it--${color}`, className]}>
+  <div class="post-it__paper">
+    <div class="post-it__copy"><slot /></div>
+  </div>
   <span class="post-it__dot" aria-hidden="true"></span>
-  <div class="post-it__copy"><slot /></div>
 </article>
 
 <style>
   .post-it {
-    display: grid;
-    justify-items: start;
-    gap: var(--space-xs);
-    padding: var(--space-sm);
+    position: relative;
+    /* Figma 114:580: the component box that holds the rotated paper and the
+       pin overlapping its top edge. */
+    inline-size: 218px;
+    block-size: 246px;
+  }
+
+  /*
+   * Figma 114:173: a fixed 200 × 200 square whose centre sits at (109, 137) in
+   * that box — the same centre for all four variants, which is why the offset
+   * is written once and only the angle varies. The drawn copy exactly fills
+   * 200 × 200 minus the padding, so longer copy overflows the paper; the frame
+   * defines no clip, so none is added here.
+   */
+  .post-it__paper {
+    position: absolute;
+    inset-block-start: 37px;
+    inset-inline-start: 9px;
+    inline-size: 200px;
+    block-size: 200px;
+    padding: var(--space-lg) var(--space-sm) var(--space-xs);
     background-color: var(--color-neutral-white);
     box-shadow: var(--shadow-md);
     color: var(--color-neutral-800);
   }
 
-  /*
-   * The four variants have distinct drawn rotations in Figma. Their exact
-   * angles are pending a live read of node 114:581, so no rotation is guessed
-   * here. When available, add them as rotate(Ndeg) literals: geometry has no
-   * angle-token tier, and inventing one would be the wrong abstraction.
-   */
+  /* Figma's rotation is counter-clockwise-positive, CSS's is clockwise, so the
+     sign is inverted from the value the file shows. */
+  .post-it--herbs .post-it__paper {
+    transform: rotate(-5deg);
+  }
 
+  .post-it--tomato .post-it__paper {
+    transform: rotate(3deg);
+  }
+
+  .post-it--lemon .post-it__paper {
+    transform: rotate(-2deg);
+  }
+
+  .post-it--pickled .post-it__paper {
+    transform: rotate(6deg);
+  }
+
+  /* Figma 114:175: 64 × 64, bound to space/xl, at (109, 0) in the box. */
   .post-it__dot {
-    /* Token-chosen dimensions while Figma is unreachable; not Figma-read. */
-    inline-size: var(--space-xs);
-    block-size: var(--space-xs);
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline-start: 109px;
+    inline-size: var(--space-xl);
+    block-size: var(--space-xl);
     border-radius: var(--radius-full);
   }
 

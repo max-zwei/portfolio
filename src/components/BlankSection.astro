@@ -2,49 +2,19 @@
 /**
  * Figma component set `blank section` (`114:636`).
  *
- * The frame's copy is final copy in Max's voice, not placeholder text.
+ * The frame's copy is final copy in Max's voice, not placeholder text. The
+ * layout is `TextSection`; this file is the set's named instance of it.
  */
+import TextSection from './TextSection.astro';
+
 interface Props {
   /** Section heading; defaults to the final heading drawn in Figma. */
   title?: string;
-  /** Heading depth chosen by the page's document outline. */
-  level?: 2 | 3 | 4;
   /** Additional class forwarded to the root section. */
   class?: string;
 }
 
-const { title = "Let's be honest", level = 2, class: className } = Astro.props;
-
-/*
- * html-validate enforces `heading-level: error`; letting the page choose the
- * level prevents a skipped heading as soon as this section sits under an h2.
- */
-const Tag = `h${level}` as 'h2';
-
-/*
- * The source prose is markdown held in content-collection frontmatter. The
- * page renders that markdown through the default slot; this component only
- * lays the resulting content out.
- */
+const { title = 'Let’s be honest', class: className } = Astro.props;
 ---
 
-<section class:list={['blank-section', className]}>
-  <Tag>{title}</Tag>
-  <div class="blank-section__body">
-    <slot />
-  </div>
-</section>
-
-<style>
-  .blank-section {
-    display: grid;
-    /* Token-chosen while Figma is unreachable; not a value read from the set. */
-    gap: var(--space-md);
-  }
-
-  .blank-section__body {
-    display: grid;
-    /* Keeps adjacent markdown blocks legible; also token-chosen, not Figma-read. */
-    gap: var(--space-sm);
-  }
-</style>
+<TextSection title={title} class={className}><slot /></TextSection>

@@ -87,9 +87,15 @@ const { mode = 'default', label = 'Site', class: className } = Astro.props;
     <div class="navbar__explore">
       <p>explore with</p>
       {
-        EXPLORE_WITH.map((icon) => (
-          <img src={withBase(icon)} alt="" width="16" height="16" />
-        ))
+        EXPLORE_WITH.map((mark) =>
+          mark.href && mark.label ? (
+            <a href={mark.href} aria-label={`Explore with ${mark.label}`}>
+              <img src={withBase(mark.icon)} alt="" width="16" height="16" />
+            </a>
+          ) : (
+            <img src={withBase(mark.icon)} alt="" width="16" height="16" />
+          ),
+        )
       }
     </div>
 
@@ -98,7 +104,12 @@ const { mode = 'default', label = 'Site', class: className } = Astro.props;
         SOCIALS.map((social) => (
           <li>
             <a href={social.href} aria-label={social.label}>
-              <img src={withBase(social.icon)} alt="" width="16" height="16" />
+              <img
+                src={withBase(social.icon)}
+                alt=""
+                width={social.width}
+                height={social.height}
+              />
             </a>
           </li>
         ))
@@ -185,6 +196,10 @@ const { mode = 'default', label = 'Site', class: className } = Astro.props;
     font-weight: var(--font-weight-regular);
     line-height: var(--line-height-loose);
     letter-spacing: var(--letter-spacing-extra-wide);
+  }
+
+  .navbar__explore a {
+    display: block;
   }
 
   .navbar__explore img {

@@ -14,24 +14,11 @@ interface Props {
   title?: string;
   /** Tool tiles to render. An empty array intentionally renders no list. */
   tools: ReadonlyArray<Tool>;
-  /** Heading depth chosen by the page's document outline. */
-  level?: 2 | 3 | 4;
   /** Additional class forwarded to the root section. */
   class?: string;
 }
 
-const {
-  title = 'Tech & Tools',
-  tools,
-  level = 2,
-  class: className,
-} = Astro.props;
-
-/*
- * html-validate enforces `heading-level: error`; letting the page choose the
- * level prevents a skipped heading as soon as this section sits under an h2.
- */
-const Tag = `h${level}` as 'h2';
+const { title = 'Tech & Tools', tools, class: className } = Astro.props;
 
 /*
  * Source prose is markdown held in content-collection frontmatter. When prose
@@ -41,7 +28,7 @@ const Tag = `h${level}` as 'h2';
 ---
 
 <section class:list={['toolbox', className]}>
-  <Tag>{title}</Tag>
+  <h2>{title}</h2>
   <slot />
   {
     tools.length > 0 && (

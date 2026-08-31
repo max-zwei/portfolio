@@ -163,6 +163,7 @@ const backId = `${id}-back`;
     display: grid;
     overflow: hidden;
     background-color: var(--color-neutral-white);
+    border-radius: var(--radius-sm);
     box-shadow: var(--shadow-md);
     color: var(--color-neutral-800);
   }
@@ -187,6 +188,31 @@ const backId = `${id}-back`;
   .flipcard[data-state='small'] {
     inline-size: 87px;
     block-size: 130.5px;
+    transition: transform var(--duration-base) var(--easing-standard);
+  }
+
+  /*
+   * Figma draws State=small at exactly 0.435 × State=Front (87/200 and
+   * 130.5/300), so the hover target is the reciprocal — the front card's own
+   * drawn size, not an invented step. The neighbour factor is √2.2989: Max
+   * asked for the surrounding cards to open up "to suit the transition", and
+   * the geometric midpoint ramps the row instead of stepping it. Figma defines
+   * neither, so both numbers are literals with this comment rather than a new
+   * token tier. `:focus-within` is here because the front face carries a
+   * button, so keyboard users reach the same state (R7).
+   */
+  .flipcard[data-state='small']:is(:hover, :focus-within) {
+    z-index: 2;
+    transform: scale(2.2989);
+  }
+
+  .flipcard[data-state='small']:is(:hover, :focus-within)
+    + .flipcard[data-state='small'],
+  .flipcard[data-state='small']:has(
+      + .flipcard[data-state='small']:is(:hover, :focus-within)
+    ) {
+    z-index: 1;
+    transform: scale(1.5162);
   }
 
   .flipcard__front {
@@ -233,13 +259,9 @@ const backId = `${id}-back`;
     inset-inline-end: var(--space-2xs);
   }
 
-  /* Typography/H5 — the playground-card title. */
+  /* Typography/H5 on an h3. Only the size differs from global.css. */
   .flipcard__title {
-    font-family: var(--font-serif);
     font-size: var(--font-size-base);
-    font-weight: var(--font-weight-semibold);
-    line-height: var(--line-height-none);
-    letter-spacing: var(--letter-spacing-normal);
   }
 
   /* Typography/Body - Small. */

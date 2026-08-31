@@ -1,7 +1,7 @@
 {
   "$comment": "Figma↔code mapping for published component sets. The counterpart of design/tokens.json, which does the same job for variables. Component sets are named for how they read on canvas, not mechanically, so this file is what makes non-obvious pairings (Buttons → Button.astro, curiosity → CuriosityRow.astro) safe to rely on. Each component file also opens with a comment naming its set and node id, so the mapping is discoverable from either end.",
   "figmaFile": "8SQOIPl0teOTvoFH1EffaB",
-  "readOn": "2026-08-29",
+  "readOn": "2026-08-31",
   "pages": {
     "Atoms": "114:14",
     "Organisms": "114:15"
@@ -53,19 +53,19 @@
         "user": ["moritz", "karina", "paula", "all"]
       },
       "combinations": ["moritz", "karina", "paula", "all"],
-      "notes": "Named Avatar because `user` collides with the prop it takes. `user=\"max\"` is a code-side addition: the Figma set has no max variant, and public/avatars/max.svg is byte-equivalent artwork to the logo set's mark. `all` resolves to /avatars/everyone.svg — the asset predates the Figma variant name."
+      "notes": "Named Avatar because `user` collides with the prop it takes. The Figma user set has no max variant; Avatar adds the three max grounds from the logo set: neutral (`108:1371`, neutral-white/tomato-500), tomato (`108:1370`, tomato-100/tomato-500), and herbs (`108:1369`, herbs-100/herbs-500). Tomato is the code default, preserving the previous rendering. `all` resolves to /avatars/everyone.svg — the asset predates the Figma variant name."
     },
     {
       "figmaName": "logo",
       "nodeId": "108:1372",
       "page": "Atoms",
-      "component": "src/components/Logo.astro",
+      "component": ["src/components/Avatar.astro", "public/favicon.svg"],
       "variantProperties": {
         "Type": ["favicon", "chat"],
         "Variant": ["Default", "tomato", "herbs"]
       },
       "combinations": ["favicon/Default", "chat/tomato", "chat/herbs"],
-      "notes": "Three separate assets, not one recolourable SVG: both the circular ground and the base rectangle recolour between variants. chat/tomato and chat/herbs have no exported file in the repo yet."
+      "notes": "The three separate artworks are not one recolourable SVG: both the circular ground and the base rectangle recolour. Avatar owns the neutral, tomato and herbs max grounds; public/favicon.svg is the neutral variant. Logo.astro was deleted because the favicon needs no component."
     },
     {
       "figmaName": "Icons",
@@ -76,7 +76,7 @@
         "icon": ["cursor", "figma-make"]
       },
       "combinations": ["cursor", "figma-make"],
-      "notes": "Two icons only. cursor (109:1373) is 40×40 and already ships as public/cursor.svg; figma-make (140:1095) is 80×80 and has no exported file yet. Scope boundary: the eight marks inside the NavBar frame are NOT part of this set — they are footer data in src/config/site.ts. Separately, public/cursor-pointer.svg (16×16) has NO Figma node: it is the same circle re-drawn at pointer size for the site-wide CSS cursor, because a url() cursor renders at the asset's intrinsic size and CSS cannot scale it. The 40×40 mark here is unchanged and is what /styleguide renders. Change the colour and both files need it."
+      "notes": "Two icons only. cursor (`109:1373`) is 40×40 and ships as public/cursor.svg; figma-make (`140:1095`) is 80×80 and ships as public/icons/figma-make.svg. Scope boundary: the eight marks inside the NavBar frame are NOT part of this set — they are footer data in src/config/site.ts. Separately, public/cursor-pointer.svg (16×16) has NO Figma node: it is the same circle re-drawn at pointer size for the site-wide CSS cursor, because a url() cursor renders at the asset's intrinsic size and CSS cannot scale it. The 40×40 mark here is unchanged and is what /styleguide renders. Change the colour and both files need it."
     },
     {
       "figmaName": "post-it",
@@ -87,7 +87,7 @@
         "Color": ["herbs", "tomato", "lemon", "pickled"]
       },
       "combinations": ["herbs", "tomato", "lemon", "pickled"],
-      "notes": "The dot is the matching colour ramp's 500 step. Each variant carries its own rotation angle on canvas; the exact four angles are not yet transcribed and the component currently ships unrotated. There is no angle token tier and there should not be one — they belong in the component as commented literals."
+      "notes": "The matching 500-step disc is 64×64 at (109, 0), overlapping a 200×200 paper centred at (109, 137) in the 218×246 component box. Figma rotations herbs +5, tomato −3, lemon +2 and pickled −6 become CSS rotate(-5deg), rotate(3deg), rotate(-2deg) and rotate(6deg) because Figma is counter-clockwise-positive while CSS is clockwise-positive."
     },
     {
       "figmaName": "flipcard",
@@ -98,7 +98,7 @@
         "State": ["Front", "Back", "small"]
       },
       "combinations": ["Front", "Back", "small"],
-      "notes": "The drawn states became a `state` prop, and client JS toggles them. The back face is a playground card and maps to the playground collection in src/content.config.ts. The design defines no motion, so the state swaps instantly — a flip animation would be invented. With JS blocked the prop is what renders and the buttons are inert."
+      "notes": "The drawn states became a `state` prop, and client JS toggles Front/Back instantly because Figma defines no motion for that swap. Max's prose defines a separate small-card hover/focus magnification, not a Figma prototype: State=small is 0.435 × Front, so the focused card scales by 2.2989 and its immediately adjacent small siblings by the geometric midpoint 1.5162. With JS blocked the prop is what renders and the buttons are inert."
     },
     {
       "figmaName": "curiosity",
@@ -116,7 +116,7 @@
       "component": "src/components/BlankSection.astro",
       "variantProperties": {},
       "combinations": ["Default"],
-      "notes": "The frame's copy (\"Let's be honest\") is final in Max's voice, not placeholder, so it is the prop default. Body arrives through the default slot because the source is markdown in collection frontmatter."
+      "notes": "The frame's copy (`Let’s be honest`) is final in Max's voice, not placeholder, so it is the prop default. BlankSection is the set's named instance of the general heading-plus-body layout in TextSection.astro. TextSection has no Figma set and therefore no separate sets entry. Body arrives through the default slot because the source is markdown in collection frontmatter."
     },
     {
       "figmaName": "CV section",
@@ -192,50 +192,39 @@
         "Mode": ["default", "dark"]
       },
       "combinations": ["default", "dark"],
-      "notes": "Named NavBar in Figma but reads as the site footer: legal link, an \"explore with\" credit, seven section links and five social marks. Mode is a ground colour per instance, NOT a colour scheme — no prefers-color-scheme block. The label prop exists so two instances on /styleguide do not trip unique-landmark. Its links live in src/config/site.ts as NAV, SOCIALS and EXPLORE_WITH, all dummy routes. Below 48rem the outer row stacks; the Figma Mobile frame (103:1103) is empty, so that one decision is undesigned."
+      "notes": "Named NavBar in Figma but reads as the site footer: legal link, an \"explore with\" credit, seven section links and five social marks. Claude and ChatGPT are accessible links with placeholder hrefs; the unidentified third mark remains decorative. Socials carry their drawn intrinsic sizes: Figma 12×16, GitHub 16×16, Dribbble 16×16, Behance 19×16, LinkedIn 16×16. Mode is a ground colour per instance, NOT a colour scheme. The label prop keeps the two /styleguide landmarks unique. Below 48rem the row stacks; Figma's Mobile frame (`103:1103`) is empty, so that decision is undesigned."
     }
   ],
   "unbound": {
     "$comment": "Values the design uses that no Figma variable holds. Each is a literal in code with a comment saying so. Listed here so the next sync can see them without re-reading the file.",
     "items": [
       "--size-chat-choice (400px) — the max-width on four of the five Chat combinations.",
+      "ChatBubble's 2px stroke (`109:1385`, `109:1386`, `109:1388`) — no --border-width-* token tier exists.",
+      "The 1px frame borders in ProjectSection and ReleaseNote — not Figma-read, still chosen, and no --border-width-* token tier exists.",
+      "The 48rem breakpoint in NavBar, ToolBox and global.css — CSS custom properties cannot be used in media-query conditions.",
+      "focus areas item gap 13px (`114:311`) — no spacing token holds it.",
+      "tool box grid gap 10px (`114:271`) — no spacing token holds it.",
       "The explore-with marks' drop-shadow(0 1px 1px rgb(240 229 17 / 0.25)) in NavBar — not an Elevation style.",
       "w-[383.108px] on the NavBar impressum column — a magic number, dropped in code.",
-      "The post-it per-variant rotation angles.",
       "The project preview paper-scrap collage geometry.",
       "flipcard state=small at 87×130.5.",
       "Sizes/L: 24 in project sections — a stray variable outside the seven collections, already marked for deletion."
     ]
   },
   "outstanding": {
-    "$comment": "Work this port could not finish because the Figma MCP server was unreachable on 2026-08-29: mcp.figma.com returned 401 Unauthorized, no Figma desktop app was installed to host the local server, and no API token was available. Every item below needs one Figma read or write and nothing else. Nothing here was guessed at — the code omits these values rather than inventing them.",
+    "$comment": "The Figma MCP server is reachable again. The blocked reads and asset exports are complete; public/favicon.svg differed and Figma's neutral-white ground won. `variableWrites` is now unblocked and is the only Figma mutation still outstanding. `geometryReads` and `unverifiedChoices` are deliberately deferred code-sync work, not authentication blockers.",
     "variableWrites": [
       "Typography collection is missing font/weight/bold = 700, line-height/none = 1 and line-height/relaxed = 1.4. All three already exist in src/styles/tokens.css and design/tokens.json, so the three-file rule is two-thirds done. Each needs a value, a description, scopes, and WEB code syntax (var(--font-weight-bold), var(--line-height-none), var(--line-height-relaxed)) — without the code syntax the MCP emits var(--line-height\\/none), which is not valid CSS. The collection has one mode, named Value.",
       "Re-bind the text styles that still hold raw numbers: Typography/H1–H5 → line-height/none; Typography/Body - Small and Typography/Captions → line-height/relaxed. Until then get_variable_defs reports floats instead of names."
     ],
-    "assetExports": [
-      "108:1370 → public/logo/chat-tomato.svg",
-      "108:1369 → public/logo/chat-herbs.svg",
-      "140:1095 → public/icons/figma-make.svg (80×80)",
-      "114:218 → public/icons/figma.svg",
-      "114:225 → public/icons/github.svg",
-      "114:231 → public/icons/dribbble.svg",
-      "114:236 → public/icons/behance.svg",
-      "114:241 → public/icons/linkedin.svg",
-      "114:196 → public/icons/explore-claude.svg",
-      "114:198 → public/icons/explore-openai.svg",
-      "114:204 → public/icons/explore-3.svg — layer name is `image 4 [Vectorized]` and the brand is not identifiable at 16px. Rendered decoratively (alt=\"\") on purpose; ask before naming it.",
-      "108:1371 → public/favicon.svg — diff against the committed file before overwriting. The committed one appears to carry a tomato-100 ground while the Figma Type=favicon variant draws a near-white one. If they differ the Figma file wins, and BaseLayout wires this as the browser icon."
-    ],
+    "assetExports": [],
     "geometryReads": [
-      "post-it (114:581) — the four per-variant rotation angles. Write each as a rotate(Ndeg) literal with a comment; there is no angle token tier and adding one would be inventing a tier.",
       "project preview (114:646) — the decorative paper-scrap collage: per-scrap offsets, sizes and rotations, plus what the exploded state moves. The component currently renders no scraps, so `exploded` has no visual expression and is observable only through data-state and aria-pressed."
     ],
     "unverifiedChoices": [
-      "Every spacing gap marked `token-chosen, not Figma-read` in the component sources — ToolBox grid and tile gaps, FocusAreas list and marker gaps, CuriosityRow avatar gap, CvSection role/company and project-row gaps, BlankSection body gap.",
+      "Spacing gaps still awaiting a Figma read: ToolBox tile gaps, CuriosityRow's avatar gap, BlankSection/TextSection's body gap, and CvSection's project-row gap.",
       "The inactive greys in ReleaseNote and ProjectSection. Picked as --color-neutral-700 for text (7.91:1 on neutral-100) and --color-neutral-600 for frames (3.40:1, clearing the 3:1 non-text bar) rather than by eye.",
       "NavBar mode=default ground = --color-neutral-100. Only the dark ground was transcribed.",
-      "The five inferred rows in the /styleguide text-style table: Typography/Body, Body - Large, Body - Bold, Mono and Captions. They are derived from component usage, marked as inferred on the page, and still need confirming.",
       "NavBar .navbar__nav flex-wrap: wrap. Not in the design — added because .navbar clips and a narrow viewport was silently cutting #aboutme and #behindthescenes off the right edge.",
       "ToolBox drops 6 columns to 2 below 48rem. A second undesigned mobile decision beyond the NavBar one."
     ]

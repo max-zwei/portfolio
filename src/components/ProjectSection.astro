@@ -19,8 +19,6 @@ interface Props {
   artefacts?: ReadonlyArray<{ src: ImageMetadata; alt: string }>;
   /** Scannable takeaways from this movement. */
   keyPoints?: ReadonlyArray<string>;
-  /** Heading depth chosen by the page that composes this section. */
-  level?: 2 | 3 | 4;
   class?: string;
 }
 
@@ -30,13 +28,8 @@ const {
   subtitle,
   artefacts = [],
   keyPoints = [],
-  level = 2,
   class: className,
 } = Astro.props;
-
-/* A caller controls the surrounding outline; html-validate enforces
-   `heading-level: error` on the built page. */
-const Tag = `h${level}` as 'h2';
 ---
 
 <section
@@ -46,7 +39,7 @@ const Tag = `h${level}` as 'h2';
 
   <div class="project-section__columns">
     <header class="project-section__header">
-      <Tag class="project-section__title">{title}</Tag>
+      <h2 class="project-section__title">{title}</h2>
       {subtitle && <p class="project-section__subtitle">{subtitle}</p>}
     </header>
 
@@ -109,13 +102,9 @@ const Tag = `h${level}` as 'h2';
     gap: var(--space-sm);
   }
 
-  /* Typography/H1. */
+  /* Typography/H1 on an h2. Only the size differs from global.css. */
   .project-section__title {
-    font-family: var(--font-serif);
     font-size: var(--font-size-3xl);
-    font-weight: var(--font-weight-semibold);
-    line-height: var(--line-height-none);
-    letter-spacing: var(--letter-spacing-normal);
   }
 
   /* Typography/Body - Large. */

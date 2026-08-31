@@ -91,10 +91,11 @@ h2,
 h3,
 h4,
 h5 {
+  font-family: var(--font-serif);
   font-weight: var(--font-weight-semibold);
   /* The Figma heading styles H1–H5 all bind line-height 1. */
   line-height: var(--line-height-none);
-  letter-spacing: var(--letter-spacing-tight);
+  letter-spacing: var(--letter-spacing-normal);
   text-wrap: balance;
 }
 

@@ -21,8 +21,6 @@ interface Props {
   // The design's header chrome shows a filename, but this component renders none, so no inert prop is exposed.
   /** Present → renders the closing return button. */
   backHref?: string;
-  /** Heading depth chosen by the page that composes this note. */
-  level?: 2 | 3 | 4;
   class?: string;
 }
 
@@ -31,13 +29,9 @@ const {
   date,
   screenshots = [],
   backHref,
-  level = 2,
   class: className,
 } = Astro.props;
 
-/* A caller controls the surrounding outline; html-validate enforces
-   `heading-level: error` on the built page. */
-const Tag = `h${level}` as 'h2';
 const formattedDate = date.toISOString().slice(0, 10);
 
 const hasUserExperience = Astro.slots.has('userExperience');
@@ -47,11 +41,11 @@ const hasTools = Astro.slots.has('tools');
 
 <article class:list={['release-note', `release-note--${state}`, className]}>
   <header>
-    <Tag class="release-note__chrome">
+    <h2 class="release-note__chrome">
       <span aria-hidden="true">● &lt; &gt; </span><time datetime={formattedDate}
         >{formattedDate}</time
       ><span aria-hidden="true"> &lt; / &gt;</span>
-    </Tag>
+    </h2>
   </header>
 
   {

@@ -5,24 +5,11 @@ interface Props {
   title?: string;
   /** Focus-area labels. An empty array intentionally renders no list. */
   areas: ReadonlyArray<string>;
-  /** Heading depth chosen by the page's document outline. */
-  level?: 2 | 3 | 4;
   /** Additional class forwarded to the root section. */
   class?: string;
 }
 
-const {
-  title = 'Focusing on...',
-  areas,
-  level = 2,
-  class: className,
-} = Astro.props;
-
-/*
- * html-validate enforces `heading-level: error`; letting the page choose the
- * level prevents a skipped heading as soon as this section sits under an h2.
- */
-const Tag = `h${level}` as 'h2';
+const { title = 'Focusing on...', areas, class: className } = Astro.props;
 
 /*
  * The source prose is markdown held in content-collection frontmatter. The
@@ -32,7 +19,7 @@ const Tag = `h${level}` as 'h2';
 ---
 
 <section class:list={['focus-areas', className]}>
-  <Tag>{title}</Tag>
+  <h2 class="focus-areas__title">{title}</h2>
   <slot />
   {
     areas.length > 0 && (
@@ -48,31 +35,35 @@ const Tag = `h${level}` as 'h2';
 <style>
   .focus-areas {
     display: grid;
-    /* Token-chosen while Figma is unreachable; not a value read from the set. */
+    /* Figma 115:703: the root vertical auto-layout gap is 24. */
     gap: var(--space-md);
+  }
+
+  /* Typography/H1 on an h2. Only the size differs from global.css. */
+  .focus-areas__title {
+    font-size: var(--font-size-3xl);
   }
 
   .focus-areas__list {
     display: grid;
-    /* Nearest existing spacing token; the unavailable Figma read left this gap unknown. */
-    gap: var(--space-sm);
+    /* Figma 115:703: the list gap is 12. */
+    gap: var(--space-xs);
     padding: 0;
     list-style: none;
   }
 
   .focus-areas__list li {
     display: grid;
-    /* Token-chosen marker track while Figma is unreachable; not Figma-read. */
+    /* Figma 114:311: the marker track is 8. */
     grid-template-columns: var(--space-2xs) 1fr;
     align-items: center;
-    /* Token-chosen marker-to-label spacing; not a value read from Figma. */
-    gap: var(--space-xs);
+    /* Figma 114:311: 13, which no space token holds. Unbound, not chosen. */
+    gap: 13px;
   }
 
   /*
    * The disc is a ::before rather than ::marker because marker colour cannot
-   * be controlled reliably across browsers.
-   * Its token-chosen dimensions were not read from Figma.
+   * be controlled reliably across browsers. Figma 114:311 draws it at 8 × 8.
    */
   .focus-areas__list li::before {
     width: var(--space-2xs);

@@ -103,7 +103,18 @@ browser-synthesised slant until one is added to `public/fonts/`.
 
 **Mono (`--font-mono`)**
 Always paired with `--letter-spacing-extra-wide` for readability
+The nav button at Figma node `109:1378` is the file's exception: its raw
+settings use `--letter-spacing-wide` and line-height `1.6`.
 Used for the chat interaction and subtitles.
+
+### Text styles
+
+The five Figma heading styles live centrally in `src/styles/global.css` as
+element rules on `h1`–`h5`. Body, Mono and Captions styles are deliberately
+transcribed per component under a `/* Figma text style: … */` comment so each
+component's Figma diff remains readable. `/styleguide`'s **Text styles** table
+is the live index of all twelve named styles. The nav button at `109:1378` is
+the exception: its raw mono settings are not the `Typography/Mono` style.
 
 ## Widths
 

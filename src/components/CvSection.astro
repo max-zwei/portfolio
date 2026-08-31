@@ -17,31 +17,20 @@ interface Props {
   start: string;
   /** End date as `YYYY` or `YYYY-MM`; absent means “present”. */
   end?: string;
-  /**
-   * Stable identity for the section and its previews. Override the derived
-   * company/start value when two entries would otherwise collide.
-   */
-  id?: string;
   /** Project destinations associated with this CV entry. */
   projectUrls?: ReadonlyArray<string>;
-  /** Heading level appropriate to the page's document outline. */
-  level?: 2 | 3 | 4;
   /** Additional class names for the section wrapper. */
   class?: string;
 }
 
 const {
-  id: idProp,
   role,
   company,
   start,
   end,
   projectUrls = [],
-  level = 2,
   class: className,
 } = Astro.props;
-
-const Tag = `h${level}` as 'h2';
 
 const slugify = (value: string) =>
   value
@@ -51,7 +40,7 @@ const slugify = (value: string) =>
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-|-$/g, '');
 
-const sectionId = idProp ?? (slugify(`${company}-${start}`) || 'cv-section');
+const sectionId = slugify(`${company}-${role}-${start}`) || 'cv-section';
 
 const titleFromUrl = (url: string, index: number) => {
   const path = url.split(/[?#]/)[0].replace(/\/+$/, '');
@@ -68,9 +57,9 @@ const titleFromUrl = (url: string, index: number) => {
   <p class="cv-section__dates">{formatRange(start, end)}</p>
 
   <div class="cv-section__position">
+    <!-- Figma text style: Typography/Body - Large, at Body - Bold's weight. -->
+    <h3 id={`${sectionId}-role`} class="cv-section__role">{role}</h3>
     <!-- Figma text style: Typography/Body - Large. -->
-    <Tag id={`${sectionId}-role`} class="cv-section__role">{role}</Tag>
-    <!-- Figma text style: Typography/Body - Bold. -->
     <p class="cv-section__company">{company}</p>
   </div>
 
@@ -112,20 +101,20 @@ const titleFromUrl = (url: string, index: number) => {
     gap: var(--space-2xs);
   }
 
+  /* Figma text style: Typography/Body - Large, at Body - Bold's weight. */
   .cv-section__role {
-    /* Figma text style: Typography/Body - Large. */
     font-family: var(--font-sans);
     font-size: var(--font-size-lg);
-    font-weight: var(--font-weight-regular);
+    font-weight: var(--font-weight-semibold);
     line-height: var(--line-height-normal);
     letter-spacing: var(--letter-spacing-normal);
   }
 
+  /* Figma text style: Typography/Body - Large. */
   .cv-section__company {
-    /* Figma text style: Typography/Body - Bold. */
     font-family: var(--font-sans);
-    font-size: var(--font-size-base);
-    font-weight: var(--font-weight-bold);
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-regular);
     line-height: var(--line-height-normal);
     letter-spacing: var(--letter-spacing-normal);
   }
