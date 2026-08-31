@@ -1,0 +1,143 @@
+---
+import type { HTMLAttributes } from 'astro/types';
+
+/**
+ * Figma component set `Buttons` (`109:1382`).
+ *
+ * Figma: Primary/Default, Secondary/Default, Nav/Primary, Nav/Secondary and
+ * Inline/Primary. Type classes select the style branch; the separately
+ * namespaced Variant axis only sub-selects the two nav colours. Inline/Primary
+ * therefore records `btn--v-primary` even though no rule consumes it: that is
+ * fidelity to Figma's sparse matrix, not dead code. Figma's `State` axis is
+ * CSS `:hover`, not a component prop.
+ */
+/*
+ * Extends the anchor attributes so the `...rest` passthrough is typed rather
+ * than merely tolerated: `download` on the two PDF links is the reason. `type`
+ * is omitted from the base because the Figma axis owns that name — the
+ * rendered `<button>` always gets `type="button"` from this file.
+ */
+interface Props extends Omit<HTMLAttributes<'a'>, 'type'> {
+  /** Figma `Type`. */
+  type?: 'primary' | 'secondary' | 'nav' | 'inline';
+  /** Figma `Variant`. Only `nav` uses it; the matrix is sparse, as in Figma. */
+  variant?: 'default' | 'primary' | 'secondary';
+  /** Present → renders `<a>`. Absent → renders `<button type="button">`. */
+  href?: string;
+  /** Additional classes applied to the root element. */
+  class?: string;
+}
+
+const {
+  type = 'primary',
+  variant = 'default',
+  href,
+  class: className,
+  ...rest
+} = Astro.props;
+
+const variantClass = variant === 'default' ? undefined : `btn--v-${variant}`;
+const classes = ['btn', `btn--${type}`, variantClass, className];
+---
+
+{
+  href ? (
+    <a href={href} class:list={classes} {...rest}>
+      <slot />
+    </a>
+  ) : (
+    <button type="button" class:list={classes} {...rest}>
+      <slot />
+    </button>
+  )
+}
+
+<style>
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    background: none;
+    border: 0;
+    padding: 0;
+  }
+
+  /* Figma text style: Typography/Mono - Small. Effect: Elevation / md. */
+  .btn--primary {
+    padding: var(--space-xs) var(--space-lg);
+    background-color: var(--color-lemon-500);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    color: var(--color-neutral-800);
+    font-family: var(--font-mono);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-regular);
+    line-height: var(--line-height-loose);
+    letter-spacing: var(--letter-spacing-extra-wide);
+    transition: box-shadow var(--duration-fast) var(--easing-standard);
+  }
+
+  /* Hover swaps to Typography/Mono and Elevation / lg. Font size is a layout
+     property, so it deliberately changes instantly rather than transitioning. */
+  .btn--primary:hover {
+    font-size: var(--font-size-base);
+    box-shadow: var(--shadow-lg);
+  }
+
+  /* Figma text style: Typography/Body - Small. */
+  .btn--secondary {
+    color: var(--color-pickled-500);
+    font-family: var(--font-sans);
+    font-size: var(--font-size-sm);
+    line-height: var(--line-height-relaxed);
+    letter-spacing: var(--letter-spacing-normal);
+  }
+
+  /* Font size is a layout property and deliberately remains untransitioned. */
+  .btn--secondary:hover {
+    font-size: var(--font-size-base);
+    line-height: var(--line-height-normal);
+  }
+
+  /* Figma 109:1378: unbound mono / 16 / regular / 1.6 / wide tracking. */
+  .btn--nav {
+    font-family: var(--font-mono);
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-regular);
+    line-height: var(--line-height-normal);
+    letter-spacing: var(--letter-spacing-wide);
+  }
+
+  .btn--nav.btn--v-primary {
+    color: var(--color-neutral-black);
+  }
+
+  .btn--nav.btn--v-secondary {
+    color: var(--color-neutral-600);
+  }
+
+  /* Font weight is a layout property and deliberately remains untransitioned. */
+  .btn--nav:hover {
+    font-weight: var(--font-weight-bold);
+  }
+
+  /* The Step 3 plan specifies these serif/semibold Inline declarations
+     without naming a Figma text style. */
+  .btn--inline {
+    color: var(--color-tomato-500);
+    font-family: var(--font-serif);
+    font-weight: var(--font-weight-semibold);
+    font-size: var(--font-size-base);
+    line-height: var(--line-height-relaxed);
+    letter-spacing: var(--letter-spacing-normal);
+    text-decoration: underline;
+    text-decoration-style: solid;
+    text-underline-position: from-font;
+    transition: color var(--duration-fast) var(--easing-standard);
+  }
+
+  .btn--inline:hover {
+    color: var(--color-tomato-600);
+  }
+</style>

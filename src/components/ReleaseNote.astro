@@ -1,0 +1,202 @@
+---
+/**
+ * Figma component set `release notes` (`115:706`).
+ *
+ * The design names its third content block `tools`, while the release-note
+ * schema calls that field `tech`. The existing `tools:` frontmatter is
+ * therefore dropped by Zod today; this slot keeps the design's name without
+ * widening this component into that separate schema migration.
+ */
+import type { ImageMetadata } from 'astro';
+import { Image } from 'astro:assets';
+import Button from './Button.astro';
+
+interface Props {
+  /** Figma `State`. */
+  state?: 'active' | 'inactive';
+  /** The release date shown in the frame's header chrome. */
+  date: Date;
+  /** Screenshots shown in the black-framed image row. */
+  screenshots?: ReadonlyArray<{ src: ImageMetadata; alt: string }>;
+  // The design's header chrome shows a filename, but this component renders none, so no inert prop is exposed.
+  /** Optional heading level to match the styleguide examples. */
+  level?: 2 | 3 | 4;
+  /** Present → renders the closing return button. */
+  backHref?: string;
+  class?: string;
+}
+
+const {
+  state = 'active',
+  date,
+  screenshots = [],
+  level = 2,
+  backHref,
+  class: className,
+} = Astro.props;
+
+const HeadingTag = `h${level}` as 'h2' | 'h3' | 'h4';
+
+const formattedDate = date.toISOString().slice(0, 10);
+
+const hasUserExperience = Astro.slots.has('userExperience');
+const hasUserInterface = Astro.slots.has('userInterface');
+const hasTools = Astro.slots.has('tools');
+---
+
+<article class:list={['release-note', `release-note--${state}`, className]}>
+  <header>
+    <HeadingTag class="release-note__chrome">
+      <span aria-hidden="true">● &lt; &gt; </span><time datetime={formattedDate}
+        >{formattedDate}</time
+      ><span aria-hidden="true"> &lt; / &gt;</span>
+    </HeadingTag>
+  </header>
+
+  {
+    (hasUserExperience || hasUserInterface || hasTools) && (
+      <div class="release-note__changes">
+        {hasUserExperience && (
+          <section class="release-note__change">
+            <p class="release-note__label">user experience</p>
+            <div class="release-note__copy">
+              <slot name="userExperience" />
+            </div>
+          </section>
+        )}
+
+        {hasUserInterface && (
+          <section class="release-note__change">
+            <p class="release-note__label">user interface</p>
+            <div class="release-note__copy">
+              <slot name="userInterface" />
+            </div>
+          </section>
+        )}
+
+        {hasTools && (
+          <section class="release-note__change">
+            <p class="release-note__label">tools</p>
+            <div class="release-note__copy">
+              <slot name="tools" />
+            </div>
+          </section>
+        )}
+      </div>
+    )
+  }
+
+  {
+    screenshots.length > 0 && (
+      <div class="release-note__screenshots">
+        {screenshots.map((screenshot) => (
+          <figure class="release-note__screenshot">
+            <Image src={screenshot.src} alt={screenshot.alt} />
+          </figure>
+        ))}
+      </div>
+    )
+  }
+
+  {
+    backHref && (
+      <div class="release-note__back">
+        <Button type="primary" href={backHref}>
+          go back in time
+        </Button>
+      </div>
+    )
+  }
+</article>
+
+<style>
+  .release-note {
+    display: grid;
+    gap: var(--space-lg);
+    color: var(--color-neutral-800);
+  }
+
+  /* Typography/Mono - Small — the frame's terminal-like header chrome. */
+  .release-note__chrome,
+  .release-note__label {
+    font-family: var(--font-mono);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-regular);
+    line-height: var(--line-height-loose);
+    letter-spacing: var(--letter-spacing-extra-wide);
+  }
+
+  .release-note__changes {
+    display: grid;
+    gap: var(--space-md);
+  }
+
+  .release-note__change {
+    display: grid;
+    gap: var(--space-xs);
+  }
+
+  .release-note__label {
+    color: var(--color-neutral-600);
+  }
+
+  /* Typography/Body — named slots carry rendered markdown from frontmatter. */
+  .release-note__copy {
+    font-family: var(--font-sans);
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-regular);
+    line-height: var(--line-height-normal);
+    letter-spacing: var(--letter-spacing-normal);
+  }
+
+  .release-note__copy :global(p) {
+    max-width: none;
+  }
+
+  .release-note__screenshots {
+    display: flex;
+    gap: var(--space-sm);
+    overflow-x: auto;
+  }
+
+  .release-note__screenshot {
+    flex: 1 0 auto;
+    margin: 0;
+    border: 1px solid var(--color-neutral-black);
+    background-color: var(--color-neutral-black);
+  }
+
+  .release-note__screenshot :global(img) {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .release-note__back {
+    justify-self: start;
+  }
+
+  /*
+   * Figma was unreachable for the inactive state's exact greys, so these are
+   * chosen from the existing neutral ramp rather than read off the frame.
+   *
+   * Chosen against measured contrast, not by eye: `neutral-700` is 7.91:1 on
+   * `neutral-100` — still visibly dimmed beside `neutral-800` body copy at
+   * 15.59:1, but comfortably past AA. The first pass used `neutral-600` (3.40)
+   * and `neutral-500` (2.31), which fail AA for text and, in the frame's case,
+   * even the 3:1 minimum for non-text. `neutral-600` is kept only where it
+   * borders or fills a shape, where 3.40:1 clears that 3:1 bar.
+   */
+  .release-note--inactive {
+    color: var(--color-neutral-700);
+  }
+
+  .release-note--inactive .release-note__label {
+    color: var(--color-neutral-700);
+  }
+
+  .release-note--inactive .release-note__screenshot {
+    border-color: var(--color-neutral-600);
+    background-color: var(--color-neutral-600);
+  }
+</style>

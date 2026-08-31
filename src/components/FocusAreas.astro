@@ -1,0 +1,83 @@
+---
+/** Figma component set `focus areas` (`115:703`). */
+interface Props {
+  /** Section heading; defaults to the heading drawn in Figma. */
+  title?: string;
+  /** Focus-area labels. An empty array intentionally renders no list. */
+  areas: ReadonlyArray<string>;
+  /** Optional heading level to match the styleguide examples. */
+  level?: 2 | 3 | 4;
+  /** Additional class forwarded to the root section. */
+  class?: string;
+}
+
+const {
+  title = 'Focusing on...',
+  areas,
+  level = 2,
+  class: className,
+} = Astro.props;
+const HeadingTag = `h${level}` as 'h2' | 'h3' | 'h4';
+
+/*
+ * The source prose is markdown held in content-collection frontmatter. The
+ * page renders that markdown through the default slot; this component only
+ * lays the resulting content out.
+ */
+---
+
+<section class:list={['focus-areas', className]}>
+  <HeadingTag class="focus-areas__title">{title}</HeadingTag>
+  <slot />
+  {
+    areas.length > 0 && (
+      <ul class="focus-areas__list">
+        {areas.map((area) => (
+          <li>{area}</li>
+        ))}
+      </ul>
+    )
+  }
+</section>
+
+<style>
+  .focus-areas {
+    display: grid;
+    /* Figma 115:703: the root vertical auto-layout gap is 24. */
+    gap: var(--space-md);
+  }
+
+  /* Typography/H1 on an h2. Only the size differs from global.css. */
+  .focus-areas__title {
+    font-size: var(--font-size-3xl);
+  }
+
+  .focus-areas__list {
+    display: grid;
+    /* Figma 115:703: the list gap is 12. */
+    gap: var(--space-xs);
+    padding: 0;
+    list-style: none;
+  }
+
+  .focus-areas__list li {
+    display: grid;
+    /* Figma 114:311: the marker track is 8. */
+    grid-template-columns: var(--space-2xs) 1fr;
+    align-items: center;
+    /* Figma 114:311: 13, which no space token holds. Unbound, not chosen. */
+    gap: 13px;
+  }
+
+  /*
+   * The disc is a ::before rather than ::marker because marker colour cannot
+   * be controlled reliably across browsers. Figma 114:311 draws it at 8 × 8.
+   */
+  .focus-areas__list li::before {
+    width: var(--space-2xs);
+    height: var(--space-2xs);
+    content: '';
+    background-color: var(--color-tomato-500);
+    border-radius: var(--radius-full);
+  }
+</style>

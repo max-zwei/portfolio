@@ -20,7 +20,7 @@ First of all, why are you here? You're probably looking for my Figma file:
 https://www.figma.com/design/8SQOIPl0teOTvoFH1EffaB/Portfolio?node-id=29-39&t=TJXfA7cuqJFqoJID-1
 
 I did also put down my thoughts on probably a heavily discussed topic on how to move from Design to Code. Honestly, I keep finding new inspiration on how to tackle this and very tough to keep up with all the updates regarding the infrastructure and tools of this process. It ended up as a skill rather than a document, because that is what actually gets read by the thing doing the work:
-→ [`behind-the-scenes/skills/figma-implement.md`](behind-the-scenes/skills/figma-implement.md), and [`docs/design-system.md`](docs/design-system.md) for what the tokens are _for_.
+→ [`behind-the-scenes/skills/figma-to-astro.md`](behind-the-scenes/skills/figma-to-astro.md), and [`docs/design-system.md`](docs/design-system.md) for what the tokens are _for_.
 
 **⚙️ You're an engineer**
 Don't judge me and my beautiful repo. If you like my approach of trying to bridge Design and Code, feel free to get in touch and let's work on our next projects together!

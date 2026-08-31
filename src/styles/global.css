@@ -32,6 +32,21 @@ body {
   text-rendering: optimizeLegibility;
 }
 
+@media (pointer: fine) {
+  html,
+  body,
+  body * {
+    cursor:
+      var(--cursor-url) 20 20,
+      auto;
+  }
+
+  input,
+  textarea {
+    cursor: text;
+  }
+}
+
 img,
 picture,
 svg,
@@ -64,9 +79,11 @@ h4 {
 h1,
 h2,
 h3,
-h4 {
+h4,
+h5 {
   font-weight: var(--font-weight-semibold);
-  line-height: var(--line-height-tight);
+  /* The Figma heading styles H1–H5 all bind line-height 1. */
+  line-height: var(--line-height-none);
   letter-spacing: var(--letter-spacing-tight);
   text-wrap: balance;
 }
@@ -82,6 +99,9 @@ h3 {
 }
 h4 {
   font-size: var(--font-size-lg);
+}
+h5 {
+  font-size: var(--font-size-base);
 }
 
 p {

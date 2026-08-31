@@ -1,0 +1,220 @@
+---
+/**
+ * Figma `NavBar` set (`210:1625`).
+ *
+ * Although the frame is named NavBar, it reads as the site footer: a legal
+ * link, an “explore with” credit, seven section links, and five social marks
+ * arranged in a 1280×220 frame.
+ */
+import Button from './Button.astro';
+import { EXPLORE_WITH, NAV, SOCIALS, withBase } from '../config/site';
+
+interface Props {
+  /**
+   * Figma `Mode`. This is a ground colour per instance, NOT a colour scheme;
+   * a `prefers-color-scheme` block is therefore forbidden here.
+   */
+  mode?: 'default' | 'dark';
+  /**
+   * Accessible name for the inner navigation landmark. `/styleguide` renders
+   * two instances, and `unique-landmark: error` rejects two `<nav>` elements
+   * that share an accessible name.
+   */
+  label?: string;
+  /** Additional class names forwarded to the footer root. */
+  class?: string;
+}
+
+const { mode = 'default', label = 'Site', class: className } = Astro.props;
+---
+
+<footer class:list={['navbar', `navbar--${mode}`, className]}>
+  <div class="navbar__row">
+    <nav class="navbar__nav" aria-label={label}>
+      <ul class="navbar__list navbar__list--impressum">
+        <li>
+          <Button
+            type="nav"
+            variant="secondary"
+            href={NAV.impressum.href}
+            class="navbar__link"
+          >
+            {NAV.impressum.label}
+          </Button>
+        </li>
+      </ul>
+
+      <ul class="navbar__list navbar__list--stack">
+        {
+          NAV.sections.map((link) => (
+            <li>
+              <Button
+                type="nav"
+                variant="primary"
+                href={link.href}
+                class="navbar__link"
+              >
+                {link.label}
+              </Button>
+            </li>
+          ))
+        }
+      </ul>
+
+      <ul class="navbar__list navbar__list--stack">
+        {
+          NAV.about.map((link) => (
+            <li>
+              <Button
+                type="nav"
+                variant={
+                  link.label === '#behindthescenes' ? 'secondary' : 'primary'
+                }
+                href={link.href}
+                class:list={[
+                  'navbar__link',
+                  link.label === '#behindthescenes' && 'navbar__link--behind',
+                ]}
+              >
+                {link.label}
+              </Button>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <div class="navbar__explore">
+      <p>explore with</p>
+      {
+        EXPLORE_WITH.map((mark) => (
+          <a href={mark.href} aria-label={`Explore with ${mark.label}`}>
+            <img src={withBase(mark.icon)} alt="" width="16" height="16" />
+          </a>
+        ))
+      }
+    </div>
+
+    <ul class="navbar__socials">
+      {
+        SOCIALS.map((social) => (
+          <li>
+            <a href={social.href} aria-label={social.label}>
+              <img
+                src={withBase(social.icon)}
+                alt=""
+                width={social.width}
+                height={social.height}
+              />
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</footer>
+
+<style>
+  .navbar {
+    width: 100%;
+    max-width: var(--content-max);
+    padding: var(--space-lg) var(--space-xl);
+    overflow: clip;
+    background-color: var(--color-neutral-100);
+  }
+
+  .navbar--dark {
+    background-color: var(--color-neutral-black);
+  }
+
+  .navbar__row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-2xl);
+  }
+
+  /*
+   * `flex-wrap: wrap` is not in the design — the frame is a fixed 1280px and
+   * never has to reflow. It is here because `.navbar` clips: without wrapping,
+   * a narrow viewport silently cut `#aboutme` and `#behindthescenes` off the
+   * right edge, so two real navigation links disappeared rather than moved.
+   * Losing content is worse than a reflow the design does not draw.
+   */
+  .navbar__nav {
+    display: flex;
+    flex: 1;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-lg);
+  }
+
+  .navbar__list,
+  .navbar__socials {
+    padding: 0;
+    list-style: none;
+  }
+
+  /* Figma reports 383.108px for this column. That unbound magic number is a
+     frame artefact, so the flex layout above distributes the width instead. */
+  .navbar__list--impressum {
+    flex: 1;
+  }
+
+  .navbar__list--stack {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+  }
+
+  /* In the dark instance the navigation is white except for the deliberately
+     muted #behindthescenes link. These global selectors reach Button's root.
+     The extra `.btn` raises specificity above Button's scoped nav-colour rules
+     so the override is deterministic rather than dependent on sheet order. */
+  .navbar--dark :global(.btn.navbar__link) {
+    color: var(--color-neutral-white);
+  }
+
+  .navbar--dark :global(.btn.navbar__link--behind) {
+    color: var(--color-neutral-600);
+  }
+
+  .navbar__explore {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+    color: var(--color-lemon-500);
+
+    /* Typography/Mono - Small. */
+    font-family: var(--font-mono);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-regular);
+    line-height: var(--line-height-loose);
+    letter-spacing: var(--letter-spacing-extra-wide);
+  }
+
+  .navbar__explore a {
+    display: block;
+  }
+
+  .navbar__explore img {
+    /* This is an unbound literal in Figma, not an Elevation effect style. */
+    filter: drop-shadow(0 1px 1px rgb(240 229 17 / 0.25));
+  }
+
+  .navbar__socials {
+    display: flex;
+    gap: var(--space-xs);
+    padding-block-end: var(--space-3xs);
+  }
+
+  /* Figma's Mobile frame (`103:1103`) is empty. This is the one undesigned
+     decision: a 1280px two-column row would otherwise overflow. */
+  @media (max-width: 48rem) {
+    .navbar__row {
+      flex-direction: column;
+      gap: var(--space-lg);
+    }
+  }
+</style>

@@ -1,6 +1,11 @@
 ---
+import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
+import Avatar, { type AvatarUser } from '../components/Avatar.astro';
+import ChatBubble from '../components/ChatBubble.astro';
 import { SITE, withBase } from '../config/site';
+import { AXES, AXIS_IDS, type AxisId } from '../config/match';
+import type { Entry, Run } from '../lib/match';
 
 // The /home frames in Figma: a branching chat, seven states. `skip` is the
 // fallback for a visitor who would rather just browse.
@@ -9,18 +14,19 @@ import { SITE, withBase } from '../config/site';
 // frames disagree (`Sounds promising` vs `Sounds promisin`), the chip's own
 // label wins, because one string drives both the chip and its echo.
 
-/** A run of text, optionally a link. Only `questions` needs the link form. */
-type Run = string | { text: string; href: string };
-
 type Message = {
   paragraphs: Run[][];
-  /** Present when the message has a face beside it. */
-  speaker?: { avatar: string; alt: string };
+  /**
+   * Present when the message has a face beside it. Just the name: `Avatar`
+   * owns the asset path and the alt text, because both are properties of the
+   * artwork rather than of this conversation.
+   */
+  speaker?: AvatarUser;
   /** The tomato panel that carries the prototype's answer, in `result`. */
   panel?: boolean;
 };
 
-type Choice = { label: string; href: string };
+type Choice = { label: string; href: string; value?: string };
 
 type Step = {
   id: string;
@@ -29,28 +35,35 @@ type Step = {
   /** Chips echoed back at the top: what the visitor said to get here. */
   answers?: string[];
   messages: Message[];
-  /** One of the prototype's four questions: remember what was answered. */
-  question?: true;
+  /** The axis this step's chips answer. */
+  axis?: AxisId;
   choices?: Choice[];
 };
+
+/** An axis's chips: every taggable option, then the escape hatch. */
+const chips = (axis: AxisId, next: string): Choice[] => [
+  ...AXES[axis].tags.map((t) => ({
+    label: t.label,
+    value: t.id,
+    href: step(next),
+  })),
+  { label: AXES[axis].other, href: step(next) },
+];
 
 /** A question's options are ordinary reply chips leading to the next one. */
 const asks = (
   prompt: string,
-  options: string[],
+  axis: AxisId,
   next: string,
-): Pick<Step, 'messages' | 'question' | 'choices'> => ({
+): Pick<Step, 'messages' | 'axis' | 'choices'> => ({
   messages: [{ paragraphs: [[prompt]] }],
-  question: true,
-  choices: options.map((label) => ({ label, href: step(next) })),
+  axis,
+  choices: chips(axis, next),
 });
 
 const step = (id: string) => `#step-${id}`;
 
-const MAX = {
-  avatar: 'max',
-  alt: 'Max — a figure with a dark bob and a red top',
-};
+const MAX: AvatarUser = 'max';
 
 const STEPS: Step[] = [
   {
@@ -109,10 +122,7 @@ const STEPS: Step[] = [
         ],
       },
       {
-        speaker: {
-          avatar: 'moritz',
-          alt: 'Moritz — a figure in green, facing a dark triangle',
-        },
+        speaker: 'moritz',
         paragraphs: [
           [
             'Hi there, I’m Moritz, a fellow designer, looking for connection or inspiration.',
@@ -120,10 +130,7 @@ const STEPS: Step[] = [
         ],
       },
       {
-        speaker: {
-          avatar: 'karina',
-          alt: 'Karina — a figure in pink with a dark rounded haircut',
-        },
+        speaker: 'karina',
         paragraphs: [
           [
             'Hello dear, my name is Karina, a recruiter, browsing profiles and checking if Max’ profile suits what we are looking for.',
@@ -131,10 +138,7 @@ const STEPS: Step[] = [
         ],
       },
       {
-        speaker: {
-          avatar: 'paula',
-          alt: 'Paula — a figure in yellow, half in shadow',
-        },
+        speaker: 'paula',
         paragraphs: [
           [
             'Nice to meet you, I’m Paula, Max’ future boss, I want to understand the skillset and preferably see his work and projects, Karina already introduced me to his CV.',
@@ -158,10 +162,7 @@ const STEPS: Step[] = [
     answers: ['YES!'],
     messages: [
       {
-        speaker: {
-          avatar: 'everyone',
-          alt: 'Moritz, Karina and Paula together',
-        },
+        speaker: 'all',
         paragraphs: [
           [
             'The first question that popped to our mind was, how can we understand who Max is? Which material or research would we need?',
@@ -264,16 +265,8 @@ const STEPS: Step[] = [
       },
       { paragraphs: [['What best describes your team?']] },
     ],
-    question: true,
-    choices: [
-      'Coporate',
-      'Startup',
-      'Individual',
-      'Pre-Company',
-      'NGO',
-      'Association',
-      'Other ...',
-    ].map((label) => ({ label, href: step('field') })),
+    axis: 'team',
+    choices: chips('team', 'field'),
   },
 
   {
@@ -281,30 +274,14 @@ const STEPS: Step[] = [
     heading: 'The field',
     // The frame's own sample pick, until the script puts the real one here.
     answers: ['Startup'],
-    ...asks(
-      'What is the field you need support with?',
-      [
-        'Web Design',
-        'Branding',
-        'UX Review',
-        'UI Review',
-        'UX Concept',
-        'Product Management',
-        'Other ...',
-      ],
-      'role',
-    ),
+    ...asks('What is the field you need support with?', 'field', 'role'),
   },
 
   {
     id: 'role',
     heading: 'Max’ role',
     answers: ['Web Design'],
-    ...asks(
-      'What should be Max’ role?',
-      ['Volunteer', 'Freelancer', 'Employee', 'Founding Designer', 'Other ...'],
-      'stack',
-    ),
+    ...asks('What should be Max’ role?', 'role', 'stack'),
   },
 
   {
@@ -313,15 +290,7 @@ const STEPS: Step[] = [
     answers: ['Freelancer'],
     ...asks(
       'Any specific tool setup or tech stack your project requires?',
-      [
-        'CSS / HTML',
-        'Wordpress',
-        'Framer / Webflow / Wix..',
-        'Python',
-        'Javascript',
-        'Julia',
-        'Other ..',
-      ],
+      'tech',
       'result',
     ),
   },
@@ -378,6 +347,56 @@ const STEPS: Step[] = [
     ],
   },
 ];
+
+/** The four tag arrays, keyed the way the matcher reads them. */
+const tags = (m: {
+  teams: readonly string[];
+  fields: readonly string[];
+  roles: readonly string[];
+  tech: readonly string[];
+}) => ({ team: m.teams, field: m.fields, role: m.roles, tech: m.tech });
+
+/*
+ * Everything the questionnaire can point at, flattened for the client — the
+ * answers only exist in the browser, so the matching has to happen there.
+ *
+ * `href` is what resolves *today*: the section pages for projects,
+ * playground, inspiration and curiosities do not exist yet, so an entry
+ * without an external link is named without being linked rather than pointed
+ * at a 404. When those routes land, this is the one place to change.
+ */
+const EVIDENCE: Entry[] = [
+  ...(await getCollection('projects')).map((e) => ({
+    collection: 'projects' as const,
+    label: e.data.title,
+    href: e.data.figmaUrl ?? e.data.repoUrl ?? null,
+    tags: tags(e.data.match),
+  })),
+  ...(await getCollection('playground')).map((e) => ({
+    collection: 'playground' as const,
+    label: e.data.title,
+    href: e.data.additionalUrl ?? e.data.githubUrl ?? e.data.figmaUrl ?? null,
+    tags: tags(e.data.match),
+  })),
+  ...(await getCollection('inspiration')).map((e) => ({
+    collection: 'inspiration' as const,
+    label: e.data.title,
+    href: e.data.url,
+    tags: tags(e.data.match),
+  })),
+  ...(await getCollection('curiosity')).map((e) => ({
+    collection: 'curiosity' as const,
+    label: e.data.thought,
+    href: null,
+    tags: tags(e.data.match),
+  })),
+  ...(await getCollection('resume')).map((e) => ({
+    collection: 'resume' as const,
+    label: `${e.data.role}, ${e.data.company}`,
+    href: e.data.projectUrls[0] ?? withBase('/resume'),
+    tags: tags(e.data.match),
+  })),
+].filter((e) => AXIS_IDS.some((axis) => e.tags[axis].length));
 ---
 
 <BaseLayout>
@@ -393,7 +412,7 @@ const STEPS: Step[] = [
             class:list={['chat__step', s.id === 'start' && 'chat__step--first']}
             aria-labelledby={`h-${s.id}`}
             tabindex="-1"
-            data-question={s.question}
+            data-axis={s.axis}
           >
             <h2 id={`h-${s.id}`} class="visually-hidden">
               {s.heading}
@@ -402,7 +421,14 @@ const STEPS: Step[] = [
             {s.answers && (
               <ul class="chat__said" data-said>
                 {s.answers.map((a) => (
-                  <li class="chat__answer">{a}</li>
+                  <ChatBubble
+                    as="li"
+                    type="response"
+                    variant="selection"
+                    class="chat__answer"
+                  >
+                    {a}
+                  </ChatBubble>
                 ))}
               </ul>
             )}
@@ -411,19 +437,15 @@ const STEPS: Step[] = [
               {s.messages.map((m, i) => (
                 <li class="chat__row" style={`--i: ${i}`}>
                   {m.speaker && (
-                    <img
-                      class="chat__avatar"
-                      src={withBase(`/avatars/${m.speaker.avatar}.svg`)}
-                      alt={m.speaker.alt}
-                      width="87"
-                      height="87"
-                    />
+                    <Avatar user={m.speaker} class="chat__avatar" />
                   )}
-                  <div
+                  <ChatBubble
+                    type="message"
                     class:list={[
                       'chat__bubble',
                       m.panel && 'chat__bubble--panel',
                     ]}
+                    data-panel={m.panel}
                   >
                     {m.paragraphs.map((p) => (
                       <p class="chat__text" data-type>
@@ -436,7 +458,7 @@ const STEPS: Step[] = [
                         )}
                       </p>
                     ))}
-                  </div>
+                  </ChatBubble>
                 </li>
               ))}
             </ol>
@@ -445,9 +467,15 @@ const STEPS: Step[] = [
               <ul class="chat__choices">
                 {s.choices.map((c) => (
                   <li>
-                    <a class="chat__choice" href={c.href}>
+                    <ChatBubble
+                      type="request"
+                      variant="selection"
+                      class="chat__choice"
+                      href={c.href}
+                      data-value={c.value}
+                    >
                       {c.label}
-                    </a>
+                    </ChatBubble>
                   </li>
                 ))}
               </ul>
@@ -456,6 +484,17 @@ const STEPS: Step[] = [
         ))
       }
     </div>
+
+    {
+      /* The entries the panel can cite. `is:inline` because this is data, not
+        a module, and Astro would otherwise try to bundle it. */
+    }
+    <script
+      is:inline
+      type="application/json"
+      data-match
+      set:html={JSON.stringify(EVIDENCE).replace(/</g, '\\u003c')}
+    />
   </main>
 </BaseLayout>
 
@@ -595,37 +634,50 @@ const STEPS: Step[] = [
     }
   }
 
+  /*
+   * ---------------------------------------------------------------------
+   * Reaching into the components this page composes.
+   *
+   * Astro passes a `class` down to a child component but NOT the parent's
+   * `data-astro-cid-*`, so a page rule naming a class that lands on a
+   * component's ROOT element compiles to a selector that matches nothing.
+   * Slotted content is the opposite case — it keeps this page's scope, which
+   * is why `.chat__text` below needs no escape.
+   *
+   * Every rule that targets a component root is therefore written as
+   * `.chat__transcript :global(…)`: anchored on a page-scoped ancestor so it
+   * stays confined to this page's chat, rather than a bare `:global` that
+   * would leak the class site-wide.
+   * ---------------------------------------------------------------------
+   */
+
   /* Sized by the asset's own 87px, on the element — the nearest space step is
      96, and substituting it would be drift dressed up as a token. */
-  .chat__avatar {
+  .chat__transcript :global(.chat__avatar) {
     flex-shrink: 0;
   }
 
-  .chat__bubble {
-    /* Hugs its text, as the component does on canvas, up to the bubble width. */
-    width: fit-content;
-    max-width: var(--size-chat-bubble);
-    padding: var(--space-xs) var(--space-sm);
-    color: var(--color-neutral-800);
-    font-family: var(--font-mono);
-    font-size: var(--font-size-sm);
-    font-weight: var(--font-weight-regular);
-    line-height: var(--line-height-loose);
-    letter-spacing: var(--letter-spacing-extra-wide);
-    background-color: var(--color-neutral-100);
-    /* Square on the corner nearest the speaker — the tail, without a tail. */
-    border-radius: 0 var(--radius-lg) var(--radius-lg) var(--radius-lg);
-  }
-
+  /*
+   * The bubble's box and type now come from `ChatBubble` (Figma `Chat`,
+   * `109:1389`). What stays here is only what this page owns: the panel
+   * variant, which the Figma set does not draw, and the link colour inside a
+   * bubble.
+   */
   .chat__text {
     max-width: none;
   }
 
-  .chat__bubble a {
+  .chat__transcript :global(.chat__bubble) a {
     color: var(--color-tomato-500);
   }
 
-  .chat__bubble--panel {
+  /*
+   * Not in the Figma `Chat` set — a page-only variant, applied as a second
+   * class on the `<ChatBubble>`. Both classes are named deliberately: it has
+   * to beat `ChatBubble`'s own `.bubble--message { max-width }`, and one class
+   * alone ties with it on specificity, leaving the winner to stylesheet order.
+   */
+  .chat__transcript :global(.chat__bubble.chat__bubble--panel) {
     max-width: none;
     margin-block: var(--space-xl);
     padding: var(--space-md);
@@ -634,7 +686,7 @@ const STEPS: Step[] = [
     border-radius: var(--radius-lg);
   }
 
-  .chat__bubble--panel .chat__text + .chat__text {
+  .chat__transcript :global(.chat__bubble--panel) .chat__text + .chat__text {
     margin-block-start: var(--space-md);
     padding-inline-start: var(--space-lg);
   }
@@ -650,54 +702,20 @@ const STEPS: Step[] = [
     padding-inline-start: var(--space-xl);
   }
 
-  .chat__answer,
-  .chat__choice {
-    display: block;
-    /* Sizes to its text. Narrow screens keep the cap and may wrap; from the
-       breakpoint up a chip holds one line, as the component does on canvas —
-       Figma's own instance of the longest chip is 452px, past the 400 cap,
-       because its text cannot wrap. */
-    width: max-content;
-    max-width: var(--size-chat-choice);
-    padding: var(--space-xs) var(--space-sm);
-    color: var(--color-neutral-800);
-    font-family: var(--font-mono);
-    font-size: var(--font-size-sm);
-    font-weight: var(--font-weight-regular);
-    line-height: var(--line-height-loose);
-    letter-spacing: var(--letter-spacing-extra-wide);
-    text-align: start;
-    text-decoration: none;
-    border: 2px solid var(--color-lemon-500);
-  }
-
-  /* Already said: filled, and squared off on the corner facing the thread. */
-  .chat__answer {
-    background-color: var(--color-lemon-200);
-    border-radius: var(--radius-lg) 0 var(--radius-lg) var(--radius-lg);
-  }
-
-  .chat__choice {
-    cursor: pointer;
-    background-color: var(--color-neutral-white);
-    border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-md);
-    transition:
-      background-color var(--duration-fast) var(--easing-standard),
-      box-shadow var(--duration-fast) var(--easing-standard);
-  }
-
-  .chat__choice:hover {
-    background-color: var(--color-lemon-200);
-  }
+  /*
+   * The chips' box and type come from `ChatBubble` too — `.chat__answer` is
+   * `response/selection` and `.chat__choice` is `request/selection`, including
+   * the undesigned hover this page introduced. Only the row layout above and
+   * the breakpoint override below belong to the page.
+   */
 
   @media (min-width: 48rem) {
     .chat__transcript {
       padding-inline: var(--space-lg);
     }
 
-    .chat__answer,
-    .chat__choice {
+    .chat__transcript :global(.chat__answer),
+    .chat__transcript :global(.chat__choice) {
       max-width: 100%;
       white-space: nowrap;
     }
@@ -705,6 +723,15 @@ const STEPS: Step[] = [
 </style>
 
 <script>
+  import { AXIS_IDS, type AxisId } from '../config/match';
+  import { statement, verdict, type Answer, type Entry } from '../lib/match';
+
+  const payload =
+    document.querySelector<HTMLScriptElement>('script[data-match]');
+  const entries: Entry[] = payload
+    ? (JSON.parse(payload.textContent || '[]') as Entry[])
+    : [];
+
   /*
    * Progressive enhancement, and nothing more. With this file blocked the page
    * is still the whole conversation: every chip is a real link, `:target`
@@ -794,7 +821,7 @@ const STEPS: Step[] = [
 
     /** What the visitor last said, and every answer the questions collected. */
     let said: string[] = [];
-    const picks: string[] = [];
+    const picks = new Map<AxisId, Answer>();
 
     /*
      * The conversation is one transcript, the way a messenger thread is: every
@@ -850,11 +877,60 @@ const STEPS: Step[] = [
       }, at);
     };
 
+    /**
+     * Swap the frame's placeholder statement for the one the answers earn.
+     *
+     * Paragraphs are cloned rather than created: scoped styles compile to
+     * `.chat__text[data-astro-cid-…]` and only Astro's own markup carries that
+     * attribute. Links have no node to clone, so they borrow the attribute
+     * from the panel itself.
+     */
+    const fillResult = (stepEl: HTMLElement) => {
+      const panel = stepEl.querySelector<HTMLElement>('[data-panel]');
+      const template = panel?.querySelector<HTMLElement>('.chat__text');
+      if (!panel || !template) return;
+
+      const paragraphs = statement(verdict(entries, [...picks.values()]));
+      // Nothing matched, or nothing was answered: the design's copy stands.
+      if (!paragraphs.length) return;
+
+      const scope = [...panel.attributes]
+        .map((a) => a.name)
+        .find((name) => name.startsWith('data-astro-cid-'));
+
+      panel.replaceChildren(
+        ...paragraphs.map((runs) => {
+          const p = template.cloneNode(false) as HTMLElement;
+          p.append(
+            ...runs.map((run) => {
+              if (typeof run === 'string') return run;
+              const a = document.createElement('a');
+              if (scope) a.setAttribute(scope, '');
+              a.href = run.href;
+              a.textContent = run.text;
+              return a;
+            }),
+          );
+          return p;
+        }),
+      );
+    };
+
     const enter = (id: string, advanced = true) => {
       const stepEl = waiting.get(id);
-      // Already in the transcript — a back button, or a repeated hash. Leave
-      // the history as it happened rather than moving the step to the end.
-      if (!stepEl || stepEl.parentElement === transcript) return;
+      if (!stepEl) return;
+
+      const revisiting = stepEl.parentElement === transcript;
+      // Back navigation keeps the transcript where it happened, but unlocks a
+      // question so its answer can be replaced. The result is the exception:
+      // refresh it in place from the newly replaced answer.
+      if (revisiting && id !== 'step-result') {
+        stepEl
+          .querySelector<HTMLElement>(':scope > .chat__choices')
+          ?.removeAttribute('hidden');
+        if (advanced) stepEl.focus({ preventScroll: true });
+        return;
+      }
 
       // Once answered, the options that were not taken go away, as a
       // messenger's quick replies do. The choice itself survives as the
@@ -871,7 +947,10 @@ const STEPS: Step[] = [
       // chip's markup changes.
       const chip = echo?.querySelector('.chat__answer');
       // The result reports every answer, not only the last one.
-      const words = id === 'step-result' && picks.length ? picks : said;
+      const words =
+        id === 'step-result' && picks.size
+          ? AXIS_IDS.filter((a) => picks.has(a)).map((a) => picks.get(a)!.label)
+          : said;
       if (echo && chip && words.length) {
         echo.replaceChildren(
           ...words.map((label) => {
@@ -882,9 +961,12 @@ const STEPS: Step[] = [
         );
       }
       said = [];
+      if (id === 'step-result') fillResult(stepEl);
 
-      transcript?.append(stepEl);
-      play(stepEl);
+      if (!revisiting) {
+        transcript?.append(stepEl);
+        play(stepEl);
+      }
       // Only when the visitor advanced. Taking focus on first load would put
       // them past the skip link before they have done anything.
       if (advanced) stepEl.focus({ preventScroll: true });
@@ -895,12 +977,13 @@ const STEPS: Step[] = [
         '.chat__choice[href^="#step-"]',
       );
       if (!link) return;
+      link.closest<HTMLElement>('.chat__choices')?.setAttribute('hidden', '');
 
       const label = link.textContent?.trim() ?? '';
       said = [label];
-      // The four prototype questions are ordinary steps now, so each echoes
-      // its own answer; the result needs all four, so they are kept here too.
-      if (link.closest('[data-question]')) picks.push(label);
+      const axis = link.closest<HTMLElement>('[data-axis]')?.dataset.axis as
+        AxisId | undefined;
+      if (axis) picks.set(axis, { axis, id: link.dataset.value, label });
     });
 
     addEventListener('hashchange', () =>

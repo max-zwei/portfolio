@@ -9,11 +9,141 @@ import {
   spacing,
   radii,
 } from '../lib/tokens';
+import Avatar from '../components/Avatar.astro';
+import BlankSection from '../components/BlankSection.astro';
+import Button from '../components/Button.astro';
+import ChatBubble from '../components/ChatBubble.astro';
+import CuriosityRow from '../components/CuriosityRow.astro';
+import CvSection from '../components/CvSection.astro';
+import FlipCard from '../components/FlipCard.astro';
+import FocusAreas from '../components/FocusAreas.astro';
+import Icon from '../components/Icon.astro';
+import Logo from '../components/Logo.astro';
+import NavBar from '../components/NavBar.astro';
+import PostIt from '../components/PostIt.astro';
+import ProjectPreview from '../components/ProjectPreview.astro';
+import ProjectSection from '../components/ProjectSection.astro';
+import ReleaseNote from '../components/ReleaseNote.astro';
+import ToolBox from '../components/ToolBox.astro';
 
 // Everything here is computed at build time from design/tokens.json.
 // No client JS, and no hand-maintained copy of the palette that could go stale.
 
 const shadows = ['sm', 'md', 'lg'];
+
+const textStyles = [
+  {
+    name: 'Typography/H1',
+    family: '--font-serif',
+    size: '--font-size-3xl',
+    weight: '--font-weight-semibold',
+    lineHeight: '--line-height-none',
+    letterSpacing: '--letter-spacing-normal',
+    derived: false,
+  },
+  {
+    name: 'Typography/H2',
+    family: '--font-serif',
+    size: '--font-size-2xl',
+    weight: '--font-weight-semibold',
+    lineHeight: '--line-height-none',
+    letterSpacing: '--letter-spacing-normal',
+    derived: false,
+  },
+  {
+    name: 'Typography/H3',
+    family: '--font-serif',
+    size: '--font-size-xl',
+    weight: '--font-weight-semibold',
+    lineHeight: '--line-height-none',
+    letterSpacing: '--letter-spacing-normal',
+    derived: false,
+  },
+  {
+    name: 'Typography/H4',
+    family: '--font-serif',
+    size: '--font-size-lg',
+    weight: '--font-weight-semibold',
+    lineHeight: '--line-height-none',
+    letterSpacing: '--letter-spacing-normal',
+    derived: false,
+  },
+  {
+    name: 'Typography/H5',
+    family: '--font-serif',
+    size: '--font-size-base',
+    weight: '--font-weight-semibold',
+    lineHeight: '--line-height-none',
+    letterSpacing: '--letter-spacing-normal',
+    derived: false,
+  },
+  {
+    name: 'Typography/Body',
+    family: '--font-sans',
+    size: '--font-size-base',
+    weight: '--font-weight-regular',
+    lineHeight: '--line-height-normal',
+    letterSpacing: '--letter-spacing-normal',
+    derived: true,
+  },
+  {
+    name: 'Typography/Body - Small',
+    family: '--font-sans',
+    size: '--font-size-sm',
+    weight: '--font-weight-regular',
+    lineHeight: '--line-height-relaxed',
+    letterSpacing: '--letter-spacing-normal',
+    derived: false,
+  },
+  {
+    name: 'Typography/Body - Large',
+    family: '--font-sans',
+    size: '--font-size-lg',
+    weight: '--font-weight-regular',
+    lineHeight: '--line-height-normal',
+    letterSpacing: '--letter-spacing-normal',
+    derived: true,
+  },
+  {
+    name: 'Typography/Body - Bold',
+    family: '--font-sans',
+    size: '--font-size-base',
+    weight: '--font-weight-bold',
+    lineHeight: '--line-height-normal',
+    letterSpacing: '--letter-spacing-normal',
+    derived: true,
+  },
+  {
+    name: 'Typography/Mono',
+    family: '--font-mono',
+    size: '--font-size-base',
+    weight: '--font-weight-regular',
+    lineHeight: '--line-height-loose',
+    letterSpacing: '--letter-spacing-extra-wide',
+    derived: true,
+  },
+  {
+    name: 'Typography/Mono - Small',
+    family: '--font-mono',
+    size: '--font-size-sm',
+    weight: '--font-weight-regular',
+    lineHeight: '--line-height-loose',
+    letterSpacing: '--letter-spacing-extra-wide',
+    derived: false,
+  },
+  {
+    name: 'Typography/Captions',
+    family: '--font-sans',
+    size: '--font-size-xs',
+    weight: '--font-weight-regular',
+    lineHeight: '--line-height-relaxed',
+    letterSpacing: '--letter-spacing-normal',
+    derived: true,
+  },
+] as const;
+
+const placeholderTools = Array.from({ length: 6 }, () => ({ name: '[tool]' }));
+const releaseDate = new Date('2026-02-06');
 ---
 
 <BaseLayout
@@ -189,6 +319,56 @@ const shadows = ['sm', 'md', 'lg'];
         ))
       }
 
+      <h3>Text styles</h3>
+      <p class="note">
+        The design defines twelve named text styles, and the repo records none
+        of them. This block is where drift becomes visible: seven rows are
+        transcribed from the design; the five marked <strong>inferred</strong>
+        are inferred from component usage and still need confirming against Figma.
+      </p>
+      <div class="table-wrap">
+        <table class="text-styles">
+          <thead>
+            <tr>
+              <th scope="col">Style</th>
+              <th scope="col">Live specimen</th>
+              <th scope="col">Tokens</th>
+            </tr>
+          </thead>
+          <tbody>
+            {
+              textStyles.map((style) => (
+                <tr>
+                  <th scope="row">
+                    <code>{style.name}</code>
+                    {style.derived && (
+                      <span class="text-styles__marker">inferred</span>
+                    )}
+                  </th>
+                  <td>
+                    <span
+                      class="text-styles__sample"
+                      style={`font-family:var(${style.family});font-size:var(${style.size});font-weight:var(${style.weight});line-height:var(${style.lineHeight});letter-spacing:var(${style.letterSpacing})`}
+                    >
+                      I care about experiences.
+                    </span>
+                  </td>
+                  <td>
+                    <span class="text-styles__tokens">
+                      <code>{style.family}</code>
+                      <code>{style.size}</code>
+                      <code>{style.weight}</code>
+                      <code>{style.lineHeight}</code>
+                      <code>{style.letterSpacing}</code>
+                    </span>
+                  </td>
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+      </div>
+
       <h3>Families</h3>
       <p class="note">
         All three are variable fonts, self-hosted. The italic below is
@@ -279,6 +459,262 @@ const shadows = ['sm', 'md', 'lg'];
         <button type="button">A button</button>
         <input type="text" aria-label="A text input" placeholder="An input" />
       </p>
+    </section>
+
+    <!-- ------------------------------------------------------------------ -->
+    <section aria-labelledby="h-components">
+      <h2 id="h-components">Components</h2>
+      <p class="note">
+        Every published Figma set has exactly one counterpart here.
+        <code>design/components.json</code> records the mapping between the design
+        and these implementations.
+      </p>
+
+      <h3>Buttons</h3>
+      <p class="note">
+        Figma set <code>Buttons</code>, node <code>109:1382</code>.
+      </p>
+      <div class="demo">
+        <Button type="primary" variant="default" href="#h-components"
+          >go back in time</Button
+        >
+        <Button type="secondary" variant="default" href="#h-components"
+          >Mehr erfahren →</Button
+        >
+        <Button type="nav" variant="primary" href="#h-components"
+          >#aboutme</Button
+        >
+        <Button type="nav" variant="secondary">#behindthescenes</Button>
+        <Button type="inline" variant="primary" href="#h-components"
+          >How might we rebrand our marketing materials?</Button
+        >
+      </div>
+
+      <h3>Chat</h3>
+      <p class="note">
+        Figma set <code>Chat</code>, node <code>109:1389</code>.
+      </p>
+      <div class="demo">
+        <ChatBubble type="message" variant="default">
+          <p>Hi, my name is Max, nice to meet you!</p>
+        </ChatBubble>
+        <ChatBubble type="response" variant="text"
+          >I think this is great</ChatBubble
+        >
+        <ChatBubble type="response" variant="selection">Selected 1</ChatBubble>
+        <ChatBubble type="request" variant="text" href="#h-components"
+          >...</ChatBubble
+        >
+        <ChatBubble type="request" variant="selection" href="#h-components"
+          >Option 1</ChatBubble
+        >
+      </div>
+
+      <h3>User</h3>
+      <p class="note">
+        Figma set <code>user</code>, node <code>117:1308</code>.
+      </p>
+      <div class="demo">
+        <Avatar user="moritz" />
+        <Avatar user="karina" />
+        <Avatar user="paula" />
+        <Avatar user="all" />
+        <Avatar user="max" />
+      </div>
+
+      <h3>Logo</h3>
+      <p class="note">
+        Figma set <code>logo</code>, node <code>108:1372</code>.
+      </p>
+      <div class="demo">
+        <Logo type="favicon" variant="default" alt="Max favicon mark" />
+        <Logo type="chat" variant="tomato" alt="Max chat mark on tomato" />
+        <Logo type="chat" variant="herbs" alt="Max chat mark on herbs" />
+      </div>
+
+      <h3>Icons</h3>
+      <p class="note">
+        Figma set <code>Icons</code>, node <code>109:1374</code>.
+      </p>
+      <div class="demo">
+        <Icon icon="cursor" alt="Cursor icon" />
+        <Icon icon="figma-make" alt="Figma Make icon" />
+      </div>
+
+      <h3>Post-it</h3>
+      <p class="note">
+        Figma set <code>post-it</code>, node <code>114:581</code>.
+      </p>
+      <div class="demo">
+        <PostIt color="herbs">[a note]</PostIt>
+        <PostIt color="tomato">[a note]</PostIt>
+        <PostIt color="lemon">[a note]</PostIt>
+        <PostIt color="pickled">[a note]</PostIt>
+      </div>
+
+      <h3>Flipcard</h3>
+      <p class="note">
+        Figma set <code>flipcard</code>, node <code>114:569</code>.
+      </p>
+      <div class="demo">
+        <FlipCard id="styleguide-flip-front" state="front" title="[project]">
+          <p>[project summary]</p>
+        </FlipCard>
+        <FlipCard
+          id="styleguide-flip-back"
+          state="back"
+          title="[project]"
+          githubUrl="#h-components"
+          figmaUrl="#h-components"
+          additionalUrl="#h-components"
+        >
+          <p>[project summary]</p>
+        </FlipCard>
+        <FlipCard id="styleguide-flip-small" state="small" title="[project]">
+          <p>[project summary]</p>
+        </FlipCard>
+      </div>
+
+      <h3>Curiosity</h3>
+      <p class="note">
+        Figma set <code>curiosity</code>, node <code>114:610</code>.
+      </p>
+      <div class="demo">
+        <CuriosityRow user="max">
+          <p>[a curiosity]</p>
+        </CuriosityRow>
+      </div>
+
+      <h3>Blank section</h3>
+      <p class="note">
+        Figma set <code>blank section</code>, node <code>114:636</code>.
+      </p>
+      <div class="demo demo--stack">
+        <BlankSection level={4}>
+          <p>[section body]</p>
+        </BlankSection>
+      </div>
+
+      <h3>CV section</h3>
+      <p class="note">
+        Figma set <code>CV section</code>, node <code>114:640</code>.
+      </p>
+      <div class="demo demo--stack">
+        <CvSection
+          role="[role]"
+          company="[company]"
+          start="2026-03"
+          end="2026-10"
+          level={4}
+        >
+          <p>[summary]</p>
+        </CvSection>
+      </div>
+
+      <h3>Project preview</h3>
+      <p class="note">
+        Figma set <code>project preview</code>, node <code>114:646</code>.
+      </p>
+      <div class="demo">
+        <ProjectPreview
+          id="styleguide-preview-collapsed-small"
+          state="collapsed"
+          size="small"
+          caption="[caption]"
+          title="[project title]"
+        />
+        <ProjectPreview
+          id="styleguide-preview-collapsed-default"
+          state="collapsed"
+          size="default"
+          caption="[caption]"
+          title="[project title]"
+        />
+        <ProjectPreview
+          id="styleguide-preview-exploded-default"
+          state="exploded"
+          size="default"
+          caption="[caption]"
+          title="[project title]"
+        />
+      </div>
+
+      <h3>Tool box</h3>
+      <p class="note">
+        Figma set <code>tool box</code>, node <code>114:685</code>.
+      </p>
+      <div class="demo demo--stack">
+        <ToolBox tools={placeholderTools} level={4} />
+        <ToolBox tools={[]} level={4} />
+      </div>
+
+      <h3>Focus areas</h3>
+      <p class="note">
+        Figma set <code>focus areas</code>, node <code>115:703</code>.
+      </p>
+      <div class="demo demo--stack">
+        <FocusAreas
+          areas={['[focus area]', '[focus area]', '[focus area]']}
+          level={4}
+        />
+        <FocusAreas areas={[]} level={4} />
+      </div>
+
+      <h3>Release notes</h3>
+      <p class="note">
+        Figma set <code>release notes</code>, node <code>115:706</code>.
+      </p>
+      <div class="demo demo--stack">
+        <ReleaseNote
+          state="active"
+          date={releaseDate}
+          backHref="#h-components"
+          level={4}
+        >
+          <p slot="userExperience">[user experience]</p>
+          <p slot="userInterface">[user interface]</p>
+          <p slot="tools">[tools]</p>
+        </ReleaseNote>
+        <ReleaseNote state="inactive" date={releaseDate} level={4}>
+          <p slot="userExperience">[inactive release note]</p>
+        </ReleaseNote>
+      </div>
+
+      <h3>Project sections</h3>
+      <p class="note">
+        Figma set <code>project sections</code>, node <code>115:755</code>.
+      </p>
+      <div class="demo demo--stack">
+        <ProjectSection
+          state="active"
+          title="[case study section]"
+          subtitle="[section subtitle]"
+          keyPoints={['[key point]', '[key point]']}
+          level={4}
+        >
+          <p>[section description]</p>
+        </ProjectSection>
+        <ProjectSection
+          state="inactive"
+          title="[case study section]"
+          subtitle="[section subtitle]"
+          keyPoints={['[key point]', '[key point]']}
+          level={4}
+        >
+          <p>[section description]</p>
+        </ProjectSection>
+      </div>
+
+      <h3>NavBar</h3>
+      <p class="note">
+        Figma set <code>NavBar</code>, node <code>210:1625</code>.
+      </p>
+      <div class="demo demo--stack">
+        <NavBar mode="default" label="Footer, light" />
+        <div class="demo__dark">
+          <NavBar mode="dark" label="Footer, dark" />
+        </div>
+      </div>
     </section>
 
     <footer class="guide__foot">
@@ -517,6 +953,31 @@ const shadows = ['sm', 'md', 'lg'];
     color: var(--color-neutral-700);
   }
 
+  .text-styles__sample {
+    display: block;
+    max-width: none;
+  }
+
+  .text-styles__marker {
+    display: inline-block;
+    padding: var(--space-3xs) var(--space-2xs);
+    margin-inline-start: var(--space-2xs);
+    border-radius: var(--radius-sm);
+    background: var(--color-lemon-100);
+    color: var(--color-neutral-800);
+    font-family: var(--font-mono);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-regular);
+    line-height: var(--line-height-relaxed);
+    letter-spacing: var(--letter-spacing-normal);
+  }
+
+  .text-styles__tokens {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3xs) var(--space-2xs);
+  }
+
   .sample-serif {
     font-family: var(--font-serif);
     font-size: var(--font-size-xl);
@@ -610,6 +1071,27 @@ const shadows = ['sm', 'md', 'lg'];
     background: var(--color-neutral-white);
     border: 1px solid var(--color-neutral-300);
     border-radius: var(--radius-md);
+  }
+
+  /* Component demos ------------------------------------------------------ */
+
+  .demo {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: var(--space-lg);
+    inline-size: 100%;
+  }
+
+  .demo--stack {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .demo__dark {
+    inline-size: 100%;
+    padding: var(--space-md);
+    background: var(--color-neutral-black);
   }
 
   .guide__foot {

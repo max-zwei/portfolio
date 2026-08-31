@@ -1,0 +1,204 @@
+---
+/**
+ * Figma component set `project sections` (`115:755`).
+ *
+ * One instance represents one movement of a case study, matching the shared
+ * `caseSection` content schema rather than wrapping the whole case study.
+ */
+import type { ImageMetadata } from 'astro';
+import { Image } from 'astro:assets';
+
+interface Props {
+  /** Figma `State`. */
+  state?: 'active' | 'inactive';
+  /** The case-study movement's heading. */
+  title: string;
+  /** Optional line beside the title, matching `caseSection.subtitle`. */
+  subtitle?: string;
+  /** Ordered visual artefacts for this movement. */
+  artefacts?: ReadonlyArray<{ src: ImageMetadata; alt: string }>;
+  /** Scannable takeaways from this movement. */
+  keyPoints?: ReadonlyArray<string>;
+  /** Optional heading level to match the styleguide examples. */
+  level?: 2 | 3 | 4;
+  class?: string;
+}
+
+const {
+  state = 'active',
+  title,
+  subtitle,
+  artefacts = [],
+  keyPoints = [],
+  level = 2,
+  class: className,
+} = Astro.props;
+
+const HeadingTag = `h${level}` as 'h2' | 'h3' | 'h4';
+---
+
+<section
+  class:list={['project-section', `project-section--${state}`, className]}
+>
+  <span class="project-section__tag" aria-hidden="true"></span>
+
+  <div class="project-section__columns">
+    <header class="project-section__header">
+      <HeadingTag class="project-section__title">{title}</HeadingTag>
+      {subtitle && <p class="project-section__subtitle">{subtitle}</p>}
+    </header>
+
+    <div class="project-section__copy">
+      <slot />
+    </div>
+  </div>
+
+  {
+    artefacts.length > 0 && (
+      <div class="project-section__artefacts">
+        {artefacts.map((artefact) => (
+          <figure class="project-section__artefact">
+            <Image src={artefact.src} alt={artefact.alt} />
+          </figure>
+        ))}
+      </div>
+    )
+  }
+
+  {
+    keyPoints.length > 0 && (
+      <ul class="project-section__key-points">
+        {keyPoints.map((keyPoint) => (
+          <li>{keyPoint}</li>
+        ))}
+      </ul>
+    )
+  }
+</section>
+
+<style>
+  .project-section {
+    display: grid;
+    gap: var(--space-md);
+    color: var(--color-neutral-800);
+  }
+
+  .project-section__tag {
+    display: block;
+    /* Token-chosen dimensions while Figma is unreachable; not Figma-read. */
+    width: var(--space-lg);
+    height: var(--space-sm);
+    background-color: var(--color-neutral-white);
+    box-shadow: var(--shadow-sm);
+  }
+
+  /* The Figma frame binds the stray `Sizes/L: 24` variable in this spacing
+     slot. It is outside the real token collections; --space-md is chosen by
+     its matching 24px value. */
+  .project-section__columns {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-md);
+    align-items: start;
+  }
+
+  .project-section__header {
+    display: grid;
+    gap: var(--space-sm);
+  }
+
+  /* Typography/H1 on an h2. Only the size differs from global.css. */
+  .project-section__title {
+    font-size: var(--font-size-3xl);
+  }
+
+  /* Typography/Body - Large. */
+  .project-section__subtitle {
+    font-family: var(--font-sans);
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-regular);
+    line-height: var(--line-height-normal);
+    letter-spacing: var(--letter-spacing-normal);
+  }
+
+  /* Typography/Body — description markdown arrives through the default slot. */
+  .project-section__copy,
+  .project-section__key-points {
+    font-family: var(--font-sans);
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-regular);
+    line-height: var(--line-height-normal);
+    letter-spacing: var(--letter-spacing-normal);
+  }
+
+  .project-section__copy :global(p) {
+    max-width: none;
+  }
+
+  .project-section__artefacts {
+    display: flex;
+    gap: var(--space-sm);
+    overflow-x: auto;
+  }
+
+  .project-section__artefact {
+    flex: 1 0 auto;
+    margin: 0;
+    border: 1px solid var(--color-neutral-black);
+    background-color: var(--color-neutral-black);
+  }
+
+  .project-section__artefact :global(img) {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .project-section__key-points {
+    display: grid;
+    gap: var(--space-xs);
+    margin: 0;
+    padding-left: var(--space-md);
+    border-left: 1px solid var(--color-neutral-300);
+    list-style: none;
+  }
+
+  .project-section__key-points li {
+    position: relative;
+    padding-left: var(--space-sm);
+  }
+
+  .project-section__key-points li::before {
+    position: absolute;
+    top: var(--space-2xs);
+    left: 0;
+    width: var(--space-2xs);
+    height: var(--space-2xs);
+    border-radius: var(--radius-full);
+    background-color: var(--color-tomato-500);
+    content: '';
+  }
+
+  /*
+   * Figma was unreachable for the inactive state's exact greys, so these come
+   * from the existing neutral ramp rather than the frame.
+   *
+   * Chosen against measured contrast: `neutral-700` is 7.91:1 on
+   * `neutral-100`, still clearly dimmed next to `neutral-800` body copy at
+   * 15.59:1. The first pass used `neutral-600` (3.40) for text and
+   * `neutral-500` (2.31) for the artefact frames; the first fails AA for text
+   * and the second fails even the 3:1 non-text minimum. `neutral-600` stays
+   * only on the frame, where 3.40:1 clears that bar.
+   */
+  .project-section--inactive .project-section__title,
+  .project-section--inactive .project-section__subtitle,
+  .project-section--inactive .project-section__copy,
+  .project-section--inactive .project-section__key-points {
+    color: var(--color-neutral-700);
+  }
+
+  .project-section--inactive .project-section__artefact {
+    border-color: var(--color-neutral-600);
+    background-color: var(--color-neutral-600);
+  }
+</style>

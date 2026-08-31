@@ -1,0 +1,49 @@
+---
+/**
+ * Figma component set `Icons` (`109:1374`).
+ *
+ * Scope boundary: the eight marks inside the Figma `NavBar` frame are not
+ * members of this set and must not be added here.
+ */
+import { withBase } from '../config/site';
+
+type IconName = 'cursor' | 'figma-make';
+
+interface Props {
+  /** Icon exported from the Figma `Icons` set. */
+  icon: IconName;
+  /** Required: an icon with no meaning is the caller's decision to make explicit. */
+  alt: string;
+  /** Additional classes applied to the image. */
+  class?: string;
+}
+
+const ICONS = {
+  // Figma `cursor` (`109:1373`).
+  cursor: {
+    src: withBase('/cursor.svg'),
+    width: 40,
+    height: 40,
+  },
+  // Figma `figma-make` (`140:1095`).
+  'figma-make': {
+    src: withBase('/icons/figma-make.svg'),
+    width: 80,
+    height: 80,
+  },
+} as const satisfies Record<
+  IconName,
+  { src: string; width: number; height: number }
+>;
+
+const { icon, alt, class: className } = Astro.props;
+const asset = ICONS[icon];
+---
+
+<img
+  src={asset.src}
+  alt={alt}
+  width={asset.width}
+  height={asset.height}
+  class:list={[className]}
+/>

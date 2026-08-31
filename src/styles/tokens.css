@@ -6,7 +6,7 @@
  * the anti-drift mechanism — keep it mechanical.
  *
  * Values come from Figma. Sync workflow, and the three things Figma cannot
- * express faithfully: behind-the-scenes/skills/figma-implement.md.
+ * express faithfully: behind-the-scenes/skills/figma-to-astro.md.
  */
 
 :root {
@@ -86,9 +86,13 @@
   --font-weight-regular: 400;
   --font-weight-medium: 500;
   --font-weight-semibold: 600;
+  --font-weight-bold: 700;
 
+  /* Set solid — the Figma heading styles H1–H5 all bind line-height 1. */
+  --line-height-none: 1;
   --line-height-tight: 1.1;
   --line-height-snug: 1.3;
+  --line-height-relaxed: 1.4;
   --line-height-normal: 1.6;
   /* Airy enough for wide-tracked mono. Chat bubbles, per the Figma text style. */
   --line-height-loose: 2;

@@ -16,19 +16,19 @@ build restrained and token-driven so the real one drops in cleanly.
 
 Numbered so they can be cited. `MUST` / `NEVER` are literal.
 
-| Rule | Statement                                                                                                                                                                                                                                  |
-| ---- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| R1   | NEVER change this file without Max's explicit approval. Propose, then wait.                                                                                                                                                                |
-| R2   | NEVER write a literal that has a token. No hex, no `px`, no `font-family` in a component. Use `var(--color-neutral-700)`, `var(--space-md)`. A needed value with no token → ask.                                                           |
-| R3   | NEVER introduce a role layer. `--text-secondary`, `--surface-default` and friends were tried and deliberately removed. One flat tier only.                                                                                                 |
-| R4   | NEVER author a style the design has not defined. Every declaration traces to a Figma frame, to `global.css`, or to an accessibility requirement. An invented hover colour is a bug.                                                        |
-| R5   | The Figma file is the decision, not a draft. You MAY report a contrast failure, an asymmetric ramp, an odd value. You MUST NOT resolve one by adding a token, darkening a value, extending a ramp or substituting a step.                  |
-| R6   | NEVER invent content. No case studies, testimonials, client names, metrics or bio copy. Placeholder copy MUST read as placeholder — `[bracketed]`.                                                                                         |
-| R7   | Accessibility is part of done. Semantic HTML, a visible `:focus-visible` on every interactive element, alt text on every image, `prefers-reduced-motion` respected (globally — do not re-add it per page), contrast measured and reported. |
-| R8   | NEVER add speculative structure. No field, option, component or helper for a use case that does not exist. `src/components/` does not exist; extract on the second use, not the first.                                                     |
-| R9   | Comments earn their place: complex code, or structure. NOT narration of the work. `tokens.css` and `fonts.css` are the exception — there the rationale is the useful part.                                                                 |
-| R10  | Run `npm run verify` before pushing. Zero warnings.                                                                                                                                                                                        |
-| R11  | Zero client JS unless a feature genuinely cannot work without it. Ask first.                                                                                                                                                               |
+| Rule | Statement                                                                                                                                                                                                                                                                                                                                                                                      |
+| ---- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| R1   | NEVER change this file without Max's explicit approval. Propose, then wait.                                                                                                                                                                                                                                                                                                                    |
+| R2   | NEVER write a literal that has a token. No hex, no `px`, no `font-family` in a component. Use `var(--color-neutral-700)`, `var(--space-md)`. A needed value with no token → ask.                                                                                                                                                                                                               |
+| R3   | NEVER introduce a role layer. `--text-secondary`, `--surface-default` and friends were tried and deliberately removed. One flat tier only.                                                                                                                                                                                                                                                     |
+| R4   | NEVER author a style the design has not defined. Every declaration traces to a Figma frame, to `global.css`, or to an accessibility requirement. An invented hover colour is a bug.                                                                                                                                                                                                            |
+| R5   | The Figma file is the decision, not a draft. You MAY report a contrast failure, an asymmetric ramp, an odd value. You MUST NOT resolve one by adding a token, darkening a value, extending a ramp or substituting a step.                                                                                                                                                                      |
+| R6   | NEVER invent content. No case studies, testimonials, client names, metrics or bio copy. Placeholder copy MUST read as placeholder — `[bracketed]`.                                                                                                                                                                                                                                             |
+| R7   | Accessibility is part of done. Semantic HTML, a visible `:focus-visible` on every interactive element, alt text on every image, `prefers-reduced-motion` respected (globally — do not re-add it per page), contrast measured and reported.                                                                                                                                                     |
+| R8   | NEVER add speculative structure. No field, option or helper for a use case that does not exist. Components are the one exception, with a sharper test: a component set **published in the Figma library** MAY live in `src/components/` before its first page use, because the library is itself a design decision. Anything not in the library stays inline on the page until its second use. |
+| R9   | Comments earn their place: complex code, or structure. NOT narration of the work. `tokens.css` and `fonts.css` are the exception — there the rationale is the useful part.                                                                                                                                                                                                                     |
+| R10  | Run `npm run verify` before pushing. Zero warnings.                                                                                                                                                                                                                                                                                                                                            |
+| R11  | Zero client JS unless a feature genuinely cannot work without it. Ask first.                                                                                                                                                                                                                                                                                                                   |
 
 ## 2. Decided — do not revisit
 
@@ -55,6 +55,7 @@ Numbered so they can be cited. `MUST` / `NEVER` are literal.
 
 ```
 src/
+  components/            Ported Figma component sets, one file per set. Each names its set and node id.
   config/site.ts         Site-wide constants. Edit here, never inline.
   content.config.ts      Collection schemas (zod).
   content/projects/      Case studies. Eight sections each; images in _media/.
@@ -66,16 +67,21 @@ src/
   content/release-notes/ What changed on the site, and when.
   layouts/               BaseLayout — head, meta, OG, skip link.
                          ProseLayout — markdown document pages.
+  lib/dates.ts           formatMonth / formatRange, shared by /resume and CvSection.
   lib/tokens.ts          Reads design/tokens.json for /styleguide.
   pages/                 File-based routes. handshake.md is a markdown page.
   styles/tokens.css      Design tokens. One flat tier. Start here.
   styles/fonts.css       All three typefaces.
   styles/global.css      Reset, typography defaults, a11y helpers, .container.
 design/tokens.json       DTCG export — the Figma exchange format.
+design/components.json   Figma component-set manifest. Read before porting a set twice.
 public/admin/            Decap CMS config.
 public/cv/               CV as PDF. Generated. NEVER hand-edit.
 public/handshake/        Handshake as PDF. Generated. NEVER hand-edit.
 public/fonts/            Satoshi + Erode woff2 + LICENSE. Third-party type.
+public/avatars/          Chat avatars as SVG. One per speaker, plus everyone.svg.
+public/icons/            Footer and Icons-set marks as SVG. Exported from Figma.
+public/logo/             The chat-ground logo variants as SVG. Exported from Figma.
 public/certificates/     Scanned qualifications. public/letters/ — references.
 scripts/render-pdf.mjs   Prints /resume and /handshake to those PDFs.
 behind-the-scenes/skills/ Agent skills. figma-implement.md is the main one.

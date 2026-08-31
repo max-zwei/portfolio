@@ -1,7 +1,8 @@
 import { defineCollection, reference, type SchemaContext } from 'astro:content';
 import { glob } from 'astro/loaders';
-import { readdirSync } from 'node:fs';
+import { existsSync, readdirSync } from 'node:fs';
 import { z } from 'zod';
+import { tagIds } from './config/match';
 
 /**
  * Content schemas.
@@ -17,10 +18,10 @@ import { z } from 'zod';
 /** The `image()` helper Astro hands to each schema. Named so helpers can take it. */
 type ImageFn = SchemaContext['image'];
 
-/** `YYYY-MM`. Sorted as a string, so the zero padding is load-bearing. */
+/** `YYYY` or `YYYY-MM`. Sorted as a string, so the zero padding is load-bearing. */
 const yearMonth = z
   .string()
-  .regex(/^\d{4}-(0[1-9]|1[0-2])$/, 'Use YYYY-MM, e.g. 2025-03');
+  .regex(/^\d{4}(?:-(0[1-9]|1[0-2]))?$/, 'Use YYYY or YYYY-MM, e.g. 2025-03');
 
 /**
  * Supporting images — sketches, flows, screens, photos of the thing.
@@ -60,6 +61,22 @@ const caseSection = (image: ImageFn) =>
       keyPoints: z.array(z.string().min(1)).default([]),
     })
     .optional();
+
+/**
+ * What the /home questionnaire matches an entry on. Every option comes from
+ * src/config/match.ts, so a chip and a tag can never drift apart.
+ *
+ * `.prefault({})` lets an untagged entry omit the object entirely and still
+ * parse to four empty arrays, which is what the matcher expects.
+ */
+const match = z
+  .object({
+    teams: z.array(z.enum(tagIds('team'))).default([]),
+    fields: z.array(z.enum(tagIds('field'))).default([]),
+    roles: z.array(z.enum(tagIds('role'))).default([]),
+    tech: z.array(z.enum(tagIds('tech'))).default([]),
+  })
+  .prefault({});
 
 const projects = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/projects' }),
@@ -106,6 +123,7 @@ const projects = defineCollection({
         feedback: caseSection(image),
         learning: caseSection(image),
         behindTheScenes: caseSection(image),
+        match,
       })
       // An image without alt text is an accessibility bug, so fail the build.
       .refine(
@@ -144,6 +162,8 @@ const playground = defineCollection({
 
         /** Anything that isn't GitHub or Figma — a demo, a write-up, a video. */
         additionalUrl: z.url().optional(),
+
+        match,
       })
       .refine((data) => !data.teaser || Boolean(data.teaserAlt), {
         message: 'teaserAlt is required when teaser is set',
@@ -167,6 +187,8 @@ const inspiration = defineCollection({
 
         teaser: image().optional(),
         teaserAlt: z.string().optional(),
+
+        match,
       })
       .refine((data) => !data.teaser || Boolean(data.teaserAlt), {
         message: 'teaserAlt is required when teaser is set',
@@ -217,6 +239,8 @@ const curiosity = defineCollection({
           `No question named "${(issue.input as { id: string }).id}". Add it under src/content/questions/, or point at one that exists.`,
       },
     ),
+
+    match,
   }),
 });
 
@@ -259,11 +283,36 @@ const resume = defineCollection({
 
         /** Up to three things to point at. Ordered — the first one leads. */
         projectUrls: z.array(z.url()).max(3).default([]),
+
+        /**
+         * The one scan behind this entry — an Arbeitszeugnis under /letters, or
+         * a qualification under /certificates. A path into public/ rather than
+         * an image(): it is served as-is for reading, not optimised, exactly
+         * like `file` on releaseNotes. The folder carries the meaning, so there
+         * is no separate label field to keep in step with it.
+         */
+        documentUrl: z
+          .string()
+          .regex(
+            /^\/(letters|certificates)\/[a-z0-9._-]+\.pdf$/,
+            'Use /letters/name.pdf or /certificates/name.pdf',
+          )
+          .optional(),
+
+        match,
       })
       .refine((data) => !data.logo || Boolean(data.logoAlt), {
         message: 'logoAlt is required when logo is set',
         path: ['logoAlt'],
-      }),
+      })
+      .refine(
+        (data) =>
+          !data.documentUrl || existsSync(`./public${data.documentUrl}`),
+        {
+          message: 'No such file under public/ — check the filename',
+          path: ['documentUrl'],
+        },
+      ),
 });
 
 /** What changed on the site, and when. */

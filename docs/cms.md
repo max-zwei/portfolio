@@ -33,19 +33,20 @@ copy it, or create an entry through `/admin`.
 The case study, told in eight sections. Everything above them is card and
 listing data.
 
-| Field                 | Type           | Required    | Purpose                                                      |
-| --------------------- | -------------- | ----------- | ------------------------------------------------------------ |
-| `title`               | string         | yes         | Project name. Used as the page `<h1>` and in listings.       |
-| `summary`             | string (≤ 280) | yes         | Card copy and meta description. One or two sentences.        |
-| `company`             | string         | yes         | Who the work was for.                                        |
-| `year`                | number         | yes         | Year the work was done, or started for ongoing work.         |
-| `tags`                | string[]       | no          | Discipline and domain tags, e.g. `["uxresearch", "edtech"]`. |
-| `teaserVertical`      | image          | no          | Portrait teaser, for tall cards.                             |
-| `teaserVerticalAlt`   | string         | conditional | **Required whenever `teaserVertical` is set.**               |
-| `teaserHorizontal`    | image          | no          | Landscape teaser, for wide cards.                            |
-| `teaserHorizontalAlt` | string         | conditional | **Required whenever `teaserHorizontal` is set.**             |
-| `figmaUrl`            | URL            | no          | The Figma file or frame the work was designed in.            |
-| `repoUrl`             | URL            | no          | The GitHub repository, where the project has one.            |
+| Field                 | Type                    | Required    | Purpose                                                      |
+| --------------------- | ----------------------- | ----------- | ------------------------------------------------------------ |
+| `title`               | string                  | yes         | Project name. Used as the page `<h1>` and in listings.       |
+| `summary`             | string (≤ 280)          | yes         | Card copy and meta description. One or two sentences.        |
+| `company`             | string                  | yes         | Who the work was for.                                        |
+| `year`                | number                  | yes         | Year the work was done, or started for ongoing work.         |
+| `tags`                | string[]                | no          | Discipline and domain tags, e.g. `["uxresearch", "edtech"]`. |
+| `teaserVertical`      | image                   | no          | Portrait teaser, for tall cards.                             |
+| `teaserVerticalAlt`   | string                  | conditional | **Required whenever `teaserVertical` is set.**               |
+| `teaserHorizontal`    | image                   | no          | Landscape teaser, for wide cards.                            |
+| `teaserHorizontalAlt` | string                  | conditional | **Required whenever `teaserHorizontal` is set.**             |
+| `figmaUrl`            | URL                     | no          | The Figma file or frame the work was designed in.            |
+| `repoUrl`             | URL                     | no          | The GitHub repository, where the project has one.            |
+| `match`               | object of four id lists | No          | What the /home questionnaire matches this entry on.          |
 
 Then the eight sections, in narrative order — `context`, `hmw`, `exploration`,
 `definition`, `development`, `feedback`, `learning`, `behindTheScenes`. Each is
@@ -62,25 +63,27 @@ There is no markdown body — the eight sections _are_ the case study.
 
 ## playground
 
-| Field           | Type           | Required    | Purpose                                               |
-| --------------- | -------------- | ----------- | ----------------------------------------------------- |
-| `title`         | string         | yes         | Name of the experiment.                               |
-| `summary`       | string (≤ 280) | yes         | One or two sentences — this is the whole description. |
-| `teaser`        | image          | no          | Card image.                                           |
-| `teaserAlt`     | string         | conditional | **Required whenever `teaser` is set.**                |
-| `githubUrl`     | URL            | no          | Where the code lives.                                 |
-| `figmaUrl`      | URL            | no          | Where it was designed.                                |
-| `additionalUrl` | URL            | no          | Anything else — a demo, a write-up, a video.          |
+| Field           | Type                    | Required    | Purpose                                               |
+| --------------- | ----------------------- | ----------- | ----------------------------------------------------- |
+| `title`         | string                  | yes         | Name of the experiment.                               |
+| `summary`       | string (≤ 280)          | yes         | One or two sentences — this is the whole description. |
+| `teaser`        | image                   | no          | Card image.                                           |
+| `teaserAlt`     | string                  | conditional | **Required whenever `teaser` is set.**                |
+| `githubUrl`     | URL                     | no          | Where the code lives.                                 |
+| `figmaUrl`      | URL                     | no          | Where it was designed.                                |
+| `additionalUrl` | URL                     | no          | Anything else — a demo, a write-up, a video.          |
+| `match`         | object of four id lists | No          | What the /home questionnaire matches this entry on.   |
 
 ## inspiration
 
-| Field       | Type           | Required    | Purpose                                                |
-| ----------- | -------------- | ----------- | ------------------------------------------------------ |
-| `title`     | string         | yes         | Name of the thing.                                     |
-| `url`       | URL            | yes         | Where it lives. The point of the entry.                |
-| `summary`   | string (≤ 280) | yes         | Why it's here — what you took from it, not what it is. |
-| `teaser`    | image          | no          | Card image.                                            |
-| `teaserAlt` | string         | conditional | **Required whenever `teaser` is set.**                 |
+| Field       | Type                    | Required    | Purpose                                                |
+| ----------- | ----------------------- | ----------- | ------------------------------------------------------ |
+| `title`     | string                  | yes         | Name of the thing.                                     |
+| `url`       | URL                     | yes         | Where it lives. The point of the entry.                |
+| `summary`   | string (≤ 280)          | yes         | Why it's here — what you took from it, not what it is. |
+| `teaser`    | image                   | no          | Card image.                                            |
+| `teaserAlt` | string                  | conditional | **Required whenever `teaser` is set.**                 |
+| `match`     | object of four id lists | No          | What the /home questionnaire matches this entry on.    |
 
 ## questions
 
@@ -94,10 +97,11 @@ thought under it still points at the same file.
 
 ## curiosity
 
-| Field      | Type                    | Required | Purpose                                      |
-| ---------- | ----------------------- | -------- | -------------------------------------------- |
-| `thought`  | string                  | yes      | The observation.                             |
-| `question` | reference → `questions` | yes      | The one question this thought belongs under. |
+| Field      | Type                    | Required | Purpose                                             |
+| ---------- | ----------------------- | -------- | --------------------------------------------------- |
+| `thought`  | string                  | yes      | The observation.                                    |
+| `question` | reference → `questions` | yes      | The one question this thought belongs under.        |
+| `match`    | object of four id lists | No       | What the /home questionnaire matches this entry on. |
 
 Both halves, always. A thought without its question is a status update.
 
@@ -122,17 +126,19 @@ One entry per position or qualification. **This is the CV** — see
 [`docs/resume.md`](./resume.md), and re-run `npm run pdf` after editing or the
 committed PDF goes stale.
 
-| Field         | Type                  | Required    | Purpose                                                        |
-| ------------- | --------------------- | ----------- | -------------------------------------------------------------- |
-| `role`        | string                | yes         | Job title, or the degree for an education entry.               |
-| `company`     | string                | yes         | Employer, client or institution.                               |
-| `kind`        | `work` \| `education` | yes         | Tells the two apart on the printed CV.                         |
-| `start`       | `YYYY-MM`             | yes         | The timeline sorts on this, so the format matters.             |
-| `end`         | `YYYY-MM`             | no          | Leave it out for anything still active.                        |
-| `summary`     | string                | yes         | One or two sentences: what the work was, and what came of it.  |
-| `logo`        | image                 | no          | Company or institution mark.                                   |
-| `logoAlt`     | string                | conditional | **Required whenever `logo` is set.**                           |
-| `projectUrls` | URL[] (max 3)         | no          | Up to three things to point at. Ordered — the first one leads. |
+| Field         | Type                                     | Required    | Purpose                                                                                         |
+| ------------- | ---------------------------------------- | ----------- | ----------------------------------------------------------------------------------------------- |
+| `role`        | string                                   | yes         | Job title, or the degree for an education entry.                                                |
+| `company`     | string                                   | yes         | Employer, client or institution.                                                                |
+| `kind`        | `work` \| `education`                    | yes         | Tells the two apart on the printed CV.                                                          |
+| `start`       | `YYYY-MM`                                | yes         | The timeline sorts on this, so the format matters.                                              |
+| `end`         | `YYYY-MM`                                | no          | Leave it out for anything still active.                                                         |
+| `summary`     | string                                   | yes         | One or two sentences: what the work was, and what came of it.                                   |
+| `logo`        | image                                    | no          | Company or institution mark.                                                                    |
+| `logoAlt`     | string                                   | conditional | **Required whenever `logo` is set.**                                                            |
+| `projectUrls` | URL[] (max 3)                            | no          | Up to three things to point at. Ordered — the first one leads.                                  |
+| `documentUrl` | path (`/letters/…` or `/certificates/…`) | no          | The Arbeitszeugnis or certificate scan for this entry. Shown on /resume, not on the printed CV. |
+| `match`       | object of four id lists                  | No          | What the /home questionnaire matches this entry on.                                             |
 
 The CV's opening paragraph is _not_ here. It is bio copy rather than a position,
 so it lives in [`src/config/site.ts`](../src/config/site.ts) as `CV_INTRO`.
@@ -151,6 +157,23 @@ so it lives in [`src/config/site.ts`](../src/config/site.ts) as `CV_INTRO`.
 All three category fields are optional because a release rarely moves all three
 at once. `file` is the **one upload that does not live in `src/`** — it is served
 as-is for download rather than optimised, so it goes to `public/releases/`.
+
+## match
+
+The `projects`, `playground`, `inspiration`, `curiosity`, and `resume`
+collections can describe the evidence they provide for the `/home`
+questionnaire. The object has four axes; every value is a list of ids:
+
+- `teams`: `corporate`, `startup`, `individual`, `pre-company`, `ngo`,
+  `association`
+- `fields`: `web-design`, `branding`, `ux-review`, `ui-review`, `ux-concept`,
+  `product-management`
+- `roles`: `volunteer`, `freelancer`, `employee`, `founding-designer`
+- `tech`: `css-html`, `wordpress`, `no-code`, `python`, `javascript`, `julia`
+
+An entry may leave any axis empty or omit it. These ids are stable keys:
+rewording a questionnaire chip does not re-tag the content. The `Other …`
+answer carries no id and matches nothing.
 
 ## Conventions
 
@@ -214,6 +237,10 @@ hmw:
 ## Adding a field
 
 Use this file as source of truth for the fields. Update all others accordingly.
+
+A `match` option is the exception: it lives in **four** places. Update
+`src/config/match.ts` (the source of truth), then `src/content.config.ts`,
+`public/admin/config.yml`, and this file, in that order.
 
 1. Add it to the zod schema in `src/content.config.ts` (with a doc comment).
 2. Add the matching widget to `public/admin/config.yml`.
