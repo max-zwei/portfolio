@@ -10,11 +10,14 @@ import TextSection from './TextSection.astro';
 interface Props {
   /** Section heading; defaults to the final heading drawn in Figma. */
   title?: string;
+  /** Optional heading level to match the styleguide examples. */
+  level?: 2 | 3 | 4;
   /** Additional class forwarded to the root section. */
   class?: string;
 }
 
-const { title = 'Let’s be honest', class: className } = Astro.props;
+const { title = 'Let’s be honest', level = 2, class: className } = Astro.props;
 ---
 
-<TextSection title={title} class={className}><slot /></TextSection>
+<TextSection title={title} level={level} class={className}><slot /></TextSection
+>

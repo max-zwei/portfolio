@@ -67,20 +67,54 @@ export const NAV = {
 
 /** Social marks the footer draws. Only the GitHub URL is known. */
 export const SOCIALS = [
-  { label: 'Figma', href: '#', icon: '/icons/figma.svg' },
+  {
+    label: 'Figma',
+    href: '#',
+    icon: '/icons/figma.svg',
+    width: 16,
+    height: 16,
+  },
   {
     label: 'GitHub',
     href: 'https://github.com/max-zwei',
     icon: '/icons/github.svg',
+    width: 16,
+    height: 16,
   },
-  { label: 'Dribbble', href: '#', icon: '/icons/dribbble.svg' },
-  { label: 'Behance', href: '#', icon: '/icons/behance.svg' },
-  { label: 'LinkedIn', href: '#', icon: '/icons/linkedin.svg' },
+  {
+    label: 'Dribbble',
+    href: '#',
+    icon: '/icons/dribbble.svg',
+    width: 16,
+    height: 16,
+  },
+  {
+    label: 'Behance',
+    href: '#',
+    icon: '/icons/behance.svg',
+    width: 16,
+    height: 16,
+  },
+  {
+    label: 'LinkedIn',
+    href: '#',
+    icon: '/icons/linkedin.svg',
+    width: 16,
+    height: 16,
+  },
 ] as const;
 
 /** The three marks beside "explore with". Decorative: the design draws no link. */
 export const EXPLORE_WITH = [
-  '/icons/explore-claude.svg',
-  '/icons/explore-openai.svg',
-  '/icons/explore-3.svg',
+  {
+    label: 'Claude',
+    href: 'https://claude.ai/',
+    icon: '/icons/explore-claude.svg',
+  },
+  {
+    label: 'OpenAI',
+    href: 'https://openai.com/',
+    icon: '/icons/explore-openai.svg',
+  },
+  { label: '3', href: '#', icon: '/icons/explore-3.svg' },
 ] as const;

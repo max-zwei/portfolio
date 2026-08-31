@@ -7,16 +7,19 @@
 interface Props {
   /** Section heading. */
   title: string;
+  /** Optional heading level to match the styleguide examples. */
+  level?: 2 | 3 | 4;
   /** Additional class forwarded to the root section. */
   class?: string;
 }
 
-const { title, class: className } = Astro.props;
+const { title, level = 2, class: className } = Astro.props;
+const HeadingTag = `h${level}` as 'h2' | 'h3' | 'h4';
 ---
 
 <section class:list={['text-section', className]}>
   <!-- Figma text style: Typography/H1. -->
-  <h2 class="text-section__title">{title}</h2>
+  <HeadingTag class="text-section__title">{title}</HeadingTag>
   <div class="text-section__body">
     <slot />
   </div>

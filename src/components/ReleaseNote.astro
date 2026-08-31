@@ -19,6 +19,8 @@ interface Props {
   /** Screenshots shown in the black-framed image row. */
   screenshots?: ReadonlyArray<{ src: ImageMetadata; alt: string }>;
   // The design's header chrome shows a filename, but this component renders none, so no inert prop is exposed.
+  /** Optional heading level to match the styleguide examples. */
+  level?: 2 | 3 | 4;
   /** Present → renders the closing return button. */
   backHref?: string;
   class?: string;
@@ -28,9 +30,12 @@ const {
   state = 'active',
   date,
   screenshots = [],
+  level = 2,
   backHref,
   class: className,
 } = Astro.props;
+
+const HeadingTag = `h${level}` as 'h2' | 'h3' | 'h4';
 
 const formattedDate = date.toISOString().slice(0, 10);
 
@@ -41,11 +46,11 @@ const hasTools = Astro.slots.has('tools');
 
 <article class:list={['release-note', `release-note--${state}`, className]}>
   <header>
-    <h2 class="release-note__chrome">
+    <HeadingTag class="release-note__chrome">
       <span aria-hidden="true">● &lt; &gt; </span><time datetime={formattedDate}
         >{formattedDate}</time
       ><span aria-hidden="true"> &lt; / &gt;</span>
-    </h2>
+    </HeadingTag>
   </header>
 
   {
