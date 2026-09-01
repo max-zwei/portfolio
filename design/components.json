@@ -181,7 +181,7 @@
         "State": ["active", "inactive"]
       },
       "combinations": ["active", "inactive"],
-      "notes": "Renders ONE case-study section, not the whole study. Mirrors caseSection in src/content.config.ts. The frame's prose is lorem ipsum, so /styleguide passes bracketed copy. The frame binds a stray variable `Sizes/L: 24` that sits outside the seven real collections and is already marked for deletion; it has no CSS token, and --space-md is 24px. The inactive greys are token-chosen, not transcribed."
+      "notes": "Renders ONE case-study section, not the whole study. Mirrors caseSection in src/content.config.ts. The frame's prose is lorem ipsum, so /styleguide passes bracketed copy. The frame binds a stray variable `Sizes/L: 24` that sits outside the seven real collections and is already marked for deletion; it has no CSS token, and --space-md is 24px. The inactive greys are token-chosen, not transcribed. The styleguide now passes four bracketed placeholder artefacts from src/assets/styleguide/."
     },
     {
       "figmaName": "NavBar",
@@ -226,7 +226,8 @@
       "The inactive greys in ReleaseNote and ProjectSection. Picked as --color-neutral-700 for text (7.91:1 on neutral-100) and --color-neutral-600 for frames (3.40:1, clearing the 3:1 non-text bar) rather than by eye.",
       "NavBar mode=default ground = --color-neutral-100. Only the dark ground was transcribed.",
       "NavBar .navbar__nav flex-wrap: wrap. Not in the design — added because .navbar clips and a narrow viewport was silently cutting #aboutme and #behindthescenes off the right edge.",
-      "ToolBox drops 6 columns to 2 below 48rem. A second undesigned mobile decision beyond the NavBar one."
+      "ToolBox drops 6 columns to 2 below 48rem. A second undesigned mobile decision beyond the NavBar one.",
+      "ProjectSection's artefact strip auto-scrolls: endless 40 px/s drift, latched off by pointer, wheel, touch, key or focus, temporarily paused on hover. Requested directly; no prototype connection exists in project sections (115:755), so nothing about the timing is Figma-read."
     ]
   }
 }
