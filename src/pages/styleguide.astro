@@ -25,6 +25,10 @@ import ProjectPreview from '../components/ProjectPreview.astro';
 import ProjectSection from '../components/ProjectSection.astro';
 import ReleaseNote from '../components/ReleaseNote.astro';
 import ToolBox from '../components/ToolBox.astro';
+import artefact1 from '../assets/styleguide/artefact-1.svg';
+import artefact2 from '../assets/styleguide/artefact-2.svg';
+import artefact3 from '../assets/styleguide/artefact-3.svg';
+import artefact4 from '../assets/styleguide/artefact-4.svg';
 
 // Everything here is computed at build time from design/tokens.json.
 // No client JS, and no hand-maintained copy of the palette that could go stale.
@@ -144,6 +148,14 @@ const textStyles = [
 
 const placeholderTools = Array.from({ length: 6 }, () => ({ name: '[tool]' }));
 const releaseDate = new Date('2026-02-06');
+
+/** The strip has no content collection; four bracketed stand-ins. */
+const demoArtefacts = [
+  { src: artefact1, alt: '[placeholder artefact 1]' },
+  { src: artefact2, alt: '[placeholder artefact 2]' },
+  { src: artefact3, alt: '[placeholder artefact 3]' },
+  { src: artefact4, alt: '[placeholder artefact 4]' },
+];
 ---
 
 <BaseLayout
@@ -689,6 +701,7 @@ const releaseDate = new Date('2026-02-06');
           state="active"
           title="[case study section]"
           subtitle="[section subtitle]"
+          artefacts={demoArtefacts}
           keyPoints={['[key point]', '[key point]']}
           level={4}
         >
@@ -698,6 +711,7 @@ const releaseDate = new Date('2026-02-06');
           state="inactive"
           title="[case study section]"
           subtitle="[section subtitle]"
+          artefacts={demoArtefacts}
           keyPoints={['[key point]', '[key point]']}
           level={4}
         >
