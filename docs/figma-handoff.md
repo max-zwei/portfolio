@@ -1,140 +1,186 @@
 # The Handoff frame
 
-Every page gets one `Handoff` frame, sitting with that page's own frames in
-Figma, and it is read before any other frame for that page — see Step 0 of
-[`figma-to-astro.md`](../behind-the-scenes/skills/figma-to-astro.md). Twelve
-sections, each answering one question the frames themselves cannot: what kind
-of page this is, what persists, where things link, what's final, what's
-missing. Writing one is a checklist, not a blank page — that's what this
-document is for.
+Every page gets one frame named `Handoff`, sitting with that page's own frames
+in Figma, and it is read before any other frame for that page — see Step 0 of
+[`figma-to-astro.md`](../behind-the-scenes/skills/figma-to-astro.md). Answering
+it means ticking boxes and filling short blanks, not writing prose. A blank is
+not a default: a blank is an open question, and the implementer asks it rather
+than infers it.
 
-If a page has no Handoff frame yet, the skill falls back to asking its
-questions directly, one at a time, rather than inferring the answers.
+If a page has no Handoff frame yet, the skill walks this template section by
+section, skipping the sections the table below says do not apply.
 
-## Archetype
+## Fill it in, in three moves
 
-**Why it exists:** decides routing and what has to be tested.
+1. Add a frame named `Handoff` to the page's own canvas, first in reading
+   order.
+2. Paste the template below into one text layer.
+3. Delete the lines that do not apply, tick one box per question, and keep the
+   numbered headings — the headings are what gets read.
 
-**Good answer looks like:** one of bespoke page, collection index, collection
-detail, prose document — named, not implied.
+## Which sections apply
 
-## What this is
+Routing is by what the page _does_, not only by its archetype: `/resume` is a
+prose document that reads the `resume` collection, so it fills section 4.
 
-**Why it exists:** the question that cost two rewrites.
+| Section           | Fill it when                                                | Skip when                                     |
+| ----------------- | ----------------------------------------------------------- | --------------------------------------------- |
+| 1 Archetype       | always                                                      | never                                         |
+| 2 What this is    | always                                                      | never                                         |
+| 3 Frame index     | the page has more than one frame                            | single-frame page — say so in §2              |
+| 4 Content map     | the page reads a content collection, whatever its archetype | nothing on the page comes from `src/content/` |
+| 5 Flow            | something on the page is clickable or changes state         | a static document                             |
+| 6 Link map        | anything links out                                          | nothing links out                             |
+| 7 Copy            | always                                                      | never                                         |
+| 8 Components      | always                                                      | never                                         |
+| 9 States          | the page uses any interactive component                     | nothing interactive is drawn                  |
+| 10 Motion         | anything moves                                              | nothing moves — write `none`                  |
+| 11 Responsive     | always                                                      | never                                         |
+| 12 Open questions | always                                                      | never                                         |
 
-**Good answer looks like:** one sentence — a single screen, a fixed set of
-states, or one continuous flow — plus what persists across frames and where a
-visitor enters.
+## The template
 
-## Frame index
+```
+HANDOFF — /route
+Figma page: <page name>                    Updated: YYYY-MM-DD
 
-**Why it exists:** stops frames reading as pages.
+1 ARCHETYPE — pick one
+[ ] page                  one route, one file, nothing repeats
+[ ] collection index      lists many entries of one collection
+[ ] collection detail     one entry as example
+[ ] prose document        long-form text; prints to PDF
 
-**Good answer looks like:** every frame in the page, each with one line on
-what it is a still _of_.
+2 WHAT THIS IS — pick one
+[ ] one screen            everything is there at once
+[ ] a set of states       the same screen, drawn several times
+[ ] one continuous flow   steps accumulate, or replace each other
+Carries across frames: ____________  (or: nothing)
+Visitor arrives at: ____________
 
-## Content map _(collection pages)_
+3 FRAME INDEX — one line per frame on this page
+<frame name> — a still of: ____________
+<frame name> — not a build target: [ ] reference [ ] unfinished [ ] to delete
 
-**Why it exists:** the frame shows one example; the code faces N.
+4 CONTENT MAP — whenever the page reads a content collection; otherwise: n/a
+Collection: [ ] projects [ ] playground [ ] inspiration [ ] questions
+            [ ] curiosity [ ] resume [ ] releaseNotes
+<layer name> -> <field name>               (field names: docs/cms.md)
+Optional field empty   -> [ ] hide the element [ ] keep the space [ ] fall back to: ______
+No entries at all      -> [ ] cannot happen [ ] show: ______
+Text longer than drawn -> [ ] let it wrap [ ] clamp at ___ lines [ ] must not grow
+A layer with no field, or a field with no layer: ____________
 
-**Good answer looks like:** every layer mapped to its schema field, plus what
-the layout does with zero entries and with every optional field absent.
+5 FLOW — one line per control; nothing clickable: none
+<control label> -> <frame name, or /route>
+Prototype links wired in Figma: [ ] yes [ ] no — the lines above are the graph
 
-## Flow
+6 LINK MAP — every outgoing link, including ones with no page yet
+/route  [ ] page exists  [ ] not built yet -> [ ] link anyway [ ] render as plain text
 
-**Why it exists:** the whole graph got inferred from button labels last time.
+7 COPY — pick one
+[ ] all final
+[ ] all placeholder
+[ ] mixed, placeholders marked [bracketed] in the frames
+[ ] mixed, not marked — the placeholders are: ____________
 
-**Good answer looks like:** every control named, with the frame or route it
-leads to — a graph, not prose.
+8 COMPONENTS
+Library sets this page uses: ____________
+Anything drawn here that is not a library set: [ ] no [ ] yes: ____________
+  for each -> [ ] build it inline on the page
+              [ ] it belongs in the library, add it there first
 
-## Link map
+9 STATES — per interactive component on this page; leave nothing silent
+<component>  drawn: ______  needed, not drawn: ______  deliberately none: ______
+(the six worth answering: hover, focus, selected/active, disabled, empty, loading)
 
-**Why it exists:** six chips currently 404.
+10 MOTION — per moving element; nothing moves: none
+<element>
+  trigger:  [ ] page load [ ] hover [ ] focus [ ] click [ ] scroll position (ask me first)
+  moves:    [ ] fade [ ] slide [ ] scale [ ] colour [ ] shadow [ ] other: ______
+  duration: [ ] duration/fast [ ] duration/base [ ] duration/slow
+  easing:   [ ] easing/standard [ ] easing/entrance
+  if CSS cannot do it exactly, it must still: ____________
 
-**Good answer looks like:** every outgoing link, including ones with no page
-yet, each marked built or not.
+11 RESPONSIVE — below 48rem
+[ ] mobile frame: <frame name>
+[ ] no mobile design yet -> [ ] stack in source order, ask before anything else
+                            [ ] rules: ____________
 
-## Copy
+12 OPEN QUESTIONS — deliberately undecided
+- ____________
+(nothing open: write none)
+```
 
-**Why it exists:** `[bracketed]` is already the repo's placeholder convention
-(R1 §1, R6).
+The options are the repo's own vocabulary, so they are picked, not substituted:
+the seven collections are the seven in `src/content.config.ts`; `duration/*` and
+`easing/*` are the Figma variable names for the five motion tokens in
+`src/styles/tokens.css`; `[bracketed]` is the placeholder convention (CLAUDE.md
+R6); `48rem` is the site's single breakpoint. Scroll-driven motion is asked
+about rather than ticked because it is above the CSS ceiling and is never
+decided alone.
 
-**Good answer looks like:** every string marked final or placeholder, using
-that convention for placeholders.
+## Why each section is asked
 
-## Components
+| Section           | Why it is asked                                                                                     |
+| ----------------- | --------------------------------------------------------------------------------------------------- |
+| 1 Archetype       | Decides routing and what has to survive testing.                                                    |
+| 2 What this is    | The question that cost two rewrites on `/home`.                                                     |
+| 3 Frame index     | Stops a frame being read as a page — a frame is a still, and of what is not always visible.         |
+| 4 Content map     | The frame shows one filled-in example; the code faces zero, one and many.                           |
+| 5 Flow            | The whole `/home` graph was reconstructed from button labels, because no frames were wired.         |
+| 6 Link map        | Six chips on `/home` still 404; a link with no page needs a decision, not a guess.                  |
+| 7 Copy            | A `…` run read as final text once; placeholders have a convention, so use it.                       |
+| 8 Components      | Pairs with the library drift check in Step 4 of the skill and `design/components.json`.             |
+| 9 States          | Every state invented on `/home` was one the frames had not drawn.                                   |
+| 10 Motion         | Three prose sentences covered a whole page's motion last time, and it was not enough to build from. |
+| 11 Responsive     | The `Mobile` frame is empty, so everything below `48rem` on `/home` is unreviewed.                  |
+| 12 Open questions | So the next read asks instead of invents.                                                           |
 
-**Why it exists:** pairs with the library drift check in Step 4 of the skill.
+## What not to put in it
 
-**Good answer looks like:** every library set the page uses, by name and node
-id, plus any set the page needs that the library doesn't have yet.
-
-## States
-
-**Why it exists:** every state that got invented was one the frames hadn't
-drawn.
-
-**Good answer looks like:** every state per component marked drawn, not
-drawn, or deliberately absent — never left silent.
-
-## Motion
-
-**Why it exists:** three prose sentences covered a whole page's motion last
-time, and it wasn't enough.
-
-**Good answer looks like:** per element — trigger, what moves, duration and
-easing named as variables, and what the CSS-only fallback must still convey.
-
-## Responsive
-
-**Why it exists:** the `Mobile` frame is empty.
-
-**Good answer looks like:** what changes below `48rem`, or an explicit "no
-mobile design yet."
-
-## Open questions
-
-**Why it exists:** so the next read asks instead of invents.
-
-**Good answer looks like:** what was left undecided on purpose.
+- **No values.** Colours, spacing, type sizes, radii and shadows are read from
+  the variables (`get_variable_defs`). Naming them twice is how they drift.
+- **No description of what the frame looks like.** The screenshot is read every
+  time, without exception.
+- **No rationale.** The Figma file is the decision (CLAUDE.md R5). The handoff
+  records what, not why.
+- **Nothing the template did not ask for.** If an answer is "nothing", write
+  `none` — that is a complete answer, and it is shorter than a paragraph.
 
 ---
 
 ## Worked example — /home
 
 `/home` shipped before this document existed, so this example is reconstructed
-from the repo record rather than from an actual Handoff frame. Any cell that
-can't be grounded that way says so rather than guessing.
-
-### Archetype
-
-Bespoke page (`reflections/2026-08-28.md:200-206`) — the least representative
-page the site will ever build, because its design _is_ its content.
-
-### What this is
-
-One continuous, accumulating conversation, not a set of screens. With the
-script running, each visited step moves into the transcript and stays
-scrollable (`index.astro:510-515`); the no-JS baseline shows one exchange at a
-time via `:target` (`index.astro:464-467`). The visitor enters at the top, at
-the `start` step.
-
-### Frame index
-
-The `/home` frames, plus `Mobile` (`103:1103`), which is empty. `home - 7` is
-named as the frame carrying the `…` runs
-(`figma-to-code-improvements.md:90`); the rest of the index is
-**[not recorded — confirm in Figma]**.
-
-### Content map _(collection pages)_
-
-Not applicable — `/home` is a bespoke page, not a collection.
-
-### Flow
-
-Ten steps and their branches, literal in `index.astro:55-379`:
+from the repo record rather than from an actual Handoff frame. Any answer that
+cannot be grounded that way says so rather than guessing — which is also what
+an honest blank looks like.
 
 ```
+HANDOFF — /
+Figma page: chat-ground                    Updated: 2026-08-28
+
+1 ARCHETYPE
+[x] bespoke page          (reflections/2026-08-28.md:200-206)
+
+2 WHAT THIS IS
+[x] one continuous flow   steps accumulate: with the script running each
+                          visited step moves into the transcript and stays
+                          scrollable (index.astro:510-515); the no-JS baseline
+                          shows one exchange at a time via :target
+                          (index.astro:464-467)
+Carries across frames: the transcript so far
+Visitor arrives at: the `start` step, top of the page
+
+3 FRAME INDEX
+Mobile (103:1103) — not a build target: [x] unfinished — the frame is empty
+home - 7 — a still of: the steps carrying the `…` runs
+the rest of the index: [not recorded — confirm in Figma]
+
+4 CONTENT MAP
+n/a — /home reads no collection
+
+5 FLOW
 start ──▶ skip
   │        (chip links, six: /resume, /inspiration, /projects,
   │         /playground, /behind-the-scenes, /curiosities)
@@ -144,7 +190,7 @@ team ──▶ skip
   ▼
 questions ──▶ skip
   │           (also carries /letters as an inline text link in its
-  │            message body, not a chip — see Link map)
+  │            message body, not a chip — see 6)
   ▼
 prototype ──▶ skip
   │
@@ -156,68 +202,72 @@ field ──▶ role ──▶ stack ──▶ result
                                (chip links, six: /resume, /inspiration,
                                 /projects, /playground, /behind-the-scenes,
                                 /curiosities)
+Prototype links wired in Figma: [x] no — the graph above was reconstructed from
+chip labels (reflections/2026-08-28.md:159-162) and is literal in
+index.astro:55-379
+
+6 LINK MAP
+/resume            [x] page exists
+/inspiration       [x] not built yet -> [x] link anyway
+/projects          [x] not built yet -> [x] link anyway
+/playground        [x] not built yet -> [x] link anyway
+/behind-the-scenes [x] not built yet -> [x] link anyway
+/curiosities       [x] not built yet -> [x] link anyway
+/letters           [x] not built yet -> [x] link anyway
+(index.astro:105-110,176-205,341-346, checked against src/pages/)
+
+7 COPY
+[x] mixed, not marked — the placeholders are: the `…` runs, which stand for
+values the tool would compute, not final text
+
+8 COMPONENTS
+Library sets this page uses: Buttons, Chat, user, logo, Icons
+                             (node ids: design/components.json)
+Anything drawn here that is not a library set: [x] no
+
+9 STATES
+Buttons  drawn: hover  needed, not drawn: —  deliberately none: —
+Two states were not drawn and were invented instead — a submit control for the
+questionnaire, and a fill for a selected/ticked option — then removed once the
+interaction model was corrected (reflections/2026-08-28.md:142-146)
+
+10 MOTION
+chip background-color and box-shadow (index.astro:684-686)
+  trigger:  [x] hover [x] focus
+  moves:    [x] colour [x] shadow
+  duration: [x] duration/fast
+  easing:   [x] easing/standard
+  if CSS cannot do it exactly, it must still: read as the chip responding to
+  the pointer, not as a new element
+a bubble or a choice group arriving (index.astro:563,577)
+  trigger:  [x] page load
+  moves:    [x] fade [x] slide
+  duration: [x] duration/base
+  easing:   [x] easing/entrance
+  if CSS cannot do it exactly, it must still: read as arriving into the
+  transcript rather than having always been there
+arrival stagger (index.astro:567-571)
+  trigger:  [x] page load
+  moves:    [x] other: animation-delay per row — with the script running a row
+            arrives when its own first character does, not on a fixed index
+            stagger
+  duration: [x] duration/base
+  easing:   [x] easing/entrance
+  if CSS cannot do it exactly, it must still: keep the rows in order
+typing pace — 18ms per character, a 240ms beat between paragraphs in one bubble
+  — is a page-level constant, deliberately not a token (index.astro:724-727)
+Notes: nothing here is defined in Figma — there are no prototype connections,
+so get_motion_context returns nothing for this page. global.css:149-162 zeroes
+durations under prefers-reduced-motion: reduce but not animation-delay.
+
+11 RESPONSIVE — below 48rem
+[x] no mobile design yet -> [x] stack in source order, ask before anything else
+One breakpoint, 48rem. The Mobile frame is empty, so everything below it is
+unreviewed.
+
+12 OPEN QUESTIONS
+- the unbuilt routes, all six ticked "link anyway": /inspiration, /projects,
+  /playground, /behind-the-scenes, /curiosities, /letters
+- the missing mobile design
+- the frame index above §3's two named frames
 ```
-
-The graph was reconstructed from chip labels because the frames have no
-prototype connections (`reflections/2026-08-28.md:159-162`). The chip sets
-above are not the complete outgoing-link set — see Link map for that,
-including `/letters`.
-
-### Link map
-
-Built target: `/resume`. Unbuilt targets, all 404 today: `/inspiration`,
-`/projects`, `/playground`, `/behind-the-scenes`, `/curiosities`, `/letters`
-(`index.astro:92-97,175-205,372-377`, checked against `src/pages/`).
-
-### Copy
-
-The `…` runs are placeholders for values the tool would compute, not final
-text. The frames don't mark them as such; the repo's placeholder convention is
-`[bracketed]` (R6).
-
-### Components
-
-| Set       | Node ID    | Variant axes                                                        |
-| --------- | ---------- | ------------------------------------------------------------------- |
-| `Buttons` | `109:1382` | Type = Primary / Secondary / Nav / Inline × State = Default / Hover |
-| `Chat`    | `109:1389` | Type = message / request / response × Variant = text / selection    |
-| `user`    | `117:1308` | moritz / karina / paula / all                                       |
-| `logo`    | `108:1372` | favicon / chat-tomato / chat-herbs                                  |
-| `Icons`   | `109:1374` | Cursor / Figma Make                                                 |
-
-(`figma-to-code-improvements.md:132-138`)
-
-### States
-
-Hover is drawn on `Buttons`. Two states were **not** drawn and were invented
-instead: a submit control for the questionnaire, and a fill for a
-selected/ticked option. Both were removed once the interaction model was
-corrected (`reflections/2026-08-28.md:142-146`).
-
-### Motion
-
-- `--duration-fast` + `--easing-standard` for hover and focus transitions — the
-  chip's `background-color` and `box-shadow` (`index.astro:684-686`).
-- `--duration-base` + `--easing-entrance` for a bubble or a choice group
-  arriving (`index.astro:563,577`).
-- Arrival is staggered by `animation-delay`; with the script running, a row
-  arrives when its own first character does, not on a fixed index stagger
-  (`index.astro:567-571`).
-- Typing pace — 18ms per character, a 240ms beat between paragraphs in one
-  bubble — is a page-level constant, deliberately not a token
-  (`index.astro:724-727`).
-- Still undefined _in Figma_: there are no prototype connections, so
-  `get_motion_context` returns nothing for this page.
-- Caveat: `global.css:149-162` zeroes durations under
-  `prefers-reduced-motion: reduce` but not `animation-delay`.
-
-### Responsive
-
-One breakpoint, `48rem`. The `Mobile` frame is empty, so everything below it
-is unreviewed.
-
-### Open questions
-
-The six unbuilt routes (`/inspiration`, `/projects`, `/playground`,
-`/behind-the-scenes`, `/curiosities`, `/letters`), and the missing mobile
-design.

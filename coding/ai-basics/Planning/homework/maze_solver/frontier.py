@@ -56,19 +56,25 @@ class Frontier:
         if self.search_algorithm == "DFS":
             # deepth-first search -> First node in, first node out
             # select the last node
-            return self.frontier[len(self.frontier) - 1]
+            return self.frontier[-1]
         
-        # breadth-first search
+        # broadth-first search
         if self.search_algorithm == "BFS":
             # broadth-first search -> Last node in, first node out
             # select the first node
             return self.frontier[0]
-        
+
         # heuristic search
         if self.search_algorithm == "HS":
             # heuristic search -> Lowest heuristic node, first node out
             # use coordinates as the heuristic (tuple of integers)
             # sort list by heuristic
             # select the last node
-            heuristic = abs(self.frontier.state - self.goal)
+            heuristic = 1000
+            lowest_heuristic = 0
+            for node in self.frontier:
+                if abs(node.state[0] - self.goal[0]) + abs(node.state[1] - self.goal[1]) < heuristic:
+                    lowest_heuristic = self.frontier.index(node)
+                    heuristic = abs(node.state[0] - self.goal[0]) + abs(node.state[1] - self.goal[1])
+            return self.frontier[lowest_heuristic]
             
