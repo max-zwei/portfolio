@@ -208,14 +208,16 @@
       "w-[383.108px] on the NavBar impressum column — a magic number, dropped in code.",
       "The project preview paper-scrap collage geometry.",
       "flipcard state=small at 87×130.5.",
-      "Sizes/L: 24 in project sections — a stray variable outside the seven collections, already marked for deletion."
+      "Sizes/L: 24 in project sections — a stray variable outside the seven collections, already marked for deletion.",
+      "The page grid — 10 columns, 24 gutter, 96 margin on the 1280 frames; 5/16/24 on the 375 Mobile frames. A layout grid is not a variable, so --grid-frame/--grid-margin/--grid-columns/--grid-gutter/--grid-column live only in src/styles/tokens.css."
     ]
   },
   "outstanding": {
     "$comment": "The Figma MCP server is reachable again. The blocked reads and asset exports are complete; public/favicon.svg differed and Figma's neutral-white ground won. `variableWrites` is now unblocked and is the only Figma mutation still outstanding. `geometryReads` and `unverifiedChoices` are deliberately deferred code-sync work, not authentication blockers.",
     "variableWrites": [
       "Typography collection is missing font/weight/bold = 700, line-height/none = 1 and line-height/relaxed = 1.4. All three already exist in src/styles/tokens.css and design/tokens.json, so the three-file rule is two-thirds done. Each needs a value, a description, scopes, and WEB code syntax (var(--font-weight-bold), var(--line-height-none), var(--line-height-relaxed)) — without the code syntax the MCP emits var(--line-height\\/none), which is not valid CSS. The collection has one mode, named Value.",
-      "Re-bind the text styles that still hold raw numbers: Typography/H1–H5 → line-height/none; Typography/Body - Small and Typography/Captions → line-height/relaxed. Until then get_variable_defs reports floats instead of names."
+      "Re-bind the text styles that still hold raw numbers: Typography/H1–H5 → line-height/none; Typography/Body - Small and Typography/Captions → line-height/relaxed. Until then get_variable_defs reports floats instead of names.",
+      "Delete size/chat-column (866) and size/chat-bubble (531) from the Size collection. Both are now computed from the page grid in CSS — 8 and 5 columns — so the variables have no code counterpart. size/chat-choice (400) stays: it is not a column span."
     ],
     "assetExports": [],
     "geometryReads": [

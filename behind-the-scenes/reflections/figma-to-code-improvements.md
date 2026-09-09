@@ -4,7 +4,7 @@ Companion to [`home-figma-to-code.md`](./home-figma-to-code.md). That one record
 what happened on the first job and why. This one is only the changes, split by
 who owns them.
 
-Nothing here is done yet. Items marked **(R1)** need Max's approval because they
+Everything here is done. Items marked **(R1)** need Max's approval because they
 change `CLAUDE.md`.
 
 ---
@@ -46,6 +46,8 @@ every job:
 
 ### A1. A `Handoff` frame per page
 
+**Status** Done
+
 One frame per page, sitting with that page's frames, read before any other
 frame. Required sections:
 
@@ -69,11 +71,15 @@ in one paragraph without opening another frame.
 
 ### A2. Prototype connections between frames
 
+**Status** Done
+
 Wire the frames with real prototype links. Two payoffs: the flow graph stops
 being something I reconstruct from copy, and `get_motion_context` starts
 returning something — right now it has nothing to read.
 
 ### A3. Motion as a spec
+
+**Status** Done
 
 Per animated element rather than per page: what triggers it, what moves, and the
 duration and easing **named as variables** (`duration/base`, `easing/entrance`),
@@ -81,34 +87,47 @@ so the handoff carries token names rather than adjectives.
 
 ### A4. Draw the states that are missing
 
+**Status** Done
+
 Per component: hover, focus, selected, disabled, empty. Where a state should not
 exist, say so. Both things I invented on `/home` — a submit control and a
 selected-option fill — were states the frames did not draw.
 
 ### A5. Mark placeholder vs final copy
 
+**Status** Done
+
 The `…` runs on `home - 7` are placeholders for values the tool would compute. I
 guessed right; the convention should not depend on that.
 
 ### A6. A route map
+
+**Status** Done
 
 Every link target, including pages that do not exist yet, so the code can point
 somewhere deliberate rather than somewhere plausible.
 
 ### A7. Responsive intent
 
+**Status** Done
+
 `Mobile` (`103:1103`) is an empty frame. Everything below `48rem` on `/home` is
 mine and unreviewed. Either a mobile frame, or a written rule per page.
 
 ### A8. Width definitions
 
-See B2 — the code side needs a decision from the design side first:
+**Status** Done
 
-- which widths are a **measure** (a character count for a given face and size),
-- which are **layout** (columns and gutters of a page grid),
-- which are genuinely a **component's own** fixed width.
+The decision was already on the frames, as layout grids rather than variables:
+every 1280 desktop frame carries `COLUMNS` ×10, gutter 24, margin 96, and every
+375 `Mobile` frame ×5, gutter 16, margin 24. So: the chat column and the
+message bubble are **layout** (8 and 5 columns), `--size-chat-choice` is the
+one genuine **component** width, and `--measure` remains the only measure. B2
+has transcribed it.
 
 ### A9. Housekeeping
+
+**Status** Done
 
 - Delete `Sizes/L: 24` — it duplicates a computed line height and sits outside
   the seven collections.
@@ -122,6 +141,8 @@ See B2 — the code side needs a decision from the design side first:
 ## B. The repo — before the next page build
 
 ### B1. Port the whole Figma library into `src/components/`
+
+**Status** Done
 
 **The keystone.** Max's idea, and the one that changes the shape of every future
 job: if the design system already exists in code, translating a page is matching
@@ -160,6 +181,8 @@ of one.
 
 ### B2. Settle the widths
 
+**Status** Done
+
 The three we hardcoded are three different kinds of constraint:
 
 | Kind                                 | Governed by                   | Expressed as                                     |
@@ -174,7 +197,20 @@ component cap the design's own instances exceed. **Those names will not survive
 `/projects`.** Define the grid and the measures once; keep `--size-*` small and
 name it for the component when it is genuinely unavoidable.
 
+**What landed.** The page grid is transcribed once in `src/styles/tokens.css`
+as `--grid-frame` / `--grid-margin` / `--grid-columns` / `--grid-gutter` /
+`--grid-column`, from the layout grid on the 1280 frames. `--size-chat-column`
+and `--size-chat-bubble` are gone: the transcript is 8 columns and the bubble
+5, computed. `--size-chat-choice` is the only surviving `--size-*`, which is
+what "keep `--size-*` small" meant. `--content-max` is retired and `.container`
+is the drawn frame with the drawn margins, which is the second half of "define
+the grid once". `size/chat-column` and `size/chat-bubble` are still in Figma;
+their deletion sits in `design/components.json` under
+`outstanding.variableWrites`.
+
 ### B3. A library ↔ code drift check
+
+**Status** Done
 
 Max's takeaway: _check with every run whether the library changed._ Make it
 cheap by mirroring what already works for tokens.
@@ -194,6 +230,8 @@ committed alongside the components.
 
 ### B4. `docs/figma-handoff.md`
 
+**Status** Done
+
 The template behind A1, so writing a Handoff frame is a checklist rather than a
 blank page. `/home` filled in as the worked example.
 
@@ -202,6 +240,8 @@ blank page. `/home` filled in as the worked example.
 ## C. Skills and docs
 
 ### C1. Rename and restructure `figma-implement.md`
+
+**Status** Done
 
 Max is right that the name hides what it is for. Proposed:
 **`figma-to-astro.md`**, with a description line naming the whole target —
@@ -235,6 +275,8 @@ Restructure from a single-frame procedure into a page-building method:
   platform enum is `iOS`, not `IOS`.
 
 ### C2. Plan mode and an orchestrator, written into the skill
+
+**Status** Done
 
 Max's proposal, designed against what the session actually cost. The measured
 shape was **40.7M cache reads against 68k output** — almost nothing was spent
@@ -280,6 +322,8 @@ Rules that fall out, and belong in the skill:
 
 ### C3. `docs/design-system.md`
 
+**Status** Done
+
 - **Widths**: the measure / layout / component distinction from B2, and the rule
   that `--size-*` is the last resort rather than the first.
 - **Motion**: currently reads "Not defined in Figma yet". One page has now
@@ -290,6 +334,8 @@ Rules that fall out, and belong in the skill:
   already uses for `pickled/600`.
 
 ### C4. `CLAUDE.md` — proposals **(R1)**
+
+**Status** Done
 
 1. **Drop R11** ("Zero client JS…"), per Max's call. Worth recording alongside:
    the no-JS baseline is what made `/home` degrade into seven readable steps and
@@ -305,9 +351,21 @@ Rules that fall out, and belong in the skill:
 5. **§6 Procedures** — point the Figma procedure at the Handoff frame and the
    archetypes; add design ↔ schema reconciliation to "changing a content field".
 
+**Verified and closed.** 1–3 were already in place: `CLAUDE.md` §1 ends at R10,
+R8 carries the Figma-library test, §3 has no client-JS row, and the no-JS
+baseline survives as Law L7 in `figma-to-astro.md`. This job added the §4 Map
+entries (`docs/figma-handoff.md`, `docs/cleanup.md`,
+`behind-the-scenes/reflections/`, `lib/match.ts`, `config/match.ts`), the §6
+Handoff-frame and archetype paragraphs, the design ↔ schema reconciliation
+note, a fourth paragraph under "Adding a token" for values Figma holds as
+something other than a variable, and fixed two references to
+`figma-implement.md` — a file renamed to `figma-to-astro.md` two jobs ago.
+
 ---
 
 ## D. Token discipline
+
+**Status** Done
 
 Measured, from the session that produced `/home`: 40,720,868 cache reads,
 1,040,857 cache writes, 68,095 output, $81.44, ~15 hours.

@@ -21,14 +21,15 @@ skill and has left this skill's scope.
 
 Read before every job — the takeaways from the first page built this way:
 
-- A frame is a still, not a screen. Ask what it is a still _of_.
+- A frame is a still, not a screen. Ask what it is a still _of_ if that is unclear.
 - Needing to invent a control means the model is wrong.
 - A near-miss token is drift.
-- With every run, check if the library was updated, and compare against the
+- With every run, check if the library in Figma was updated, and compare against the
   version history of `src/components/`.
 - Read the whole declaration, not the part that looks like a token.
 - Verify behaviour over time, not the end state.
 - Assert outcomes, not mechanisms.
+- Use the frame "Handoff" in each Figma subpage to understand the design requirements.
 
 ---
 
@@ -61,9 +62,6 @@ A magic number that ships is a magic number forever.
 ## 2. Archetypes
 
 The archetype comes first — it decides routing and what has to survive testing.
-`/home` is the least representative page this site will ever build: it is
-bespoke, and its design _is_ its content. Everything after it is a template over
-a content collection, edited through Decap.
 
 | Archetype         | Example                                                    | Routing                             | What varies                                            |
 | ----------------- | ---------------------------------------------------------- | ----------------------------------- | ------------------------------------------------------ |
@@ -74,10 +72,7 @@ a content collection, edited through Decap.
 
 For a collection page the frame shows **one filled-in example** and the code
 must survive N entries including zero, absent optional fields, and text far
-longer than the mockup. `projects` alone has eight optional case-study
-sections, two teaser images with refined alt-text pairs, and a 280-character
-`summary` cap. The plan has to name those cases before building, not discover
-them.
+longer than the mockup.
 
 It also has to reconcile design against schema in both directions: a frame
 showing a field the schema lacks is a three-file change (`content.config.ts`,
@@ -89,8 +84,7 @@ either dead or the design is incomplete — ask, do not delete.
 ## 3. Connection
 
 The Figma MCP server is declared in [`.mcp.json`](../../.mcp.json) at the repo
-root, so any session started in this repo picks it up. It is the remote server
-(`https://mcp.figma.com/mcp`) — no desktop app required.
+root, so any session started in this repo picks it up.
 
 `whoami` before anything else. Most "cannot find node" failures are auth or seat
 errors wearing a different hat, and thirty seconds here saves twenty minutes of
@@ -120,21 +114,12 @@ https://figma.com/design/<fileKey>/<name>?node-id=<int>-<int>
 
 - Read the page's `Handoff` frame before any other frame, per
   [`docs/figma-handoff.md`](../../docs/figma-handoff.md).
-- If there is no Handoff frame, ask these eight questions verbatim, as a
-  numbered list, and do not start building on inferred answers:
-  1. What is this page — one screen, a set of states, or one continuous flow?
-     What carries over between frames?
-  2. Which control leads where, and where does each link go — including pages
-     that do not exist yet?
-  3. Which text is final and which is placeholder?
-  4. Which states are drawn, and for the ones that aren't — derive them, or
-     leave them out?
-  5. What happens below the breakpoint?
-  6. For each motion: what triggers it, what moves, and what must it still feel
-     like if I cannot do it exactly?
-  7. _(collection pages)_ Which layer is which field, and what does the layout
-     do when an optional one is empty?
-  8. What did you deliberately leave open, so I ask instead of inventing?
+- If there is no Handoff frame, work through the template in
+  [`docs/figma-handoff.md`](../../docs/figma-handoff.md) section by section, in
+  its numbering, asking only the sections its skip table says apply to this
+  page. Do not start building on inferred answers.
+- A section left blank, or a frame that answers only some of them, is an open
+  question — ask it, never infer it.
 - **Output:** the archetype, and the interaction model in one paragraph. If you
   cannot write that paragraph, you are not ready to read a frame.
 
@@ -244,8 +229,8 @@ Three readings to distrust — see §9.
 `get_motion_context` for prototype interactions and smart animate;
 `export_video` when the timing has to be watched rather than read.
 
-**The ceiling is CSS `transition` and `@keyframes`.** Within it use the motion
-tokens: `--duration-fast` for hover and focus, `--duration-base` for state
+**The ceiling is CSS `transition` and `@keyframes`.** Within it use the available and defined motion
+tokens, for example: `--duration-fast` for hover and focus, `--duration-base` for state
 change and entrance, `--duration-slow` for large ambient movement;
 `--easing-standard` for anything that starts and ends on screen,
 `--easing-entrance` for things arriving.
@@ -362,7 +347,7 @@ brief rather than raw material:
 
 **Phase 2 — Plan.** Main thread, high effort, in plan mode. Consumes the three
 briefs, produces the plan — archetype, interaction model, token diff, component
-inventory, motion spec — and ends by putting the open questions to Max.
+inventory, motion spec — and ends by requestin plan approval from Max.
 **Nothing is built.**
 
 **Phase 3 — Build.** Main thread. This does not split: each step depends on the
@@ -427,11 +412,7 @@ variables directly. Load the `figma-use` skill first.
 ### The collections, as built
 
 80 variables across 7 collections. The first 77 were verified against the file
-on 27 Aug 2026; the three added by the library port on 29 Aug 2026
-(`font/weight/bold`, `line-height/none`, `line-height/relaxed`) landed in
-`tokens.css` and `design/tokens.json` but **not yet in Figma** — the MCP server
-was unreachable that session, so the third leg of the three-file rule is
-outstanding. Every variable carries a description and WEB code syntax, and no
+on 27 Aug 2026. Every variable carries a description and WEB code syntax, and no
 two emit the same code syntax.
 
 | Figma collection | Vars | JSON key | CSS prefix                                          |
@@ -444,11 +425,10 @@ two emit the same code syntax.
 | Motion           | 5    | `motion` | `--duration-*`, `--easing-*`                        |
 | Elevation        | 3    | `shadow` | `--shadow-*`                                        |
 
-There is no Semantic collection. One existed briefly and was deleted — see L4.
+There is no Semantic collection. One existed briefly and was deleted intentionally.
 Size holds layout widths read off the `/home` chat frames — named for what
 they size (`size/chat-column`) rather than as a scale, because 400/531/866 is
-not one. `--measure` and `--content-max` are the older layout constants and
-live in `tokens.css` alone; the three-file rule has never been applied to them.
+not one.
 
 Every collection has exactly one mode, named `Value`. No light/dark split, by
 decision. With no role tier there is nothing to remap, so a dark scheme would

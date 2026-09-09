@@ -1,5 +1,7 @@
 # Design system rule book
 
+All changes to this file need to be approved by Max.
+
 `tokens.css` says what the values are. This says what they are _for_.
 
 With one flat token tier there is no `--text-secondary` to tell you a colour is
@@ -126,16 +128,35 @@ the exception: its raw mono settings are not the `Typography/Mono` style.
 
 `--size-*` is the last resort, not the first.
 
-The three `--size-chat-*` tokens (`tokens.css:140-142`) were read off the
-`/home` chat frames — `--size-chat-column` (866px) is layout,
-`--size-chat-bubble` (531px) is a measure (~46 characters of mono at
-`--font-size-sm`), `--size-chat-choice` (400px) is a component cap the
-design's own instances exceed. **Those names will not survive `/projects`.**
-Reclassifying them is blocked on a design-side decision — which widths are
-measure, layout, component — and the rename is a three-file change
-(`design/tokens.json`, `src/styles/tokens.css`, and the Figma Size
-collection), so it lands in one commit with the Figma variables, never half
-of it.
+**The grid.** Every 1280-wide desktop frame carries the same layout grid:
+`COLUMNS` ×10, gutter 24, margin 96 — so 1088 of content and an 87.2 column.
+The 375 `Mobile` frames draw ×5, gutter 16, margin 24. That is the page grid,
+and it is drawn on the frames rather than held in a variable, because a layout
+grid is not a Figma variable. `src/styles/tokens.css` transcribes it as
+`--grid-frame` (80rem), `--grid-margin` (6rem), `--grid-columns` (10),
+`--grid-gutter` (1.5rem) and `--grid-column`, which computes one column from
+the other four. Those five have no entry in `design/tokens.json` — the same
+exception `--measure` has always had, and the reason CLAUDE.md §6 "Adding a
+token" carries a fourth paragraph.
+
+**The chat widths, reclassified.** Both are layout, so both are column spans
+rather than tokens: the message column is 8 columns (54.1rem, against the 866
+drawn on `home - chat`) and a message bubble is 5 columns (33.25rem, against
+531). Computing them costs 0.4px and 1px respectively, and buys `/projects`
+the same maths instead of two more per-page widths. `--size-chat-choice`
+(400px) is the only `--size-*` left: four columns is 420.8px, so 400 is the
+component's own cap — and the design's own chip instances exceed it.
+
+**The page container.** `--content-max: 72rem` is retired. No frame drew 1152;
+the drawn frame is 1280 with 96px margins, so `.container` is now
+`max-width: var(--grid-frame)` with `var(--grid-margin)` of padding above
+48rem and `--space-md` (24px, the `Mobile` frame's margin) below it. `NavBar`
+follows the same frame — `210:1625` `Mode=Default` is 1280 wide with its own
+64px padding.
+
+`size/chat-column` (866) and `size/chat-bubble` (531) still exist in the Figma
+`Size` collection with nothing in the CSS reading them. Their deletion is
+recorded in `design/components.json` under `outstanding.variableWrites`.
 
 ## Motion
 
@@ -149,9 +170,10 @@ of it.
 - The typing pace — 18ms per character, a 240ms beat between paragraphs in one
   bubble — is a page-level constant Max signed off, deliberately not a token
   (`index.astro:724-727`).
-- Still undefined _in Figma_: there are no prototype connections, so
-  `get_motion_context` returns nothing. Duration and easing arrive as prose
-  until the design names them by variable.
+- Four prototype connections exist on /home — the `Chat` instances (`115:806`,
+  `118:1469`, `128:93`, `128:117`) navigate to `home - skip` (`117:898`) — but
+  each carries `transition: null`, so no duration or easing is named in Figma
+  and both still arrive as prose.
 - The caveat: `global.css:149-162` zeroes durations under
   `prefers-reduced-motion: reduce` but not `animation-delay`.
 
