@@ -80,7 +80,8 @@ const classes = ['bubble', `bubble--${type}`, `bubble--${variant}`, className];
 
   .bubble--message {
     width: fit-content;
-    max-width: var(--size-chat-bubble);
+    /* Five of the grid's ten columns — the 531 bubble on `home - chat`. */
+    max-width: calc(5 * var(--grid-column) + 4 * var(--grid-gutter));
     background-color: var(--color-neutral-100);
     border-radius: 0 var(--radius-lg) var(--radius-lg) var(--radius-lg);
   }

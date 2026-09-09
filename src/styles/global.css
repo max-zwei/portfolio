@@ -174,13 +174,15 @@ a {
 
 .container {
   width: 100%;
-  max-width: var(--content-max);
+  max-width: var(--grid-frame);
   margin-inline: auto;
+  /* 24px — the margin on the 375 `Mobile` frames. */
   padding-inline: var(--space-md);
 }
 
 @media (min-width: 48rem) {
   .container {
-    padding-inline: var(--space-lg);
+    /* 96px — the margin on the 1280 desktop frames. */
+    padding-inline: var(--grid-margin);
   }
 }

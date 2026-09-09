@@ -132,17 +132,36 @@
   --easing-standard: cubic-bezier(0.2, 0, 0, 1);
   --easing-entrance: cubic-bezier(0, 0, 0, 1);
 
-  /* Layout */
+  /*
+   * Page grid — transcribed from the layout grid on every 1280 Figma desktop
+   * frame (`home - chat` 103:1102, `/projects` 128:638 and the rest): COLUMNS
+   * ×10, gutter 24, margin 96, so 1088 of content and an 87.2 column. A layout
+   * grid is not a Figma variable, so unlike every other token here these have
+   * no entry in design/tokens.json — the exception --measure has always had.
+   * The 375 `Mobile` frames draw ×5, gutter 16, margin 24; that 24 is
+   * --space-md, which global.css already uses below 48rem.
+   */
+  --grid-frame: 80rem; /* 1280px — the drawn frame */
+  --grid-margin: 6rem; /* 96px */
+  --grid-columns: 10;
+  --grid-gutter: 1.5rem; /* 24px */
+  /* One column: 5.45rem / 87.2px. Computed, so changing the frame or the
+     gutter cannot leave a stale derived value behind. */
+  --grid-column: calc(
+    (
+        var(--grid-frame) - 2 * var(--grid-margin) - (var(--grid-columns) - 1) *
+          var(--grid-gutter)
+      ) /
+      var(--grid-columns)
+  );
+
   --measure: 68ch; /* readable line length */
-  --content-max: 72rem; /* page container */
 
   /*
-   * Chat widths, from the /home frames. Named for the thing they size rather
-   * than as a scale, because 400/531/866 is not one. If a second layout ever
-   * needs a width, this group is the place to reconsider the naming.
+   * The one width that is a component's own. 400px is not a column span — four
+   * columns is 420.8 — and the design's own chip instances exceed it.
+   * `size/chat-choice` in Figma.
    */
-  --size-chat-column: 54.125rem; /* 866px */
-  --size-chat-bubble: 33.1875rem; /* 531px */
   --size-chat-choice: 25rem; /*  400px */
 
   /* ---------------------------------------------------------------
