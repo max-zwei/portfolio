@@ -117,7 +117,9 @@ const { mode = 'default', label = 'Site', class: className } = Astro.props;
 <style>
   .navbar {
     width: 100%;
-    max-width: var(--content-max);
+    /* The drawn bar is the frame: `NavBar` 210:1625 Mode=Default is 1280 wide
+       with its own 64px side padding, kept below. */
+    max-width: var(--grid-frame);
     padding: var(--space-lg) var(--space-xl);
     overflow: clip;
     background-color: var(--color-neutral-100);
