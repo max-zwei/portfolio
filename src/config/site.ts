@@ -39,6 +39,12 @@ export const CV_INTRO =
   'where you are heading. This is the only prose on the CV that the timeline ' +
   'below cannot tell — replace it before sending the PDF anywhere.]';
 
+/** The two lines the /resume header draws under the name (Figma 251:2563). */
+export const CV_STUDY = {
+  field: 'Design & Innovation',
+  institution: '@ CODE University of Applied Sciences',
+} as const;
+
 /** Social / professional links. Add entries as the profiles go live. */
 export const LINKS: ReadonlyArray<{ label: string; href: string }> = [
   { label: 'Email', href: `mailto:${SITE.email}` },
@@ -65,26 +71,35 @@ export const NAV = {
   ],
 } as const;
 
-/** Social marks the footer draws. Only the GitHub URL is known. */
+/**
+ * Social marks the footer draws. Only the GitHub URL is known.
+ *
+ * `width` is each mark's own drawn width at a 16 height, so the asset is never
+ * stretched. `iconDark` is the same artwork as Figma's `Mode=Dark` NavBar
+ * paints it — neutral-white instead of neutral-800.
+ */
 export const SOCIALS = [
   {
     label: 'Figma',
     href: '#',
     icon: '/icons/figma.svg',
-    width: 16,
+    iconDark: '/icons/dark/figma.svg',
+    width: 12,
     height: 16,
   },
   {
     label: 'GitHub',
     href: 'https://github.com/max-zwei',
     icon: '/icons/github.svg',
-    width: 16,
+    iconDark: '/icons/dark/github.svg',
+    width: 17,
     height: 16,
   },
   {
     label: 'Dribbble',
     href: '#',
     icon: '/icons/dribbble.svg',
+    iconDark: '/icons/dark/dribbble.svg',
     width: 16,
     height: 16,
   },
@@ -92,29 +107,38 @@ export const SOCIALS = [
     label: 'Behance',
     href: '#',
     icon: '/icons/behance.svg',
-    width: 16,
+    iconDark: '/icons/dark/behance.svg',
+    width: 19,
     height: 16,
   },
   {
     label: 'LinkedIn',
     href: '#',
     icon: '/icons/linkedin.svg',
-    width: 16,
+    iconDark: '/icons/dark/linkedin.svg',
+    width: 17,
     height: 16,
   },
 ] as const;
 
-/** The three marks beside "explore with". Decorative: the design draws no link. */
+/** The three marks beside "explore with". */
 export const EXPLORE_WITH = [
   {
     label: 'Claude',
     href: 'https://claude.ai/',
     icon: '/icons/explore-claude.svg',
+    iconDark: '/icons/dark/explore-claude.svg',
   },
   {
     label: 'OpenAI',
     href: 'https://openai.com/',
     icon: '/icons/explore-openai.svg',
+    iconDark: '/icons/dark/explore-openai.svg',
   },
-  { label: '3', href: '#', icon: '/icons/explore-3.svg' },
+  {
+    label: '3',
+    href: '#',
+    icon: '/icons/explore-3.svg',
+    iconDark: '/icons/dark/explore-3.svg',
+  },
 ] as const;

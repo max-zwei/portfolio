@@ -7,16 +7,21 @@
  */
 import ProjectPreview from './ProjectPreview.astro';
 import { formatRange } from '../lib/dates';
+import { withBase } from '../config/site';
 
 interface Props {
   /** Position or qualification title. */
   role: string;
-  /** Employer, client, or institution. */
-  company: string;
+  /** Employer, client, or institution. Omit to show no company line. */
+  company?: string;
   /** Start date as `YYYY` or `YYYY-MM`. */
   start: string;
   /** End date as `YYYY` or `YYYY-MM`; absent means “present”. */
   end?: string;
+  /** Public path of a certificate or reference letter; makes the role a link. */
+  documentUrl?: string;
+  /** What that document is, for assistive tech: e.g. `Reference letter (PDF)`. */
+  documentLabel?: string;
   /** Optional heading level to match the styleguide examples. */
   level?: 2 | 3 | 4;
   /** Project destinations associated with this CV entry. */
@@ -30,12 +35,20 @@ const {
   company,
   start,
   end,
+  documentUrl,
+  documentLabel,
   level = 3,
   projectUrls = [],
   class: className,
 } = Astro.props;
 
 const HeadingTag = `h${level}` as 'h2' | 'h3' | 'h4';
+const hasLogo = Astro.slots.has('logo');
+/* Astro.slots.has('default') is true even when the page passes a falsy
+   expression (e.g. `{entry.data.summary && <p>…}`), so the slot has to be
+   rendered and checked for real content instead. */
+const summaryHtml = await Astro.slots.render('default');
+const hasSummary = summaryHtml.trim().length > 0;
 
 const slugify = (value: string) =>
   value
@@ -45,7 +58,7 @@ const slugify = (value: string) =>
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-|-$/g, '');
 
-const sectionId = slugify(`${company}-${role}-${start}`) || 'cv-section';
+const sectionId = `cv-${slugify(`${company ?? ''}-${role}-${start}`) || 'section'}`;
 
 const titleFromUrl = (url: string, index: number) => {
   const path = url.split(/[?#]/)[0].replace(/\/+$/, '');
@@ -58,39 +71,94 @@ const titleFromUrl = (url: string, index: number) => {
   class:list={['cv-section', className]}
   aria-labelledby={`${sectionId}-role`}
 >
-  <!-- Figma text style: Typography/Mono - Small. -->
-  <p class="cv-section__dates">{formatRange(start, end)}</p>
-
-  <div class="cv-section__position">
-    <!-- Figma text style: Typography/Body - Large, at Body - Bold's weight. -->
-    <HeadingTag id={`${sectionId}-role`} class="cv-section__role"
-      >{role}</HeadingTag
-    >
-    <!-- Figma text style: Typography/Body - Large. -->
-    <p class="cv-section__company">{company}</p>
-  </div>
-
   {
-    projectUrls.length > 0 && (
-      <div class="cv-section__projects">
-        {projectUrls.map((href, index) => (
-          // The page decides the real project caption and title. This URL-only
-          // interface supplies short, deterministic labels until it does.
-          <ProjectPreview
-            id={`${sectionId}-project-${index + 1}`}
-            caption={`Project ${index + 1}`}
-            title={titleFromUrl(href, index)}
-            href={href}
-          />
-        ))}
+    hasLogo && (
+      <div class="cv-section__logo">
+        <slot name="logo" />
       </div>
     )
   }
 
-  <div class="cv-section__summary"><slot /></div>
+  <div class="cv-section__content">
+    <div class="cv-section__header">
+      <!-- Figma text style: Typography/Mono - Small. -->
+      <p class="cv-section__dates">{formatRange(start, end)}</p>
+
+      <div class="cv-section__position">
+        <!-- Figma text style: Typography/Body - Bold. -->
+        <HeadingTag id={`${sectionId}-role`} class="cv-section__role">
+          {
+            documentUrl ? (
+              <a href={withBase(documentUrl)} class="cv-section__role-link">
+                <span class="cv-section__role-ghost" aria-hidden="true">
+                  {role}
+                </span>
+                <span class="cv-section__role-label">
+                  {role}
+                  {documentLabel && (
+                    <span class="visually-hidden"> — {documentLabel}</span>
+                  )}
+                </span>
+              </a>
+            ) : (
+              role
+            )
+          }
+        </HeadingTag>
+        <!-- Figma text style: Typography/Body. -->
+        {company && <p class="cv-section__company">{company}</p>}
+      </div>
+    </div>
+
+    {
+      projectUrls.length > 0 && (
+        <div class="cv-section__projects">
+          {projectUrls.map((href, index) => (
+            // The page decides the real project caption and title. This URL-only
+            // interface supplies short, deterministic labels until it does.
+            <ProjectPreview
+              id={`${sectionId}-project-${index + 1}`}
+              caption={`Project ${index + 1}`}
+              title={titleFromUrl(href, index)}
+              href={href}
+            />
+          ))}
+        </div>
+      )
+    }
+
+    {hasSummary && <div class="cv-section__summary" set:html={summaryHtml} />}
+  </div>
 </section>
 
 <style>
+  /* Figma 114:640: Logo slot 40 × 40, Content Container at x64. */
+  .cv-section {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-md);
+  }
+
+  /* Figma 377:1946 wraps the slot in a column with 8 of top padding. 40 is
+     space/lg. */
+  .cv-section__logo {
+    flex: 0 0 var(--space-lg);
+    padding-block-start: var(--space-2xs);
+  }
+
+  .cv-section__logo :global(img) {
+    inline-size: 100%;
+    block-size: auto;
+  }
+
+  .cv-section__content {
+    display: grid;
+    /* Figma 114:640: 16 between Header, Media and Description. */
+    row-gap: var(--space-sm);
+    flex: 1 1 auto;
+    min-inline-size: 0;
+  }
+
   .cv-section__dates {
     /* Figma text style: Typography/Mono - Small. */
     font-family: var(--font-mono);
@@ -98,32 +166,77 @@ const titleFromUrl = (url: string, index: number) => {
     font-weight: var(--font-weight-regular);
     line-height: var(--line-height-loose);
     letter-spacing: var(--letter-spacing-extra-wide);
+    color: var(--color-neutral-600);
   }
 
   .cv-section__position {
     display: flex;
+    /* Figma 114:260 draws one line; real entries run longer than the
+       mockup's, so the row wraps rather than overflowing its container. */
     flex-wrap: wrap;
-    align-items: baseline;
-    /* Token-chosen while Figma is unreachable; not a value read from the set. */
-    gap: var(--space-2xs);
+    align-items: center;
+    /* Figma 114:260: Role x0, Company x201 across a 185 role — a 16 gap. */
+    gap: var(--space-sm);
+    color: var(--color-neutral-black);
   }
 
-  /* Figma text style: Typography/Body - Large, at Body - Bold's weight. */
+  /* Figma text style: Typography/Body - Bold. */
   .cv-section__role {
     font-family: var(--font-sans);
-    font-size: var(--font-size-lg);
+    font-size: var(--font-size-base);
     font-weight: var(--font-weight-semibold);
     line-height: var(--line-height-normal);
     letter-spacing: var(--letter-spacing-normal);
   }
 
-  /* Figma text style: Typography/Body - Large. */
+  /* Max's decision: the role links to its certificate or reference letter. The
+     set has no link layer. Hover enlarges and bolds without moving anything —
+     the ghost holds the box, the label is out of flow. */
+  .cv-section__role-link {
+    position: relative;
+    display: inline-block;
+    text-decoration: none;
+  }
+
+  .cv-section__role-ghost {
+    visibility: hidden;
+  }
+
+  .cv-section__role-label {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center start;
+    white-space: nowrap;
+  }
+
+  /*
+   * The same call NavBar's wrapping row makes: below 48rem the column beside
+   * the note rail does not exist, and a nowrap role ran off the right edge —
+   * content lost rather than moved. Recorded in design/components.json.
+   */
+  @media (max-width: 48rem) {
+    .cv-section__role-label {
+      white-space: normal;
+    }
+  }
+
+  .cv-section__role-link:hover .cv-section__role-label {
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-bold);
+  }
+
+  /* Figma text style: Typography/Body. */
   .cv-section__company {
     font-family: var(--font-sans);
-    font-size: var(--font-size-lg);
+    font-size: var(--font-size-base);
     font-weight: var(--font-weight-regular);
     line-height: var(--line-height-normal);
     letter-spacing: var(--letter-spacing-normal);
+  }
+
+  .cv-section__summary {
+    color: var(--color-neutral-800);
   }
 
   .cv-section__projects {

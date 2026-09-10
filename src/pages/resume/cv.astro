@@ -1,0 +1,316 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { SITE, LINKS, CV_INTRO, withBase } from '../../config/site';
+import { formatMonth } from '../../lib/dates';
+import Button from '../../components/Button.astro';
+
+// This page is the CV. The PDF is a print of it, rendered by `npm run pdf` —
+// so anything added here has to survive A4 as well as a browser window.
+// See docs/resume.md.
+
+/** Written by scripts/render-pdf.mjs. Kept in one place so page and script agree. */
+const CV_PDF = withBase('/cv/max-pinkert-cv.pdf');
+
+// One list, newest first — so the order of the files on disk is a convenience,
+// not the contract.
+const timeline = (await getCollection('resume')).sort((a, b) =>
+  b.data.start.localeCompare(a.data.start),
+);
+
+// On paper nobody can click "GitHub", so the link text is the address itself.
+const contact = [
+  { label: SITE.email, href: `mailto:${SITE.email}` },
+  ...LINKS.filter((link) => link.href.startsWith('http')).map((link) => ({
+    label: link.href.replace(/^https?:\/\//, ''),
+    href: link.href,
+  })),
+];
+---
+
+<BaseLayout
+  title="Curriculum vitae"
+  description={`Curriculum vitae of ${SITE.name} — ${SITE.role}. Positions and education, with a PDF to download.`}
+>
+  <main id="main" class="container cv">
+    <header class="cv__head">
+      <p class="cv__back no-print">
+        <a href={withBase('/')}>&larr; Portfolio</a>
+      </p>
+      <p class="eyebrow">Curriculum vitae</p>
+      <h1 class="cv__name">{SITE.name}</h1>
+      <p class="cv__role">{SITE.role}</p>
+
+      <p class="cv__intro">{CV_INTRO}</p>
+
+      <ul class="cv__contact">
+        {
+          contact.map((item) => (
+            <li>
+              <a href={item.href}>{item.label}</a>
+            </li>
+          ))
+        }
+      </ul>
+
+      <p class="cv__download no-print">
+        <Button type="secondary" href={CV_PDF} download>Download as PDF</Button>
+      </p>
+    </header>
+
+    <section aria-labelledby="h-timeline">
+      <h2 id="h-timeline" class="cv__section">Positions &amp; education</h2>
+
+      <ol class="timeline">
+        {
+          timeline.map(({ data }) => (
+            <li class:list={['entry', `entry--${data.kind}`]}>
+              <p class="entry__period">
+                <time datetime={data.start}>{formatMonth(data.start)}</time>
+                {' – '}
+                {data.end ? (
+                  <time datetime={data.end}>{formatMonth(data.end)}</time>
+                ) : (
+                  'present'
+                )}
+              </p>
+
+              <div class="entry__body">
+                <p class="entry__kind">
+                  {data.kind === 'work' ? 'Position' : 'Education'}
+                </p>
+                <h3 class="entry__title">{data.role}</h3>
+                {data.company && <p class="entry__org">{data.company}</p>}
+                {data.summary && <p class="entry__summary">{data.summary}</p>}
+                {data.documentUrl && (
+                  <p class="entry__doc no-print">
+                    <a href={withBase(data.documentUrl)}>
+                      {data.documentUrl.startsWith('/letters/')
+                        ? 'Reference letter (PDF)'
+                        : 'Certificate (PDF)'}
+                    </a>
+                  </p>
+                )}
+              </div>
+            </li>
+          ))
+        }
+      </ol>
+    </section>
+  </main>
+</BaseLayout>
+
+<style>
+  .cv {
+    padding-block: var(--space-2xl) var(--space-xl);
+  }
+
+  /* The site has no nav, and a CV is a page people arrive at from outside. */
+  .cv__back {
+    margin-bottom: var(--space-lg);
+    font-size: var(--font-size-sm);
+    color: var(--color-neutral-700);
+  }
+
+  .eyebrow {
+    margin-bottom: var(--space-md);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    letter-spacing: var(--letter-spacing-wide);
+    text-transform: uppercase;
+    color: var(--color-neutral-700);
+  }
+
+  .cv__name {
+    font-size: var(--font-size-2xl);
+  }
+
+  .cv__role {
+    margin-top: var(--space-2xs);
+    font-family: var(--font-serif);
+    font-size: var(--font-size-lg);
+    color: var(--color-pickled-500);
+  }
+
+  .cv__intro {
+    margin-top: var(--space-md);
+    max-width: var(--measure);
+  }
+
+  .cv__contact,
+  .cv__download {
+    margin-top: var(--space-md);
+    padding: 0;
+    list-style: none;
+    font-size: var(--font-size-sm);
+  }
+
+  .cv__contact {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2xs) var(--space-md);
+    color: var(--color-neutral-700);
+  }
+
+  /*
+   * The link itself is `Button type="secondary"` (Figma `Buttons`,
+   * `109:1382`). The pill with the neutral border that used to live here was a
+   * page-side invention; the Buttons set decides this treatment.
+   */
+
+  .cv__section {
+    margin-top: var(--space-2xl);
+    margin-bottom: var(--space-lg);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    letter-spacing: var(--letter-spacing-wide);
+    text-transform: uppercase;
+    color: var(--color-neutral-700);
+  }
+
+  /* ---------------------------------------------------------------
+   * Timeline. One list, both kinds of entry, newest first — a career
+   * reads as one line, not as two competing tables.
+   * ------------------------------------------------------------- */
+
+  .timeline {
+    padding: 0;
+    list-style: none;
+  }
+
+  .entry {
+    display: grid;
+    gap: var(--space-2xs);
+    padding-bottom: var(--space-lg);
+  }
+
+  .entry__period {
+    font-size: var(--font-size-sm);
+    font-variant-numeric: tabular-nums;
+    color: var(--color-neutral-700);
+    white-space: nowrap;
+  }
+
+  .entry__body {
+    position: relative;
+    padding-left: var(--space-md);
+    border-left: 1px solid var(--color-neutral-200);
+  }
+
+  /* The one gesture on this page: a Lemon dot per position, a green one per
+     qualification. Colour never carries the meaning alone — .entry__kind
+     spells it out for anyone who can't see the difference. */
+  .entry__body::before {
+    content: '';
+    position: absolute;
+    top: 0.5em;
+    left: calc(var(--space-2xs) / -2);
+    width: var(--space-2xs);
+    height: var(--space-2xs);
+    background: var(--color-lemon-500);
+    border-radius: var(--radius-full);
+    print-color-adjust: exact;
+  }
+
+  .entry--education .entry__body::before {
+    background: var(--color-herbs-400);
+  }
+
+  .entry__kind {
+    font-size: var(--font-size-sm);
+    letter-spacing: var(--letter-spacing-wide);
+    text-transform: uppercase;
+    color: var(--color-neutral-700);
+  }
+
+  .entry__title {
+    margin-top: var(--space-3xs);
+    font-size: var(--font-size-lg);
+  }
+
+  .entry__org {
+    margin-top: var(--space-3xs);
+    color: var(--color-pickled-500);
+  }
+
+  .entry__summary {
+    margin-top: var(--space-2xs);
+    max-width: var(--measure);
+    color: var(--color-neutral-700);
+  }
+
+  /* Screen only — the printed CV carries no unclickable URLs. */
+  .entry__doc {
+    margin-top: var(--space-2xs);
+    font-size: var(--font-size-sm);
+  }
+
+  @media (min-width: 48rem) {
+    .entry {
+      grid-template-columns: 10rem minmax(0, 1fr);
+      gap: var(--space-md);
+    }
+
+    .entry__period {
+      padding-top: 0.15em;
+      text-align: right;
+    }
+  }
+
+  /* ---------------------------------------------------------------
+   * Print — this is the PDF. `npm run pdf` renders exactly these rules.
+   * ------------------------------------------------------------- */
+
+  /* Sheet geometry is literal: @page sits outside the document tree and
+     cannot read custom properties, so there is no token to use here. */
+  @page {
+    size: A4;
+    margin: 16mm 15mm;
+  }
+
+  @media print {
+    .cv {
+      padding-block: 0;
+      max-width: none;
+      padding-inline: 0;
+    }
+
+    .no-print {
+      display: none;
+    }
+
+    /* Warm off-white is a screen decision; a CV prints on white. */
+    :global(body) {
+      background: var(--color-neutral-white);
+      font-size: var(--font-size-sm);
+    }
+
+    .cv__name {
+      font-size: var(--font-size-xl);
+    }
+
+    .cv__role,
+    .entry__title {
+      font-size: var(--font-size-base);
+    }
+
+    .cv__section {
+      margin-top: var(--space-lg);
+      margin-bottom: var(--space-md);
+    }
+
+    .entry {
+      padding-bottom: var(--space-md);
+      break-inside: avoid;
+    }
+
+    .entry__summary,
+    .cv__intro {
+      max-width: none;
+    }
+
+    a {
+      text-decoration: none;
+    }
+  }
+</style>

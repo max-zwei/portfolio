@@ -66,10 +66,12 @@ src/
   content/release-notes/ What changed on the site, and when.
   layouts/               BaseLayout — head, meta, OG, skip link.
                          ProseLayout — markdown document pages.
-  lib/dates.ts           formatMonth / formatRange, shared by /resume and CvSection.
+  lib/dates.ts           formatMonth / formatRange, shared by /resume/cv and CvSection.
   lib/match.ts           The persona matcher behind /home's chat. Imported by index.astro.
   lib/tokens.ts          Reads design/tokens.json for /styleguide.
   pages/                 File-based routes. handshake.md is a markdown page.
+  pages/resume.astro     The designed CV page. Screen only.
+  pages/resume/cv.astro  The same content as a printable document. The PDF's source.
   styles/tokens.css      Design tokens. One flat tier. Start here.
   styles/fonts.css       All three typefaces.
   styles/global.css      Reset, typography defaults, a11y helpers, .container.
@@ -83,7 +85,7 @@ public/avatars/          Chat avatars as SVG. One per speaker, plus everyone.svg
 public/icons/            Footer and Icons-set marks as SVG. Exported from Figma.
 public/logo/             The chat-ground logo variants as SVG. Exported from Figma.
 public/certificates/     Scanned qualifications. public/letters/ — references.
-scripts/render-pdf.mjs   Prints /resume and /handshake to those PDFs.
+scripts/render-pdf.mjs   Prints /resume/cv and /handshake to those PDFs.
 behind-the-scenes/skills/ Agent skills. figma-to-astro.md is the main one.
 behind-the-scenes/reflections/ What the last Figma → code job cost, and the improvements it produced.
 docs/                    cms (fields + editor), design-system, figma-handoff, resume, aeo, cleanup.
@@ -94,7 +96,7 @@ docs/                    cms (fields + editor), design-system, figma-handoff, re
 ```bash
 npm run dev      # local dev server
 npm run verify   # check + build + HTML lint + format check — before every push
-npm run pdf      # rebuild, then re-print /resume and /handshake to public/
+npm run pdf      # rebuild, then re-print /resume/cv and /handshake to public/
 npm run format   # prettier, write mode
 npx decap-server # local CMS backend, so /admin works without OAuth
 ```
@@ -150,8 +152,15 @@ layout grid, for instance. `--grid-*` and `--measure` live in
 
 ### Editing the résumé or the handshake
 
-Both PDFs are printed from their pages. After editing either, run `npm run pdf`
-and commit the result — nothing checks this for you.
+The CV lives at two routes. `/resume` is the designed page — portrait, note
+rail, dimming timeline — and is screen only. `/resume/cv` is the same collection
+laid out as a document, and it is the one `npm run pdf` prints; the designed page
+does not survive A4. Content is shared, so the two cannot disagree, but a change
+to what the CV _says_ belongs in `src/content/resume/`, and a change to how the
+printed one looks belongs in `src/pages/resume/cv.astro`.
+
+After editing either page or the handshake, run `npm run pdf` and commit the
+result — nothing checks this for you.
 
 ## 7. Conventions
 

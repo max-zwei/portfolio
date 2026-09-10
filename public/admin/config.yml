@@ -497,7 +497,8 @@ collections:
       - label: Company
         name: company
         widget: string
-        hint: Employer, client or institution.
+        required: false
+        hint: Employer, client or institution. Leave blank to show no company line.
 
       - label: Kind
         name: kind
@@ -511,7 +512,8 @@ collections:
       - label: Summary
         name: summary
         widget: text
-        hint: 'One or two sentences: what the work was, and what came of it.'
+        required: false
+        hint: 'One or two sentences: what the work was, and what came of it. Leave blank to show no summary.'
 
       - label: Project URLs
         name: projectUrls

@@ -7,7 +7,7 @@
     "node": ">=22"
   },
   "scripts": {
-    "dev": "astro dev",
+    "dev": "astro dev --base /",
     "build": "astro build",
     "preview": "astro preview",
     "check": "astro check",
