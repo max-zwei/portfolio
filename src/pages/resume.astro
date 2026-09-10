@@ -1,31 +1,59 @@
 ---
 import { getCollection } from 'astro:content';
+import { Image } from 'astro:assets';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { SITE, LINKS, CV_INTRO, withBase } from '../config/site';
-import { formatMonth } from '../lib/dates';
+import CvSection from '../components/CvSection.astro';
+import FocusAreas from '../components/FocusAreas.astro';
+import Icon from '../components/Icon.astro';
+import NavBar from '../components/NavBar.astro';
+import PostIt from '../components/PostIt.astro';
+import ToolBox from '../components/ToolBox.astro';
 import Button from '../components/Button.astro';
-
-// This page is the CV. The PDF is a print of it, rendered by `npm run pdf` —
-// so anything added here has to survive A4 as well as a browser window.
-// See docs/resume.md.
+import { SITE, CV_STUDY, SOCIALS, withBase } from '../config/site';
+import portrait from '../assets/max-pinkert-portrait.png';
 
 /** Written by scripts/render-pdf.mjs. Kept in one place so page and script agree. */
 const CV_PDF = withBase('/cv/max-pinkert-cv.pdf');
+const SHARE_URL = new URL(withBase('/resume'), Astro.site).href;
 
-// One list, newest first — so the order of the files on disk is a convenience,
-// not the contract.
-const timeline = (await getCollection('resume')).sort((a, b) =>
-  b.data.start.localeCompare(a.data.start),
+const entries = await getCollection('resume');
+const byNewest = (a: (typeof entries)[number], b: (typeof entries)[number]) =>
+  b.data.start.localeCompare(a.data.start);
+const work = entries
+  .filter((entry) => entry.data.kind === 'work')
+  .sort(byNewest);
+const education = entries
+  .filter((entry) => entry.data.kind === 'education')
+  .sort(byNewest);
+
+const documentLabel = (url: string) =>
+  url.startsWith('/letters/') ? 'Reference letter (PDF)' : 'Certificate (PDF)';
+
+const TOOLS = Array.from({ length: 18 }, () => ({
+  name: '[tool]',
+  icon: '/icons/figma.svg',
+}));
+const FOCUS_AREAS = Array.from({ length: 6 }, () => '[focus area]');
+
+/*
+ * Handoff §7: the notes' copy is not written yet; the drawn text is the set's
+ * own placeholder. Handoff §13: the notes hang off the combined Experience +
+ * Education list rather than off either section, so one rail runs the length
+ * of both and the four colours cycle in the page's own order (`251:3244`,
+ * `251:3248`, `251:3255`, `251:3262`).
+ *
+ * The count follows the combined row count — two notes every five rows, plus
+ * the one that closes the rail — and the rail spreads them over the real
+ * height of the list, so the clear space between notes stays in the drawn
+ * 300–400px band as entries are added. Measured at 1280 with today's 15
+ * rows: 7 notes, 314px apart.
+ */
+const NOTE_COLORS = ['herbs', 'tomato', 'lemon', 'pickled'] as const;
+const rows = work.length + education.length;
+const notes = Array.from(
+  { length: Math.round((rows * 2) / 5) + 1 },
+  (_, index) => NOTE_COLORS[index % NOTE_COLORS.length],
 );
-
-// On paper nobody can click "GitHub", so the link text is the address itself.
-const contact = [
-  { label: SITE.email, href: `mailto:${SITE.email}` },
-  ...LINKS.filter((link) => link.href.startsWith('http')).map((link) => ({
-    label: link.href.replace(/^https?:\/\//, ''),
-    href: link.href,
-  })),
-];
 ---
 
 <BaseLayout
@@ -33,284 +61,372 @@ const contact = [
   description={`Curriculum vitae of ${SITE.name} — ${SITE.role}. Positions and education, with a PDF to download.`}
 >
   <main id="main" class="container cv">
-    <header class="cv__head">
-      <p class="cv__back no-print">
-        <a href={withBase('/')}>&larr; Portfolio</a>
-      </p>
-      <p class="eyebrow">Curriculum vitae</p>
-      <h1 class="cv__name">{SITE.name}</h1>
-      <p class="cv__role">{SITE.role}</p>
+    <header class="cv__header">
+      <div class="cv__profile">
+        <Image
+          class="cv__portrait"
+          src={portrait}
+          alt={SITE.name}
+          width={198}
+          height={198}
+        />
+        <div class="cv__identity">
+          <div class="cv__naming">
+            <h1 class="cv__name">{SITE.name}</h1>
+            <p class="cv__study">
+              {CV_STUDY.field}<br />{CV_STUDY.institution}
+            </p>
+          </div>
 
-      <p class="cv__intro">{CV_INTRO}</p>
+          <ul class="cv__socials">
+            {
+              SOCIALS.map((social) => (
+                <li>
+                  <a href={social.href} aria-label={social.label}>
+                    <img
+                      src={withBase(social.icon)}
+                      alt=""
+                      width={social.width}
+                      height={social.height}
+                    />
+                  </a>
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+      </div>
 
-      <ul class="cv__contact">
+      <div class="cv__actions">
+        <Button icon="on" href={CV_PDF} download>
+          <Icon slot="icon" icon="download" alt="" />
+          Download
+        </Button>
+        <Button icon="on" href={SHARE_URL} class="cv__share" data-share>
+          <Icon slot="icon" icon="share" alt="" />
+          Share
+        </Button>
+      </div>
+
+      <p class="visually-hidden" role="status" data-share-status></p>
+    </header>
+
+    <div class="cv__body">
+      <div class="cv__sections">
+        <section class="cv__section" aria-labelledby="h-experience">
+          <h2 id="h-experience" class="cv__section-title">Experience</h2>
+          <ol class="cv__list">
+            {
+              work.map((entry) => (
+                <li class="cv__row">
+                  <CvSection
+                    role={entry.data.role}
+                    company={entry.data.company}
+                    start={entry.data.start}
+                    end={entry.data.end}
+                    documentUrl={entry.data.documentUrl}
+                    documentLabel={
+                      entry.data.documentUrl &&
+                      documentLabel(entry.data.documentUrl)
+                    }
+                  >
+                    {entry.data.logo && entry.data.logoAlt ? (
+                      <Image
+                        slot="logo"
+                        src={entry.data.logo}
+                        alt={entry.data.logoAlt}
+                      />
+                    ) : (
+                      /* Handoff §12: no employer logos collected yet. */
+                      <img
+                        slot="logo"
+                        src={withBase('/icons/figma.svg')}
+                        alt=""
+                        width="12"
+                        height="16"
+                      />
+                    )}
+                    {entry.data.summary && <p>{entry.data.summary}</p>}
+                  </CvSection>
+                </li>
+              ))
+            }
+          </ol>
+        </section>
+
+        <section class="cv__section" aria-labelledby="h-education">
+          <h2 id="h-education" class="cv__section-title">Education</h2>
+          <ol class="cv__list">
+            {
+              education.map((entry) => (
+                <li class="cv__row">
+                  <CvSection
+                    role={entry.data.role}
+                    company={entry.data.company}
+                    start={entry.data.start}
+                    end={entry.data.end}
+                    documentUrl={entry.data.documentUrl}
+                    documentLabel={
+                      entry.data.documentUrl &&
+                      documentLabel(entry.data.documentUrl)
+                    }
+                  >
+                    {entry.data.summary && <p>{entry.data.summary}</p>}
+                  </CvSection>
+                </li>
+              ))
+            }
+          </ol>
+        </section>
+      </div>
+
+      <ul class="cv__notes">
         {
-          contact.map((item) => (
+          notes.map((color) => (
             <li>
-              <a href={item.href}>{item.label}</a>
+              <PostIt color={color}>[a note]</PostIt>
             </li>
           ))
         }
       </ul>
+    </div>
 
-      <p class="cv__download no-print">
-        <Button type="secondary" href={CV_PDF} download>Download as PDF</Button>
-      </p>
-    </header>
-
-    <section aria-labelledby="h-timeline">
-      <h2 id="h-timeline" class="cv__section">Positions &amp; education</h2>
-
-      <ol class="timeline">
-        {
-          timeline.map(({ data }) => (
-            <li class:list={['entry', `entry--${data.kind}`]}>
-              <p class="entry__period">
-                <time datetime={data.start}>{formatMonth(data.start)}</time>
-                {' – '}
-                {data.end ? (
-                  <time datetime={data.end}>{formatMonth(data.end)}</time>
-                ) : (
-                  'present'
-                )}
-              </p>
-
-              <div class="entry__body">
-                <p class="entry__kind">
-                  {data.kind === 'work' ? 'Position' : 'Education'}
-                </p>
-                <h3 class="entry__title">{data.role}</h3>
-                <p class="entry__org">{data.company}</p>
-                <p class="entry__summary">{data.summary}</p>
-                {data.documentUrl && (
-                  <p class="entry__doc no-print">
-                    <a href={withBase(data.documentUrl)}>
-                      {data.documentUrl.startsWith('/letters/')
-                        ? 'Reference letter (PDF)'
-                        : 'Certificate (PDF)'}
-                    </a>
-                  </p>
-                )}
-              </div>
-            </li>
-          ))
-        }
-      </ol>
-    </section>
+    <div class="cv__strip">
+      <div class="cv__toolbox"><ToolBox tools={TOOLS} /></div>
+      <div class="cv__focus"><FocusAreas areas={FOCUS_AREAS} /></div>
+    </div>
   </main>
+
+  <NavBar mode="dark" label="Site" />
 </BaseLayout>
 
 <style>
+  /* Figma 377:2095: 144 between the header, both sections and the strip. */
   .cv {
-    padding-block: var(--space-2xl) var(--space-xl);
+    display: grid;
+    row-gap: var(--space-3xl);
+    padding-block: var(--space-3xl);
   }
 
-  /* The site has no nav, and a CV is a page people arrive at from outside. */
-  .cv__back {
-    margin-bottom: var(--space-lg);
-    font-size: var(--font-size-sm);
-    color: var(--color-neutral-700);
+  /* Figma 251:2566: the profile and the two actions at opposite ends. */
+  .cv__header {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
   }
 
-  .eyebrow {
-    margin-bottom: var(--space-md);
-    font-size: var(--font-size-sm);
-    font-weight: var(--font-weight-medium);
-    letter-spacing: var(--letter-spacing-wide);
-    text-transform: uppercase;
-    color: var(--color-neutral-700);
+  .cv__profile {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
   }
 
+  /* 198 is the asset's own size, not a token (skill §9). */
+  .cv__portrait {
+    border-radius: var(--radius-full);
+    object-fit: cover;
+  }
+
+  /* Figma 251:2564: the naming block and the marks at the ends of a column
+     inset by 16 top and bottom. */
+  .cv__identity {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: var(--space-md);
+  }
+
+  .cv__naming {
+    display: grid;
+    row-gap: var(--space-xs);
+  }
+
+  /* Typography/H2 on the h1: only the size differs from global.css. */
   .cv__name {
     font-size: var(--font-size-2xl);
   }
 
-  .cv__role {
-    margin-top: var(--space-2xs);
-    font-family: var(--font-serif);
-    font-size: var(--font-size-lg);
-    color: var(--color-pickled-500);
-  }
-
-  .cv__intro {
-    margin-top: var(--space-md);
-    max-width: var(--measure);
-  }
-
-  .cv__contact,
-  .cv__download {
-    margin-top: var(--space-md);
-    padding: 0;
-    list-style: none;
-    font-size: var(--font-size-sm);
-  }
-
-  .cv__contact {
+  /* Figma 377:2096: five marks in a row, 12 apart, 4 of bottom padding. */
+  .cv__socials {
     display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-2xs) var(--space-md);
-    color: var(--color-neutral-700);
+    align-items: center;
+    gap: var(--space-xs);
+    padding: 0;
+    padding-block-end: var(--space-3xs);
+    list-style: none;
+  }
+
+  /* Figma 251:2560: the two icon buttons stack 16 apart, right-aligned. */
+  .cv__actions {
+    display: flex;
+    align-items: flex-end;
+    gap: var(--space-sm);
+  }
+
+  /* Handoff §9: Share keeps lemon/200 in both states, deliberately. The class
+     reaches Button's root, hence :global. */
+  :global(.btn.cv__share),
+  :global(.btn.cv__share:hover) {
+    background-color: var(--color-lemon-200);
+  }
+
+  .cv__section {
+    display: grid;
+    row-gap: var(--space-lg);
+  }
+
+  /* Typography/H1 on the h2. */
+  .cv__section-title {
+    font-size: var(--font-size-3xl);
+  }
+
+  /* Figma 251:2615 and 377:1989: both lists are drawn at 64. */
+  .cv__list {
+    display: grid;
+    row-gap: var(--space-xl);
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+
+  .cv__row {
+    display: grid;
+    row-gap: var(--space-md);
+  }
+
+  /* Figma 377:2095: the two sections are 144 apart, like every other pair. */
+  .cv__sections {
+    display: grid;
+    row-gap: var(--space-3xl);
   }
 
   /*
-   * The link itself is `Button type="secondary"` (Figma `Buttons`,
-   * `109:1382`). The pill with the neutral border that used to live here was a
-   * page-side invention; the Buttons set decides this treatment.
+   * The rail is one column of notes for the whole timeline, spread over its
+   * height. Below 48rem it has nowhere to sit beside the entries, and the
+   * Mobile frame (`103:1124`) is unfinished, so it follows them instead.
    */
-
-  .cv__section {
-    margin-top: var(--space-2xl);
-    margin-bottom: var(--space-lg);
-    font-size: var(--font-size-sm);
-    font-weight: var(--font-weight-medium);
-    letter-spacing: var(--letter-spacing-wide);
-    text-transform: uppercase;
-    color: var(--color-neutral-700);
-  }
-
-  /* ---------------------------------------------------------------
-   * Timeline. One list, both kinds of entry, newest first — a career
-   * reads as one line, not as two competing tables.
-   * ------------------------------------------------------------- */
-
-  .timeline {
+  .cv__notes {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--space-xl);
     padding: 0;
+    margin-block-start: var(--space-xl);
     list-style: none;
   }
 
-  .entry {
+  .cv__strip {
     display: grid;
-    gap: var(--space-2xs);
-    padding-bottom: var(--space-lg);
+    row-gap: var(--space-2xl);
   }
 
-  .entry__period {
-    font-size: var(--font-size-sm);
-    font-variant-numeric: tabular-nums;
-    color: var(--color-neutral-700);
-    white-space: nowrap;
+  /*
+   * Handoff §10 via IntersectionObserver: entries outside the middle 60% of
+   * the viewport fade to neutral-300 (Handoff §14 — the contrast failure is
+   * intended, the dimmed entry is not meant to be read). CvSection colours its
+   * own parts, so the dimmed state has to reach them. Nothing is dimmed
+   * without the script.
+   */
+  .cv__row,
+  .cv__row :global(*) {
+    transition: color var(--duration-slow) var(--easing-standard);
   }
 
-  .entry__body {
-    position: relative;
-    padding-left: var(--space-md);
-    border-left: 1px solid var(--color-neutral-200);
-  }
-
-  /* The one gesture on this page: a Lemon dot per position, a green one per
-     qualification. Colour never carries the meaning alone — .entry__kind
-     spells it out for anyone who can't see the difference. */
-  .entry__body::before {
-    content: '';
-    position: absolute;
-    top: 0.5em;
-    left: calc(var(--space-2xs) / -2);
-    width: var(--space-2xs);
-    height: var(--space-2xs);
-    background: var(--color-lemon-500);
-    border-radius: var(--radius-full);
-    print-color-adjust: exact;
-  }
-
-  .entry--education .entry__body::before {
-    background: var(--color-herbs-400);
-  }
-
-  .entry__kind {
-    font-size: var(--font-size-sm);
-    letter-spacing: var(--letter-spacing-wide);
-    text-transform: uppercase;
-    color: var(--color-neutral-700);
-  }
-
-  .entry__title {
-    margin-top: var(--space-3xs);
-    font-size: var(--font-size-lg);
-  }
-
-  .entry__org {
-    margin-top: var(--space-3xs);
-    color: var(--color-pickled-500);
-  }
-
-  .entry__summary {
-    margin-top: var(--space-2xs);
-    max-width: var(--measure);
-    color: var(--color-neutral-700);
-  }
-
-  /* Screen only — the printed CV carries no unclickable URLs. */
-  .entry__doc {
-    margin-top: var(--space-2xs);
-    font-size: var(--font-size-sm);
+  .cv__row--dimmed,
+  .cv__row--dimmed :global(*) {
+    color: var(--color-neutral-300);
   }
 
   @media (min-width: 48rem) {
-    .entry {
-      grid-template-columns: 10rem minmax(0, 1fr);
-      gap: var(--space-md);
+    .cv__header {
+      flex-direction: row;
+      align-items: flex-start;
+      justify-content: space-between;
     }
 
-    .entry__period {
-      padding-top: 0.15em;
-      text-align: right;
-    }
-  }
-
-  /* ---------------------------------------------------------------
-   * Print — this is the PDF. `npm run pdf` renders exactly these rules.
-   * ------------------------------------------------------------- */
-
-  /* Sheet geometry is literal: @page sits outside the document tree and
-     cannot read custom properties, so there is no token to use here. */
-  @page {
-    size: A4;
-    margin: 16mm 15mm;
-  }
-
-  @media print {
-    .cv {
-      padding-block: 0;
-      max-width: none;
-      padding-inline: 0;
+    .cv__profile {
+      flex-direction: row;
+      align-items: center;
     }
 
-    .no-print {
-      display: none;
+    .cv__identity {
+      align-self: stretch;
+      padding-block: var(--space-sm);
     }
 
-    /* Warm off-white is a screen decision; a CV prints on white. */
-    :global(body) {
-      background: var(--color-neutral-white);
-      font-size: var(--font-size-sm);
+    .cv__actions {
+      flex-direction: column;
     }
 
-    .cv__name {
-      font-size: var(--font-size-xl);
+    .cv__body,
+    .cv__strip {
+      display: grid;
+      grid-template-columns: repeat(var(--grid-columns), minmax(0, 1fr));
+      column-gap: var(--grid-gutter);
     }
 
-    .cv__role,
-    .entry__title {
-      font-size: var(--font-size-base);
+    /* Handoff §13: seven columns for the entries; the notes ride the two the
+       page keeps free on the right (Figma 251:3244, right edge 1184). Column
+       8 stays clear between the text and the note rail. */
+    .cv__sections {
+      grid-column: 1 / span 7;
     }
 
-    .cv__section {
-      margin-top: var(--space-lg);
-      margin-bottom: var(--space-md);
+    .cv__notes {
+      grid-column: 9 / -1;
+      margin-block-start: 0;
+      gap: 0;
     }
 
-    .entry {
-      padding-bottom: var(--space-md);
-      break-inside: avoid;
+    .cv__toolbox {
+      grid-column: 1 / span 4;
     }
 
-    .entry__summary,
-    .cv__intro {
-      max-width: none;
-    }
-
-    a {
-      text-decoration: none;
+    .cv__focus {
+      grid-column: 7 / span 4;
     }
   }
 </style>
+
+<script>
+  // Handoff §10: dim every entry outside the middle 33% of the viewport.
+  const rows = document.querySelectorAll<HTMLElement>('.cv__row');
+  if (rows.length > 0 && 'IntersectionObserver' in window) {
+    const dim = (records: IntersectionObserverEntry[]) => {
+      for (const record of records) {
+        record.target.classList.toggle(
+          'cv__row--dimmed',
+          !record.isIntersecting,
+        );
+      }
+    };
+
+    // Percentage rootMargin resolves against root *width* (Intersection
+    // Observer spec), not height, so a height-based band has to be computed
+    // in pixels and rebuilt whenever the viewport height changes.
+    let observer: IntersectionObserver | undefined;
+    const observeRows = () => {
+      observer?.disconnect();
+      const inset = document.documentElement.clientHeight * 0.335;
+      observer = new IntersectionObserver(dim, {
+        rootMargin: `-${inset}px 0px -${inset}px 0px`,
+      });
+      for (const row of rows) observer.observe(row);
+    };
+
+    observeRows();
+    window.addEventListener('resize', observeRows);
+  }
+
+  // Handoff §6: Share copies this page's URL. Without the script the button is
+  // still a link to that URL.
+  const share = document.querySelector<HTMLAnchorElement>('[data-share]');
+  const status = document.querySelector<HTMLElement>('[data-share-status]');
+  share?.addEventListener('click', async (event) => {
+    if (!navigator.clipboard) return;
+    event.preventDefault();
+    await navigator.clipboard.writeText(share.href);
+    if (status) status.textContent = 'Link copied';
+  });
+</script>

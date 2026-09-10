@@ -7,7 +7,7 @@
  */
 import { withBase } from '../config/site';
 
-type IconName = 'cursor' | 'figma-make';
+type IconName = 'cursor' | 'figma-make' | 'download' | 'share';
 
 interface Props {
   /** Icon exported from the Figma `Icons` set. */
@@ -30,6 +30,18 @@ const ICONS = {
     src: withBase('/icons/figma-make.svg'),
     width: 80,
     height: 80,
+  },
+  // Figma `download` (`377:2133`).
+  download: {
+    src: withBase('/icons/download.svg'),
+    width: 28,
+    height: 28,
+  },
+  // Figma `share` (`377:2143`).
+  share: {
+    src: withBase('/icons/share.svg'),
+    width: 28,
+    height: 28,
   },
 } as const satisfies Record<
   IconName,

@@ -23,59 +23,85 @@ const { color = 'herbs', class: className } = Astro.props;
 </article>
 
 <style>
+  /*
+   * Figma 114:577-114:580. Every length below is drawn geometry, not spacing:
+   * the box is the rotated paper's bounding box plus the disc overhanging its
+   * top edge, so each variant carries its own box, paper offset and disc
+   * position. The paper itself is 181 × 181 in all four.
+   */
   .post-it {
     position: relative;
-    /* Figma 114:580: the component box that holds the rotated paper and the
-       pin overlapping its top edge. */
-    inline-size: 218px;
-    block-size: 246px;
+    inline-size: var(--post-it-width);
+    block-size: var(--post-it-height);
   }
 
-  /*
-   * Figma 114:173: a fixed 200 × 200 square whose centre sits at (109, 137) in
-   * that box — the same centre for all four variants, which is why the offset
-   * is written once and only the angle varies. The drawn copy exactly fills
-   * 200 × 200 minus the padding, so longer copy overflows the paper; the frame
-   * defines no clip, so none is added here.
-   */
   .post-it__paper {
     position: absolute;
-    inset-block-start: 37px;
-    inset-inline-start: 9px;
-    inline-size: 200px;
-    block-size: 200px;
-    padding: var(--space-lg) var(--space-sm) var(--space-xs);
+    inset-block-start: var(--post-it-paper-y);
+    inset-inline-start: var(--post-it-paper-x);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    inline-size: 181px;
+    block-size: 181px;
+    padding: var(--space-lg) var(--space-sm) var(--space-sm);
+    overflow: clip;
     background-color: var(--color-neutral-white);
     box-shadow: var(--shadow-md);
     color: var(--color-neutral-800);
+    /* Figma's rotation is counter-clockwise-positive, CSS's is clockwise, so
+       the sign is inverted from the value the file shows. */
+    rotate: var(--post-it-rotate);
   }
 
-  /* Figma's rotation is counter-clockwise-positive, CSS's is clockwise, so the
-     sign is inverted from the value the file shows. */
-  .post-it--herbs .post-it__paper {
-    transform: rotate(-5deg);
-  }
-
-  .post-it--tomato .post-it__paper {
-    transform: rotate(3deg);
-  }
-
-  .post-it--lemon .post-it__paper {
-    transform: rotate(-2deg);
-  }
-
-  .post-it--pickled .post-it__paper {
-    transform: rotate(6deg);
-  }
-
-  /* Figma 114:175: 64 × 64, bound to space/xl, at (109, 0) in the box. */
+  /* Figma 114:175 and its three siblings: a 40 disc, placed per variant. */
   .post-it__dot {
     position: absolute;
-    inset-block-start: 0;
-    inset-inline-start: 109px;
-    inline-size: var(--space-xl);
-    block-size: var(--space-xl);
+    inset-block-start: var(--post-it-dot-y);
+    inset-inline-start: var(--post-it-dot-x);
+    inline-size: 40px;
+    block-size: 40px;
     border-radius: var(--radius-full);
+  }
+
+  .post-it--herbs {
+    --post-it-width: 197px;
+    --post-it-height: 211px;
+    --post-it-paper-x: 8.14px;
+    --post-it-paper-y: 22.42px;
+    --post-it-rotate: -5deg;
+    --post-it-dot-x: 104px;
+    --post-it-dot-y: 0;
+  }
+
+  .post-it--tomato {
+    --post-it-width: 192px;
+    --post-it-height: 211px;
+    --post-it-paper-x: 5.51px;
+    --post-it-paper-y: 24.51px;
+    --post-it-rotate: 3deg;
+    --post-it-dot-x: 41px;
+    --post-it-dot-y: 0;
+  }
+
+  .post-it--lemon {
+    --post-it-width: 188px;
+    --post-it-height: 222px;
+    --post-it-paper-x: 3.67px;
+    --post-it-paper-y: 37.33px;
+    --post-it-rotate: -2deg;
+    --post-it-dot-x: 32px;
+    --post-it-dot-y: 18.5px;
+  }
+
+  .post-it--pickled {
+    --post-it-width: 200px;
+    --post-it-height: 227px;
+    --post-it-paper-x: 9.04px;
+    --post-it-paper-y: 36.06px;
+    --post-it-rotate: 6deg;
+    --post-it-dot-x: 43px;
+    --post-it-dot-y: 11px;
   }
 
   .post-it--herbs .post-it__dot {

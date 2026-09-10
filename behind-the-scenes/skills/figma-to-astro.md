@@ -30,6 +30,9 @@ Read before every job — the takeaways from the first page built this way:
 - Verify behaviour over time, not the end state.
 - Assert outcomes, not mechanisms.
 - Use the frame "Handoff" in each Figma subpage to understand the design requirements.
+- `design/components.json` is the record, never the source. A clean diff against
+  it proves nothing about the library — re-read the sets the page instantiates.
+- Export an asset from the instance that uses it. An SVG's fill is baked.
 
 ---
 
@@ -129,6 +132,15 @@ https://figma.com/design/<fileKey>/<name>?node-id=<int>-<int>
 use it to confirm you are pointed at the frame you think you are before pulling
 anything heavy. With no `nodeId` it lists the file's pages.
 
+Read the frame's own `fills` in the same breath — one property, and it is the
+page's ground. Do not inherit it from `global.css` and assume the two agree:
+`/resume` (`103:1123`) is `#fdfcf8` bound to `color/neutral/white` while the
+body ground was still neutral-100, and that shipped.
+
+A frame edge is not a content edge. A 1280 frame cannot draw "this element runs
+to the viewport", so full-bleed is a question for the Handoff, never an
+inference from the frame width.
+
 If the frame needs a full text sweep — checking for placeholder copy, or every
 outgoing link — remember `findAllWithCriteria` does not descend into instances.
 Recurse into instance children explicitly, or the sweep silently misses whatever
@@ -174,23 +186,52 @@ continuing if anything is in the last three rows.
    and an `unbound` list of values the design uses that no variable holds.
    `notes` is where a code name or shape departs from the Figma name, and it is
    the field to read before assuming a rename is drift.
-3. Read the delta only: a set with no manifest entry is new design work to
+3. **Then re-read, because that diff cannot see drift.** The manifest records
+   what a set looked like on `readOn`; it does not change when the set does. For
+   every set this page instantiates, pull the current geometry and variant list
+   out of Figma and compare against the manifest entry. One read-only
+   `use_figma` snippet returning `{ name, w, h, fills, variantProperties }` per
+   node covers it. Skipping this is what shipped a 200 × 200 post-it against a
+   181 × 181 redraw, and a NavBar built from a port two weeks stale.
+4. Read the delta only: a set with no manifest entry is new design work to
    port; an entry with no file under `src/components/` means the port is
    incomplete; a changed variant property means a prop signature changed; a
-   `combinations` list that grew means the matrix filled in.
-4. Variant properties map to props mechanically — `Type=Primary` → `type="primary"`
+   `combinations` list that grew means the matrix filled in. Whatever the
+   re-read found goes back into the manifest in the same pass, with `readOn`
+   moved on.
+5. Variant properties map to props mechanically — `Type=Primary` → `type="primary"`
    — the same one-to-one rule that keeps tokens honest. A name that does not
    transform cleanly is the finding.
-5. **Code Connect is unavailable on this account, not merely demoted.**
+6. **Code Connect is unavailable on this account, not merely demoted.**
    `get_code_connect_map` and `add_code_connect_map` both answer _"You need a
    Dev or Full seat on an Organization or Enterprise plan"_ on a student seat —
    verified 29 Aug 2026, having previously been misread as "silently returned
    nothing". Do not spend a call on either. `design/components.json` is the
    replacement and the better one here: it is diffable, it lives in the commit,
    and it holds the `notes` a mapping table has nowhere to put.
-6. Keep the "build it inline" fallback but restate it against amended R8: a set
+7. Keep the "build it inline" fallback but restate it against amended R8: a set
    published in the library MAY become a component before its first page use;
    anything not in the library stays inline until its second use.
+
+### Step 4b — Re-sync jobs
+
+Rounds two and three of a page are not round one. The frames are already built;
+what arrives is a list. Before touching anything:
+
+1. **Read the Handoff's newest section only**, and treat earlier sections as
+   possibly superseded — values do get reverted between rounds. Where two
+   sections disagree, the later one wins and the earlier one is dead text.
+2. **Split the list in two.** A line describing a Figma change is a read; a line
+   describing a code correction is an edit. The same sentence shape carries both
+   and they cost very different amounts.
+3. **Re-read every set named in the update lines**, per Step 4's re-read. An
+   update that says a component changed is the one case where the manifest is
+   guaranteed stale.
+4. **A number in prose that has changed once will change again.** Give it a
+   named constant with the Handoff section in the comment, so the next round
+   edits one line.
+5. Verification after a re-sync is the same Step 8, plus the specific thing the
+   feedback said was wrong — measured, not eyeballed.
 
 ### Step 5 — The spec
 
@@ -497,6 +538,11 @@ Five places where reading Figma literally produces the wrong code.
   `animation-delay` — so a CSS stagger still waits under
   `prefers-reduced-motion: reduce`. Do not re-add a per-page block (R7); if a
   delay is load-bearing, raise it.
+- **The dev server needs Node ≥ 22 and `--base /`.** An older Node on the PATH
+  exits before readiness, and without the base override every asset 404s against
+  the deploy base while the page still renders — silently wrong screenshots.
+- **Hide `astro-dev-toolbar` before any screenshot.** It overlays the bottom
+  centre of every capture and quietly corrupts a visual comparison.
 
 ---
 
@@ -506,6 +552,13 @@ Five places where reading Figma literally produces the wrong code.
   come out through `exportAsync({ format: 'SVG_STRING' })` rather than a
   download URL.
 - The code-syntax platform enum is `iOS`, not `IOS`.
+- **Targeted plugin-API reads are the cheap tool.** `get_design_context` is for
+  building a frame the first time; every check after that — a fill, a paint, a
+  variant matrix, a box — is a read-only `use_figma` snippet returning a few
+  dozen bytes instead of a full reference implementation.
+- **Export per instance, not per component.** Mode is a ground colour per
+  instance, and an exported SVG bakes its fills — so a dark instance needs its
+  own files (`public/icons/dark/`), not a recolour of the light export.
 
 ---
 
@@ -542,16 +595,22 @@ Five places where reading Figma literally produces the wrong code.
   studies, clients, metrics or bio copy, ever
 - ❌ Copying Figma's letter-spacing bindings as if they were intent
 - ❌ Verifying timed motion from a settled screenshot
+- ❌ Treating a clean `design/components.json` diff as proof the library has not
+  moved
+- ❌ Reading a page's ground from `global.css` instead of the frame's own fill
+- ❌ Implementing an earlier Handoff section that a later one reverted
+- ❌ `get_design_context` to check one property
 
 ---
 
 ## 14. Checkpoints
 
-| After  | Show                                                      | Ask                                                                  |
-| ------ | --------------------------------------------------------- | -------------------------------------------------------------------- |
-| Step 0 | The archetype, and the interaction model in one paragraph | "Is that the model?" — required, every page                          |
-| Step 2 | One sentence on what the frame is for                     | "Is that the intent?" — only if the screenshot left it ambiguous     |
-| Step 3 | Token diff: matched, missing, disagreeing                 | "These N values have no token. Add them, or is the design drifting?" |
-| Step 4 | Which components are reused vs. built new                 | Which sets came from the library, which are new design work          |
-| Step 7 | Design intent vs. CSS-only version                        | Required whenever the ceiling is hit. Never skip.                    |
-| Step 8 | Screenshot comparison, contrast, verify run               | "Done — here's what needed a decision."                              |
+| After   | Show                                                      | Ask                                                                  |
+| ------- | --------------------------------------------------------- | -------------------------------------------------------------------- |
+| Step 0  | The archetype, and the interaction model in one paragraph | "Is that the model?" — required, every page                          |
+| Step 2  | One sentence on what the frame is for                     | "Is that the intent?" — only if the screenshot left it ambiguous     |
+| Step 3  | Token diff: matched, missing, disagreeing                 | "These N values have no token. Add them, or is the design drifting?" |
+| Step 4  | Which components are reused vs. built new                 | Which sets came from the library, which are new design work          |
+| Step 4b | What the re-read found: which sets moved since `readOn`   | "These N sets were redrawn — is that the current library?"           |
+| Step 7  | Design intent vs. CSS-only version                        | Required whenever the ceiling is hit. Never skip.                    |
+| Step 8  | Screenshot comparison, contrast, verify run               | "Done — here's what needed a decision."                              |
