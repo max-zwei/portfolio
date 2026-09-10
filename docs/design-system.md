@@ -91,6 +91,12 @@ Primarily used for text of user input, for example ghost buttons. And as alterna
 | `neutral-800`                         | Body text.                                                                                                         |
 | `neutral-black`                       | Heading ink                                                                                                        |
 
+**Every page's ground is `neutral-white`, and that is the default rather than a
+per-page choice.** It is set once on `body` in `global.css:30`; a page that wants
+a different ground has to be drawn that way, and the frame's own fill is what
+says so. `neutral-100` is the step above it — the raised ground for something
+sitting _on_ the page, not an alternative page colour.
+
 ## Type
 
 **Sans (`--font-sans`)**

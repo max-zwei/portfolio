@@ -47,7 +47,7 @@ Every project I take on follows the same five phases. The details change; the sh
 
 ### Phase 1 — Stakeholder interview
 
-We start with a structured conversation before any design work happens. I ask who you are, what your business is, what success looks like, what's been tried, and what you're worried about. The format follows the NN/g stakeholder-interview method ([nngroup.com/articles/stakeholder-interviews](https://www.nngroup.com/articles/stakeholder-interviews/)). The output of this phase is the "Desired outcome" entry in Section 1 and a shared understanding of constraints.
+We start with a structured conversation before any design work happens. I ask who you are, what your business is, what success looks like, what's been tried, and what you're worried about. The output of this phase is the "Desired outcome" entry in Section 1 and a shared understanding of constraints.
 
 ### Phase 2 — Design
 

@@ -6,7 +6,7 @@ so nothing is written down twice and the two cannot disagree.
 
 | Document  | URL          | Source                                                     | PDF                                    |
 | --------- | ------------ | ---------------------------------------------------------- | -------------------------------------- |
-| CV        | `/resume`    | `src/content/resume/` + `CV_INTRO` in `src/config/site.ts` | `/cv/max-pinkert-cv.pdf`               |
+| CV        | `/resume/cv` | `src/content/resume/` + `CV_INTRO` in `src/config/site.ts` | `/cv/max-pinkert-cv.pdf`               |
 | Handshake | `/handshake` | `src/pages/handshake.md`                                   | `/handshake/max-pinkert-handshake.pdf` |
 
 Both are produced by one command, `npm run pdf`. The rest of this file is about
@@ -38,7 +38,7 @@ whenever a résumé entry or the handshake changes, and commit the result.
 Always run `npm run pdf` before merging.
 
 [`scripts/render-pdf.mjs`](../scripts/render-pdf.mjs) serves `dist/` on a random
-port and prints `/resume` and `/handshake` with Chromium via `playwright-core`. It needs a browser
+port and prints `/resume/cv` and `/handshake` with Chromium via `playwright-core`. It needs a browser
 to print with:
 
 ```bash
@@ -52,9 +52,18 @@ script, it only builds the site the PDFs were already made from.
 The handshake's print rules live in `src/layouts/ProseLayout.astro`, so any
 markdown page using that layout prints the same way.
 
+## Two résumé routes
+
+`/resume` is the designed page — the portrait, the note rail, the dimming
+timeline. `/resume/cv` is the same content laid out as a document, and it is the
+one the PDF is printed from: the designed page does not survive A4, and making it
+do so would have cost the design. Both read the same collection, so neither can
+drift from the other on content.
+
 ## Changing how it looks
 
-Screen and print styles both live in `src/pages/resume.astro`. Two things to know
+Screen and print styles for the printed CV live in `src/pages/resume/cv.astro`.
+Two things to know
 before touching them:
 
 - **`@page` can't read custom properties.** The sheet size and margins are

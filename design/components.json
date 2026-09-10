@@ -15,16 +15,18 @@
       "variantProperties": {
         "Type": ["Primary", "Secondary", "Nav", "Inline"],
         "Variant": ["Default", "Primary", "Secondary"],
-        "State": ["Default", "Hover"]
+        "State": ["Default", "Hover"],
+        "Icon": ["OFF", "ON"]
       },
       "combinations": [
-        "Primary/Default",
-        "Secondary/Default",
-        "Nav/Primary",
-        "Nav/Secondary",
-        "Inline/Primary"
+        "Primary/Default/OFF",
+        "Primary/Default/ON",
+        "Secondary/Default/OFF",
+        "Nav/Primary/OFF",
+        "Nav/Secondary/OFF",
+        "Inline/Primary/OFF"
       ],
-      "notes": "The matrix is sparse in Figma and sparse in code — only the five combinations above exist. State is a CSS :hover, not a prop. Renders <a> when href is present, <button type=\"button\"> otherwise."
+      "notes": "The matrix is sparse in Figma and sparse in code — only the six combinations above exist. State is a CSS :hover, not a prop. Renders <a> when href is present, <button type=\"button\"> otherwise. Icon=ON (`377:2215`) exists on Type=Primary only: 16 / 12 padding around a 28 icon (60 × 52), no label drawn — the component keeps the default slot as the accessible name and hides it visually. Hover draws 64 × 56 by growing the icon to 32; code scales the icon by 32/28 instead of growing the box, the same no-reflow rule .btn__ghost follows for text."
     },
     {
       "figmaName": "Chat",
@@ -73,10 +75,45 @@
       "page": "Atoms",
       "component": "src/components/Icon.astro",
       "variantProperties": {
-        "icon": ["cursor", "figma-make"]
+        "Icon": [
+          "Cursor",
+          "Figma Make",
+          "download",
+          "share",
+          "perplexity",
+          "anthropic",
+          "openai",
+          "figma",
+          "github",
+          "dribbble",
+          "behance",
+          "linkedin"
+        ],
+        "Color": ["Lemon", "Black", "White"]
       },
-      "combinations": ["cursor", "figma-make"],
-      "notes": "Two icons only. cursor (`109:1373`) is 40×40 and ships as public/cursor.svg; figma-make (`140:1095`) is 80×80 and ships as public/icons/figma-make.svg. Scope boundary: the eight marks inside the NavBar frame are NOT part of this set — they are footer data in src/config/site.ts. Separately, public/cursor-pointer.svg (16×16) has NO Figma node: it is the same circle re-drawn at pointer size for the site-wide CSS cursor, because a url() cursor renders at the asset's intrinsic size and CSS cannot scale it. The 40×40 mark here is unchanged and is what /styleguide renders. Change the colour and both files need it."
+      "combinations": [
+        "Cursor/Lemon",
+        "Figma Make/Black",
+        "download/Black",
+        "share/Black",
+        "perplexity/Black",
+        "perplexity/White",
+        "anthropic/Black",
+        "anthropic/White",
+        "openai/Black",
+        "openai/White",
+        "figma/Black",
+        "figma/White",
+        "github/Black",
+        "github/White",
+        "dribbble/Black",
+        "dribbble/White",
+        "behance/Black",
+        "behance/White",
+        "linkedin/Black",
+        "linkedin/White"
+      ],
+      "notes": "Rebuilt by Max on 10 Sep 2026 as the single source for every mark, and the scope boundary recorded here before it is now REVERSED: the eight footer marks ARE this set. Twenty symbols on a two-axis matrix — Icon × Color — with Black (#040302) and White (#FDFCF8) pairs for the eight marks, and single Lemon (Cursor, `109:1373`, 40×40) and Black (Figma Make, `140:1095`, 56×56; download `377:2133` and share `377:2143`, 28×28) entries. Marks are 16 tall at their own drawn widths: perplexity `387:2931`/`389:2932` 16, anthropic `387:2929`/`389:2934` 16, openai `387:2930`/`389:2936` 16.14, figma `389:2969`/`389:2974` 11.53, github `389:2970`/`389:2981` 16.44, dribbble `389:2971`/`389:2992` 16, behance `389:2972`/`389:2987` 19, linkedin `389:2973`/`389:2997` 16.15. Geometry verified identical to the shipped assets, which resolves two open items: the third \"explore with\" mark is PERPLEXITY, not unidentified, and public/icons/dark/ is the set's own White variant rather than a code invention. Two deltas remain: the shipped light marks carry #171613 because that is what the NavBar Mode=Default instance paints them, while the set's Color=Black is #040302 — an instance paint, not drift; and the files are still named explore-3.svg, explore-claude.svg and explore-openai.svg rather than perplexity, anthropic and openai. Separately, public/cursor-pointer.svg (16×16) has NO Figma node: it is the same circle re-drawn at pointer size for the site-wide CSS cursor, because a url() cursor renders at the asset's intrinsic size and CSS cannot scale it. The 40×40 mark is what /styleguide renders. Change the colour and both files need it."
     },
     {
       "figmaName": "post-it",
@@ -87,7 +124,7 @@
         "Color": ["herbs", "tomato", "lemon", "pickled"]
       },
       "combinations": ["herbs", "tomato", "lemon", "pickled"],
-      "notes": "The matching 500-step disc is 64×64 at (109, 0), overlapping a 200×200 paper centred at (109, 137) in the 218×246 component box. Figma rotations herbs +5, tomato −3, lemon +2 and pickled −6 become CSS rotate(-5deg), rotate(3deg), rotate(-2deg) and rotate(6deg) because Figma is counter-clockwise-positive while CSS is clockwise-positive."
+      "notes": "Each variant is its own geometry, so PostIt carries four sets of custom properties rather than one shared offset. The paper is 181 × 181 with 40 / 16 / 16 padding, Elevation / md and its own clip; the 500-step disc is 40 × 40 and sits at (104, 0) herbs, (41, 0) tomato, (32, 18.5) lemon, (43, 11) pickled inside boxes of 197 × 211, 192 × 211, 188 × 222 and 200 × 227. Figma rotations herbs +5, tomato −3, lemon +2 and pickled −6 become CSS rotate(-5deg), rotate(3deg), rotate(-2deg) and rotate(6deg) because Figma is counter-clockwise-positive while CSS is clockwise-positive."
     },
     {
       "figmaName": "flipcard",
@@ -125,7 +162,7 @@
       "component": "src/components/CvSection.astro",
       "variantProperties": {},
       "combinations": ["Default"],
-      "notes": "Renders one position. Mirrors the resume collection in src/content.config.ts. The date range is formatted by src/lib/dates.ts formatRange; the hyphen-minus in \"Mar - Oct 2026\" is the design's glyph, not an en dash."
+      "notes": "Renders one position. Mirrors the resume collection in src/content.config.ts. The date range is formatted by src/lib/dates.ts formatRange; the hyphen-minus in \"Mar - Oct 2026\" is the design's glyph, not an en dash. Text styles as re-read on 2026-09-10: Date is Mono - Small in neutral-600, Role is Body - Large at regular, Company is Body - Large at bold, Description is Body in neutral-800 — role and company are the reverse of the weights src/components/feedback.md asked for a week earlier. The logo column (`377:1946`) is 40 wide with 8 of top padding."
     },
     {
       "figmaName": "project preview",
@@ -192,7 +229,7 @@
         "Mode": ["default", "dark"]
       },
       "combinations": ["default", "dark"],
-      "notes": "Named NavBar in Figma but reads as the site footer: legal link, an \"explore with\" credit, seven section links and five social marks. Claude and ChatGPT are accessible links with placeholder hrefs; the unidentified third mark remains decorative. Socials carry their drawn intrinsic sizes: Figma 12×16, GitHub 16×16, Dribbble 16×16, Behance 19×16, LinkedIn 16×16. Mode is a ground colour per instance, NOT a colour scheme. The label prop keeps the two /styleguide landmarks unique. Below 48rem the row stacks; Figma's Mobile frame (`103:1103`) is empty, so that decision is undesigned."
+      "notes": "Named NavBar in Figma but reads as the site footer: legal link, an \"explore with\" credit, seven section links and five social marks. Claude and ChatGPT are accessible links with placeholder hrefs; the unidentified third mark remains decorative. Layout as drawn (`114:189`): #impressum and the explore credit at the two ends of the left column; the four section links, then the about links over the social marks, on the right. Socials carry their drawn intrinsic sizes: Figma 12×16, GitHub 17×16, Dribbble 16×16, Behance 19×16, LinkedIn 17×16. Mode is a ground colour per instance, NOT a colour scheme: Mode=Dark paints every mark neutral-white, so public/icons/dark/ holds the same eight artworks with that fill and src/config/site.ts carries both paths. The bar is full-bleed at every viewport — it has no max-width. The label prop keeps the two /styleguide landmarks unique. Below 48rem the row stacks; Figma's Mobile frame (`103:1103`) is empty, so that decision is undesigned."
     }
   ],
   "unbound": {
@@ -203,12 +240,18 @@
       "The 1px frame borders in ProjectSection and ReleaseNote — not Figma-read, still chosen, and no --border-width-* token tier exists.",
       "The 48rem breakpoint in NavBar, ToolBox and global.css — CSS custom properties cannot be used in media-query conditions.",
       "focus areas item gap 13px (`114:311`) — no spacing token holds it.",
-      "tool box grid gap 10px (`114:271`) — no spacing token holds it.",
-      "The explore-with marks' drop-shadow(0 1px 1px rgb(240 229 17 / 0.25)) in NavBar — not an Elevation style.",
+      "tool box tile 57 × 59.33 (`114:272`) — transcribed as aspect-ratio: 57 / 59.33.",
+      "The #ffffff fill on the slot placeholders — tool box tile (`114:272`), CV section Logo (`114:255`) and its three Image slots. One step off neutral-white and unbound; code paints them neutral-white, which is invisible against the page ground, as it is in Figma.",
+      "The explore-with marks' drop-shadow(0 1px 2px …) in NavBar — not an Elevation style. Verified against `114:196` (Mode=Default) and `385:2254`/`385:2256`/`385:2262` (Mode=Dark): 25% lemon-500 in Mode=Default, 75% in Mode=Dark. CSS-owned via color-mix, no longer duplicated inside the exported SVGs.",
       "w-[383.108px] on the NavBar impressum column — a magic number, dropped in code.",
       "The project preview paper-scrap collage geometry.",
       "flipcard state=small at 87×130.5.",
       "Sizes/L: 24 in project sections — a stray variable outside the seven collections, already marked for deletion.",
+      "The post-it geometry — the 181 paper, the 40 disc, and the four per-variant boxes and offsets (`114:577`-`114:580`).",
+      "The post-it copy's #000000 fill (`114:174`) — the only unbound text fill in the set; code keeps neutral-800 rather than introduce a second near-black.",
+      "The share icon's two #000000 strokes beside its #040302 discs (`377:2143`) — exported verbatim.",
+      "The .btn--icon 28 / 32 icon box (`377:2215`, `377:2217`) — an icon size, not a spacing step.",
+      "The /resume note rail's count rule — two notes every five combined rows, plus one. Handoff §13 names a 300-400px gap, not a count, and no drawn value fixes either.",
       "The page grid — 10 columns, 24 gutter, 96 margin on the 1280 frames; 5/16/24 on the 375 Mobile frames. A layout grid is not a variable, so --grid-frame/--grid-margin/--grid-columns/--grid-gutter/--grid-column live only in src/styles/tokens.css."
     ]
   },
@@ -227,7 +270,9 @@
       "Spacing gaps still awaiting a Figma read: ToolBox tile gaps, CuriosityRow's avatar gap, BlankSection/TextSection's body gap, and CvSection's project-row gap.",
       "The inactive greys in ReleaseNote and ProjectSection. Picked as --color-neutral-700 for text (7.91:1 on neutral-100) and --color-neutral-600 for frames (3.40:1, clearing the 3:1 non-text bar) rather than by eye.",
       "NavBar mode=default ground = --color-neutral-100. Only the dark ground was transcribed.",
-      "NavBar .navbar__nav flex-wrap: wrap. Not in the design — added because .navbar clips and a narrow viewport was silently cutting #aboutme and #behindthescenes off the right edge.",
+      "NavBar's columns stack below 48rem, and the row itself no longer wraps — the drawn 1280 frame is now full-bleed at every width, so the wrap that stopped #aboutme being clipped is unnecessary.",
+      "CvSection's role label drops white-space: nowrap below 48rem, for the reason the NavBar row wrapped: a long role ran off the right edge instead of reflowing.",
+      "/resume stacks its note rail under the timeline below 48rem. The Mobile frame (`103:1124`) is unfinished, so where the notes go on a phone is undrawn.",
       "ToolBox drops 6 columns to 2 below 48rem. A second undesigned mobile decision beyond the NavBar one.",
       "ProjectSection's artefact strip auto-scrolls: endless 40 px/s drift, latched off by pointer, wheel, touch, key or focus, temporarily paused on hover. Requested directly; no prototype connection exists in project sections (115:755), so nothing about the timing is Figma-read."
     ]

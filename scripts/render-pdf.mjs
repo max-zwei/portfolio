@@ -31,7 +31,7 @@ const dist = join(root, 'dist');
  */
 const base = (astroConfig.base ?? '').replace(/\/$/, '');
 const DOCUMENTS = [
-  { route: '/resume', output: join('cv', 'max-pinkert-cv.pdf') },
+  { route: '/resume/cv', output: join('cv', 'max-pinkert-cv.pdf') },
   {
     route: '/handshake',
     output: join('handshake', 'max-pinkert-handshake.pdf'),
