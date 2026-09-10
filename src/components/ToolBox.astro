@@ -3,7 +3,7 @@
 import { withBase } from '../config/site';
 
 interface Tool {
-  /** Visible tool name. */
+  /** Tool name: image alt text when an icon exists, visible text otherwise. */
   name: string;
   /** Optional public asset path; absent intentionally leaves the tile icon-free. */
   icon?: string;
@@ -36,15 +36,18 @@ const HeadingTag = `h${level}` as 'h2' | 'h3' | 'h4';
 ---
 
 <section class:list={['toolbox', className]}>
-  <HeadingTag>{title}</HeadingTag>
+  <HeadingTag class="toolbox__title">{title}</HeadingTag>
   <slot />
   {
     tools.length > 0 && (
       <ul class="toolbox__tools">
         {tools.map((tool) => (
           <li class="toolbox__tool">
-            {tool.icon && <img src={withBase(tool.icon)} alt="" />}
-            <span>{tool.name}</span>
+            {tool.icon ? (
+              <img src={withBase(tool.icon)} alt={tool.name} />
+            ) : (
+              <span>{tool.name}</span>
+            )}
           </li>
         ))}
       </ul>
@@ -59,10 +62,13 @@ const HeadingTag = `h${level}` as 'h2' | 'h3' | 'h4';
     gap: var(--space-md);
   }
 
+  .toolbox__title {
+    font-size: var(--font-size-3xl);
+  }
+
   .toolbox__tools {
     display: grid;
     grid-template-columns: repeat(6, minmax(0, 1fr));
-    /* Nearest existing spacing token; the unavailable Figma read left this gap unknown. */
     gap: var(--space-sm);
     padding: 0;
     list-style: none;
@@ -70,16 +76,10 @@ const HeadingTag = `h${level}` as 'h2' | 'h3' | 'h4';
 
   .toolbox__tool {
     display: flex;
-    flex-direction: column;
     align-items: center;
     justify-content: center;
-    /* Token-chosen internal spacing; not a value read from Figma. */
-    gap: var(--space-xs);
-    padding: var(--space-sm);
+    aspect-ratio: 57 / 59.33;
     background-color: var(--color-neutral-white);
-    border-radius: var(--radius-md);
-    /* Figma effect style: Elevation / md. */
-    box-shadow: var(--shadow-md);
     text-align: center;
   }
 

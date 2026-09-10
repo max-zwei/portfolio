@@ -29,22 +29,40 @@ const { mode = 'default', label = 'Site', class: className } = Astro.props;
 ---
 
 <footer class:list={['navbar', `navbar--${mode}`, className]}>
-  <div class="navbar__row">
-    <nav class="navbar__nav" aria-label={label}>
-      <ul class="navbar__list navbar__list--impressum">
-        <li>
-          <Button
-            type="nav"
-            variant="secondary"
-            href={NAV.impressum.href}
-            class="navbar__link"
-          >
-            {NAV.impressum.label}
-          </Button>
-        </li>
-      </ul>
+  <nav class="navbar__row" aria-label={label}>
+    <div class="navbar__legal">
+      <Button
+        type="nav"
+        variant="secondary"
+        href={NAV.impressum.href}
+        class="navbar__link"
+      >
+        {NAV.impressum.label}
+      </Button>
 
-      <ul class="navbar__list navbar__list--stack">
+      <div class="navbar__explore">
+        <p>explore with</p>
+        <ul class="navbar__marks">
+          {
+            EXPLORE_WITH.map((mark) => (
+              <li>
+                <a href={mark.href} aria-label={`Explore with ${mark.label}`}>
+                  <img
+                    src={withBase(mode === 'dark' ? mark.iconDark : mark.icon)}
+                    alt=""
+                    width="16"
+                    height="16"
+                  />
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
+
+    <div class="navbar__right">
+      <ul class="navbar__list">
         {
           NAV.sections.map((link) => (
             <li>
@@ -61,65 +79,57 @@ const { mode = 'default', label = 'Site', class: className } = Astro.props;
         }
       </ul>
 
-      <ul class="navbar__list navbar__list--stack">
-        {
-          NAV.about.map((link) => (
-            <li>
-              <Button
-                type="nav"
-                variant={
-                  link.label === '#behindthescenes' ? 'secondary' : 'primary'
-                }
-                href={link.href}
-                class:list={[
-                  'navbar__link',
-                  link.label === '#behindthescenes' && 'navbar__link--behind',
-                ]}
-              >
-                {link.label}
-              </Button>
-            </li>
-          ))
-        }
-      </ul>
-    </nav>
+      <div class="navbar__bottom">
+        <ul class="navbar__list">
+          {
+            NAV.about.map((link) => (
+              <li>
+                <Button
+                  type="nav"
+                  variant={
+                    link.label === '#behindthescenes' ? 'secondary' : 'primary'
+                  }
+                  href={link.href}
+                  class:list={[
+                    'navbar__link',
+                    link.label === '#behindthescenes' && 'navbar__link--behind',
+                  ]}
+                >
+                  {link.label}
+                </Button>
+              </li>
+            ))
+          }
+        </ul>
 
-    <div class="navbar__explore">
-      <p>explore with</p>
-      {
-        EXPLORE_WITH.map((mark) => (
-          <a href={mark.href} aria-label={`Explore with ${mark.label}`}>
-            <img src={withBase(mark.icon)} alt="" width="16" height="16" />
-          </a>
-        ))
-      }
+        <ul class="navbar__socials">
+          {
+            SOCIALS.map((social) => (
+              <li>
+                <a href={social.href} aria-label={social.label}>
+                  <img
+                    src={withBase(
+                      mode === 'dark' ? social.iconDark : social.icon,
+                    )}
+                    alt=""
+                    width={social.width}
+                    height={social.height}
+                  />
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
     </div>
-
-    <ul class="navbar__socials">
-      {
-        SOCIALS.map((social) => (
-          <li>
-            <a href={social.href} aria-label={social.label}>
-              <img
-                src={withBase(social.icon)}
-                alt=""
-                width={social.width}
-                height={social.height}
-              />
-            </a>
-          </li>
-        ))
-      }
-    </ul>
-  </div>
+  </nav>
 </footer>
 
 <style>
+  /* The bar is the page frame's full width at every viewport; only its own
+     64 / 40 padding holds the content in. */
   .navbar {
     width: 100%;
-    /* The drawn bar is the frame: `NavBar` 210:1625 Mode=Default is 1280 wide
-       with its own 64px side padding, kept below. */
-    max-width: var(--grid-frame);
     padding: var(--space-lg) var(--space-xl);
     overflow: clip;
     background-color: var(--color-neutral-100);
@@ -129,6 +139,8 @@ const { mode = 'default', label = 'Site', class: className } = Astro.props;
     background-color: var(--color-neutral-black);
   }
 
+  /* Figma 114:189 `Left Section`: the legal column and the links section sit
+     at the two ends of one row, both anchored to its top. */
   .navbar__row {
     display: flex;
     align-items: flex-start;
@@ -136,37 +148,48 @@ const { mode = 'default', label = 'Site', class: className } = Astro.props;
     gap: var(--space-2xl);
   }
 
-  /*
-   * `flex-wrap: wrap` is not in the design — the frame is a fixed 1280px and
-   * never has to reflow. It is here because `.navbar` clips: without wrapping,
-   * a narrow viewport silently cut `#aboutme` and `#behindthescenes` off the
-   * right edge, so two real navigation links disappeared rather than moved.
-   * Losing content is worse than a reflow the design does not draw.
-   */
-  .navbar__nav {
+  /* Figma 114:190 `Impressum Container`: #impressum at the top, the explore
+     credit at the bottom of the same column. */
+  .navbar__legal {
     display: flex;
     flex: 1;
-    flex-wrap: wrap;
+    flex-direction: column;
     align-items: flex-start;
     justify-content: space-between;
     gap: var(--space-lg);
+    align-self: stretch;
+  }
+
+  /* Figma 114:206 `Right Section`. */
+  .navbar__right {
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-end;
+    gap: var(--space-2xl);
+  }
+
+  /* Figma 114:213 `Bottom Links Container`: the two about links at the top,
+     the social marks at the bottom, level with the explore credit opposite. */
+  .navbar__bottom {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-lg);
+    align-self: stretch;
   }
 
   .navbar__list,
+  .navbar__marks,
   .navbar__socials {
+    display: flex;
     padding: 0;
     list-style: none;
   }
 
-  /* Figma reports 383.108px for this column. That unbound magic number is a
-     frame artefact, so the flex layout above distributes the width instead. */
-  .navbar__list--impressum {
-    flex: 1;
-  }
-
-  .navbar__list--stack {
-    display: flex;
+  .navbar__list {
     flex-direction: column;
+    align-items: flex-start;
     gap: var(--space-xs);
   }
 
@@ -196,25 +219,54 @@ const { mode = 'default', label = 'Site', class: className } = Astro.props;
     letter-spacing: var(--letter-spacing-extra-wide);
   }
 
-  .navbar__explore a {
+  .navbar__marks {
+    gap: var(--space-xs);
+    align-items: flex-start;
+  }
+
+  .navbar__marks a {
     display: block;
   }
 
-  .navbar__explore img {
-    /* This is an unbound literal in Figma, not an Elevation effect style. */
-    filter: drop-shadow(0 1px 1px rgb(240 229 17 / 0.25));
+  .navbar__marks img {
+    /* Locks the box against the 17×16 OpenAI mark so scaling on hover moves
+       nothing else in the row. */
+    inline-size: var(--space-sm);
+    block-size: var(--space-sm);
+    transition: transform var(--duration-fast) var(--easing-standard);
+    /* This is an unbound literal in Figma, not an Elevation effect style;
+       the SVG no longer carries its own copy (design/components.json). */
+    filter: drop-shadow(
+      0 1px 2px color-mix(in srgb, var(--color-lemon-500) 25%, transparent)
+    );
+  }
+
+  /* 18 / 16 — Figma draws no separate hover state for these marks; this
+     mirrors Button's .btn__icon no-reflow enlargement pattern. */
+  .navbar__marks a:hover img,
+  .navbar__marks a:focus-visible img {
+    transform: scale(1.125);
+  }
+
+  /* Figma 385:2254/2256/2262: the dark instance's marks draw the same
+     shadow at 75% instead of 25%. */
+  .navbar--dark .navbar__marks img {
+    filter: drop-shadow(
+      0 1px 2px color-mix(in srgb, var(--color-lemon-500) 75%, transparent)
+    );
   }
 
   .navbar__socials {
-    display: flex;
     gap: var(--space-xs);
+    align-items: center;
     padding-block-end: var(--space-3xs);
   }
 
   /* Figma's Mobile frame (`103:1103`) is empty. This is the one undesigned
      decision: a 1280px two-column row would otherwise overflow. */
   @media (max-width: 48rem) {
-    .navbar__row {
+    .navbar__row,
+    .navbar__right {
       flex-direction: column;
       gap: var(--space-lg);
     }

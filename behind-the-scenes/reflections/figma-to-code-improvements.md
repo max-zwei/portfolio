@@ -1,8 +1,8 @@
 # Improvements — Figma → code
 
-Companion to [`home-figma-to-code.md`](./home-figma-to-code.md). That one records
-what happened on the first job and why. This one is only the changes, split by
-who owns them.
+Companion to [`2026-08-28.md`](./2026-08-28.md). That one records what happened
+on the first job and why. This one is only the changes, split by who owns them.
+[`2026-09-10.md`](./2026-09-10.md) scores them against the second job.
 
 Everything here is done. Items marked **(R1)** need Max's approval because they
 change `CLAUDE.md`.

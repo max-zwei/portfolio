@@ -259,8 +259,8 @@ const resume = defineCollection({
         /** Job title, or the degree for an education entry. */
         role: z.string().min(1),
 
-        /** Employer, client or institution. */
-        company: z.string().min(1),
+        /** Employer, client or institution. Omit to leave the entry unaffiliated — the page shows no company line. */
+        company: z.string().optional(),
 
         /**
          * Work or study. Drives the "Position"/"Education" label the CV needs
@@ -274,8 +274,8 @@ const resume = defineCollection({
         /** Leave it out for anything still running — it renders as "present". */
         end: yearMonth.optional(),
 
-        /** One or two sentences: what the work was, and what came of it. */
-        summary: z.string().min(1),
+        /** One or two sentences: what the work was, and what came of it. Omit to show no summary. */
+        summary: z.string().optional(),
 
         /** Company or institution mark. */
         logo: image().optional(),

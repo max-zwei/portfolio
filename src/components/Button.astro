@@ -22,6 +22,12 @@ interface Props extends Omit<HTMLAttributes<'a'>, 'type'> {
   type?: 'primary' | 'secondary' | 'nav' | 'inline';
   /** Figma `Variant`. Only `nav` uses it; the matrix is sparse, as in Figma. */
   variant?: 'default' | 'primary' | 'secondary';
+  /**
+   * Figma `Icon`. `on` draws the icon slot alone — the default slot stays the
+   * accessible name and is rendered visually hidden. Only Type=Primary has the
+   * variant in Figma.
+   */
+  icon?: 'off' | 'on';
   /** Present → renders `<a>`. Absent → renders `<button type="button">`. */
   href?: string;
   /** Additional classes applied to the root element. */
@@ -31,29 +37,57 @@ interface Props extends Omit<HTMLAttributes<'a'>, 'type'> {
 const {
   type = 'primary',
   variant = 'default',
+  icon = 'off',
   href,
   class: className,
   ...rest
 } = Astro.props;
 
 const variantClass = variant === 'default' ? undefined : `btn--v-${variant}`;
-const classes = ['btn', `btn--${type}`, variantClass, className];
+const iconClass = icon === 'on' ? 'btn--icon' : undefined;
+const classes = ['btn', `btn--${type}`, variantClass, iconClass, className];
+const label = await Astro.slots.render('default');
 ---
 
 {
   href ? (
     <a href={href} class:list={classes} {...rest}>
-      <slot />
+      {icon === 'on' ? (
+        <>
+          <span class="btn__icon">
+            <slot name="icon" />
+          </span>
+          <span class="visually-hidden" set:html={label} />
+        </>
+      ) : (
+        <>
+          <span class="btn__ghost" aria-hidden="true" set:html={label} />
+          <span class="btn__label" set:html={label} />
+        </>
+      )}
     </a>
   ) : (
     <button type="button" class:list={classes} {...rest}>
-      <slot />
+      {icon === 'on' ? (
+        <>
+          <span class="btn__icon">
+            <slot name="icon" />
+          </span>
+          <span class="visually-hidden" set:html={label} />
+        </>
+      ) : (
+        <>
+          <span class="btn__ghost" aria-hidden="true" set:html={label} />
+          <span class="btn__label" set:html={label} />
+        </>
+      )}
     </button>
   )
 }
 
 <style>
   .btn {
+    position: relative;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -61,6 +95,20 @@ const classes = ['btn', `btn--${type}`, variantClass, className];
     background: none;
     border: 0;
     padding: 0;
+  }
+
+  /* Sizes the box at the rest state, so the hover enlargement below cannot
+     reflow anything around the button. */
+  .btn__ghost {
+    visibility: hidden;
+  }
+
+  .btn__label {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    white-space: nowrap;
   }
 
   /* Figma text style: Typography/Mono - Small. Effect: Elevation / md. */
@@ -78,11 +126,37 @@ const classes = ['btn', `btn--${type}`, variantClass, className];
     transition: box-shadow var(--duration-fast) var(--easing-standard);
   }
 
-  /* Hover swaps to Typography/Mono and Elevation / lg. Font size is a layout
-     property, so it deliberately changes instantly rather than transitioning. */
+  /* Hover swaps to Typography/Mono and Elevation / lg. */
   .btn--primary:hover {
-    font-size: var(--font-size-base);
     box-shadow: var(--shadow-lg);
+  }
+
+  /*
+   * Figma 377:2215 `Icon=ON`: 16 / 12 padding around a 28 icon, so 60 × 52.
+   * Hover draws 64 × 56 by growing the icon to 32; as with .btn__ghost the box
+   * stays at its rest size and the icon scales instead, so hovering one button
+   * in a stack cannot move the next.
+   */
+  .btn--primary.btn--icon {
+    padding: var(--space-xs) var(--space-sm);
+    gap: var(--space-xs);
+  }
+
+  .btn__icon {
+    display: grid;
+    place-items: center;
+    inline-size: 28px;
+    block-size: 28px;
+    transition: transform var(--duration-fast) var(--easing-standard);
+  }
+
+  .btn--icon:hover .btn__icon {
+    /* 32 / 28 — the icon size Figma draws for State=Hover. */
+    transform: scale(1.1429);
+  }
+
+  .btn--primary:hover .btn__label {
+    font-size: var(--font-size-base);
   }
 
   /* Figma text style: Typography/Body - Small. */
@@ -94,8 +168,7 @@ const classes = ['btn', `btn--${type}`, variantClass, className];
     letter-spacing: var(--letter-spacing-normal);
   }
 
-  /* Font size is a layout property and deliberately remains untransitioned. */
-  .btn--secondary:hover {
+  .btn--secondary:hover .btn__label {
     font-size: var(--font-size-base);
     line-height: var(--line-height-normal);
   }
@@ -117,8 +190,7 @@ const classes = ['btn', `btn--${type}`, variantClass, className];
     color: var(--color-neutral-600);
   }
 
-  /* Font weight is a layout property and deliberately remains untransitioned. */
-  .btn--nav:hover {
+  .btn--nav:hover .btn__label {
     font-weight: var(--font-weight-bold);
   }
 
