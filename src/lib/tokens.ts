@@ -140,3 +140,24 @@ export const radii = flatten(tokens.radius).map(({ path, value }) => ({
   cssVar: `--radius-${path[0]}`,
   value,
 }));
+
+type TextStyleLegs = {
+  fontFamily: string;
+  fontSize: string;
+  fontWeight: string;
+  lineHeight: string;
+  letterSpacing: string;
+};
+
+const textGroup = tokens.text as Record<
+  string,
+  string | { $value: TextStyleLegs }
+>;
+
+/** The twelve named Figma text styles. Every leg is a CSS custom property name. */
+export const textStyles = Object.entries(textGroup)
+  .filter(
+    (entry): entry is [string, { $value: TextStyleLegs }] =>
+      typeof entry[1] !== 'string',
+  )
+  .map(([key, style]) => ({ key, ...style.$value }));

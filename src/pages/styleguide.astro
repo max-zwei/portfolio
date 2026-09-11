@@ -8,6 +8,7 @@ import {
   fontSizes,
   spacing,
   radii,
+  textStyles as textStyleTokens,
 } from '../lib/tokens';
 import Avatar from '../components/Avatar.astro';
 import BlankSection from '../components/BlankSection.astro';
@@ -35,116 +36,26 @@ import artefact4 from '../assets/styleguide/artefact-4.svg';
 
 const shadows = ['sm', 'md', 'lg'];
 
-const textStyles = [
-  {
-    name: 'Typography/H1',
-    family: '--font-serif',
-    size: '--font-size-3xl',
-    weight: '--font-weight-semibold',
-    lineHeight: '--line-height-none',
-    letterSpacing: '--letter-spacing-normal',
-    derived: false,
-  },
-  {
-    name: 'Typography/H2',
-    family: '--font-serif',
-    size: '--font-size-2xl',
-    weight: '--font-weight-semibold',
-    lineHeight: '--line-height-none',
-    letterSpacing: '--letter-spacing-normal',
-    derived: false,
-  },
-  {
-    name: 'Typography/H3',
-    family: '--font-serif',
-    size: '--font-size-xl',
-    weight: '--font-weight-semibold',
-    lineHeight: '--line-height-none',
-    letterSpacing: '--letter-spacing-normal',
-    derived: false,
-  },
-  {
-    name: 'Typography/H4',
-    family: '--font-serif',
-    size: '--font-size-lg',
-    weight: '--font-weight-semibold',
-    lineHeight: '--line-height-none',
-    letterSpacing: '--letter-spacing-normal',
-    derived: false,
-  },
-  {
-    name: 'Typography/H5',
-    family: '--font-serif',
-    size: '--font-size-base',
-    weight: '--font-weight-semibold',
-    lineHeight: '--line-height-none',
-    letterSpacing: '--letter-spacing-normal',
-    derived: false,
-  },
-  {
-    name: 'Typography/Body',
-    family: '--font-sans',
-    size: '--font-size-base',
-    weight: '--font-weight-regular',
-    lineHeight: '--line-height-normal',
-    letterSpacing: '--letter-spacing-normal',
-    derived: true,
-  },
-  {
-    name: 'Typography/Body - Small',
-    family: '--font-sans',
-    size: '--font-size-sm',
-    weight: '--font-weight-regular',
-    lineHeight: '--line-height-relaxed',
-    letterSpacing: '--letter-spacing-normal',
-    derived: false,
-  },
-  {
-    name: 'Typography/Body - Large',
-    family: '--font-sans',
-    size: '--font-size-lg',
-    weight: '--font-weight-regular',
-    lineHeight: '--line-height-normal',
-    letterSpacing: '--letter-spacing-normal',
-    derived: true,
-  },
-  {
-    name: 'Typography/Body - Bold',
-    family: '--font-sans',
-    size: '--font-size-base',
-    weight: '--font-weight-bold',
-    lineHeight: '--line-height-normal',
-    letterSpacing: '--letter-spacing-normal',
-    derived: true,
-  },
-  {
-    name: 'Typography/Mono',
-    family: '--font-mono',
-    size: '--font-size-base',
-    weight: '--font-weight-regular',
-    lineHeight: '--line-height-loose',
-    letterSpacing: '--letter-spacing-extra-wide',
-    derived: true,
-  },
-  {
-    name: 'Typography/Mono - Small',
-    family: '--font-mono',
-    size: '--font-size-sm',
-    weight: '--font-weight-regular',
-    lineHeight: '--line-height-loose',
-    letterSpacing: '--letter-spacing-extra-wide',
-    derived: false,
-  },
-  {
-    name: 'Typography/Captions',
-    family: '--font-sans',
-    size: '--font-size-xs',
-    weight: '--font-weight-regular',
-    lineHeight: '--line-height-relaxed',
-    letterSpacing: '--letter-spacing-normal',
-    derived: true,
-  },
-] as const;
+/** Display name and provenance per style. `inferred` means read off component usage, not yet confirmed in Figma. */
+const TEXT_STYLE_META: Record<string, { name: string; inferred: boolean }> = {
+  h1: { name: 'Typography/H1', inferred: false },
+  h2: { name: 'Typography/H2', inferred: false },
+  h3: { name: 'Typography/H3', inferred: false },
+  h4: { name: 'Typography/H4', inferred: false },
+  h5: { name: 'Typography/H5', inferred: false },
+  body: { name: 'Typography/Body', inferred: true },
+  'body-small': { name: 'Typography/Body - Small', inferred: false },
+  'body-large': { name: 'Typography/Body - Large', inferred: true },
+  'body-bold': { name: 'Typography/Body - Bold', inferred: true },
+  mono: { name: 'Typography/Mono', inferred: true },
+  'mono-small': { name: 'Typography/Mono - Small', inferred: false },
+  captions: { name: 'Typography/Captions', inferred: true },
+};
+
+const textStyles = textStyleTokens.map((style) => ({
+  ...style,
+  ...TEXT_STYLE_META[style.key],
+}));
 
 const placeholderTools = Array.from({ length: 6 }, () => ({ name: '[tool]' }));
 const releaseDate = new Date('2026-02-06');
@@ -333,10 +244,12 @@ const demoArtefacts = [
 
       <h3>Text styles</h3>
       <p class="note">
-        The design defines twelve named text styles, and the repo records none
-        of them. This block is where drift becomes visible: seven rows are
-        transcribed from the design; the five marked <strong>inferred</strong>
-        are inferred from component usage and still need confirming against Figma.
+        The design defines twelve named text styles. All twelve are recorded in <code
+          >DESIGN.md</code
+        >&rsquo;s front matter and generated into <code>design/tokens.json</code
+        >, which is where this table reads them from. Seven are transcribed from
+        the design; the five marked <strong>inferred</strong> are read off component
+        usage and still need confirming against Figma.
       </p>
       <div class="table-wrap">
         <table class="text-styles">
@@ -353,23 +266,23 @@ const demoArtefacts = [
                 <tr>
                   <th scope="row">
                     <code>{style.name}</code>
-                    {style.derived && (
+                    {style.inferred && (
                       <span class="text-styles__marker">inferred</span>
                     )}
                   </th>
                   <td>
                     <span
                       class="text-styles__sample"
-                      style={`font-family:var(${style.family});font-size:var(${style.size});font-weight:var(${style.weight});line-height:var(${style.lineHeight});letter-spacing:var(${style.letterSpacing})`}
+                      style={`font-family:var(${style.fontFamily});font-size:var(${style.fontSize});font-weight:var(${style.fontWeight});line-height:var(${style.lineHeight});letter-spacing:var(${style.letterSpacing})`}
                     >
                       I care about experiences.
                     </span>
                   </td>
                   <td>
                     <span class="text-styles__tokens">
-                      <code>{style.family}</code>
-                      <code>{style.size}</code>
-                      <code>{style.weight}</code>
+                      <code>{style.fontFamily}</code>
+                      <code>{style.fontSize}</code>
+                      <code>{style.fontWeight}</code>
                       <code>{style.lineHeight}</code>
                       <code>{style.letterSpacing}</code>
                     </span>

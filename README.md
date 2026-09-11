@@ -20,7 +20,7 @@ First of all, why are you here? You're probably looking for my Figma file:
 https://www.figma.com/design/8SQOIPl0teOTvoFH1EffaB/Portfolio?node-id=29-39&t=TJXfA7cuqJFqoJID-1
 
 I did also put down my thoughts on probably a heavily discussed topic on how to move from Design to Code. Honestly, I keep finding new inspiration on how to tackle this and very tough to keep up with all the updates regarding the infrastructure and tools of this process. It ended up as a skill rather than a document, because that is what actually gets read by the thing doing the work:
-→ [`behind-the-scenes/skills/figma-to-astro.md`](behind-the-scenes/skills/figma-to-astro.md), and [`docs/design-system.md`](docs/design-system.md) for what the tokens are _for_.
+→ [`behind-the-scenes/skills/figma-to-astro.md`](behind-the-scenes/skills/figma-to-astro.md), and [`DESIGN.md`](DESIGN.md) for what the tokens are _for_.
 
 **⚙️ You're an engineer**
 Don't judge me and my beautiful repo. If you like my approach of trying to bridge Design and Code, feel free to get in touch and let's work on our next projects together!
@@ -61,6 +61,7 @@ npm run dev        # http://localhost:4321
 | ------------------- | ------------------------------------------------------------------- |
 | `npm run dev`       | Dev server with hot reload                                          |
 | `npm run pdf`       | Re-prints `/resume` and `/handshake` to their PDFs in `public/`     |
+| `npm run tokens`    | Regenerates `tokens.css` + `tokens.json` from `DESIGN.md`           |
 | `npm run verify`    | **The one to run before pushing** — check, build, HTML lint, format |
 | `npm run check`     | `astro check` — 0 errors, 0 warnings                                |
 | `npm run build`     | Static build into `dist/`                                           |
@@ -76,6 +77,11 @@ CI runs the same chain on every pull request, plus `npm audit`.
 Tokens live in [`src/styles/tokens.css`](src/styles/tokens.css) as **one flat
 tier**, named after the thing: `--color-lemon-500`, `--space-md`,
 `--font-size-lg`. Components use those names directly.
+
+[`DESIGN.md`](DESIGN.md) is the source, written in the
+[DESIGN.md format](docs/design-md-format.md): its front matter holds the tokens,
+and both `src/styles/tokens.css` and `design/tokens.json` are generated from it
+by `npm run tokens`.
 
 The kind of conflicts I have with Claude Code:
 "There is no role layer (`--text-secondary`, `--surface-raised`). There was one;

@@ -1,12 +1,14 @@
 /*
- * Design tokens. One tier, no role layer.
+ * Generated from DESIGN.md by scripts/build-tokens.mjs. Do not edit.
+ * Run `npm run tokens` after changing DESIGN.md's front matter.
  *
  * Every name here is its Figma variable name with `/` swapped for `-` and `--`
  * in front: `color/lemon/500` is `--color-lemon-500`. That correspondence is
  * the anti-drift mechanism — keep it mechanical.
  *
- * Values come from Figma. Sync workflow, and the three things Figma cannot
- * express faithfully: behind-the-scenes/skills/figma-to-astro.md.
+ * Values come from Figma, through DESIGN.md. One tier, no role layer. The
+ * three things Figma cannot express faithfully are in
+ * behind-the-scenes/skills/figma-to-astro.md.
  */
 
 :root {
@@ -137,9 +139,9 @@
    * frame (`home - chat` 103:1102, `/projects` 128:638 and the rest): COLUMNS
    * ×10, gutter 24, margin 96, so 1088 of content and an 87.2 column. A layout
    * grid is not a Figma variable, so unlike every other token here these have
-   * no entry in design/tokens.json — the exception --measure has always had.
-   * The 375 `Mobile` frames draw ×5, gutter 16, margin 24; that 24 is
-   * --space-md, which global.css already uses below 48rem.
+   * no entry in design/tokens.json — DESIGN.md's `layout` group is CSS-only,
+   * as is `focus`. The 375 `Mobile` frames draw ×5, gutter 16, margin 24; that
+   * 24 is --space-md, which global.css already uses below 48rem.
    */
   --grid-frame: 80rem; /* 1280px — the drawn frame */
   --grid-margin: 6rem; /* 96px */
@@ -147,13 +149,7 @@
   --grid-gutter: 1.5rem; /* 24px */
   /* One column: 5.45rem / 87.2px. Computed, so changing the frame or the
      gutter cannot leave a stale derived value behind. */
-  --grid-column: calc(
-    (
-        var(--grid-frame) - 2 * var(--grid-margin) - (var(--grid-columns) - 1) *
-          var(--grid-gutter)
-      ) /
-      var(--grid-columns)
-  );
+  --grid-column: calc((var(--grid-frame) - 2 * var(--grid-margin) - (var(--grid-columns) - 1) * var(--grid-gutter)) / var(--grid-columns));
 
   --measure: 68ch; /* readable line length */
 
@@ -162,7 +158,7 @@
    * columns is 420.8 — and the design's own chip instances exceed it.
    * `size/chat-choice` in Figma.
    */
-  --size-chat-choice: 25rem; /*  400px */
+  --size-chat-choice: 25rem; /* 400px */
 
   /* ---------------------------------------------------------------
    * 4. FOCUS RING — defined once, applied in global.css.
