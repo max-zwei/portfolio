@@ -31,27 +31,30 @@ Numbered so they can be cited. `MUST` / `NEVER` are literal.
 
 ## 2. Decided — do not revisit
 
-| Decision                                                        | Consequence                                                                                                                       |
-| --------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
-| No dark mode.                                                   | NEVER add a `prefers-color-scheme` block. With no role tier a dark scheme is a refactor of every component, and that is accepted. |
-| `/admin` is local-only, stripped from the production build.     | It cannot log in without an OAuth relay. Edit via `npx decap-server`. See [docs/cms.md](docs/cms.md).                             |
-| Token names are Figma variable names, mechanically transformed. | `color/lemon/500` ↔ `--color-lemon-500`. This one-to-one mapping is the entire anti-drift mechanism. Do not break it.             |
-| Fonts are self-hosted; the site makes no third-party requests.  | No CDN links, no `@import` from a font host.                                                                                      |
+| Decision                                                                                               | Consequence                                                                                                                       |
+| ------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------- |
+| No dark mode.                                                                                          | NEVER add a `prefers-color-scheme` block. With no role tier a dark scheme is a refactor of every component, and that is accepted. |
+| `/admin` is local-only, stripped from the production build.                                            | It cannot log in without an OAuth relay. Edit via `npx decap-server`. See [docs/cms.md](docs/cms.md).                             |
+| Token names are Figma variable names, mechanically transformed.                                        | `color/lemon/500` ↔ `--color-lemon-500`. This one-to-one mapping is the entire anti-drift mechanism. Do not break it.             |
+| Fonts are self-hosted; the site makes no third-party requests.                                         | No CDN links, no `@import` from a font host.                                                                                      |
+| DESIGN.md is the token source; `src/styles/tokens.css` and `design/tokens.json` are generated from it. | NEVER hand-edit either. Change DESIGN.md's front matter and the Figma variable, then run `npm run tokens`.                        |
 
 ## 3. Stack
 
-| Concern   | Choice                        | Constraint                                                                      |
-| --------- | ----------------------------- | ------------------------------------------------------------------------------- |
-| Framework | Astro, static output          | No SSR.                                                                         |
-| Styling   | Plain CSS + custom properties | No Tailwind, no CSS-in-JS. Scoped `<style>` in `.astro` files.                  |
-| Content   | Astro content collections     | Seven. Markdown in `src/content/`, schemas in `src/content.config.ts`.          |
-| CMS       | Decap                         | `public/admin/`. Writes markdown back to the repo.                              |
-| Hosting   | GitHub Pages via Actions      | `.github/workflows/deploy.yml`. Every push to `main` deploys. PRs run `ci.yml`. |
-| Design    | Figma via MCP                 | `.mcp.json`. Procedure: `behind-the-scenes/skills/figma-to-astro.md`.           |
+| Concern       | Choice                                                                                     | Constraint                                                                      |
+| ------------- | ------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------- |
+| Framework     | Astro, static output                                                                       | No SSR.                                                                         |
+| Styling       | Plain CSS + custom properties                                                              | No Tailwind, no CSS-in-JS. Scoped `<style>` in `.astro` files.                  |
+| Content       | Astro content collections                                                                  | Seven. Markdown in `src/content/`, schemas in `src/content.config.ts`.          |
+| CMS           | Decap                                                                                      | `public/admin/`. Writes markdown back to the repo.                              |
+| Hosting       | GitHub Pages via Actions                                                                   | `.github/workflows/deploy.yml`. Every push to `main` deploys. PRs run `ci.yml`. |
+| Design        | Figma via MCP                                                                              | `.mcp.json`. Procedure: `behind-the-scenes/skills/figma-to-astro.md`.           |
+| Design system | DESIGN.md, per the DESIGN.md format ([docs/design-md-format.md](docs/design-md-format.md)) | Front matter is the source; two generated outputs.                              |
 
 ## 4. Map
 
 ```
+DESIGN.md                The design system: token front matter, and what the tokens are for.
 src/
   components/            Ported Figma component sets, one file per set. Each names its set and node id.
   config/site.ts         Site-wide constants. Edit here, never inline.
@@ -72,10 +75,10 @@ src/
   pages/                 File-based routes. handshake.md is a markdown page.
   pages/resume.astro     The designed CV page. Screen only.
   pages/resume/cv.astro  The same content as a printable document. The PDF's source.
-  styles/tokens.css      Design tokens. One flat tier. Start here.
+  styles/tokens.css      Design tokens. One flat tier. Generated — NEVER hand-edit.
   styles/fonts.css       All three typefaces.
   styles/global.css      Reset, typography defaults, a11y helpers, .container.
-design/tokens.json       DTCG export — the Figma exchange format.
+design/tokens.json       DTCG export — the Figma exchange format. Generated — NEVER hand-edit.
 design/components.json   Figma component-set manifest. Read before porting a set twice.
 public/admin/            Decap CMS config.
 public/cv/               CV as PDF. Generated. NEVER hand-edit.
@@ -86,9 +89,10 @@ public/icons/            Footer and Icons-set marks as SVG. Exported from Figma.
 public/logo/             The chat-ground logo variants as SVG. Exported from Figma.
 public/certificates/     Scanned qualifications. public/letters/ — references.
 scripts/render-pdf.mjs   Prints /resume/cv and /handshake to those PDFs.
+scripts/build-tokens.mjs Generates tokens.css + tokens.json from DESIGN.md's front matter.
 behind-the-scenes/skills/ Agent skills. figma-to-astro.md is the main one.
 behind-the-scenes/reflections/ What the last Figma → code job cost, and the improvements it produced.
-docs/                    cms (fields + editor), design-system, figma-handoff, resume, aeo, cleanup.
+docs/                    cms (fields + editor), design-md-format, figma-handoff, resume, aeo, cleanup.
 ```
 
 ## 5. Commands
@@ -97,6 +101,7 @@ docs/                    cms (fields + editor), design-system, figma-handoff, re
 npm run dev      # local dev server
 npm run verify   # check + build + HTML lint + format check — before every push
 npm run pdf      # rebuild, then re-print /resume/cv and /handshake to public/
+npm run tokens   # regenerate tokens.css + tokens.json from DESIGN.md
 npm run format   # prettier, write mode
 npx decap-server # local CMS backend, so /admin works without OAuth
 ```
@@ -112,8 +117,9 @@ in full first. Not optional.** It is the contract and the procedure: read order,
 token diff, component reuse, the motion ceiling, the checks that make a page
 done.
 
-[docs/design-system.md](docs/design-system.md) is what the tokens are _for_.
-Read it before choosing any colour.
+[DESIGN.md](DESIGN.md) is what the tokens are _for_. Read it before choosing
+any colour. A run starts by checking the Figma variable collections against its
+front matter and regenerating — before any frame is read.
 
 Step 0 is the page's **`Handoff` frame** — archetype, interaction model, frame
 index, flow, link map, motion, responsive intent. Read it before any other
@@ -141,14 +147,17 @@ design is incomplete — ask, do not delete.
 
 ### Adding a token
 
-Three files, same commit: `design/tokens.json`, `src/styles/tokens.css`, and the
-Figma variable collection. Two of three is a bug. The Figma variable needs WEB
-code syntax set, or the MCP emits invalid CSS.
+Two places, same commit: the Figma variable collection and DESIGN.md's front
+matter. Then `npm run tokens`. Two of two is the whole rule — the outputs
+(`src/styles/tokens.css`, `design/tokens.json`) are generated and never edited
+by hand. The Figma variable needs WEB code syntax set, or the MCP emits invalid
+CSS.
 
 The exception is a value Figma holds as something other than a variable — a
-layout grid, for instance. `--grid-*` and `--measure` live in
-`src/styles/tokens.css` alone, not in `design/tokens.json`, and
-[docs/design-system.md](docs/design-system.md) says what they transcribe.
+layout grid, for instance. The front matter's `layout` and `focus` groups
+generate into `src/styles/tokens.css` alone and are excluded from
+`design/tokens.json`, because Figma holds no variable for them.
+[DESIGN.md](DESIGN.md) § Layout says what they transcribe.
 
 ### Editing the résumé or the handshake
 

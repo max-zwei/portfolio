@@ -7,6 +7,15 @@ package-lock.json
 # drop-in usable. Reformatting would make it diverge for no benefit.
 behind-the-scenes/skills/token-system.md
 
+# The DESIGN.md format spec, vendored verbatim so references resolve inside
+# the repo. Reformatting would make it diverge from the published spec.
+docs/design-md-format.md
+
+# Generated from DESIGN.md by scripts/build-tokens.mjs — the generator owns
+# the formatting. Run `npm run tokens`, never prettier, on these two.
+src/styles/tokens.css
+design/tokens.json
+
 # Designer feedback is source input for the component pass; preserve it verbatim.
 src/components/feedback.md
 
