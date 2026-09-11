@@ -9,8 +9,11 @@ disable-model-invocation: false
 This file is both the contract and the procedure. Build one frame at a time, in
 the order below, and stop where it says STOP.
 
-Read alongside: [`docs/design-system.md`](../../docs/design-system.md) — what the
-tokens are _for_. Read it before choosing any colour.
+Read alongside: [`DESIGN.md`](../../DESIGN.md) — the design system, written in
+the DESIGN.md format (spec vendored at
+[`docs/design-md-format.md`](../../docs/design-md-format.md)). Its front matter
+is the token source; what the tokens are _for_ is the body. Read it before
+choosing any colour.
 
 Out of scope: writing to Figma. Any `use_figma` call requires the `figma-use`
 skill and has left this skill's scope.
@@ -33,6 +36,8 @@ Read before every job — the takeaways from the first page built this way:
 - `design/components.json` is the record, never the source. A clean diff against
   it proves nothing about the library — re-read the sets the page instantiates.
 - Export an asset from the instance that uses it. An SVG's fill is baked.
+- The token setup is checked against Figma at the start of every run, before
+  any frame is read. Step 0b.
 
 ---
 
@@ -126,6 +131,25 @@ https://figma.com/design/<fileKey>/<name>?node-id=<int>-<int>
 - **Output:** the archetype, and the interaction model in one paragraph. If you
   cannot write that paragraph, you are not ready to read a frame.
 
+### Step 0b — Token sync
+
+Before any frame is read, and every run:
+
+1. Read the current Figma variable collections — a read-only `use_figma`
+   snippet, or `get_variable_defs` on the library page, not a page frame.
+2. Diff them against DESIGN.md's front matter, group by group.
+3. Update the front matter for anything that moved, then run `npm run tokens`
+   and report the diff.
+
+Figma is the decision (L1). A value that disagrees is **reported, not
+resolved** — and the front matter follows Figma, never the other way round.
+A front-matter value with no Figma variable, or a Figma variable with no
+front-matter entry, is a finding for the checkpoint, not something to invent
+past.
+
+`src/styles/tokens.css` and `design/tokens.json` are generated. Editing either
+by hand is caught by `npm run tokens:check`, which runs in `verify` and in CI.
+
 ### Step 1 — Orient
 
 `get_metadata` with the `fileKey` and that `nodeId`. Cheap structural overview;
@@ -161,15 +185,15 @@ are not ready to build it, and the fix is to ask, not to start typing.
 `color/neutral/700` → `--color-neutral-700`. Swap `/` for `-`, prefix `--`. A
 name that does not transform cleanly is itself the finding.
 
-Diff every value against `src/styles/tokens.css`, then per value:
+Diff every value against DESIGN.md's front matter, then per value:
 
-| What you find                    | What to do                                                                                                       |
-| -------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
-| Matches a token                  | Use the token name. Never the literal.                                                                           |
-| No token exists                  | Add it to all three: `design/tokens.json`, `src/styles/tokens.css`, the Figma collection. Two of three is a bug. |
-| Close to a token but not equal   | **STOP and ask.** Either the design drifted or the system is missing a step.                                     |
-| Emits `var(--color\/lemon\/500)` | Not a CSS bug — that variable is missing its WEB code syntax in Figma. Use the correct name and flag it.         |
-| A one-off with no system home    | **STOP and ask.**                                                                                                |
+| What you find                    | What to do                                                                                                                     |
+| -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| Matches a token                  | Use the token name. Never the literal.                                                                                         |
+| No token exists                  | Add it to DESIGN.md's front matter and the Figma collection, then run `npm run tokens`. Two places, never the generated files. |
+| Close to a token but not equal   | **STOP and ask.** Either the design drifted or the system is missing a step.                                                   |
+| Emits `var(--color\/lemon\/500)` | Not a CSS bug — that variable is missing its WEB code syntax in Figma. Use the correct name and flag it.                       |
+| A one-off with no system home    | **STOP and ask.**                                                                                                              |
 
 **Output:** the token diff — matched, missing, disagreeing. Ask before
 continuing if anything is in the last three rows.
@@ -177,7 +201,7 @@ continuing if anything is in the last three rows.
 ### Step 4 — Component inventory and drift check
 
 1. Read the library pages, not the page frames: Atoms (`114:14`) and Organisms
-   (`114:15`) — the two URLs recorded in `docs/design-system.md:42-50`.
+   (`114:15`) — the two URLs recorded in `DESIGN.md` § Components.
 2. Diff the sets found against [`design/components.json`](../../design/components.json)
    (the component-set equivalent of `design/tokens.json`). It exists as of the
    library port and is the reuse mechanism — read it, do not re-derive it. Its
@@ -439,12 +463,15 @@ discipline below worth keeping.
 
 ## 8. Token sync
 
-`design/tokens.json` is the exchange format; `src/styles/tokens.css` is what
-ships. They are kept in step by hand — the file is small and changes rarely, and
-a generator would be more machinery than the problem deserves.
+DESIGN.md's front matter is the token source. `design/tokens.json` is the
+generated exchange format; `src/styles/tokens.css` is the generated stylesheet
+that ships. Both come out of `scripts/build-tokens.mjs`, and
+`npm run tokens:check` runs inside `npm run verify` and in CI, so neither can
+be hand-edited or left stale without failing the build.
 
 **Figma → code** (the normal direction): `get_variable_defs` for a frame, diff
-against `tokens.css`, update `tokens.css` and `tokens.json` in the same commit.
+against DESIGN.md's front matter, update the front matter and run
+`npm run tokens` in the same commit.
 
 **Code → Figma** (when the system is being built out): `design/tokens.json` is
 DTCG-shaped, so a token plugin can import it, or `use_figma` can write the
@@ -482,9 +509,9 @@ decision (L1). The neutral ends are **named, not numbered** —
 `color/neutral/white` (`#fdfcf8`) and `color/neutral/black` (`#040302`).
 
 > **Definition of done for a new variable:** a value, a description matching its
-> _current_ name, scopes, **WEB code syntax**, and matching entries in
-> `design/tokens.json` and `src/styles/tokens.css`. Code syntax is the one that
-> gets forgotten, and forgetting it makes the MCP emit
+> _current_ name, scopes, **WEB code syntax**, and a matching entry in
+> DESIGN.md's front matter, with `npm run tokens` run. Code syntax is the one
+> that gets forgotten, and forgetting it makes the MCP emit
 > `var(--color\/lemon\/500)`, which is not valid CSS.
 
 ---
@@ -580,6 +607,8 @@ Five places where reading Figma literally produces the wrong code.
 - ❌ `get_design_context` on a whole page, or several frames at once
 - ❌ Writing CSS before `get_variable_defs` came back
 - ❌ Hardcoding a value "just for now"
+- ❌ Hand-editing `src/styles/tokens.css` or `design/tokens.json` — they are
+  generated from DESIGN.md
 - ❌ Inventing a style the design never specified — a hover colour, a shadow, a
   transition "because it needs one"
 - ❌ Inventing a role name — `--text-secondary`, `--surface-default`
@@ -608,6 +637,7 @@ Five places where reading Figma literally produces the wrong code.
 | After   | Show                                                      | Ask                                                                  |
 | ------- | --------------------------------------------------------- | -------------------------------------------------------------------- |
 | Step 0  | The archetype, and the interaction model in one paragraph | "Is that the model?" — required, every page                          |
+| Step 0b | The Figma ↔ DESIGN.md token diff                          | "These N variables moved — is that the current system?"              |
 | Step 2  | One sentence on what the frame is for                     | "Is that the intent?" — only if the screenshot left it ambiguous     |
 | Step 3  | Token diff: matched, missing, disagreeing                 | "These N values have no token. Add them, or is the design drifting?" |
 | Step 4  | Which components are reused vs. built new                 | Which sets came from the library, which are new design work          |

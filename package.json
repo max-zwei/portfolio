@@ -12,10 +12,12 @@
     "preview": "astro preview",
     "check": "astro check",
     "pdf": "npm run build && node scripts/render-pdf.mjs",
+    "tokens": "node scripts/build-tokens.mjs",
+    "tokens:check": "node scripts/build-tokens.mjs --check",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "lint:html": "html-validate \"dist/**/*.html\"",
-    "verify": "npm run check && npm run build && npm run lint:html && npm run format:check"
+    "verify": "npm run tokens:check && npm run check && npm run build && npm run lint:html && npm run format:check"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.3",
@@ -29,6 +31,7 @@
     "playwright-core": "^1.62.1",
     "prettier": "^3.9.6",
     "prettier-plugin-astro": "^0.14.1",
-    "typescript": "^5.8.3"
+    "typescript": "^5.8.3",
+    "yaml": "^2.9.0"
   }
 }

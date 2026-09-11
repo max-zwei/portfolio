@@ -32,6 +32,12 @@ jobs:
       - name: Audit dependencies
         run: npm audit --audit-level=high
 
+      # DESIGN.md's front matter is the token source; src/styles/tokens.css and
+      # design/tokens.json are generated from it. This fails on a hand-edit or
+      # a front-matter change that was never regenerated.
+      - name: Check generated tokens
+        run: npm run tokens:check
+
       - name: Check formatting
         run: npm run format:check
 
