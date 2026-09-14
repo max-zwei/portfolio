@@ -1,0 +1,351 @@
+---
+import readmeSource from '../../README.md?raw';
+import designSource from '../../DESIGN.md?raw';
+import Button from '../components/Button.astro';
+import NavBar from '../components/NavBar.astro';
+import { PORTFOLIO_SOURCE } from '../config/site';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { renderRepositoryDocument } from '../lib/repository-documents';
+
+const [readmeHtml, designHtml] = await Promise.all([
+  renderRepositoryDocument(readmeSource, 'readme', PORTFOLIO_SOURCE.repository),
+  renderRepositoryDocument(designSource, 'design', PORTFOLIO_SOURCE.repository),
+]);
+
+const readmeUrl = `${PORTFOLIO_SOURCE.repository}/blob/main/README.md`;
+const designUrl = `${PORTFOLIO_SOURCE.repository}/blob/main/DESIGN.md`;
+const figmaEmbedUrl = new URL(
+  PORTFOLIO_SOURCE.figma.replace('www.figma.com', 'embed.figma.com'),
+);
+figmaEmbedUrl.searchParams.set('node-id', '114-15');
+figmaEmbedUrl.searchParams.set('embed-host', 'max-pinkert-portfolio');
+---
+
+<BaseLayout title="How I built this">
+  <main id="main" class="container bts">
+    <header class="bts__hero">
+      <h1>How I <br />built this</h1>
+      <p>
+        Welcome to the meta case study of how I built this website. For this
+        project I can actually just share the raw data. Browse through my Figma
+        file and GitHub repo, I tried to include explanations and information,
+      </p>
+    </header>
+
+    <div class="bts__cards">
+      <section class="bts-card bts-card--design" aria-labelledby="h-design">
+        <h2 id="h-design">Design</h2>
+        <Button type="secondary" href={PORTFOLIO_SOURCE.figma}
+          >Figma file →</Button
+        >
+        <p>
+          My one and only Figma. Since starting my rookie journey as a
+          about-to-be designer, Figma has always been my place to play around,
+          no matter which use case. Affinity also started playing a role a bit,
+          especially when it comes to print design. But Figma is my home turf
+          and I enjoy working in it. Here the file where all the website came to
+          life. I tried to keep a bit more artifacts than usually, take a look:
+        </p>
+        <iframe
+          class="bts-card__embed"
+          src={figmaEmbedUrl.href}
+          title="Portfolio Figma file — Organisms"
+          loading="lazy"
+          allowfullscreen
+          tabindex="0"></iframe>
+      </section>
+
+      <section class="bts-card bts-card--code" aria-labelledby="h-code">
+        <h2 id="h-code">Code</h2>
+        <Button type="secondary" href={PORTFOLIO_SOURCE.repository}
+          >GitHub repository →</Button
+        >
+        <p>
+          This isn’t the first try at coding a website, my journey started with
+          a blog in Jimdo, evolved to Webflow where we build the website for
+          2zero and ultimately went back to pure HTML/CSS. I still have to rely
+          on coding agents to do the heavy lifting but I at least can understand
+          the generated code and structure which helps to question the output of
+          LLMs and also to do changes on my own. Take a look:
+        </p>
+
+        <div class="bts-doc">
+          <section
+            class="bts-doc__body"
+            aria-labelledby="bts-readme-label"
+            tabindex="0"
+            set:html={readmeHtml}
+          />
+          <p class="bts-doc__label" id="bts-readme-label">
+            <a href={readmeUrl}>/README.md</a>
+          </p>
+        </div>
+
+        <div class="bts-doc">
+          <section
+            class="bts-doc__body"
+            aria-labelledby="bts-design-label"
+            tabindex="0"
+            set:html={designHtml}
+          />
+          <p class="bts-doc__label" id="bts-design-label">
+            <a href={designUrl}>/DESIGN.md</a>
+          </p>
+        </div>
+      </section>
+    </div>
+
+    <section class="bts__credits" aria-labelledby="h-credits">
+      <h2 id="h-credits">Credits</h2>
+      <p>
+        I enjoy trying out different tools and playing around with them. And
+        also as part of this portfolio website I took to several helpers and
+        here is a small way to say thank you and at least credit your work so
+        hopefully people read this and try them out themselves:
+      </p>
+      <ul class="bts-credits__list">
+        <li>
+          <span
+            ><a href="https://www.fontshare.com/fonts/erode">Erode</a>, Typeface
+            by Indian Type Foundry, via Fontshare</span
+          >
+        </li>
+        <li>
+          <span
+            ><a href="https://www.fontshare.com/fonts/satoshi">Satoshi</a>,
+            Typeface by Indian Type Foundry, via Fontshare</span
+          >
+        </li>
+        <li>
+          <span
+            ><a href="https://oklch.com">OKLCH</a>, Color picker by Evil
+            Martians</span
+          >
+        </li>
+        <li><span>Bauhaus, Figma Weave</span></li>
+        <li>
+          <span><a href="https://brandfetch.com/">Brandfetch</a>, Figma</span>
+        </li>
+        <li>
+          <span
+            >Rename Layers, Figma, I love structure, but renaming layers just
+            takes too much time.</span
+          >
+        </li>
+      </ul>
+    </section>
+  </main>
+
+  <NavBar mode="dark" label="Site" />
+</BaseLayout>
+
+<style>
+  .bts {
+    display: grid;
+    gap: var(--space-3xl);
+    padding-block: var(--space-2xl) var(--space-3xl);
+  }
+
+  .bts p,
+  .bts-credits__list {
+    color: var(--color-neutral-800);
+  }
+
+  .bts__hero,
+  .bts__credits {
+    width: 100%;
+    max-width: calc(6 * var(--grid-column) + 5 * var(--grid-gutter));
+  }
+
+  .bts__hero {
+    display: grid;
+    gap: var(--space-md);
+  }
+
+  .bts__cards {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-md);
+  }
+
+  .bts-card {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    align-items: start;
+    gap: var(--space-md);
+    padding: var(--space-lg) var(--space-md);
+  }
+
+  .bts-card--design {
+    background-color: var(--color-tomato-100);
+  }
+
+  .bts-card--code {
+    background-color: var(--color-herbs-100);
+  }
+
+  .bts h2 {
+    font-size: var(--font-size-3xl);
+  }
+
+  .bts-card__embed {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 4 / 3;
+    border: 0;
+  }
+
+  .bts-doc {
+    display: grid;
+    width: 100%;
+    gap: var(--space-2xs);
+  }
+
+  .bts-doc__body {
+    width: 100%;
+    min-height: 0;
+    aspect-ratio: 4 / 3;
+    padding: var(--space-sm);
+    overflow: auto;
+    background-color: var(--color-neutral-100);
+    scrollbar-color: var(--color-lemon-100) transparent;
+    scrollbar-width: thin;
+  }
+
+  .bts-doc__body::-webkit-scrollbar {
+    width: var(--space-3xs);
+  }
+
+  .bts-doc__body::-webkit-scrollbar-track {
+    margin-block: var(--space-sm);
+  }
+
+  .bts-doc__body::-webkit-scrollbar-thumb {
+    min-height: var(--space-lg);
+    background-color: var(--color-lemon-100);
+  }
+
+  .bts-doc__body :global(h3) {
+    margin-top: 0;
+    font-size: var(--font-size-2xl);
+  }
+
+  .bts-doc__body :global(h4) {
+    margin-top: var(--space-xl);
+    font-size: var(--font-size-lg);
+  }
+
+  .bts-doc__body :global(h5) {
+    margin-top: var(--space-lg);
+    font-size: var(--font-size-base);
+  }
+
+  .bts-doc__body :global(p),
+  .bts-doc__body :global(ul),
+  .bts-doc__body :global(ol) {
+    margin-top: var(--space-sm);
+  }
+
+  .bts-doc__body :global(ul),
+  .bts-doc__body :global(ol) {
+    padding-left: var(--space-md);
+  }
+
+  .bts-doc__body :global(li + li) {
+    margin-top: var(--space-2xs);
+  }
+
+  .bts-doc__body :global(strong) {
+    font-weight: var(--font-weight-semibold);
+  }
+
+  .bts-doc__body :global(a) {
+    text-decoration-color: var(--color-neutral-300);
+  }
+
+  .bts-doc__label a:hover,
+  .bts-doc__body :global(a:hover),
+  .bts-credits__list a:hover {
+    font-weight: var(--font-weight-bold);
+  }
+
+  .bts-doc__body :global(.table-wrap) {
+    margin-top: var(--space-lg);
+    overflow-x: auto;
+  }
+
+  .bts-doc__body :global(table) {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--font-size-sm);
+  }
+
+  .bts-doc__body :global(th),
+  .bts-doc__body :global(td) {
+    padding: var(--space-2xs) var(--space-sm);
+    text-align: left;
+    vertical-align: top;
+    border-bottom: 1px solid var(--color-neutral-200);
+  }
+
+  .bts-doc__body :global(th) {
+    color: var(--color-neutral-700);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    letter-spacing: var(--letter-spacing-wide);
+    text-transform: uppercase;
+  }
+
+  .bts-doc__body :global(code),
+  .bts-doc__body :global(pre) {
+    font-family: var(--font-mono);
+    font-size: var(--font-size-sm);
+    line-height: var(--line-height-loose);
+    letter-spacing: var(--letter-spacing-extra-wide);
+  }
+
+  .bts-doc__body :global(pre) {
+    margin-top: var(--space-sm);
+    overflow-x: auto;
+  }
+
+  .bts__credits {
+    display: grid;
+    gap: var(--space-md);
+  }
+
+  .bts-credits__list {
+    display: grid;
+    gap: var(--space-sm);
+    padding: 0;
+    list-style: none;
+  }
+
+  .bts-credits__list li {
+    display: grid;
+    grid-template-columns: var(--space-sm) minmax(0, 1fr);
+    gap: var(--space-sm);
+  }
+
+  .bts-credits__list li::before {
+    width: var(--space-sm);
+    height: var(--space-sm);
+    margin-block-start: calc((1lh - var(--space-sm)) / 2);
+    content: '';
+    background-color: var(--color-pickled-500);
+    border-radius: var(--radius-full);
+  }
+
+  @media (min-width: 48rem) {
+    .bts__hero {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      align-items: end;
+    }
+
+    .bts__cards {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+</style>
