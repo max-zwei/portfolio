@@ -20,6 +20,7 @@
     "verify": "npm run tokens:check && npm run check && npm run build && npm run lint:html && npm run format:check"
   },
   "dependencies": {
+    "@astrojs/markdown-satteri": "0.4.1",
     "@astrojs/sitemap": "^3.7.3",
     "@fontsource-variable/jetbrains-mono": "^5.3.0",
     "astro": "^7.2.6",

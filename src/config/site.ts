@@ -25,6 +25,11 @@ export const SITE = {
   email: 'max.pinkert@code.berlin',
 } as const;
 
+export const PORTFOLIO_SOURCE = {
+  repository: 'https://github.com/max-zwei/portfolio',
+  figma: 'https://www.figma.com/design/8SQOIPl0teOTvoFH1EffaB/Portfolio',
+} as const;
+
 /**
  * The paragraph at the top of the CV. The one piece of prose on /resume the
  * timeline can't tell you, so it is written by hand rather than derived — and
@@ -53,9 +58,8 @@ export const LINKS: ReadonlyArray<{ label: string; href: string }> = [
 ];
 
 /**
- * The footer's own navigation, from the Figma NavBar. The href is the label
- * with its `#` stripped — the same mechanical transform the token names use.
- * None of these routes exists yet; Max supplies the real map.
+ * The footer's own navigation, from the Figma NavBar. Labels retain the
+ * component's hashtag convention while hrefs map to the implemented routes.
  */
 export const NAV = {
   impressum: { label: '#impressum', href: withBase('/impressum') },
@@ -67,7 +71,7 @@ export const NAV = {
   ],
   about: [
     { label: '#aboutme', href: withBase('/aboutme') },
-    { label: '#behindthescenes', href: withBase('/behindthescenes') },
+    { label: '#behindthescenes', href: withBase('/behind-the-scenes') },
   ],
 } as const;
 
