@@ -7,7 +7,7 @@
  */
 import { withBase } from '../config/site';
 
-type IconName = 'cursor' | 'figma-make' | 'download' | 'share';
+type IconName = 'cursor' | 'figma-make' | 'download' | 'share' | 'triangle';
 
 interface Props {
   /** Icon exported from the Figma `Icons` set. */
@@ -42,6 +42,13 @@ const ICONS = {
     src: withBase('/icons/share.svg'),
     width: 28,
     height: 28,
+  },
+  // Figma `triangle` (`476:1350`). 29.686 is the drawn box, rounded as the
+  // NavBar marks are — width/height attributes must be integers.
+  triangle: {
+    src: withBase('/icons/triangle.svg'),
+    width: 30,
+    height: 30,
   },
 } as const satisfies Record<
   IconName,

@@ -130,20 +130,11 @@ const notes = Array.from(
                       documentLabel(entry.data.documentUrl)
                     }
                   >
-                    {entry.data.logo && entry.data.logoAlt ? (
+                    {entry.data.logo && entry.data.logoAlt && (
                       <Image
                         slot="logo"
                         src={entry.data.logo}
                         alt={entry.data.logoAlt}
-                      />
-                    ) : (
-                      /* Handoff §12: no employer logos collected yet. */
-                      <img
-                        slot="logo"
-                        src={withBase('/icons/figma.svg')}
-                        alt=""
-                        width="12"
-                        height="16"
                       />
                     )}
                     {entry.data.summary && <p>{entry.data.summary}</p>}
@@ -324,18 +315,27 @@ const notes = Array.from(
   /*
    * Handoff §10 via IntersectionObserver: entries outside the middle 60% of
    * the viewport fade to neutral-300 (Handoff §14 — the contrast failure is
-   * intended, the dimmed entry is not meant to be read). CvSection colours its
-   * own parts, so the dimmed state has to reach them. Nothing is dimmed
-   * without the script.
+   * intended, the dimmed entry is not meant to be read), and the rail's line
+   * fades neutral-200 → neutral-100 with them. CvSection colours its own
+   * parts, so the dimmed state has to reach them. Nothing is dimmed without
+   * the script.
    */
   .cv__row,
   .cv__row :global(*) {
     transition: color var(--duration-slow) var(--easing-standard);
   }
 
+  .cv__row :global(.cv-section__rail)::after {
+    transition: background-color var(--duration-slow) var(--easing-standard);
+  }
+
   .cv__row--dimmed,
   .cv__row--dimmed :global(*) {
     color: var(--color-neutral-300);
+  }
+
+  .cv__row--dimmed {
+    --cv-section-line-color: var(--color-neutral-100);
   }
 
   @media (min-width: 48rem) {
