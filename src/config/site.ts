@@ -76,7 +76,7 @@ export const NAV = {
 } as const;
 
 /**
- * Social marks the footer draws. Only the GitHub URL is known.
+ * Social marks the footer draws, and the same row on /resume.
  *
  * `width` is each mark's own drawn width at a 16 height, so the asset is never
  * stretched. `iconDark` is the same artwork as Figma's `Mode=Dark` NavBar
@@ -85,7 +85,7 @@ export const NAV = {
 export const SOCIALS = [
   {
     label: 'Figma',
-    href: '#',
+    href: 'https://www.figma.com/@maxpinkert',
     icon: '/icons/figma.svg',
     iconDark: '/icons/dark/figma.svg',
     width: 12,
@@ -101,7 +101,7 @@ export const SOCIALS = [
   },
   {
     label: 'Dribbble',
-    href: '#',
+    href: 'https://dribbble.com/maxzwei',
     icon: '/icons/dribbble.svg',
     iconDark: '/icons/dark/dribbble.svg',
     width: 16,
@@ -109,7 +109,7 @@ export const SOCIALS = [
   },
   {
     label: 'Behance',
-    href: '#',
+    href: 'https://www.behance.net/maxpinkert',
     icon: '/icons/behance.svg',
     iconDark: '/icons/dark/behance.svg',
     width: 19,
@@ -117,7 +117,7 @@ export const SOCIALS = [
   },
   {
     label: 'LinkedIn',
-    href: '#',
+    href: 'https://www.linkedin.com/in/max-pinkert/',
     icon: '/icons/linkedin.svg',
     iconDark: '/icons/dark/linkedin.svg',
     width: 17,
