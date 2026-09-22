@@ -2,16 +2,29 @@
 /**
  * Figma component set `Icons` (`109:1374`).
  *
- * Scope boundary: the eight marks inside the Figma `NavBar` frame are not
- * members of this set and must not be added here.
+ * The eight social/AI marks are members of this set, but they ship as raw
+ * `<img>` driven by `SOCIALS` in `src/config/site.ts` because each needs its
+ * own light and dark export — that pairing has no home in this component's
+ * one-colour-per-icon shape. `NavBar.astro` stays on that path; migrating it
+ * is not in scope here.
  */
 import { withBase } from '../config/site';
 
-type IconName = 'cursor' | 'figma-make' | 'download' | 'share' | 'triangle';
+type IconName =
+  | 'cursor'
+  | 'figma-make'
+  | 'download'
+  | 'share'
+  | 'triangle'
+  | 'mail'
+  | 'phone';
+type IconColor = 'black' | 'lemon' | 'herbs' | 'tomato';
 
 interface Props {
-  /** Icon exported from the Figma `Icons` set. */
+  /** Figma `Icon`. */
   icon: IconName;
+  /** Figma `Color`. Defaults to the one colour the set draws for this icon. */
+  color?: IconColor;
   /** Required: an icon with no meaning is the caller's decision to make explicit. */
   alt: string;
   /** Additional classes applied to the image. */
@@ -19,48 +32,49 @@ interface Props {
 }
 
 const ICONS = {
-  // Figma `cursor` (`109:1373`).
-  cursor: {
-    src: withBase('/cursor.svg'),
-    width: 40,
-    height: 40,
-  },
-  // Figma `figma-make` (`140:1095`).
+  // Figma `Icon=Cursor, Color=Lemon` (`109:1373`).
+  cursor: { width: 40, height: 40, src: { lemon: '/cursor.svg' } },
+  // Figma `Icon=Figma Make, Color=Black` (`140:1095`).
   'figma-make': {
-    src: withBase('/icons/figma-make.svg'),
     width: 80,
     height: 80,
+    src: { black: '/icons/figma-make.svg' },
   },
-  // Figma `download` (`377:2133`).
-  download: {
-    src: withBase('/icons/download.svg'),
-    width: 28,
-    height: 28,
-  },
-  // Figma `share` (`377:2143`).
-  share: {
-    src: withBase('/icons/share.svg'),
-    width: 28,
-    height: 28,
-  },
-  // Figma `triangle` (`476:1350`). 29.686 is the drawn box, rounded as the
-  // NavBar marks are — width/height attributes must be integers.
+  // Figma `Icon=download, Color=Black` (`377:2133`).
+  download: { width: 28, height: 28, src: { black: '/icons/download.svg' } },
+  // Figma `Icon=share, Color=Black` (`377:2143`).
+  share: { width: 28, height: 28, src: { black: '/icons/share.svg' } },
+  // Figma `Icon=triangle, Color=Herbs` (`476:1350`). 29.686 is the drawn box,
+  // rounded as the NavBar marks are. The tomato file is the same polygon with
+  // the fill the /resume/cv Education entries override it to.
   triangle: {
-    src: withBase('/icons/triangle.svg'),
     width: 30,
     height: 30,
+    src: { herbs: '/icons/triangle.svg', tomato: '/icons/triangle-tomato.svg' },
   },
+  // Figma `Icon=mail, Color=Black` (`484:2508`).
+  mail: { width: 16, height: 16, src: { black: '/icons/mail.svg' } },
+  // Figma `Icon=phone, Color=Black` (`492:2530`).
+  phone: { width: 16, height: 16, src: { black: '/icons/phone.svg' } },
 } as const satisfies Record<
   IconName,
-  { src: string; width: number; height: number }
+  { width: number; height: number; src: Partial<Record<IconColor, string>> }
 >;
 
-const { icon, alt, class: className } = Astro.props;
+const { icon, color, alt, class: className } = Astro.props;
 const asset = ICONS[icon];
+const src_ = asset.src as Partial<Record<IconColor, string>>;
+const names = Object.keys(src_) as IconColor[];
+const resolved = color ?? names[0];
+const src = src_[resolved];
+
+if (!src) {
+  throw new Error(`Icons has no \`Icon=${icon}, Color=${resolved}\` variant.`);
+}
 ---
 
 <img
-  src={asset.src}
+  src={withBase(src)}
   alt={alt}
   width={asset.width}
   height={asset.height}

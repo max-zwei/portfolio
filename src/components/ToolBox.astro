@@ -1,5 +1,5 @@
 ---
-/** Figma component set `tool box` (`114:685`). */
+/** Figma component set `Tech&Tools` (`477:2462`). */
 import { withBase } from '../config/site';
 
 interface Tool {
@@ -14,6 +14,8 @@ interface Props {
   title?: string;
   /** Tool tiles to render. An empty array intentionally renders no list. */
   tools: ReadonlyArray<Tool>;
+  /** Figma `Usage`. */
+  usage?: 'web' | 'pdf';
   /** Optional heading level to match the styleguide examples. */
   level?: 2 | 3 | 4;
   /** Additional class forwarded to the root section. */
@@ -23,6 +25,7 @@ interface Props {
 const {
   title = 'Tech & Tools',
   tools,
+  usage = 'web',
   level = 2,
   class: className,
 } = Astro.props;
@@ -35,7 +38,7 @@ const HeadingTag = `h${level}` as 'h2' | 'h3' | 'h4';
  */
 ---
 
-<section class:list={['toolbox', className]}>
+<section class:list={['toolbox', `toolbox--${usage}`, className]}>
   <HeadingTag class="toolbox__title">{title}</HeadingTag>
   <slot />
   {
@@ -86,11 +89,27 @@ const HeadingTag = `h${level}` as 'h2' | 'h3' | 'h4';
   /*
    * An explicit rule preserves the set's exact six-column desktop matrix, then
    * reduces it to two columns at the site's sole breakpoint so tiles stay useful
-   * on narrow screens. The source design has no readable mobile frame.
+   * on narrow screens. The source design has no readable mobile frame. Scoped
+   * to the web usage so the nine-column print grid (Usage=PDF, 477:2461) is
+   * never collapsed by a print viewport that happens to fall under 48rem.
    */
   @media (max-width: 48rem) {
-    .toolbox__tools {
+    .toolbox--web .toolbox__tools {
       grid-template-columns: repeat(2, minmax(0, 1fr));
     }
+  }
+
+  /* Figma 477:2461 (Usage=PDF): the title drops to Typography/H3 and the same
+     eighteen slots lie in nine columns of 32.67 × 32 tiles. */
+  .toolbox--pdf .toolbox__title {
+    font-size: var(--font-size-xl);
+  }
+
+  .toolbox--pdf .toolbox__tools {
+    grid-template-columns: repeat(9, minmax(0, 1fr));
+  }
+
+  .toolbox--pdf .toolbox__tool {
+    aspect-ratio: 32.67 / 32;
   }
 </style>

@@ -11,19 +11,21 @@ interface Props {
   /** Figma `Type`. */
   type?: 'favicon' | 'chat';
   /** Figma `Variant`. The available combinations are intentionally sparse. */
-  variant?: 'default' | 'tomato' | 'herbs';
+  variant?: 'default' | 'tomato' | 'herbs' | 'monochrome';
   /** Accessible alternative text for a meaningful logo. */
   alt?: string;
   /** Additional classes applied to the image. */
   class?: string;
 }
 
-type LogoKey = 'favicon/default' | 'chat/tomato' | 'chat/herbs';
+type LogoKey =
+  'favicon/default' | 'chat/tomato' | 'chat/herbs' | 'chat/monochrome';
 
 const SOURCES: Record<LogoKey, string> = {
   'favicon/default': withBase('/favicon.svg'),
   'chat/tomato': withBase('/logo/chat-tomato.svg'),
   'chat/herbs': withBase('/logo/chat-herbs.svg'),
+  'chat/monochrome': withBase('/logo/chat-monochrome.svg'),
 };
 
 const {
@@ -38,7 +40,7 @@ const isLogoKey = (value: string): value is LogoKey => value in SOURCES;
 
 if (!isLogoKey(key)) {
   throw new Error(
-    `Unsupported Logo combination "${key}". Use favicon/default, chat/tomato or chat/herbs.`,
+    `Unsupported Logo combination "${key}". Use favicon/default, chat/tomato, chat/herbs or chat/monochrome.`,
   );
 }
 

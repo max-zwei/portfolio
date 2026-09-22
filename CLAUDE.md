@@ -100,7 +100,7 @@ docs/                    cms (fields + editor), design-md-format, figma-handoff,
 ```bash
 npm run dev      # local dev server
 npm run verify   # check + build + HTML lint + format check — before every push
-npm run pdf      # rebuild, then re-print /resume/cv and /handshake to public/
+npm run pdf      # alias for build — postbuild re-prints /resume/cv and /handshake
 npm run tokens   # regenerate tokens.css + tokens.json from DESIGN.md
 npm run format   # prettier, write mode
 npx decap-server # local CMS backend, so /admin works without OAuth
@@ -163,13 +163,14 @@ generate into `src/styles/tokens.css` alone and are excluded from
 
 The CV lives at two routes. `/resume` is the designed page — portrait, note
 rail, dimming timeline — and is screen only. `/resume/cv` is the same collection
-laid out as a document, and it is the one `npm run pdf` prints; the designed page
-does not survive A4. Content is shared, so the two cannot disagree, but a change
-to what the CV _says_ belongs in `src/content/resume/`, and a change to how the
-printed one looks belongs in `src/pages/resume/cv.astro`.
+laid out as a document, and it is the one `npm run build` prints; the designed
+page does not survive A4. Content is shared, so the two cannot disagree, but a
+change to what the CV _says_ belongs in `src/content/resume/`, and a change to
+how the printed one looks belongs in `src/pages/resume/cv.astro`.
 
-After editing either page or the handshake, run `npm run pdf` and commit the
-result — nothing checks this for you.
+Every `npm run build` (and so `npm run verify` and `npm run pdf`, its alias)
+re-prints both PDFs via its `postbuild` hook — commit the regenerated PDFs
+after editing either page or the handshake.
 
 ## 7. Conventions
 
