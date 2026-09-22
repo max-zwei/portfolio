@@ -9,7 +9,14 @@ import NavBar from '../components/NavBar.astro';
 import PostIt from '../components/PostIt.astro';
 import ToolBox from '../components/ToolBox.astro';
 import Button from '../components/Button.astro';
-import { SITE, CV_STUDY, SOCIALS, withBase } from '../config/site';
+import {
+  SITE,
+  CV_STUDY,
+  CV_INTRO,
+  CV_TOOLS,
+  SOCIALS,
+  withBase,
+} from '../config/site';
 import portrait from '../assets/max-pinkert-portrait.png';
 
 /** Written by scripts/render-pdf.mjs. Kept in one place so page and script agree. */
@@ -29,10 +36,6 @@ const education = entries
 const documentLabel = (url: string) =>
   url.startsWith('/letters/') ? 'Reference letter (PDF)' : 'Certificate (PDF)';
 
-const TOOLS = Array.from({ length: 18 }, () => ({
-  name: '[tool]',
-  icon: '/icons/figma.svg',
-}));
 const FOCUS_AREAS = Array.from({ length: 6 }, () => '[focus area]');
 
 /*
@@ -61,55 +64,59 @@ const notes = Array.from(
   description={`Curriculum vitae of ${SITE.name} — ${SITE.role}. Positions and education, with a PDF to download.`}
 >
   <main id="main" class="container cv">
-    <header class="cv__header">
-      <div class="cv__profile">
-        <Image
-          class="cv__portrait"
-          src={portrait}
-          alt={SITE.name}
-          width={198}
-          height={198}
-        />
-        <div class="cv__identity">
-          <div class="cv__naming">
-            <h1 class="cv__name">{SITE.name}</h1>
-            <p class="cv__study">
-              {CV_STUDY.field}<br />{CV_STUDY.institution}
-            </p>
+    <div class="cv__opening">
+      <header class="cv__header">
+        <div class="cv__profile">
+          <Image
+            class="cv__portrait"
+            src={portrait}
+            alt={SITE.name}
+            width={198}
+            height={198}
+          />
+          <div class="cv__identity">
+            <div class="cv__naming">
+              <h1 class="cv__name">{SITE.name}</h1>
+              <p class="cv__study">
+                {CV_STUDY.field}<br />{CV_STUDY.institution}
+              </p>
+            </div>
+
+            <ul class="cv__socials">
+              {
+                SOCIALS.map((social) => (
+                  <li>
+                    <a href={social.href} aria-label={social.label}>
+                      <img
+                        src={withBase(social.icon)}
+                        alt=""
+                        width={social.width}
+                        height={social.height}
+                      />
+                    </a>
+                  </li>
+                ))
+              }
+            </ul>
           </div>
-
-          <ul class="cv__socials">
-            {
-              SOCIALS.map((social) => (
-                <li>
-                  <a href={social.href} aria-label={social.label}>
-                    <img
-                      src={withBase(social.icon)}
-                      alt=""
-                      width={social.width}
-                      height={social.height}
-                    />
-                  </a>
-                </li>
-              ))
-            }
-          </ul>
         </div>
-      </div>
 
-      <div class="cv__actions">
-        <Button icon="on" href={CV_PDF} download>
-          <Icon slot="icon" icon="download" alt="" />
-          Download
-        </Button>
-        <Button icon="on" href={SHARE_URL} class="cv__share" data-share>
-          <Icon slot="icon" icon="share" alt="" />
-          Share
-        </Button>
-      </div>
+        <div class="cv__actions">
+          <Button icon="on" href={CV_PDF} download>
+            <Icon slot="icon" icon="download" alt="" />
+            Download
+          </Button>
+          <Button icon="on" href={SHARE_URL} class="cv__share" data-share>
+            <Icon slot="icon" icon="share" alt="" />
+            Share
+          </Button>
+        </div>
 
-      <p class="visually-hidden" role="status" data-share-status></p>
-    </header>
+        <p class="visually-hidden" role="status" data-share-status></p>
+      </header>
+
+      <p class="cv__intro">{CV_INTRO}</p>
+    </div>
 
     <div class="cv__body">
       <div class="cv__sections">
@@ -183,7 +190,7 @@ const notes = Array.from(
     </div>
 
     <div class="cv__strip">
-      <div class="cv__toolbox"><ToolBox tools={TOOLS} /></div>
+      <div class="cv__toolbox"><ToolBox tools={CV_TOOLS} /></div>
       <div class="cv__focus"><FocusAreas areas={FOCUS_AREAS} /></div>
     </div>
   </main>
@@ -197,6 +204,18 @@ const notes = Array.from(
     display: grid;
     row-gap: var(--space-3xl);
     padding-block: var(--space-3xl);
+  }
+
+  /* Figma 477:2484: the header and the paragraph 64 apart. */
+  .cv__opening {
+    display: grid;
+    row-gap: var(--space-xl);
+  }
+
+  /* Figma 477:2483 draws the paragraph across the whole content column, wider
+     than global.css's --measure default for a p. */
+  .cv__intro {
+    max-width: none;
   }
 
   /* Figma 251:2566: the profile and the two actions at opposite ends. */
@@ -245,6 +264,18 @@ const notes = Array.from(
     padding: 0;
     padding-block-end: var(--space-3xs);
     list-style: none;
+  }
+
+  /* Figma 377:2104: the mark lifts on Elevation/md geometry in lemon-500.
+     inline-flex so the shadow traces the mark, not the line box. */
+  .cv__socials a {
+    display: inline-flex;
+    border-radius: var(--radius-sm);
+    transition: box-shadow var(--duration-fast) var(--easing-standard);
+  }
+
+  .cv__socials a:hover {
+    box-shadow: var(--shadow-md-lemon);
   }
 
   /* Figma 251:2560: the two icon buttons stack 16 apart, right-aligned. */

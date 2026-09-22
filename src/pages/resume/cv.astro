@@ -1,312 +1,346 @@
 ---
 import { getCollection } from 'astro:content';
+import { Image } from 'astro:assets';
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { SITE, LINKS, CV_INTRO, withBase } from '../../config/site';
-import { formatMonth } from '../../lib/dates';
 import Button from '../../components/Button.astro';
+import CvSection from '../../components/CvSection.astro';
+import Icon from '../../components/Icon.astro';
+import Logo from '../../components/Logo.astro';
+import ToolBox from '../../components/ToolBox.astro';
+import {
+  SITE,
+  CV_STUDY,
+  CV_INTRO,
+  CV_CONTACT,
+  CV_PROFILES,
+  CV_TOOLS,
+  SOCIALS,
+  withBase,
+} from '../../config/site';
+import portrait from '../../assets/max-pinkert-portrait.png';
 
-// This page is the CV. The PDF is a print of it, rendered by `npm run pdf` —
-// so anything added here has to survive A4 as well as a browser window.
-// See docs/resume.md.
+// This page is the CV. Both PDFs are printed by scripts/render-pdf.mjs, run
+// automatically after every `astro build` — so anything added here has to
+// survive A4 as well as a browser window. See docs/resume.md.
 
 /** Written by scripts/render-pdf.mjs. Kept in one place so page and script agree. */
 const CV_PDF = withBase('/cv/max-pinkert-cv.pdf');
 
-// One list, newest first — so the order of the files on disk is a convenience,
-// not the contract.
-const timeline = (await getCollection('resume')).sort((a, b) =>
-  b.data.start.localeCompare(a.data.start),
-);
+const entries = await getCollection('resume');
+const byNewest = (a: (typeof entries)[number], b: (typeof entries)[number]) =>
+  b.data.start.localeCompare(a.data.start);
+const work = entries
+  .filter((entry) => entry.data.kind === 'work')
+  .sort(byNewest);
+const education = entries
+  .filter((entry) => entry.data.kind === 'education')
+  .sort(byNewest);
 
-// On paper nobody can click "GitHub", so the link text is the address itself.
-const contact = [
-  { label: SITE.email, href: `mailto:${SITE.email}` },
-  ...LINKS.filter((link) => link.href.startsWith('http')).map((link) => ({
-    label: link.href.replace(/^https?:\/\//, ''),
-    href: link.href,
-  })),
-];
+const profiles = CV_PROFILES.map((label) => {
+  const social = SOCIALS.find((entry) => entry.label === label);
+  if (!social)
+    throw new Error(`CV_PROFILES names no SOCIALS entry "${label}".`);
+  return social;
+});
 ---
 
 <BaseLayout
   title="Curriculum vitae"
   description={`Curriculum vitae of ${SITE.name} — ${SITE.role}. Positions and education, with a PDF to download.`}
 >
-  <main id="main" class="container cv">
-    <header class="cv__head">
-      <p class="cv__back no-print">
-        <a href={withBase('/')}>&larr; Portfolio</a>
-      </p>
-      <p class="eyebrow">Curriculum vitae</p>
-      <h1 class="cv__name">{SITE.name}</h1>
-      <p class="cv__role">{SITE.role}</p>
+  <main id="main" class="cv">
+    <p class="cv__back no-print">
+      <a href={withBase('/')}>&larr; Portfolio</a>
+    </p>
+
+    <header class="cv__opening">
+      <div class="cv__header">
+        <div class="cv__identity">
+          <Image
+            class="cv__portrait"
+            src={portrait}
+            alt={SITE.name}
+            width={80}
+            height={80}
+          />
+          <div class="cv__naming">
+            <h1 class="cv__name">{SITE.name}</h1>
+            <p class="cv__study">
+              {CV_STUDY.field}<br />{CV_STUDY.institution}
+            </p>
+          </div>
+        </div>
+
+        <div class="cv__contact">
+          <ul class="cv__reach">
+            <li>
+              <Icon icon="mail" alt="" class="cv__mark" />
+              <a href={`mailto:${CV_CONTACT.email}`}>{CV_CONTACT.email}</a>
+            </li>
+            <li>
+              <Icon icon="phone" alt="" class="cv__mark" />
+              <a href={CV_CONTACT.phoneHref}>{CV_CONTACT.phone}</a>
+            </li>
+            <li>
+              <Logo type="chat" variant="monochrome" class="cv__mark" />
+              <a href={CV_CONTACT.website}>{CV_CONTACT.website}</a>
+            </li>
+          </ul>
+
+          <ul class="cv__profiles">
+            {
+              profiles.map((social) => (
+                <li>
+                  <img
+                    src={withBase(social.icon)}
+                    alt=""
+                    width={social.width}
+                    height={social.height}
+                    class="cv__mark"
+                  />
+                  <a href={social.href}>{social.href}</a>
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+      </div>
 
       <p class="cv__intro">{CV_INTRO}</p>
-
-      <ul class="cv__contact">
-        {
-          contact.map((item) => (
-            <li>
-              <a href={item.href}>{item.label}</a>
-            </li>
-          ))
-        }
-      </ul>
-
-      <p class="cv__download no-print">
-        <Button type="secondary" href={CV_PDF} download>Download as PDF</Button>
-      </p>
     </header>
 
-    <section aria-labelledby="h-timeline">
-      <h2 id="h-timeline" class="cv__section">Positions &amp; education</h2>
+    <p class="cv__download no-print">
+      <Button type="secondary" href={CV_PDF} download>Download as PDF</Button>
+    </p>
 
-      <ol class="timeline">
+    <section class="cv__section" aria-labelledby="h-experience">
+      <h2 id="h-experience" class="cv__section-title">Experience</h2>
+      <ol class="cv__list">
         {
-          timeline.map(({ data }) => (
-            <li class:list={['entry', `entry--${data.kind}`]}>
-              <p class="entry__period">
-                <time datetime={data.start}>{formatMonth(data.start)}</time>
-                {' – '}
-                {data.end ? (
-                  <time datetime={data.end}>{formatMonth(data.end)}</time>
-                ) : (
-                  'present'
-                )}
-              </p>
-
-              <div class="entry__body">
-                <p class="entry__kind">
-                  {data.kind === 'work' ? 'Position' : 'Education'}
-                </p>
-                <h3 class="entry__title">{data.role}</h3>
-                {data.company && <p class="entry__org">{data.company}</p>}
-                {data.summary && <p class="entry__summary">{data.summary}</p>}
-                {data.documentUrl && (
-                  <p class="entry__doc no-print">
-                    <a href={withBase(data.documentUrl)}>
-                      {data.documentUrl.startsWith('/letters/')
-                        ? 'Reference letter (PDF)'
-                        : 'Certificate (PDF)'}
-                    </a>
-                  </p>
-                )}
-              </div>
+          work.map((entry, index) => (
+            <li class="cv__row" style={`--cv-mark-index: ${index}`}>
+              <CvSection
+                state="pdf"
+                role={entry.data.role}
+                company={entry.data.company}
+                start={entry.data.start}
+                end={entry.data.end}
+              >
+                <Icon
+                  slot="logo"
+                  icon="triangle"
+                  color="herbs"
+                  alt=""
+                  class="cv-section__mark"
+                />
+                {entry.data.summary && <p>{entry.data.summary}</p>}
+              </CvSection>
             </li>
           ))
         }
       </ol>
     </section>
+
+    <section
+      class="cv__section cv__section--education"
+      aria-labelledby="h-education"
+    >
+      <h2 id="h-education" class="cv__section-title">Education</h2>
+      <ol class="cv__list">
+        {
+          education.map((entry, index) => (
+            <li class="cv__row" style={`--cv-mark-index: ${index}`}>
+              <CvSection
+                state="pdf"
+                role={entry.data.role}
+                company={entry.data.company}
+                start={entry.data.start}
+                end={entry.data.end}
+              >
+                <Icon
+                  slot="logo"
+                  icon="triangle"
+                  color="tomato"
+                  alt=""
+                  class="cv-section__mark"
+                />
+                {entry.data.summary && <p>{entry.data.summary}</p>}
+              </CvSection>
+            </li>
+          ))
+        }
+      </ol>
+    </section>
+
+    <ToolBox usage="pdf" tools={CV_TOOLS} class="cv__tools" />
   </main>
 </BaseLayout>
 
 <style>
+  /* Figma 267:4053: a 64 margin on every side, its blocks 40 apart. */
   .cv {
-    padding-block: var(--space-2xl) var(--space-xl);
+    display: grid;
+    row-gap: var(--space-lg);
+    max-width: var(--grid-frame);
+    margin-inline: auto;
+    padding: var(--space-xl);
   }
 
   /* The site has no nav, and a CV is a page people arrive at from outside. */
   .cv__back {
-    margin-bottom: var(--space-lg);
     font-size: var(--font-size-sm);
     color: var(--color-neutral-700);
   }
 
-  .eyebrow {
-    margin-bottom: var(--space-md);
-    font-size: var(--font-size-sm);
-    font-weight: var(--font-weight-medium);
-    letter-spacing: var(--letter-spacing-wide);
-    text-transform: uppercase;
-    color: var(--color-neutral-700);
+  /* Figma 492:2539: the header row and the paragraph 24 apart. */
+  .cv__opening {
+    display: grid;
+    row-gap: var(--space-md);
   }
 
-  .cv__name {
-    font-size: var(--font-size-2xl);
-  }
-
-  .cv__role {
-    margin-top: var(--space-2xs);
-    font-family: var(--font-serif);
-    font-size: var(--font-size-lg);
-    color: var(--color-pickled-500);
-  }
-
-  .cv__intro {
-    margin-top: var(--space-md);
-    max-width: var(--measure);
-  }
-
-  .cv__contact,
-  .cv__download {
-    margin-top: var(--space-md);
-    padding: 0;
-    list-style: none;
-    font-size: var(--font-size-sm);
-  }
-
-  .cv__contact {
+  /* Figma 477:1911: the profile at one end, the two contact columns at the other. */
+  .cv__header {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--space-2xs) var(--space-md);
-    color: var(--color-neutral-700);
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-md);
   }
 
-  /*
-   * The link itself is `Button type="secondary"` (Figma `Buttons`,
-   * `109:1382`). The pill with the neutral border that used to live here was a
-   * page-side invention; the Buttons set decides this treatment.
-   */
-
-  .cv__section {
-    margin-top: var(--space-2xl);
-    margin-bottom: var(--space-lg);
-    font-size: var(--font-size-sm);
-    font-weight: var(--font-weight-medium);
-    letter-spacing: var(--letter-spacing-wide);
-    text-transform: uppercase;
-    color: var(--color-neutral-700);
+  /* Figma 477:1912: an 80 portrait, 12 from the naming lines. */
+  .cv__identity {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
   }
 
-  /* ---------------------------------------------------------------
-   * Timeline. One list, both kinds of entry, newest first — a career
-   * reads as one line, not as two competing tables.
-   * ------------------------------------------------------------- */
-
-  .timeline {
-    padding: 0;
-    list-style: none;
-  }
-
-  .entry {
-    display: grid;
-    gap: var(--space-2xs);
-    padding-bottom: var(--space-lg);
-  }
-
-  .entry__period {
-    font-size: var(--font-size-sm);
-    font-variant-numeric: tabular-nums;
-    color: var(--color-neutral-700);
-    white-space: nowrap;
-  }
-
-  .entry__body {
-    position: relative;
-    padding-left: var(--space-md);
-    border-left: 1px solid var(--color-neutral-200);
-  }
-
-  /* The one gesture on this page: a Lemon dot per position, a green one per
-     qualification. Colour never carries the meaning alone — .entry__kind
-     spells it out for anyone who can't see the difference. */
-  .entry__body::before {
-    content: '';
-    position: absolute;
-    top: 0.5em;
-    left: calc(var(--space-2xs) / -2);
-    width: var(--space-2xs);
-    height: var(--space-2xs);
-    background: var(--color-lemon-500);
+  .cv__portrait {
     border-radius: var(--radius-full);
-    print-color-adjust: exact;
+    object-fit: cover;
   }
 
-  .entry--education .entry__body::before {
-    background: var(--color-herbs-400);
+  /* Figma 477:1915: the two naming lines 8 apart. */
+  .cv__naming {
+    display: grid;
+    row-gap: var(--space-2xs);
   }
 
-  .entry__kind {
-    font-size: var(--font-size-sm);
-    letter-spacing: var(--letter-spacing-wide);
-    text-transform: uppercase;
-    color: var(--color-neutral-700);
-  }
-
-  .entry__title {
-    margin-top: var(--space-3xs);
+  /* Typography/H4 on the h1: only the size differs from global.css. */
+  .cv__name {
     font-size: var(--font-size-lg);
   }
 
-  .entry__org {
-    margin-top: var(--space-3xs);
-    color: var(--color-pickled-500);
-  }
-
-  .entry__summary {
-    margin-top: var(--space-2xs);
-    max-width: var(--measure);
-    color: var(--color-neutral-700);
-  }
-
-  /* Screen only — the printed CV carries no unclickable URLs. */
-  .entry__doc {
-    margin-top: var(--space-2xs);
+  /* Figma text style: Typography/Body - Small. */
+  .cv__study {
     font-size: var(--font-size-sm);
+    line-height: var(--line-height-relaxed);
   }
 
-  @media (min-width: 48rem) {
-    .entry {
-      grid-template-columns: 10rem minmax(0, 1fr);
-      gap: var(--space-md);
-    }
-
-    .entry__period {
-      padding-top: 0.15em;
-      text-align: right;
-    }
+  /* Figma 492:2529: the two contact columns 40 apart. */
+  .cv__contact {
+    display: flex;
+    gap: var(--space-lg);
   }
 
-  /* ---------------------------------------------------------------
-   * Print — this is the PDF. `npm run pdf` renders exactly these rules.
-   * ------------------------------------------------------------- */
+  /* Figma 492:2528 and 477:1918: rows 8 apart, mark and text 8 apart,
+     Typography/Body - Small in neutral-800. */
+  .cv__reach,
+  .cv__profiles {
+    display: grid;
+    row-gap: var(--space-2xs);
+    padding: 0;
+    margin: 0;
+    list-style: none;
+    font-size: var(--font-size-sm);
+    line-height: var(--line-height-relaxed);
+    color: var(--color-neutral-800);
+  }
 
-  /* Sheet geometry is literal: @page sits outside the document tree and
-     cannot read custom properties, so there is no token to use here. */
+  .cv__reach li,
+  .cv__profiles li {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2xs);
+  }
+
+  /* 18 is the size the header draws every mark at (Figma 477:2404, 477:2385) —
+     a drawn size with no token, recorded in design/components.json unbound. */
+  :global(.cv__mark) {
+    flex-shrink: 0;
+    inline-size: 18px;
+    block-size: auto;
+  }
+
+  /* Figma 477:2483 draws the paragraph across the whole content column. */
+  .cv__intro {
+    max-width: none;
+  }
+
+  /* Figma 477:1947: the title and the list 24 apart. */
+  .cv__section {
+    display: grid;
+    row-gap: var(--space-md);
+  }
+
+  /* Typography/H3 on the h2. */
+  .cv__section-title {
+    font-size: var(--font-size-xl);
+  }
+
+  /* Figma 477:1949: entries 24 apart. */
+  .cv__list {
+    display: grid;
+    row-gap: var(--space-md);
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+
+  /* Figma 477:1955: Education is drawn 866 wide inside the 1152 column. A4 is a
+     narrower sheet, so the ratio transfers and the pixels do not. */
+  .cv__section--education {
+    inline-size: 75.2%;
+  }
+
+  /* Figma 477:1961: Tech & Tools is drawn 422 wide in the 1152 column — the same
+     four-of-ten columns /resume gives it. Ratio again, not pixels. */
+  .cv__tools {
+    inline-size: 36.6%;
+  }
+
+  /* Handoff §12: each entry's mark carries on turning, restarting at the top of
+     each section. Figma −16 is clockwise on screen, so CSS continues it with a
+     positive rotate. */
+  .cv__row :global(.cv-section__mark) {
+    rotate: calc(16deg * var(--cv-mark-index, 0));
+  }
+
+  /* Sheet geometry is literal: @page sits outside the document tree and cannot
+     read custom properties. 16.9mm is the frame's 64px margin at 96dpi. */
   @page {
     size: A4;
-    margin: 16mm 15mm;
+    margin: 16.9mm;
   }
 
   @media print {
     .cv {
-      padding-block: 0;
+      padding: 0;
       max-width: none;
-      padding-inline: 0;
     }
 
     .no-print {
       display: none;
     }
 
-    /* Warm off-white is a screen decision; a CV prints on white. */
-    :global(body) {
-      background: var(--color-neutral-white);
-      font-size: var(--font-size-sm);
-    }
-
-    .cv__name {
-      font-size: var(--font-size-xl);
-    }
-
-    .cv__role,
-    .entry__title {
-      font-size: var(--font-size-base);
-    }
-
-    .cv__section {
-      margin-top: var(--space-lg);
-      margin-bottom: var(--space-md);
-    }
-
-    .entry {
-      padding-bottom: var(--space-md);
+    /* Handoff §12: the break falls between entries, never inside one, and a
+       section heading never strands at the foot of a sheet. */
+    .cv__row,
+    .cv__tools {
       break-inside: avoid;
     }
 
-    .entry__summary,
-    .cv__intro {
-      max-width: none;
+    .cv__section-title {
+      break-after: avoid;
     }
 
     a {

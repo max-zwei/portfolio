@@ -1,11 +1,15 @@
 /**
- * Prints built pages to the PDFs in public/.
+ * Prints built pages to the PDFs in public/, and copies them into dist/.
  *
  * Neither PDF is a second document. Each is its page printed to A4 by the same
  * `@media print` rules that style it on screen, so nothing is written down
  * twice and the two cannot disagree.
  *
- * Run it with `npm run pdf`, which builds first — this script only reads dist/.
+ * Runs automatically as `postbuild` after `astro build` (and so after
+ * `npm run pdf`, which is now an alias for `npm run build`) — this script
+ * only reads dist/. `astro build` already copied public/ before this script
+ * runs, so the PDFs are copied back into dist/ after printing or the built
+ * output would ship the previous print.
  *
  * It needs a Chromium to print with, in this order:
  *   1. $CHROME_PATH, if set
@@ -13,7 +17,7 @@
  */
 
 import { createReadStream, existsSync } from 'node:fs';
-import { mkdir, stat } from 'node:fs/promises';
+import { copyFile, mkdir, stat } from 'node:fs/promises';
 import { createServer } from 'node:http';
 import { dirname, extname, join, normalize, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -106,7 +110,7 @@ async function launchBrowser() {
 
 for (const { route } of DOCUMENTS) {
   if (!existsSync(join(dist, route.slice(1), 'index.html'))) {
-    console.error(`No built ${route} page in dist/. Run \`npm run pdf\`.`);
+    console.error(`No built ${route} page in dist/. Run \`npm run build\`.`);
     process.exit(1);
   }
 }
@@ -134,6 +138,12 @@ try {
       // Honour each page's own @page rule rather than restating A4 here.
       preferCSSPageSize: true,
     });
+
+    // astro build copied public/ before this script ran, so dist/ still
+    // carries the previous print without this.
+    const built = join(dist, doc.output);
+    await mkdir(dirname(built), { recursive: true });
+    await copyFile(output, built);
 
     const { size } = await stat(output);
     console.log(

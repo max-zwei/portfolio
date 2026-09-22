@@ -61,13 +61,22 @@
       "figmaName": "logo",
       "nodeId": "108:1372",
       "page": "Atoms",
-      "component": ["src/components/Avatar.astro", "public/favicon.svg"],
+      "component": [
+        "src/components/Avatar.astro",
+        "public/favicon.svg",
+        "src/components/Logo.astro"
+      ],
       "variantProperties": {
         "Type": ["favicon", "chat"],
-        "Variant": ["Default", "tomato", "herbs"]
+        "Variant": ["Default", "tomato", "herbs", "monochrome"]
       },
-      "combinations": ["favicon/Default", "chat/tomato", "chat/herbs"],
-      "notes": "The three separate artworks are not one recolourable SVG: both the circular ground and the base rectangle recolour. Avatar owns the neutral, tomato and herbs max grounds; public/favicon.svg is the neutral variant. Logo.astro was deleted because the favicon needs no component."
+      "combinations": [
+        "favicon/Default",
+        "chat/tomato",
+        "chat/herbs",
+        "chat/monochrome"
+      ],
+      "notes": "The three separate artworks are not one recolourable SVG: both the circular ground and the base rectangle recolour. Avatar owns the neutral, tomato and herbs max grounds; public/favicon.svg is the neutral variant. Re-read 2026-09-22 for the /resume/cv redesign: the set gained `Variant=monochrome` (`484:2490`, `Type=chat`), exported to public/logo/chat-monochrome.svg and consumed by src/components/Logo.astro, which the 10 Sep 2026 note here claimed was deleted — it exists and is the component this set now maps to, alongside Avatar.astro and public/favicon.svg."
     },
     {
       "figmaName": "Icons",
@@ -90,7 +99,9 @@
           "linkedin",
           "circle",
           "square",
-          "triangle"
+          "triangle",
+          "mail",
+          "phone"
         ],
         "Color": ["Lemon", "Black", "White", "Tomato", "Herbs"]
       },
@@ -117,9 +128,11 @@
         "linkedin/White",
         "circle/Black",
         "square/Tomato",
-        "triangle/Herbs"
+        "triangle/Herbs",
+        "mail/Black",
+        "phone/Black"
       ],
-      "notes": "Rebuilt by Max on 10 Sep 2026 as the single source for every mark, and the scope boundary recorded here before it is now REVERSED: the eight footer marks ARE this set. Twenty-three symbols on a two-axis matrix — Icon × Color — with Black (#040302) and White (#FDFCF8) pairs for the eight marks, and single Lemon (Cursor, `109:1373`, 40×40), Black (Figma Make, `140:1095`, 56×56; download `377:2133` and share `377:2143`, 28×28; circle `476:522`, 16×16), Tomato (square `476:1348`) and Herbs (triangle `476:1350`) entries. Circle ships as public/icons/circle.svg and ReleaseNote consumes it as a CSS mask, so the one black export serves both states. Square remains unported because nothing uses it; triangle is ported in Icon.astro for CvSection's default logo. Marks are 16 tall at their own drawn widths: perplexity `387:2931`/`389:2932` 16, anthropic `387:2929`/`389:2934` 16, openai `387:2930`/`389:2936` 16.14, figma `389:2969`/`389:2974` 11.53, github `389:2970`/`389:2981` 16.44, dribbble `389:2971`/`389:2992` 16, behance `389:2972`/`389:2987` 19, linkedin `389:2973`/`389:2997` 16.15. Geometry verified identical to the shipped assets, which resolves two open items: the third \"explore with\" mark is PERPLEXITY, not unidentified, and public/icons/dark/ is the set's own White variant rather than a code invention. Two deltas remain: the shipped light marks carry #171613 because that is what the NavBar Mode=Default instance paints them, while the set's Color=Black is #040302 — an instance paint, not drift; and the files are still named explore-3.svg, explore-claude.svg and explore-openai.svg rather than perplexity, anthropic and openai. Separately, public/cursor-pointer.svg (16×16) has NO Figma node: it is the same circle re-drawn at pointer size for the site-wide CSS cursor, because a url() cursor renders at the asset's intrinsic size and CSS cannot scale it. The 40×40 mark is what /styleguide renders. Change the colour and both files need it. Re-read 2026-09-22. The three newest variants are circle/Black (`476:522`), an ELLIPSE 16 × 16; square/Tomato (`476:1348`), a RECTANGLE 16 × 16 with Figma rotation +12 and a 18.977 drawn box; and triangle/Herbs (`476:1350`), a POLYGON 24 × 24 with Figma rotation −16 and a 29.686 drawn box. Only triangle is newly ported for this work, per R8; nothing uses square yet."
+      "notes": "Rebuilt by Max on 10 Sep 2026 as the single source for every mark, and the scope boundary recorded here before it is now REVERSED: the eight footer marks ARE this set. Twenty-three symbols on a two-axis matrix — Icon × Color — with Black (#040302) and White (#FDFCF8) pairs for the eight marks, and single Lemon (Cursor, `109:1373`, 40×40), Black (Figma Make, `140:1095`, 56×56; download `377:2133` and share `377:2143`, 28×28; circle `476:522`, 16×16), Tomato (square `476:1348`) and Herbs (triangle `476:1350`) entries. Circle ships as public/icons/circle.svg and ReleaseNote consumes it as a CSS mask, so the one black export serves both states. Square remains unported because nothing uses it; triangle is ported in Icon.astro for CvSection's default logo. Marks are 16 tall at their own drawn widths: perplexity `387:2931`/`389:2932` 16, anthropic `387:2929`/`389:2934` 16, openai `387:2930`/`389:2936` 16.14, figma `389:2969`/`389:2974` 11.53, github `389:2970`/`389:2981` 16.44, dribbble `389:2971`/`389:2992` 16, behance `389:2972`/`389:2987` 19, linkedin `389:2973`/`389:2997` 16.15. Geometry verified identical to the shipped assets, which resolves two open items: the third \"explore with\" mark is PERPLEXITY, not unidentified, and public/icons/dark/ is the set's own White variant rather than a code invention. Two deltas remain: the shipped light marks carry #171613 because that is what the NavBar Mode=Default instance paints them, while the set's Color=Black is #040302 — an instance paint, not drift; and the files are still named explore-3.svg, explore-claude.svg and explore-openai.svg rather than perplexity, anthropic and openai. Separately, public/cursor-pointer.svg (16×16) has NO Figma node: it is the same circle re-drawn at pointer size for the site-wide CSS cursor, because a url() cursor renders at the asset's intrinsic size and CSS cannot scale it. The 40×40 mark is what /styleguide renders. Change the colour and both files need it. Re-read 2026-09-22. The three newest variants are circle/Black (`476:522`), an ELLIPSE 16 × 16; square/Tomato (`476:1348`), a RECTANGLE 16 × 16 with Figma rotation +12 and a 18.977 drawn box; and triangle/Herbs (`476:1350`), a POLYGON 24 × 24 with Figma rotation −16 and a 29.686 drawn box. Only triangle is newly ported for this work, per R8; nothing uses square yet. Re-read 2026-09-22 for the /resume/cv redesign: two new members, `mail` (`484:2508`, 16×16) and `phone` (`492:2530`, 16×16), both Color=Black only. The set holds no `Icon=triangle, Color=Tomato` variant — public/icons/triangle-tomato.svg is the same polygon with the fill the /resume/cv Education entries override triangle/Herbs to, not a ported Figma variant. `Icon=Figma Make` is 56×56 in Figma against 80×80 in Icon.astro — pre-existing drift, outside this job's frames."
     },
     {
       "figmaName": "post-it",
@@ -163,12 +176,14 @@
     },
     {
       "figmaName": "CV section",
-      "nodeId": "114:640",
+      "nodeId": "477:2204",
       "page": "Organisms",
       "component": "src/components/CvSection.astro",
-      "variantProperties": {},
-      "combinations": ["Default"],
-      "notes": "Renders one position. Mirrors the resume collection in src/content.config.ts. The date range is formatted by src/lib/dates.ts formatRange; the hyphen-minus in \"Mar - Oct 2026\" is the design's glyph, not an en dash. Text styles as re-read on 2026-09-10: Date is Mono - Small in neutral-600, Role is Body - Large at regular, Company is Body - Large at bold, Description is Body in neutral-800 — role and company are the reverse of the weights src/components/feedback.md asked for a week earlier. The logo column (`377:1946`) is 40 wide with 8 of top padding. Re-read 2026-09-22. The logo column now holds Line 2 (`476:513`) under the 40 slot: a 1px stroke bound to color/neutral/200, filling the column with a 16 gap so each entry carries its own segment. The Logo slot's default content is the Icons triangle/Herbs mark."
+      "variantProperties": {
+        "State": ["Default", "PDF"]
+      },
+      "combinations": ["State=Default", "State=PDF"],
+      "notes": "Renders one position. Mirrors the resume collection in src/content.config.ts. The date range is formatted by src/lib/dates.ts formatRange; the hyphen-minus in \"Mar - Oct 2026\" is the design's glyph, not an en dash. Re-read 2026-09-22 for the /resume/cv redesign: the set gained a State axis. State=Default (`114:640`) is unchanged from the prior single-variant port. State=PDF (`477:2203`, 1152 × 72) tightens the rail to gap 12 with no top inset, shrinks the logo box to 40 × 26, drops the content gap to 12, turns Header Container horizontal (gap 40, centre-aligned), and drops Description to Typography/Body - Small; Media Container is hidden. Text styles confirmed on the PDF variant, and unchanged from Default: Date is Mono - Small in neutral-600, Role is Body - Bold, Company is Body, Description is Body(-Small in PDF) in neutral-800 — the code already matches; the 2026-09-10 note claiming the reverse role/company weights was stale and is corrected here. The PDF Date node hugs (textAutoResize WIDTH_AND_HEIGHT); its drawn 140 width is the measured width of \"Mar - Oct 2026\", not a fixed date column. The logo column (`377:1946`) is 40 wide with 8 of top padding in Default. The logo column holds Line 2 (`476:513`) under the 40 slot: a 1px stroke bound to color/neutral/200, filling the column with a 16 gap so each entry carries its own segment of the divider."
     },
     {
       "figmaName": "project preview",
@@ -187,13 +202,15 @@
       "notes": "exploded/small does not exist. Props are presentation-level rather than schema-level because the page decides which projects fields feed them. The decorative paper-scrap collage is absolutely-positioned aria-hidden geometry with no token — its per-scrap offsets, sizes and rotations are not yet transcribed, so the collage does not render yet."
     },
     {
-      "figmaName": "tool box",
-      "nodeId": "114:685",
+      "figmaName": "Tech&Tools",
+      "nodeId": "477:2462",
       "page": "Organisms",
       "component": "src/components/ToolBox.astro",
-      "variantProperties": {},
-      "combinations": ["Default"],
-      "notes": "Six columns of tiles, as drawn. No content collection exists for tools, so /styleguide passes placeholders. An entry with no icon renders the empty tile the design already draws, with its name as the visible label."
+      "variantProperties": {
+        "Usage": ["Web", "PDF"]
+      },
+      "combinations": ["Usage=Web", "Usage=PDF"],
+      "notes": "Renamed from `tool box` to `Tech&Tools` on 2026-09-22, and gained a Usage axis. Usage=Web (`114:685`, the old `tool box` node id) is six columns of tiles as drawn, unchanged from the prior port. Usage=PDF (`477:2461`) drops the title to Typography/H3 and lays the same eighteen slots across nine columns of 32.67 × 32 tiles, both axes still 16 apart. The code file keeps its name, ToolBox.astro, since the rename is a Figma-side relabel, not a new component. No content collection exists for tools, so /styleguide passes placeholders. An entry with no icon renders the empty tile the design already draws, with its name as the visible label."
     },
     {
       "figmaName": "focus areas",
@@ -263,7 +280,12 @@
       "The release-note date line has a JetBrains Mono Bold override (`I476:78;114:337`) against the Regular Typography/Mono - Small text style.",
       "The page grid — 10 columns, 24 gutter, 96 margin on the 1280 frames; 5/16/24 on the 375 Mobile frames. A layout grid is not a variable, so --grid-frame/--grid-margin/--grid-columns/--grid-gutter/--grid-column live only in src/styles/tokens.css.",
       "The CV section divider line's 1px stroke (`476:513`) — no --border-width-* tier exists, the same gap ProjectSection and ReleaseNote's frames fall into.",
-      "The triangle mark's 29.686 drawn box (`476:1350`) — rounded to 30 in Icon.astro, as the NavBar marks are."
+      "The triangle mark's 29.686 drawn box (`476:1350`) — rounded to 30 in Icon.astro, as the NavBar marks are.",
+      "The /resume/cv header mark size 18px (Figma 477:2404, 477:2385) — a drawn size with no token.",
+      "The /resume/cv Education section width, 75.2% of the content column (Figma 477:1955, 866 of 1152) — a ratio, not the 866 pixel value, because A4 is a narrower sheet than the 1280 frame.",
+      "The /resume/cv Tech & Tools width, 36.6% of the content column (Figma 477:1961, 422 of 1152) — the same four-of-ten columns /resume gives it, again a ratio.",
+      "The CV section State=PDF logo box, 40 × 26 (Figma 477:2203) — not transcribed; the code lets the box hug so the 30 mark centres against the 26 title row on its own.",
+      "The /resume/cv @page margin, 16.9mm — the frame's 64px margin (space/xl) converted to the print unit @page requires, since @page cannot read custom properties."
     ]
   },
   "outstanding": {

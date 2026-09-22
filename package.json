@@ -9,9 +9,10 @@
   "scripts": {
     "dev": "astro dev --base /",
     "build": "astro build",
+    "postbuild": "node scripts/render-pdf.mjs",
     "preview": "astro preview",
     "check": "astro check",
-    "pdf": "npm run build && node scripts/render-pdf.mjs",
+    "pdf": "npm run build",
     "tokens": "node scripts/build-tokens.mjs",
     "tokens:check": "node scripts/build-tokens.mjs --check",
     "format": "prettier --write .",

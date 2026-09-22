@@ -158,6 +158,7 @@ rounded:
 shadows:
   sm: '0 1px 2px rgb(20 17 15 / 0.06)'
   md: '0 4px 16px rgb(20 17 15 / 0.08)'
+  md-lemon: '0 4px 16px #f0e511'
   lg: '0 12px 40px rgb(20 17 15 / 0.12)'
 motion:
   duration:
@@ -355,7 +356,11 @@ recorded in `design/components.json` under `outstanding.variableWrites`.
 
 The Figma effect styles `Elevation / sm|md|lg` map to `--shadow-sm|md|lg` by
 name. Read the style name, not the drop-shadow the MCP emits; the two agree
-today and both must change together.
+today and both must change together. `--shadow-md-lemon` is the one exception:
+the lift on the `/resume` social marks (`377:2104`) is `Elevation/md`'s
+geometry with lemon-500 colour baked in — a raw effect on that node, not an
+effect style, because Figma effect styles carry no colour override per
+instance.
 
 ## Shapes
 
