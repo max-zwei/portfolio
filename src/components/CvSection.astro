@@ -6,6 +6,7 @@
  * summary remains slotted so markdown content stays owned by the calling page.
  */
 import ProjectPreview from './ProjectPreview.astro';
+import Icon from './Icon.astro';
 import { formatRange } from '../lib/dates';
 import { withBase } from '../config/site';
 
@@ -43,11 +44,12 @@ const {
 } = Astro.props;
 
 const HeadingTag = `h${level}` as 'h2' | 'h3' | 'h4';
-const hasLogo = Astro.slots.has('logo');
-/* Astro.slots.has('default') is true even when the page passes a falsy
-   expression (e.g. `{entry.data.summary && <p>…}`), so the slot has to be
+/* Astro.slots.has() is true even when the page passes a falsy expression
+   (e.g. `{entry.data.logo && <Image slot="logo" … />}`), so slots have to be
    rendered and checked for real content instead. */
-const summaryHtml = await Astro.slots.render('default');
+const logoHtml = (await Astro.slots.render('logo')) ?? '';
+const hasLogo = logoHtml.trim().length > 0;
+const summaryHtml = (await Astro.slots.render('default')) ?? '';
 const hasSummary = summaryHtml.trim().length > 0;
 
 const slugify = (value: string) =>
@@ -71,13 +73,17 @@ const titleFromUrl = (url: string, index: number) => {
   class:list={['cv-section', className]}
   aria-labelledby={`${sectionId}-role`}
 >
-  {
-    hasLogo && (
-      <div class="cv-section__logo">
-        <slot name="logo" />
-      </div>
-    )
-  }
+  <div class="cv-section__rail">
+    <div class="cv-section__logo">
+      {
+        hasLogo ? (
+          <Fragment set:html={logoHtml} />
+        ) : (
+          <Icon icon="triangle" alt="" class="cv-section__mark" />
+        )
+      }
+    </div>
+  </div>
 
   <div class="cv-section__content">
     <div class="cv-section__header">
@@ -139,16 +145,50 @@ const titleFromUrl = (url: string, index: number) => {
     gap: var(--space-md);
   }
 
-  /* Figma 377:1946 wraps the slot in a column with 8 of top padding. 40 is
-     space/lg. */
-  .cv-section__logo {
+  /* Figma 377:1946: a 40 column, 8 of top padding, its items 16 apart and
+     centred. It stretches to the entry's height so the line can fill it. */
+  .cv-section__rail {
+    display: flex;
     flex: 0 0 var(--space-lg);
+    flex-direction: column;
+    align-items: center;
+    align-self: stretch;
+    gap: var(--space-sm);
     padding-block-start: var(--space-2xs);
+  }
+
+  /* Figma 114:255: the slot is a 40 box that clips its content. */
+  .cv-section__logo {
+    display: grid;
+    place-items: center;
+    inline-size: 100%;
+    block-size: var(--space-lg);
+    overflow: clip;
   }
 
   .cv-section__logo :global(img) {
     inline-size: 100%;
     block-size: auto;
+  }
+
+  /* The default mark keeps its own drawn box inside the slot rather than
+     filling it: Figma 476:1350 is 29.686, rounded to 30 as the NavBar marks
+     are. Not a token — an asset's own size. */
+  .cv-section__logo :global(.cv-section__mark) {
+    inline-size: 30px;
+    block-size: 30px;
+  }
+
+  /* Figma 476:513: a 1px line in neutral-200 filling the column under the
+     logo, so it runs from 16 below the mark to the foot of the entry. No
+     --border-width-* tier exists, so 1px is a literal, as it is in
+     ProjectSection and ReleaseNote. */
+  .cv-section__rail::after {
+    content: '';
+    flex: 1 1 auto;
+    inline-size: 1px;
+    min-block-size: 0;
+    background-color: var(--cv-section-line-color, var(--color-neutral-200));
   }
 
   .cv-section__content {
@@ -244,5 +284,34 @@ const titleFromUrl = (url: string, index: number) => {
     flex-wrap: wrap;
     /* Token-chosen while Figma is unreachable; not a value read from the set. */
     gap: var(--space-sm);
+  }
+  /*
+   * Max's ask, not a Figma prototype: the default mark carries on turning in
+   * the direction it is drawn — a further 16° as its entry crosses the
+   * viewport. @keyframes on a view() timeline, so the motion ceiling holds.
+   * Figma −16 is clockwise on screen, so CSS continues it with a positive
+   * rotate.
+   *
+   * The reduced-motion guard is local, against the usual rule, because
+   * global.css's blanket animation-duration override cannot stop a
+   * progress-driven timeline — duration is not what advances it.
+   */
+  @keyframes cv-section-mark-turn {
+    from {
+      rotate: 0deg;
+    }
+
+    to {
+      rotate: 16deg;
+    }
+  }
+
+  @supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+      :global(.cv-section__mark) {
+        animation: cv-section-mark-turn linear both;
+        animation-timeline: view();
+      }
+    }
   }
 </style>
