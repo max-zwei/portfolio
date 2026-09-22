@@ -148,6 +148,7 @@ so it lives in [`src/config/site.ts`](../src/config/site.ts) as `CV_INTRO`.
 | Field            | Type           | Required | Purpose                                               |
 | ---------------- | -------------- | -------- | ----------------------------------------------------- |
 | `date`           | date           | yes      | When the release happened.                            |
+| `description`    | string         | no       | One sentence under the date.                          |
 | `userExperience` | markdown       | no       | What changed in how the site behaves.                 |
 | `userInterface`  | markdown       | no       | What changed in how it looks.                         |
 | `tech`           | markdown       | no       | What changed under it — build, CMS, tokens, workflow. |

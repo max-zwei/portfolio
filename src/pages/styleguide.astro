@@ -593,14 +593,23 @@ const demoArtefacts = [
         <ReleaseNote
           state="active"
           date={releaseDate}
-          backHref="#h-components"
+          description="[what this release was]"
+          screenshots={demoArtefacts}
+          fileHref="#h-components"
           level={4}
         >
           <p slot="userExperience">[user experience]</p>
           <p slot="userInterface">[user interface]</p>
           <p slot="tools">[tools]</p>
         </ReleaseNote>
-        <ReleaseNote state="inactive" date={releaseDate} level={4}>
+        <ReleaseNote
+          state="inactive"
+          date={releaseDate}
+          description="[what this release was]"
+          screenshots={demoArtefacts}
+          fileHref="#h-components"
+          level={4}
+        >
           <p slot="userExperience">[inactive release note]</p>
         </ReleaseNote>
       </div>
