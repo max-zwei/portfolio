@@ -321,6 +321,8 @@ const releaseNotes = defineCollection({
   schema: ({ image }) =>
     z.object({
       date: z.coerce.date(),
+      /** The line under the date — one sentence on what this release was. */
+      description: z.string().min(1).optional(),
 
       /* The three things a release can touch. Markdown, and all optional —
          a release rarely moves all three at once. */
