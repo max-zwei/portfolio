@@ -8,13 +8,13 @@ interface Props {
   /** Section heading. */
   title: string;
   /** Optional heading level to match the styleguide examples. */
-  level?: 2 | 3 | 4;
+  level?: 1 | 2 | 3 | 4;
   /** Additional class forwarded to the root section. */
   class?: string;
 }
 
 const { title, level = 2, class: className } = Astro.props;
-const HeadingTag = `h${level}` as 'h2' | 'h3' | 'h4';
+const HeadingTag = `h${level}` as 'h1' | 'h2' | 'h3' | 'h4';
 ---
 
 <section class:list={['text-section', className]}>
