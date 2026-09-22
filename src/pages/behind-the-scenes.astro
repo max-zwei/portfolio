@@ -195,7 +195,10 @@ figmaEmbedUrl.searchParams.set('embed-host', 'max-pinkert-portfolio');
                   description={block.entry.data.description}
                   screenshots={block.entry.data.screenshots}
                   fileHref={
-                    block.entry.data.file && withBase(block.entry.data.file)
+                    block.entry.data.file &&
+                    (/^https?:\/\//.test(block.entry.data.file)
+                      ? block.entry.data.file
+                      : withBase(block.entry.data.file))
                   }
                   level={3}
                 >
