@@ -48,7 +48,7 @@ const profiles = CV_PROFILES.map((label) => {
   title="Curriculum vitae"
   description={`Curriculum vitae of ${SITE.name} — ${SITE.role}. Positions and education, with a PDF to download.`}
 >
-  <main id="main" class="cv">
+  <main id="main" class="cv cv-document">
     <p class="cv__back no-print">
       <a href={withBase('/')}>&larr; Portfolio</a>
     </p>
@@ -66,7 +66,7 @@ const profiles = CV_PROFILES.map((label) => {
           <div class="cv__naming">
             <h1 class="cv__name">{SITE.name}</h1>
             <p class="cv__study">
-              {CV_STUDY.field}<br />{CV_STUDY.institution}
+              <strong>{CV_STUDY.field}</strong><br />{CV_STUDY.institution}
             </p>
           </div>
         </div>
@@ -177,6 +177,14 @@ const profiles = CV_PROFILES.map((label) => {
 </BaseLayout>
 
 <style>
+  :global(body:has(.cv-document)) {
+    background-color: #ffffff;
+  }
+
+  .cv-document :global(.toolbox--pdf .toolbox__tool) {
+    background-color: #ffffff;
+  }
+
   /* Figma 267:4053: a 64 margin on every side, its blocks 40 apart. */
   .cv {
     display: grid;
@@ -184,6 +192,8 @@ const profiles = CV_PROFILES.map((label) => {
     max-width: var(--grid-frame);
     margin-inline: auto;
     padding: var(--space-xl);
+    font-size: var(--font-size-sm);
+    line-height: var(--line-height-relaxed);
   }
 
   /* The site has no nav, and a CV is a page people arrive at from outside. */
@@ -202,7 +212,7 @@ const profiles = CV_PROFILES.map((label) => {
   .cv__header {
     display: flex;
     flex-wrap: wrap;
-    align-items: flex-start;
+    align-items: center;
     justify-content: space-between;
     gap: var(--space-md);
   }
@@ -223,6 +233,7 @@ const profiles = CV_PROFILES.map((label) => {
   .cv__naming {
     display: grid;
     row-gap: var(--space-2xs);
+    padding-block: var(--space-xs);
   }
 
   /* Typography/H4 on the h1: only the size differs from global.css. */
@@ -234,6 +245,10 @@ const profiles = CV_PROFILES.map((label) => {
   .cv__study {
     font-size: var(--font-size-sm);
     line-height: var(--line-height-relaxed);
+  }
+
+  .cv__study strong {
+    font-weight: var(--font-weight-bold);
   }
 
   /* Figma 492:2529: the two contact columns 40 apart. */
@@ -256,6 +271,15 @@ const profiles = CV_PROFILES.map((label) => {
     color: var(--color-neutral-800);
   }
 
+  .cv__profiles {
+    padding-block-end: var(--space-3xs);
+  }
+
+  .cv__contact a[href^='mailto:'],
+  .cv__contact a[href^='tel:'] {
+    text-decoration: none;
+  }
+
   .cv__reach li,
   .cv__profiles li {
     display: flex;
@@ -274,6 +298,9 @@ const profiles = CV_PROFILES.map((label) => {
   /* Figma 477:2483 draws the paragraph across the whole content column. */
   .cv__intro {
     max-width: none;
+    font-size: var(--font-size-sm);
+    line-height: var(--line-height-relaxed);
+    color: var(--color-neutral-800);
   }
 
   /* Figma 477:1947: the title and the list 24 apart. */
@@ -304,7 +331,7 @@ const profiles = CV_PROFILES.map((label) => {
 
   /* Figma 477:1961: Tech & Tools is drawn 422 wide in the 1152 column — the same
      four-of-ten columns /resume gives it. Ratio again, not pixels. */
-  .cv__tools {
+  :global(.cv__tools) {
     inline-size: 36.6%;
   }
 
@@ -315,27 +342,68 @@ const profiles = CV_PROFILES.map((label) => {
     rotate: calc(16deg * var(--cv-mark-index, 0));
   }
 
-  /* Sheet geometry is literal: @page sits outside the document tree and cannot
-     read custom properties. 16.9mm is the frame's 64px margin at 96dpi. */
+  /* @page cannot read custom properties. 10.5mm is the proportional inset:
+     210mm × 64 / 1280 from Figma frame 267:4053. */
   @page {
     size: A4;
-    margin: 16.9mm;
+    margin: 10.5mm;
   }
 
   @media print {
+    :global(body:has(.cv-document)) {
+      min-height: 0;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+
     .cv {
+      display: block;
       padding: 0;
       max-width: none;
+    }
+
+    .cv__section,
+    .cv__list {
+      display: block;
+    }
+
+    .cv__section {
+      margin-block-start: var(--space-lg);
+    }
+
+    :global(.cv__tools) {
+      margin-block-start: var(--space-lg);
+    }
+
+    .cv__list {
+      margin-block-start: var(--space-md);
+    }
+
+    .cv__row + .cv__row {
+      margin-block-start: var(--space-md);
+    }
+
+    .cv__name {
+      font-size: calc(var(--font-size-base) * 1.5);
+    }
+
+    .cv__section-title,
+    :global(.cv__tools .toolbox__title) {
+      font-size: calc(var(--font-size-base) * 2);
     }
 
     .no-print {
       display: none;
     }
 
-    /* Handoff §12: the break falls between entries, never inside one, and a
-       section heading never strands at the foot of a sheet. */
-    .cv__row,
-    .cv__tools {
+    /* Handoff §12: normal entries stay intact, while an entry longer than a
+       sheet can still fragment rather than clip. */
+    .cv__opening,
+    .cv__row {
+      break-inside: avoid;
+    }
+
+    :global(.cv__tools) {
       break-inside: avoid;
     }
 
@@ -343,8 +411,8 @@ const profiles = CV_PROFILES.map((label) => {
       break-after: avoid;
     }
 
-    a {
-      text-decoration: none;
+    .cv__list > .cv__row:first-child {
+      break-before: avoid;
     }
   }
 </style>

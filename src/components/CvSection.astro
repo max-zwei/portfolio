@@ -326,10 +326,10 @@ const titleFromUrl = (url: string, index: number) => {
     padding-block-start: 0;
   }
 
-  /* The 26-high logo box the variant draws is an alignment, not a value: with the
-     box hugging, the 30 mark centres against the 26 title row by itself. */
+  /* Figma 477:2177: the PDF variant centres the exported 30px mark in a
+     40 × 26 slot. The approved 26px literal is CV-only component geometry. */
   .cv-section--pdf .cv-section__logo {
-    block-size: auto;
+    block-size: 26px;
   }
 
   .cv-section--pdf .cv-section__content {
@@ -351,11 +351,29 @@ const titleFromUrl = (url: string, index: number) => {
 
   .cv-section--pdf .cv-section__position {
     flex: 1 1 auto;
+    min-inline-size: 0;
+    gap: var(--space-2xs);
+  }
+
+  .cv-section--pdf .cv-section__role,
+  .cv-section--pdf .cv-section__company {
+    font-size: var(--font-size-sm);
+    line-height: var(--line-height-relaxed);
+  }
+
+  .cv-section--pdf .cv-section__role {
+    font-weight: var(--font-weight-bold);
   }
 
   /* Figma text style: Typography/Body - Small. */
   .cv-section--pdf .cv-section__summary {
     font-size: var(--font-size-sm);
     line-height: var(--line-height-relaxed);
+  }
+
+  /* Figma 477:2191: PDF copy uses the full content column rather than the
+     global paragraph measure. */
+  .cv-section--pdf .cv-section__summary :global(p) {
+    max-width: none;
   }
 </style>

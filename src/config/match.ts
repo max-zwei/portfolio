@@ -57,6 +57,7 @@ export const AXES = {
   tech: {
     step: 'stack',
     tags: [
+      { id: 'solely design', label: 'Solely Design' },
       { id: 'css-html', label: 'CSS / HTML' },
       { id: 'wordpress', label: 'Wordpress' },
       { id: 'no-code', label: 'Framer / Webflow / Wix..' },
