@@ -32,15 +32,16 @@ const HeadingTag = `h${level}` as 'h1' | 'h2' | 'h3' | 'h4';
     gap: var(--space-md);
   }
 
-  /* Typography/H1 on an h2. Only the size differs from global.css. */
+  /* Typography/H1 on an h2. Figma binds letter-spacing normal, not the tight
+     tracking global.css gives every heading. */
   .text-section__title {
     font-size: var(--font-size-3xl);
+    letter-spacing: var(--letter-spacing-normal);
   }
 
+  /* Figma 114:636: one Description text layer, so its paragraphs sit on the
+     body line-height with no gap between them. */
   .text-section__body {
-    display: grid;
-    /* Token-chosen: the set draws a single body paragraph, so it has no gap
-       to read. Keeps adjacent markdown blocks legible. */
-    gap: var(--space-sm);
+    color: var(--color-neutral-800);
   }
 </style>
