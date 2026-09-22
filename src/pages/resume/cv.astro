@@ -178,11 +178,11 @@ const profiles = CV_PROFILES.map((label) => {
 
 <style>
   :global(body:has(.cv-document)) {
-    background-color: #ffffff;
+    background-color: var(--color-neutral-white);
   }
 
   .cv-document :global(.toolbox--pdf .toolbox__tool) {
-    background-color: #ffffff;
+    background-color: var(--color-neutral-white);
   }
 
   /* Figma 267:4053: a 64 margin on every side, its blocks 40 apart. */
@@ -383,6 +383,9 @@ const profiles = CV_PROFILES.map((label) => {
       margin-block-start: var(--space-md);
     }
 
+    /* The lg/xl tokens are clamps and a print sheet has no fluid viewport, so
+       the two sizes are pinned to the values those clamps reach at desktop
+       width. */
     .cv__name {
       font-size: calc(var(--font-size-base) * 1.5);
     }
