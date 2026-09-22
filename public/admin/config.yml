@@ -613,7 +613,9 @@ collections:
         widget: file
         required: false
         # The one upload that does NOT go in src/. It is served as-is for
-        # download rather than optimised, so it has to live in public/.
+        # download rather than optimised, so it has to live in public/. An
+        # absolute http(s) URL is also allowed and passed through untouched —
+        # this widget only uploads, so write an external URL by hand instead.
         media_folder: /public/releases
         public_folder: /releases
-        hint: An optional attachment. Downloaded as-is, not optimised.
+        hint: An optional attachment, or an absolute URL. Downloaded as-is, not optimised.
