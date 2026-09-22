@@ -152,7 +152,7 @@ const playground = defineCollection({
         title: z.string().min(1),
 
         /** One or two sentences — this is the whole description. */
-        summary: z.string().min(1).max(280),
+        summary: z.string().min(1).max(400),
 
         teaser: image().optional(),
         teaserAlt: z.string().optional(),

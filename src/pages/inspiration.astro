@@ -1,0 +1,25 @@
+---
+import BlankSection from '../components/BlankSection.astro';
+import NavBar from '../components/NavBar.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Inspiration">
+  <main id="main" class="container inspiration">
+    <BlankSection level={1}>
+      <p>
+        I have a lot of great ideas for this section. But my daughter is
+        requesting “naked pasta” and expecting them now.
+      </p>
+      <p>I’ll hopefully return to this section soon!</p>
+    </BlankSection>
+  </main>
+
+  <NavBar mode="dark" label="Site" />
+</BaseLayout>
+
+<style>
+  .inspiration {
+    padding-block: var(--space-3xl);
+  }
+</style>
