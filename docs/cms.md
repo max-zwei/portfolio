@@ -24,9 +24,10 @@ served by [`src/pages/admin/index.astro`](../src/pages/admin/index.astro).
 | `resume`       | `src/content/resume/`        | The CV, one entry per position            |
 | `releaseNotes` | `src/content/release-notes/` | What changed on the site, and when        |
 
-The filename becomes the URL slug where a collection has a page. Every
-collection ships one `[bracketed placeholder]` entry as a worked example —
-copy it, or create an entry through `/admin`.
+The filename becomes the URL slug where a collection has a page. Most
+collections ship one `[bracketed placeholder]` entry as a worked example —
+copy it, or create an entry through `/admin`. `projects` does not: every entry
+there is a real case study.
 
 ## projects
 
@@ -145,19 +146,22 @@ so it lives in [`src/config/site.ts`](../src/config/site.ts) as `CV_INTRO`.
 
 ## releaseNotes
 
-| Field            | Type           | Required | Purpose                                               |
-| ---------------- | -------------- | -------- | ----------------------------------------------------- |
-| `date`           | date           | yes      | When the release happened.                            |
-| `description`    | string         | no       | One sentence under the date.                          |
-| `userExperience` | markdown       | no       | What changed in how the site behaves.                 |
-| `userInterface`  | markdown       | no       | What changed in how it looks.                         |
-| `tech`           | markdown       | no       | What changed under it — build, CMS, tokens, workflow. |
-| `screenshots`    | list of images | no       | Each needs `src` and `alt`.                           |
-| `file`           | path           | no       | An optional attachment, under `/releases`.            |
+| Field            | Type           | Required | Purpose                                                        |
+| ---------------- | -------------- | -------- | -------------------------------------------------------------- |
+| `date`           | date           | yes      | When the release happened.                                     |
+| `description`    | string         | no       | One sentence under the date.                                   |
+| `userExperience` | markdown       | no       | What changed in how the site behaves.                          |
+| `userInterface`  | markdown       | no       | What changed in how it looks.                                  |
+| `tech`           | markdown       | no       | What changed under it — build, CMS, tokens, workflow.          |
+| `screenshots`    | list of images | no       | Each needs `src` and `alt`.                                    |
+| `file`           | path or URL    | no       | An optional attachment, under `/releases`, or an absolute URL. |
 
 All three category fields are optional because a release rarely moves all three
-at once. `file` is the **one upload that does not live in `src/`** — it is served
-as-is for download rather than optimised, so it goes to `public/releases/`.
+at once. `file` is the **one upload that does not live in `src/`** — an uploaded
+file is served as-is for download rather than optimised, so it goes to
+`public/releases/`. An absolute `http(s)://` URL is also allowed and is passed
+through untouched; Decap's `file` widget only uploads, so an external URL has
+to be written into the entry's markdown by hand.
 
 ## match
 

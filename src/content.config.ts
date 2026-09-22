@@ -333,8 +333,9 @@ const releaseNotes = defineCollection({
       screenshots: artefacts(image),
 
       /**
-       * An optional attachment. A path under /releases, not an `image()` —
-       * this is served as-is for download rather than optimised.
+       * An optional attachment. A path under /releases, or an absolute
+       * http(s) URL — not an `image()`, since this is served or linked as-is
+       * rather than run through Astro's optimiser.
        */
       file: z.string().min(1).optional(),
     }),
