@@ -72,11 +72,18 @@ const STEPS: Step[] = [
     messages: [
       {
         speaker: MAX,
-        paragraphs: [['Hi, my name is Max, nice to meet you!'], ['...']],
+        paragraphs: [
+          ['Hi, my name is Max, nice to meet you!'],
+          [
+            'I’m currently studying Digital Design & Innovation at CODE University of Applied Sciences. I developed a passion for wondering about design in the context of children and education. And generally someone who is curious about experiences and aims to explore, ideate and create experiences.',
+          ],
+        ],
       },
       {
         paragraphs: [
-          ['Recently I stumbled upon a HMW, you might also question yourself:'],
+          [
+            'Now back to you, recently I stumbled upon a question, you might also ask yourself:',
+          ],
           ['How might we come to a decision to hire or not hire Max?'],
         ],
       },
@@ -235,14 +242,15 @@ const STEPS: Step[] = [
       },
       {
         paragraphs: [
-          ['Resulting in a statement like such:'],
-          [
-            'Max ticks all the boxes except ... You can find prove looking at project x.',
-          ],
+          ['Resulting in statements like such:'],
+          ['Max ticks all the boxes except ... .'],
+          ['You can find proof looking at project x.'],
           ['Are you willing to trade off ... against ... ?'],
         ],
       },
-      { paragraphs: [['Let’s build a first prototype!']] },
+      {
+        paragraphs: [['Let’s build a first prototype...'], ['...'], ['...']],
+      },
       { paragraphs: [['Done, you want to give it a try?']] },
     ],
     choices: [
