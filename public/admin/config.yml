@@ -266,7 +266,16 @@ collections:
             multiple: true
             required: false
             default: []
-            options: [css-html, wordpress, no-code, python, javascript, julia]
+            options:
+              [
+                'solely design',
+                css-html,
+                wordpress,
+                no-code,
+                python,
+                javascript,
+                julia,
+              ]
 
   # ---------------------------------------------------------------------------
   # Playground — small self-directed builds.

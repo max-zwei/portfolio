@@ -12,7 +12,7 @@ match:
   teams: [corporate]
   fields: [ux-concept, product-management, branding]
   roles: [founding-designer]
-  tech: []
+  tech: [solely design]
 
 # The case study, in narrative order. Delete the sections a project does not
 # earn — all eight are optional, but a section that exists needs a description.
