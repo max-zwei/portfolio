@@ -1,0 +1,22 @@
+---
+import BlankSection from '../components/BlankSection.astro';
+import NavBar from '../components/NavBar.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Impressum">
+  <main id="main" class="container impressum">
+    <BlankSection level={1}>
+      <p>[Impressum — the legal disclosure is not written yet.]</p>
+      <p>I’ll hopefully return to this section soon!</p>
+    </BlankSection>
+  </main>
+
+  <NavBar mode="dark" label="Site" />
+</BaseLayout>
+
+<style>
+  .impressum {
+    padding-block: var(--space-3xl);
+  }
+</style>
