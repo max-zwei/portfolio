@@ -34,15 +34,21 @@ export const PORTFOLIO_SOURCE = {
  * The paragraph at the top of the CV. The one piece of prose on /resume the
  * timeline can't tell you, so it is written by hand rather than derived — and
  * it stays here rather than in the resume collection because it is bio copy,
- * not a position.
- *
- * The square brackets are the tell: an unfinished CV should be impossible to
- * miss in the printed PDF, not subtle.
+ * not a position. Verbatim from Figma 477:2483.
  */
 export const CV_INTRO =
-  '[Two or three sentences in your own voice: what you design, who for, and ' +
-  'where you are heading. This is the only prose on the CV that the timeline ' +
-  'below cannot tell — replace it before sending the PDF anywhere.]';
+  'Thirteen years across Berlin startups, founding and running my own company, ' +
+  'and two Mittelstand employers taught me how organisations create value and, ' +
+  'more often, where they quietly leave it on the table: unused potential, ' +
+  'unaddressed demographic shifts, processes drifting away from the core ' +
+  'offer. When I stepped back from the founder role to prioritise being a ' +
+  'father, it became clear that what I kept reaching for in every position ' +
+  'was the curiosity and creative problem framing that sits at the centre of ' +
+  'design. Design & Innovation at CODE University of Applied Sciences matches ' +
+  'how I thrive, project based, hands on and learning by burning. I am now ' +
+  'always looking for a working student position where I can put that into ' +
+  'practice, test the designer role from the inside, and sharpen my focus, ' +
+  'currently pulling strongest toward User Experience and Brand Design.';
 
 /** The two lines the /resume header draws under the name (Figma 251:2563). */
 export const CV_STUDY = {
@@ -50,12 +56,29 @@ export const CV_STUDY = {
   institution: '@ CODE University of Applied Sciences',
 } as const;
 
-/** Social / professional links. Add entries as the profiles go live. */
-export const LINKS: ReadonlyArray<{ label: string; href: string }> = [
-  { label: 'Email', href: `mailto:${SITE.email}` },
-  { label: 'GitHub', href: 'https://github.com/max-zwei' },
-  { label: 'Résumé', href: withBase('/resume') },
-];
+/** The printed CV's contact column (Figma 492:2528). */
+export const CV_CONTACT = {
+  email: SITE.email,
+  phone: '+49\u00A0174\u00A0186\u00A03130',
+  phoneHref: 'tel:+491741863130',
+  website: 'https://zwei.berlin',
+} as const;
+
+/**
+ * The profiles the printed CV lists, in the order Figma 477:1918 draws them.
+ * Each entry names a SOCIALS label; the href and the mark come from there, so
+ * a URL is never written twice.
+ */
+export const CV_PROFILES = ['GitHub', 'Behance', 'LinkedIn'] as const;
+
+/**
+ * Tool tiles for Tech & Tools, on both résumé surfaces. Placeholder until the
+ * logos exist (Figma /resume Handoff §12).
+ */
+export const CV_TOOLS = Array.from({ length: 18 }, () => ({
+  name: '[tool]',
+  icon: '/icons/figma.svg',
+}));
 
 /**
  * The footer's own navigation, from the Figma NavBar. Labels retain the

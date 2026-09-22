@@ -44,6 +44,11 @@ jobs:
       - name: Type-check
         run: npm run check
 
+      # playwright-core ships no browser, and `npm run build` now prints the
+      # CV and handshake PDFs through it.
+      - name: Install Chromium
+        run: npx playwright-core install --with-deps chromium
+
       - name: Build
         run: npm run build
 

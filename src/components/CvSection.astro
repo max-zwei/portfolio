@@ -23,6 +23,8 @@ interface Props {
   documentUrl?: string;
   /** What that document is, for assistive tech: e.g. `Reference letter (PDF)`. */
   documentLabel?: string;
+  /** Figma `State`. */
+  state?: 'default' | 'pdf';
   /** Optional heading level to match the styleguide examples. */
   level?: 2 | 3 | 4;
   /** Project destinations associated with this CV entry. */
@@ -38,6 +40,7 @@ const {
   end,
   documentUrl,
   documentLabel,
+  state = 'default',
   level = 3,
   projectUrls = [],
   class: className,
@@ -70,7 +73,7 @@ const titleFromUrl = (url: string, index: number) => {
 ---
 
 <section
-  class:list={['cv-section', className]}
+  class:list={['cv-section', `cv-section--${state}`, className]}
   aria-labelledby={`${sectionId}-role`}
 >
   <div class="cv-section__rail">
@@ -308,10 +311,51 @@ const titleFromUrl = (url: string, index: number) => {
 
   @supports (animation-timeline: view()) {
     @media (prefers-reduced-motion: no-preference) {
-      :global(.cv-section__mark) {
+      .cv-section--default :global(.cv-section__mark) {
         animation: cv-section-mark-turn linear both;
         animation-timeline: view();
       }
     }
+  }
+
+  /* Figma 477:2203 (State=PDF): the rail tightens to 12 with no top inset, the
+     header becomes one row with the date in its own hugging column 40 from the
+     title, and the description drops to Typography/Body - Small. */
+  .cv-section--pdf .cv-section__rail {
+    gap: var(--space-xs);
+    padding-block-start: 0;
+  }
+
+  /* The 26-high logo box the variant draws is an alignment, not a value: with the
+     box hugging, the 30 mark centres against the 26 title row by itself. */
+  .cv-section--pdf .cv-section__logo {
+    block-size: auto;
+  }
+
+  .cv-section--pdf .cv-section__content {
+    row-gap: var(--space-xs);
+  }
+
+  .cv-section--pdf .cv-section__header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-lg);
+  }
+
+  /* Figma 477:2182 hugs (textAutoResize WIDTH_AND_HEIGHT); its 140 is the
+     measured width of one date, not a column. */
+  .cv-section--pdf .cv-section__dates {
+    flex: 0 0 auto;
+    white-space: nowrap;
+  }
+
+  .cv-section--pdf .cv-section__position {
+    flex: 1 1 auto;
+  }
+
+  /* Figma text style: Typography/Body - Small. */
+  .cv-section--pdf .cv-section__summary {
+    font-size: var(--font-size-sm);
+    line-height: var(--line-height-relaxed);
   }
 </style>
