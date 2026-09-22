@@ -20,3 +20,9 @@ pnpm-debug.log*
 .vscode/
 !.vscode/extensions.json
 .idea/
+
+# projects/: personal code-reference workspace. Folders named "data" hold
+# private source datasets — visible as an empty folder, contents never
+# published. .gitkeep keeps the folder itself tracked.
+projects/**/data/**
+!projects/**/data/.gitkeep
