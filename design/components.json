@@ -172,7 +172,7 @@
       "component": "src/components/BlankSection.astro",
       "variantProperties": {},
       "combinations": ["Default"],
-      "notes": "The frame's copy (`Let’s be honest`) is final in Max's voice, not placeholder, so it is the prop default. BlankSection is the set's named instance of the general heading-plus-body layout in TextSection.astro. TextSection has no Figma set and therefore no separate sets entry. Body arrives through the default slot because the source is markdown in collection frontmatter."
+      "notes": "The frame's copy (`Let’s be honest`) is final in Max's voice, not placeholder, so it is the prop default. BlankSection is the set's named instance of the general heading-plus-body layout in TextSection.astro. TextSection has no Figma set and therefore no separate sets entry. Body arrives through the default slot because the source is markdown in collection frontmatter. Geometry verified 2026-09-22: the set is one vertical auto-layout with gap 24, and its body is a single Description text layer at y=96 holding both paragraphs — so paragraphs sit on the body line-height with no inter-paragraph gap. The heading binds Typography/H1 with letter-spacing normal, not the tight tracking global.css gives headings; Description is --color-neutral-800."
     },
     {
       "figmaName": "CV section",
@@ -300,7 +300,7 @@
       "project preview (114:646) — the decorative paper-scrap collage: per-scrap offsets, sizes and rotations, plus what the exploded state moves. The component currently renders no scraps, so `exploded` has no visual expression and is observable only through data-state and aria-pressed."
     ],
     "unverifiedChoices": [
-      "Spacing gaps still awaiting a Figma read: ToolBox tile gaps, CuriosityRow's avatar gap, BlankSection/TextSection's body gap, and CvSection's project-row gap.",
+      "Spacing gaps still awaiting a Figma read: ToolBox tile gaps, CuriosityRow's avatar gap, and CvSection's project-row gap.",
       "The inactive greys in ProjectSection. Picked as --color-neutral-700 for text (7.91:1 on neutral-100) and --color-neutral-600 for frames (3.40:1, clearing the 3:1 non-text bar) rather than by eye.",
       "NavBar mode=default ground = --color-neutral-100. Only the dark ground was transcribed.",
       "NavBar's columns stack below 48rem, and the row itself no longer wraps — the drawn 1280 frame is now full-bleed at every width, so the wrap that stopped #aboutme being clipped is unnecessary.",

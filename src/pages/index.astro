@@ -114,7 +114,7 @@ const STEPS: Step[] = [
       { label: 'Projects', href: withBase('/projects') },
       { label: 'Playground', href: withBase('/playground') },
       { label: 'Behind the scenes', href: withBase('/behind-the-scenes') },
-      { label: 'My curiosities', href: withBase('/curiosities') },
+      { label: 'My curiosities', href: withBase('/curious') },
     ],
   },
 
@@ -351,7 +351,7 @@ const STEPS: Step[] = [
       { label: 'Projects', href: withBase('/projects') },
       { label: 'Playground', href: withBase('/playground') },
       { label: 'Behind the scenes', href: withBase('/behind-the-scenes') },
-      { label: 'Curiosities', href: withBase('/curiosities') },
+      { label: 'Curiosities', href: withBase('/curious') },
     ],
   },
 ];
@@ -368,10 +368,11 @@ const tags = (m: {
  * Everything the questionnaire can point at, flattened for the client — the
  * answers only exist in the browser, so the matching has to happen there.
  *
- * `href` is what resolves *today*: the section pages for projects,
- * playground, inspiration and curiosities do not exist yet, so an entry
- * without an external link is named without being linked rather than pointed
- * at a 404. When those routes land, this is the one place to change.
+ * `href` is what resolves *today*: the section pages for projects, playground
+ * and inspiration do not exist yet, so an entry without an external link is
+ * named without being linked rather than pointed at a 404. When those routes
+ * land, this is the one place to change. Individual curiosities stay unlinked
+ * too: /curious is the section placeholder, not an entry-detail route.
  */
 const EVIDENCE: Entry[] = [
   ...(await getCollection('projects')).map((e) => ({

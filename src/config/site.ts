@@ -89,7 +89,7 @@ export const NAV = {
   sections: [
     { label: '#projects', href: withBase('/projects') },
     { label: '#playground', href: withBase('/playground') },
-    { label: '#curiosity', href: withBase('/curiosity') },
+    { label: '#curiosity', href: withBase('/curious') },
     { label: '#inspiration', href: withBase('/inspiration') },
   ],
   about: [
