@@ -1,16 +1,38 @@
 ---
+import { getCollection } from 'astro:content';
 import readmeSource from '../../README.md?raw';
 import designSource from '../../DESIGN.md?raw';
 import Button from '../components/Button.astro';
 import NavBar from '../components/NavBar.astro';
-import { PORTFOLIO_SOURCE } from '../config/site';
+import ReleaseNote from '../components/ReleaseNote.astro';
+import { PORTFOLIO_SOURCE, withBase } from '../config/site';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { renderRepositoryDocument } from '../lib/repository-documents';
+import { renderFrontmatterMarkdown } from '../lib/markdown';
 
 const [readmeHtml, designHtml] = await Promise.all([
   renderRepositoryDocument(readmeSource, 'readme', PORTFOLIO_SOURCE.repository),
   renderRepositoryDocument(designSource, 'design', PORTFOLIO_SOURCE.repository),
 ]);
+
+const releases = (await getCollection('releaseNotes')).sort(
+  (a, b) => b.data.date.getTime() - a.data.date.getTime(),
+);
+
+const releaseBlocks = await Promise.all(
+  releases.map(async (entry) => ({
+    entry,
+    userExperience: entry.data.userExperience
+      ? await renderFrontmatterMarkdown(entry.data.userExperience)
+      : undefined,
+    userInterface: entry.data.userInterface
+      ? await renderFrontmatterMarkdown(entry.data.userInterface)
+      : undefined,
+    tech: entry.data.tech
+      ? await renderFrontmatterMarkdown(entry.data.tech)
+      : undefined,
+  })),
+);
 
 const readmeUrl = `${PORTFOLIO_SOURCE.repository}/blob/main/README.md`;
 const designUrl = `${PORTFOLIO_SOURCE.repository}/blob/main/DESIGN.md`;
@@ -134,6 +156,53 @@ figmaEmbedUrl.searchParams.set('embed-host', 'max-pinkert-portfolio');
         </li>
       </ul>
     </section>
+
+    <section class="bts__releases" aria-labelledby="h-releases">
+      <header class="bts-releases__header">
+        <h2 id="h-releases">Release Notes</h2>
+        <p>
+          I have tried multiple approaches for my portfolio. To give you some
+          idea of my iterations, I created this collection of release notes,
+          clustered to user experience, user interface and tools.
+        </p>
+      </header>
+
+      {
+        releaseBlocks.length > 0 && (
+          <ol class="bts-releases__list">
+            {releaseBlocks.map((block) => (
+              <li>
+                <ReleaseNote
+                  date={block.entry.data.date}
+                  description={block.entry.data.description}
+                  screenshots={block.entry.data.screenshots}
+                  fileHref={
+                    block.entry.data.file && withBase(block.entry.data.file)
+                  }
+                  level={3}
+                >
+                  {block.userExperience && (
+                    <Fragment
+                      slot="userExperience"
+                      set:html={block.userExperience}
+                    />
+                  )}
+                  {block.userInterface && (
+                    <Fragment
+                      slot="userInterface"
+                      set:html={block.userInterface}
+                    />
+                  )}
+                  {block.tech && (
+                    <Fragment slot="tools" set:html={block.tech} />
+                  )}
+                </ReleaseNote>
+              </li>
+            ))}
+          </ol>
+        )
+      }
+    </section>
   </main>
 
   <NavBar mode="dark" label="Site" />
@@ -152,7 +221,8 @@ figmaEmbedUrl.searchParams.set('embed-host', 'max-pinkert-portfolio');
   }
 
   .bts__hero,
-  .bts__credits {
+  .bts__credits,
+  .bts-releases__header {
     width: 100%;
     max-width: calc(6 * var(--grid-column) + 5 * var(--grid-gutter));
   }
@@ -316,6 +386,23 @@ figmaEmbedUrl.searchParams.set('embed-host', 'max-pinkert-portfolio');
     gap: var(--space-md);
   }
 
+  .bts__releases {
+    display: grid;
+    gap: var(--space-lg);
+  }
+
+  .bts-releases__header {
+    display: grid;
+    gap: var(--space-md);
+  }
+
+  .bts-releases__list {
+    display: grid;
+    gap: var(--space-xl);
+    padding: 0;
+    list-style: none;
+  }
+
   .bts-credits__list {
     display: grid;
     gap: var(--space-sm);
@@ -349,3 +436,50 @@ figmaEmbedUrl.searchParams.set('embed-host', 'max-pinkert-portfolio');
     }
   }
 </style>
+
+<script>
+  /*
+   * Handoff (given in chat, 22 Sep 2026): the release note the visitor is
+   * currently on renders active, every other one inactive. Exactly one note is
+   * active, so the band is a 2px line at the middle of the viewport and the
+   * last note to cross it stays active while the gap between two notes passes.
+   * Nothing is dimmed without the script — the page ships every note active.
+   */
+  const notes = Array.from(
+    document.querySelectorAll<HTMLElement>('[data-release-note]'),
+  );
+
+  if (notes.length > 0 && 'IntersectionObserver' in window) {
+    let active: HTMLElement | undefined;
+
+    const apply = () => {
+      if (!active) return;
+      for (const note of notes) {
+        note.classList.toggle('release-note--active', note === active);
+        note.classList.toggle('release-note--inactive', note !== active);
+      }
+    };
+
+    // Percentage rootMargin resolves against root *width* (Intersection
+    // Observer spec), not height, so the band is computed in pixels and
+    // rebuilt whenever the viewport height changes — as /resume does.
+    let observer: IntersectionObserver | undefined;
+    const observeNotes = () => {
+      observer?.disconnect();
+      const inset = document.documentElement.clientHeight / 2 - 1;
+      observer = new IntersectionObserver(
+        (records) => {
+          for (const record of records) {
+            if (record.isIntersecting) active = record.target as HTMLElement;
+          }
+          apply();
+        },
+        { rootMargin: `-${inset}px 0px -${inset}px 0px` },
+      );
+      for (const note of notes) observer.observe(note);
+    };
+
+    observeNotes();
+    window.addEventListener('resize', observeNotes);
+  }
+</script>

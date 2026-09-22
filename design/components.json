@@ -1,7 +1,7 @@
 {
   "$comment": "Figma↔code mapping for published component sets. The counterpart of design/tokens.json, which does the same job for variables. Component sets are named for how they read on canvas, not mechanically, so this file is what makes non-obvious pairings (Buttons → Button.astro, curiosity → CuriosityRow.astro) safe to rely on. Each component file also opens with a comment naming its set and node id, so the mapping is discoverable from either end.",
   "figmaFile": "8SQOIPl0teOTvoFH1EffaB",
-  "readOn": "2026-08-31",
+  "readOn": "2026-09-22",
   "pages": {
     "Atoms": "114:14",
     "Organisms": "114:15"
@@ -119,7 +119,7 @@
         "square/Tomato",
         "triangle/Herbs"
       ],
-      "notes": "Rebuilt by Max on 10 Sep 2026 as the single source for every mark, and the scope boundary recorded here before it is now REVERSED: the eight footer marks ARE this set. Twenty-three symbols on a two-axis matrix — Icon × Color — with Black (#040302) and White (#FDFCF8) pairs for the eight marks, and single Lemon (Cursor, `109:1373`, 40×40), Black (Figma Make, `140:1095`, 56×56; download `377:2133` and share `377:2143`, 28×28; circle `476:522`, 16×16), Tomato (square `476:1348`) and Herbs (triangle `476:1350`) entries. Marks are 16 tall at their own drawn widths: perplexity `387:2931`/`389:2932` 16, anthropic `387:2929`/`389:2934` 16, openai `387:2930`/`389:2936` 16.14, figma `389:2969`/`389:2974` 11.53, github `389:2970`/`389:2981` 16.44, dribbble `389:2971`/`389:2992` 16, behance `389:2972`/`389:2987` 19, linkedin `389:2973`/`389:2997` 16.15. Geometry verified identical to the shipped assets, which resolves two open items: the third \"explore with\" mark is PERPLEXITY, not unidentified, and public/icons/dark/ is the set's own White variant rather than a code invention. Two deltas remain: the shipped light marks carry #171613 because that is what the NavBar Mode=Default instance paints them, while the set's Color=Black is #040302 — an instance paint, not drift; and the files are still named explore-3.svg, explore-claude.svg and explore-openai.svg rather than perplexity, anthropic and openai. Separately, public/cursor-pointer.svg (16×16) has NO Figma node: it is the same circle re-drawn at pointer size for the site-wide CSS cursor, because a url() cursor renders at the asset's intrinsic size and CSS cannot scale it. The 40×40 mark is what /styleguide renders. Change the colour and both files need it. Re-read 2026-09-22. The three new marks are circle/Black (`476:522`), an ELLIPSE 16 × 16; square/Tomato (`476:1348`), a RECTANGLE 16 × 16 with Figma rotation +12 and a 18.977 drawn box; and triangle/Herbs (`476:1350`), a POLYGON 24 × 24 with Figma rotation −16 and a 29.686 drawn box. Only triangle is ported, per R8, because nothing uses circle or square yet."
+      "notes": "Rebuilt by Max on 10 Sep 2026 as the single source for every mark, and the scope boundary recorded here before it is now REVERSED: the eight footer marks ARE this set. Twenty-three symbols on a two-axis matrix — Icon × Color — with Black (#040302) and White (#FDFCF8) pairs for the eight marks, and single Lemon (Cursor, `109:1373`, 40×40), Black (Figma Make, `140:1095`, 56×56; download `377:2133` and share `377:2143`, 28×28; circle `476:522`, 16×16), Tomato (square `476:1348`) and Herbs (triangle `476:1350`) entries. Circle ships as public/icons/circle.svg and ReleaseNote consumes it as a CSS mask, so the one black export serves both states. Square remains unported because nothing uses it; triangle is ported in Icon.astro for CvSection's default logo. Marks are 16 tall at their own drawn widths: perplexity `387:2931`/`389:2932` 16, anthropic `387:2929`/`389:2934` 16, openai `387:2930`/`389:2936` 16.14, figma `389:2969`/`389:2974` 11.53, github `389:2970`/`389:2981` 16.44, dribbble `389:2971`/`389:2992` 16, behance `389:2972`/`389:2987` 19, linkedin `389:2973`/`389:2997` 16.15. Geometry verified identical to the shipped assets, which resolves two open items: the third \"explore with\" mark is PERPLEXITY, not unidentified, and public/icons/dark/ is the set's own White variant rather than a code invention. Two deltas remain: the shipped light marks carry #171613 because that is what the NavBar Mode=Default instance paints them, while the set's Color=Black is #040302 — an instance paint, not drift; and the files are still named explore-3.svg, explore-claude.svg and explore-openai.svg rather than perplexity, anthropic and openai. Separately, public/cursor-pointer.svg (16×16) has NO Figma node: it is the same circle re-drawn at pointer size for the site-wide CSS cursor, because a url() cursor renders at the asset's intrinsic size and CSS cannot scale it. The 40×40 mark is what /styleguide renders. Change the colour and both files need it. Re-read 2026-09-22. The three newest variants are circle/Black (`476:522`), an ELLIPSE 16 × 16; square/Tomato (`476:1348`), a RECTANGLE 16 × 16 with Figma rotation +12 and a 18.977 drawn box; and triangle/Herbs (`476:1350`), a POLYGON 24 × 24 with Figma rotation −16 and a 29.686 drawn box. Only triangle is newly ported for this work, per R8; nothing uses square yet."
     },
     {
       "figmaName": "post-it",
@@ -213,7 +213,7 @@
         "State": ["active", "inactive"]
       },
       "combinations": ["active", "inactive"],
-      "notes": "Renders ONE note, not the feed. The design's third section label is `tools`, which is why the prop is; the releaseNotes schema field is `tech`, so the `tools:` key in src/content/release-notes/2026-08-17.md frontmatter is silently dropped by Zod today. That is a content-field rename, out of scope here. The inactive greys are token-chosen, not transcribed."
+      "notes": "Renders ONE note, not the feed. Re-read after the redraw on 22 Sep 2026: a rail dot and connecting line were added; a Description line sits under the date; fixed 320 × 180 slides on a solid ground replace the 1px-framed images; the button is drawn in both states; and section labels now inherit the note colour. Inactive colours are transcribed as neutral-600 text/dot/slides, neutral-100 rail line and lemon-100 button rather than chosen. The design's third section label remains `tools`, while the releaseNotes schema field is `tech`."
     },
     {
       "figmaName": "project sections",
@@ -243,7 +243,7 @@
     "items": [
       "--size-chat-choice (400px) — the max-width on four of the five Chat combinations.",
       "ChatBubble's 2px stroke (`109:1385`, `109:1386`, `109:1388`) — no --border-width-* token tier exists.",
-      "The 1px frame borders in ProjectSection and ReleaseNote — not Figma-read, still chosen, and no --border-width-* token tier exists.",
+      "The 1px frame border in ProjectSection — not Figma-read, still chosen, and no --border-width-* token tier exists.",
       "The 48rem breakpoint in NavBar, ToolBox and global.css — CSS custom properties cannot be used in media-query conditions.",
       "focus areas item gap 13px (`114:311`) — no spacing token holds it.",
       "tool box tile 57 × 59.33 (`114:272`) — transcribed as aspect-ratio: 57 / 59.33.",
@@ -258,6 +258,9 @@
       "The share icon's two #000000 strokes beside its #040302 discs (`377:2143`) — exported verbatim.",
       "The .btn--icon 28 / 32 icon box (`377:2215`, `377:2217`) — an icon size, not a spacing step.",
       "The /resume note rail's count rule — two notes every five combined rows, plus one. Handoff §13 names a 300-400px gap, not a count, and no drawn value fixes either.",
+      "The active release-note body fill is raw #000000 (`I476:78;114:335`); Max chose --color-neutral-800 for the shipped component.",
+      "The release-note slide box is 320 × 180 (`I476:78;114:349`). Its white 220 × 124 inner rectangle is placeholder art, not a bezel, and is not transcribed.",
+      "The release-note date line has a JetBrains Mono Bold override (`I476:78;114:337`) against the Regular Typography/Mono - Small text style.",
       "The page grid — 10 columns, 24 gutter, 96 margin on the 1280 frames; 5/16/24 on the 375 Mobile frames. A layout grid is not a variable, so --grid-frame/--grid-margin/--grid-columns/--grid-gutter/--grid-column live only in src/styles/tokens.css.",
       "The CV section divider line's 1px stroke (`476:513`) — no --border-width-* tier exists, the same gap ProjectSection and ReleaseNote's frames fall into.",
       "The triangle mark's 29.686 drawn box (`476:1350`) — rounded to 30 in Icon.astro, as the NavBar marks are."
@@ -276,7 +279,7 @@
     ],
     "unverifiedChoices": [
       "Spacing gaps still awaiting a Figma read: ToolBox tile gaps, CuriosityRow's avatar gap, BlankSection/TextSection's body gap, and CvSection's project-row gap.",
-      "The inactive greys in ReleaseNote and ProjectSection. Picked as --color-neutral-700 for text (7.91:1 on neutral-100) and --color-neutral-600 for frames (3.40:1, clearing the 3:1 non-text bar) rather than by eye.",
+      "The inactive greys in ProjectSection. Picked as --color-neutral-700 for text (7.91:1 on neutral-100) and --color-neutral-600 for frames (3.40:1, clearing the 3:1 non-text bar) rather than by eye.",
       "NavBar mode=default ground = --color-neutral-100. Only the dark ground was transcribed.",
       "NavBar's columns stack below 48rem, and the row itself no longer wraps — the drawn 1280 frame is now full-bleed at every width, so the wrap that stopped #aboutme being clipped is unnecessary.",
       "CvSection's role label drops white-space: nowrap below 48rem, for the reason the NavBar row wrapped: a long role ran off the right edge instead of reflowing.",

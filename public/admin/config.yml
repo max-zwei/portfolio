@@ -569,6 +569,11 @@ collections:
         time_format: false
         # Without this a release can slip a day backwards across timezones.
         picker_utc: true
+      - label: Description
+        name: description
+        widget: text
+        required: false
+        hint: One sentence on what this release was. Sits under the date.
 
       # A release rarely moves all three at once, so all three are optional.
       - label: User experience
