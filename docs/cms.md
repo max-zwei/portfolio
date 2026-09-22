@@ -67,7 +67,7 @@ There is no markdown body — the eight sections _are_ the case study.
 | Field           | Type                    | Required    | Purpose                                               |
 | --------------- | ----------------------- | ----------- | ----------------------------------------------------- |
 | `title`         | string                  | yes         | Name of the experiment.                               |
-| `summary`       | string (≤ 280)          | yes         | One or two sentences — this is the whole description. |
+| `summary`       | string (≤ 400)          | yes         | One or two sentences — this is the whole description. |
 | `teaser`        | image                   | no          | Card image.                                           |
 | `teaserAlt`     | string                  | conditional | **Required whenever `teaser` is set.**                |
 | `githubUrl`     | URL                     | no          | Where the code lives.                                 |
@@ -174,7 +174,7 @@ questionnaire. The object has four axes; every value is a list of ids:
 - `fields`: `web-design`, `branding`, `ux-review`, `ui-review`, `ux-concept`,
   `product-management`
 - `roles`: `volunteer`, `freelancer`, `employee`, `founding-designer`
-- `tech`: `css-html`, `wordpress`, `no-code`, `python`, `javascript`, `julia`
+- `tech`: `solely design`, `css-html`, `wordpress`, `no-code`, `python`, `javascript`, `julia`
 
 An entry may leave any axis empty or omit it. These ids are stable keys:
 rewording a questionnaire chip does not re-tag the content. The `Other …`
