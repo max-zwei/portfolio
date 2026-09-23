@@ -23,6 +23,8 @@ pnpm-debug.log*
 
 # projects/: personal code-reference workspace. Folders named "data" hold
 # private source datasets — visible as an empty folder, contents never
-# published. .gitkeep keeps the folder itself tracked.
+# published. .gitkeep keeps the folder itself tracked; the analysis notebooks
+# are our own work and stay tracked alongside the data they read.
 projects/**/data/**
 !projects/**/data/.gitkeep
+!projects/**/data/*.ipynb
