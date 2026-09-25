@@ -281,8 +281,8 @@ const resume = defineCollection({
         logo: image().optional(),
         logoAlt: z.string().optional(),
 
-        /** Up to three things to point at. Ordered — the first one leads. */
-        projectUrls: z.array(z.url()).max(3).default([]),
+        /** Up to three portfolio projects connected to this entry. */
+        projects: z.array(reference('projects')).max(3).default([]),
 
         /**
          * The one scan behind this entry — an Arbeitszeugnis under /letters, or

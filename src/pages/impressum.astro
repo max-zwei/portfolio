@@ -1,22 +1,104 @@
 ---
-import BlankSection from '../components/BlankSection.astro';
 import NavBar from '../components/NavBar.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
+
+const LIABILITY_CONTENT =
+  'Die Inhalte meiner Seiten wurden mit größter Sorgfalt erstellt. Für die Richtigkeit, Vollständigkeit und Aktualität der Inhalte kann ich jedoch keine Gewähr übernehmen. Als Diensteanbieter bin ich gemäß § 7 Abs.1 TMG für eigene Inhalte auf diesen Seiten nach den allgemeinen Gesetzen verantwortlich. Nach §§ 8 bis 10 TMG bin ich als Diensteanbieter jedoch nicht verpflichtet, übermittelte oder gespeicherte fremde Informationen zu überwachen oder nach Umständen zu forschen, die auf eine rechtswidrige Tätigkeit hinweisen. Verpflichtungen zur Entfernung oder Sperrung der Nutzung von Informationen nach den allgemeinen Gesetzen bleiben hiervon unberührt. Eine diesbezügliche Haftung ist jedoch erst ab dem Zeitpunkt der Kenntnis einer konkreten Rechtsverletzung möglich. Bei Bekanntwerden von entsprechenden Rechtsverletzungen\nwerde ich diese Inhalte umgehend entfernen.';
+const LIABILITY_LINKS =
+  'Meine Website enthält Links zu externen Webseiten Dritter, auf deren Inhalte ich keinen Einfluss habe. Deshalb kann ich für diese fremden Inhalte auch keine Gewähr übernehmen. Für die Inhalte der verlinkten Seiten ist stets der jeweilige Anbieter oder Betreiber der Seiten verantwortlich. Die verlinkten Seiten wurden zum Zeitpunkt der Verlinkung auf mögliche Rechtsverstöße überprüft. Rechtswidrige Inhalte waren zum Zeitpunkt der Verlinkung nicht erkennbar. Eine permanente inhaltliche Kontrolle der verlinkten Seiten ist jedoch ohne konkrete Anhaltspunkte einer Rechtsverletzung nicht zumutbar. Bei Bekanntwerden von Rechtsverletzungen werde ich derartige Links umgehend entfernen.';
+const COPYRIGHT =
+  'Die durch die Seitenbetreiber erstellten Inhalte und Werke auf diesen Seiten unterliegen dem deutschen Urheberrecht. Die Vervielfältigung, Bearbeitung, Verbreitung und jede Art der Verwertung außerhalb der Grenzen des Urheberrechtes bedürfen der schriftlichen Zustimmung des jeweiligen Autors bzw. Erstellers. Downloads und Kopien dieser Seite sind nur für den privaten, nicht kommerziellen Gebrauch gestattet. Soweit die Inhalte auf dieser Seite nicht vom Betreiber erstellt wurden, werden die Urheberrechte Dritter beachtet. Insbesondere werden Inhalte Dritter als solche gekennzeichnet. Sollten Sie trotzdem auf eine Urheberrechtsverletzung aufmerksam werden, bitte ich um einen entsprechenden Hinweis. Bei Bekanntwerden von Rechtsverletzungen werde ich derartige Inhalte umgehend entfernen.';
 ---
 
 <BaseLayout title="Impressum">
-  <main id="main" class="container impressum">
-    <BlankSection level={1}>
-      <p>[Impressum — the legal disclosure is not written yet.]</p>
-      <p>I’ll hopefully return to this section soon!</p>
-    </BlankSection>
+  <main id="main" class="container impressum" lang="de">
+    <h1>Impressum</h1>
+
+    <div class="impressum__blocks">
+      <section class="impressum__block impressum__block--narrow">
+        <h2>Angaben gemäß § 5 TMG</h2>
+        <p>
+          Max Pinkert<br />
+          Elberfelder Straße 5<br />
+          10555 Berlin<br />
+          Deutschland<br />
+          max@zwei.berlin
+        </p>
+      </section>
+
+      <section class="impressum__block impressum__block--narrow">
+        <h2>Verantwortlich für den Inhalt nach § 55 Abs. 2 RStV</h2>
+        <p>
+          Max Pinkert<br />
+          Elberfelder Straße 5<br />
+          10555 Berlin<br />
+          Deutschland
+        </p>
+      </section>
+
+      <section class="impressum__block">
+        <h2>Haftung für Inhalte</h2>
+        <p>{LIABILITY_CONTENT}</p>
+      </section>
+
+      <section class="impressum__block">
+        <h2>Haftung für Links</h2>
+        <p>{LIABILITY_LINKS}</p>
+      </section>
+
+      <section class="impressum__block">
+        <h2>Urheberrecht</h2>
+        <p>{COPYRIGHT}</p>
+      </section>
+    </div>
   </main>
 
   <NavBar mode="dark" label="Site" />
 </BaseLayout>
 
 <style>
+  :global(body:has(.impressum)) {
+    background-color: var(--color-neutral-white);
+  }
+
   .impressum {
     padding-block: var(--space-3xl);
+  }
+
+  .impressum > h1 {
+    font-size: var(--font-size-3xl);
+  }
+
+  .impressum__blocks {
+    display: grid;
+    row-gap: var(--space-md);
+    margin-block-start: var(--space-xl);
+  }
+
+  .impressum__block {
+    display: grid;
+    row-gap: var(--space-xs);
+  }
+
+  .impressum__block--narrow {
+    max-inline-size: 45%;
+  }
+
+  .impressum__block h2 {
+    font-family: var(--font-sans);
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-bold);
+    line-height: var(--line-height-normal);
+    letter-spacing: var(--letter-spacing-normal);
+  }
+
+  .impressum__block p {
+    max-width: none;
+  }
+
+  @media (max-width: 48rem) {
+    .impressum__block--narrow {
+      max-inline-size: none;
+    }
   }
 </style>

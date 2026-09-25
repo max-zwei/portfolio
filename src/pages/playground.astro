@@ -1,25 +1,377 @@
 ---
-import BlankSection from '../components/BlankSection.astro';
+import { getCollection } from 'astro:content';
+import Avatar from '../components/Avatar.astro';
+import ChatBubble from '../components/ChatBubble.astro';
+import FlipCard from '../components/FlipCard.astro';
 import NavBar from '../components/NavBar.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { withBase } from '../config/site';
+
+const entries = await getCollection('playground');
+const positions = [
+  { x: 986, y: 32 },
+  { x: 430, y: 332 },
+  { x: 763, y: 406 },
+  { x: 1101, y: 482 },
+] as const;
+const handshakeHref = withBase('/handshake');
 ---
 
 <BaseLayout title="Playground">
-  <main id="main" class="container playground">
-    <BlankSection level={1}>
-      <p>
-        I have a lot of great ideas for this section. But my daughter is
-        requesting “naked pasta” and expecting them now.
-      </p>
-      <p>I’ll hopefully return to this section soon!</p>
-    </BlankSection>
+  <script is:inline slot="head">
+    document.documentElement.classList.add('js');
+  </script>
+
+  <main id="main" class="playground">
+    <h1 class="visually-hidden">Playground</h1>
+    <h2 id="playground-canvas-title" class="visually-hidden">
+      Playground projects
+    </h2>
+
+    <!-- Without scripts this viewport is an ordinary scrollable grid. Every
+         card shows both faces and every destination remains reachable. -->
+    <section
+      class="playground__viewport"
+      data-canvas
+      aria-labelledby="playground-canvas-title"
+    >
+      <div class="playground__chat" data-playground-chat>
+        <div class="playground__chat-state">
+          <Avatar user="max" class="playground__avatar" />
+          <div class="playground__agreement">
+            <div class="playground__message-stack">
+              <ChatBubble
+                user="talking-head"
+                state="default"
+                class="playground__bubble playground__message--expanded"
+              >
+                <p>
+                  I’m always up for a challenge, if you have an upcoming project
+                  and are limited regarding your resources, check out my
+                  handshake agreement. I basically offer free-of-charge support
+                  with the prerequisite of using the work in my portfolio.
+                </p>
+              </ChatBubble>
+              <ChatBubble
+                user="talking-head"
+                state="default"
+                class="playground__bubble playground__message--collapsed"
+              >
+                <p>“Do one portrait, now do 200 more!”</p>
+                <p>- Brian Chesky</p>
+              </ChatBubble>
+            </div>
+            <ChatBubble
+              user="visitor"
+              state="default"
+              href={handshakeHref}
+              class="playground__selection"
+            >
+              Tell me more about this handshake agreement
+            </ChatBubble>
+          </div>
+        </div>
+      </div>
+
+      <div class="playground__world" data-world>
+        <span class="playground__sentinel" data-canvas-sentinel></span>
+        {
+          entries.map((entry, index) => {
+            const position = positions[index % positions.length];
+            const slug = entry.id.replace(/\.md$/, '');
+            return (
+              <div
+                class="playground__card"
+                style={`--card-x: ${position.x}px; --card-y: ${position.y}px`}
+              >
+                <FlipCard
+                  id={`playground-${slug}`}
+                  state="front"
+                  title={entry.data.title}
+                  teaser={entry.data.teaser}
+                  teaserAlt={entry.data.teaserAlt}
+                  githubUrl={entry.data.githubUrl}
+                  figmaUrl={entry.data.figmaUrl}
+                  additionalUrl={entry.data.additionalUrl}
+                >
+                  <p>{entry.data.summary}</p>
+                </FlipCard>
+              </div>
+            );
+          })
+        }
+      </div>
+    </section>
   </main>
 
   <NavBar mode="dark" label="Site" />
 </BaseLayout>
 
 <style>
-  .playground {
-    padding-block: var(--space-3xl);
+  :global(body:has(.playground)) {
+    background-color: var(--color-neutral-white);
+  }
+
+  .playground__viewport {
+    display: grid;
+    gap: var(--space-xl);
+    padding: var(--space-md);
+    overflow: auto;
+  }
+
+  .playground__world {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--space-xl);
+  }
+
+  .playground__sentinel {
+    display: none;
+  }
+
+  .playground__chat {
+    position: relative;
+    z-index: 2;
+  }
+
+  .playground__chat-state {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-md);
+  }
+
+  .playground__agreement {
+    display: grid;
+    justify-items: start;
+    gap: var(--space-xs);
+  }
+
+  .playground__message-stack {
+    display: grid;
+    justify-items: start;
+  }
+
+  .playground__message-stack :global(.playground__message--collapsed) {
+    display: none;
+  }
+
+  .playground__chat :global(.playground__bubble) {
+    max-width: calc(5 * var(--grid-column) + 4 * var(--grid-gutter));
+  }
+
+  .playground__chat :global(.playground__bubble) p {
+    max-width: none;
+  }
+
+  :global(html.js) .playground__viewport {
+    position: relative;
+    display: block;
+    block-size: calc(
+      100svh - var(--space-3xl) - var(--space-xl) - var(--space-xs)
+    );
+    padding: 0;
+    overflow: hidden;
+    background-color: var(--color-neutral-white);
+  }
+
+  :global(html.js) .playground__world {
+    position: absolute;
+    inset: 0;
+    display: block;
+    inline-size: 100%;
+    block-size: 100%;
+    transform-origin: left top;
+    will-change: transform;
+  }
+
+  :global(html.js) .playground__sentinel {
+    position: absolute;
+    inset: 0;
+    display: block;
+    inline-size: 100%;
+    block-size: 100%;
+    pointer-events: none;
+    opacity: 0;
+  }
+
+  :global(html.js) .playground__card {
+    position: absolute;
+    inset-block-start: var(--card-y);
+    inset-inline-start: var(--card-x);
+  }
+
+  :global(html.js) .playground__chat {
+    position: absolute;
+    inset-block-start: calc(var(--space-lg) + var(--space-2xs));
+    inset-inline-start: var(--grid-margin);
+    max-inline-size: calc(100% - 2 * var(--grid-margin));
+  }
+
+  .playground__chat[data-collapsed] :global(.playground__avatar),
+  .playground__chat[data-collapsed] :global(.playground__message--expanded) {
+    display: none;
+  }
+
+  .playground__chat[data-collapsed] .playground__agreement {
+    inline-size: max-content;
+    max-inline-size: min(
+      100%,
+      calc(5 * var(--grid-column) + 4 * var(--grid-gutter))
+    );
+  }
+
+  .playground__chat[data-collapsed] .playground__message-stack {
+    inline-size: auto;
+    justify-self: stretch;
+  }
+
+  .playground__chat[data-collapsed] :global(.playground__message--collapsed) {
+    display: block;
+    inline-size: auto;
+    justify-self: stretch;
+  }
+
+  .playground__chat[data-collapsed] :global(.playground__selection) {
+    inline-size: 100%;
+    max-inline-size: none;
+    min-inline-size: 0;
+    contain: inline-size;
+  }
+
+  @media (max-width: 48rem) {
+    :global(html.js) .playground__viewport {
+      display: grid;
+      block-size: auto;
+      gap: var(--space-xl);
+      padding: var(--space-md);
+      overflow-x: auto;
+    }
+
+    :global(html.js) .playground__world {
+      position: static;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: var(--space-xl);
+      transform: none !important;
+    }
+
+    :global(html.js) .playground__card,
+    :global(html.js) .playground__chat {
+      position: static;
+    }
+
+    :global(html.js) .playground__chat {
+      max-inline-size: 100%;
+      min-inline-size: 0;
+    }
+
+    :global(html.js) .playground__sentinel {
+      display: none;
+    }
   }
 </style>
+
+<script>
+  const viewport = document.querySelector<HTMLElement>('[data-canvas]');
+  const world = document.querySelector<HTMLElement>('[data-world]');
+  const chat = document.querySelector<HTMLElement>('[data-playground-chat]');
+  const sentinel = document.querySelector<HTMLElement>(
+    '[data-canvas-sentinel]',
+  );
+
+  if (viewport && world) {
+    const smallViewport = matchMedia('(max-width: 48rem)');
+    let x = 0;
+    let y = 0;
+    const measure = document.createElement('span');
+    measure.style.cssText =
+      'position:absolute;inline-size:var(--space-lg);visibility:hidden';
+    viewport.append(measure);
+    const panStep = measure.getBoundingClientRect().width;
+    measure.remove();
+
+    const render = () => {
+      world.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+    };
+
+    viewport.addEventListener(
+      'wheel',
+      (event) => {
+        if (smallViewport.matches) return;
+        event.preventDefault();
+        x -= event.deltaX;
+        y -= event.deltaY;
+        render();
+      },
+      { passive: false },
+    );
+
+    viewport.addEventListener('keydown', (event) => {
+      if (smallViewport.matches || event.target !== viewport) return;
+      const movement: Record<string, [number, number]> = {
+        ArrowLeft: [panStep, 0],
+        ArrowRight: [-panStep, 0],
+        ArrowUp: [0, panStep],
+        ArrowDown: [0, -panStep],
+      };
+      const delta = movement[event.key];
+      if (!delta) return;
+      event.preventDefault();
+      x += delta[0];
+      y += delta[1];
+      render();
+    });
+
+    viewport.addEventListener('focusin', (event) => {
+      if (smallViewport.matches) return;
+      const card = (event.target as Element).closest<HTMLElement>(
+        '.playground__card',
+      );
+      if (!card) return;
+      const canvasBounds = viewport.getBoundingClientRect();
+      const cardBounds = card.getBoundingClientRect();
+      if (cardBounds.left < canvasBounds.left)
+        x += canvasBounds.left - cardBounds.left;
+      if (cardBounds.right > canvasBounds.right)
+        x -= cardBounds.right - canvasBounds.right;
+      if (cardBounds.top < canvasBounds.top)
+        y += canvasBounds.top - cardBounds.top;
+      if (cardBounds.bottom > canvasBounds.bottom)
+        y -= cardBounds.bottom - canvasBounds.bottom;
+      render();
+    });
+
+    const syncMode = () => {
+      if (smallViewport.matches) {
+        viewport.removeAttribute('tabindex');
+        viewport.setAttribute('aria-label', 'Playground projects');
+        world.style.removeProperty('transform');
+      } else {
+        viewport.tabIndex = 0;
+        viewport.setAttribute(
+          'aria-label',
+          'Explorable playground canvas. Use a trackpad, mouse wheel, or arrow keys to pan.',
+        );
+        render();
+      }
+    };
+    smallViewport.addEventListener('change', syncMode);
+    syncMode();
+  }
+
+  if (chat && sentinel && viewport && 'IntersectionObserver' in window) {
+    let seen = false;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.intersectionRatio === 1) {
+          seen = true;
+        } else if (seen) {
+          chat.setAttribute('data-collapsed', '');
+          observer.disconnect();
+        }
+      },
+      { root: viewport, threshold: 1 },
+    );
+    observer.observe(sentinel);
+  }
+</script>

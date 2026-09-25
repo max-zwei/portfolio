@@ -8,18 +8,37 @@
 interface Props {
   /** Figma `Color`. */
   color?: 'herbs' | 'tomato' | 'lemon' | 'pickled';
+  /** Optional destination; when present the whole note becomes a link. */
+  href?: string;
   /** Additional class supplied by the composing page. */
   class?: string;
 }
 
-const { color = 'herbs', class: className } = Astro.props;
+const { color = 'herbs', href, class: className } = Astro.props;
 ---
 
 <article class:list={['post-it', `post-it--${color}`, className]}>
-  <div class="post-it__paper">
-    <div class="post-it__copy"><slot /></div>
-  </div>
-  <span class="post-it__dot" aria-hidden="true"></span>
+  {
+    href ? (
+      <a class="post-it__link" href={href}>
+        <div class="post-it__paper">
+          <div class="post-it__copy">
+            <slot />
+          </div>
+        </div>
+        <span class="post-it__dot" aria-hidden="true" />
+      </a>
+    ) : (
+      <>
+        <div class="post-it__paper">
+          <div class="post-it__copy">
+            <slot />
+          </div>
+        </div>
+        <span class="post-it__dot" aria-hidden="true" />
+      </>
+    )
+  }
 </article>
 
 <style>
@@ -33,8 +52,24 @@ const { color = 'herbs', class: className } = Astro.props;
     position: relative;
     inline-size: var(--post-it-width);
     block-size: var(--post-it-height);
+    /* Figma's rotation is counter-clockwise-positive, CSS's is clockwise, so
+       the sign is inverted from the value the file shows. */
+    rotate: var(--post-it-rotate);
+    transition: rotate var(--duration-fast) var(--easing-standard);
   }
 
+  .post-it:hover,
+  .post-it:has(a:focus-visible) {
+    rotate: calc(var(--post-it-rotate) + 8deg);
+  }
+
+  .post-it__link {
+    display: block;
+    inline-size: 100%;
+    block-size: 100%;
+    color: inherit;
+    text-decoration: none;
+  }
   .post-it__paper {
     position: absolute;
     inset-block-start: var(--post-it-paper-y);
@@ -49,9 +84,6 @@ const { color = 'herbs', class: className } = Astro.props;
     background-color: var(--color-neutral-white);
     box-shadow: var(--shadow-md);
     color: var(--color-neutral-800);
-    /* Figma's rotation is counter-clockwise-positive, CSS's is clockwise, so
-       the sign is inverted from the value the file shows. */
-    rotate: var(--post-it-rotate);
   }
 
   /* Figma 114:175 and its three siblings: a 40 disc, placed per variant. */

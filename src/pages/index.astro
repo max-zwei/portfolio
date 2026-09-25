@@ -399,12 +399,17 @@ const EVIDENCE: Entry[] = [
     href: null,
     tags: tags(e.data.match),
   })),
-  ...(await getCollection('resume')).map((e) => ({
-    collection: 'resume' as const,
-    label: `${e.data.role}, ${e.data.company}`,
-    href: e.data.projectUrls[0] ?? withBase('/resume'),
-    tags: tags(e.data.match),
-  })),
+  ...(await getCollection('resume')).map((e) => {
+    const project = e.data.projects?.[0];
+    return {
+      collection: 'resume' as const,
+      label: `${e.data.role}, ${e.data.company}`,
+      href: project
+        ? withBase(`/projects/${project.id.replace(/\.md$/, '')}`)
+        : withBase('/resume'),
+      tags: tags(e.data.match),
+    };
+  }),
 ].filter((e) => AXIS_IDS.some((axis) => e.tags[axis].length));
 ---
 
@@ -432,8 +437,8 @@ const EVIDENCE: Entry[] = [
                 {s.answers.map((a) => (
                   <ChatBubble
                     as="li"
-                    type="response"
-                    variant="selection"
+                    user="visitor"
+                    state="selected"
                     class="chat__answer"
                   >
                     {a}
@@ -449,7 +454,8 @@ const EVIDENCE: Entry[] = [
                     <Avatar user={m.speaker} class="chat__avatar" />
                   )}
                   <ChatBubble
-                    type="message"
+                    user="talking-head"
+                    state="default"
                     class:list={[
                       'chat__bubble',
                       m.panel && 'chat__bubble--panel',
@@ -477,8 +483,8 @@ const EVIDENCE: Entry[] = [
                 {s.choices.map((c) => (
                   <li>
                     <ChatBubble
-                      type="request"
-                      variant="selection"
+                      user="visitor"
+                      state="default"
                       class="chat__choice"
                       href={c.href}
                       data-value={c.value}
@@ -685,8 +691,9 @@ const EVIDENCE: Entry[] = [
   /*
    * Not in the Figma `Chat` set — a page-only variant, applied as a second
    * class on the `<ChatBubble>`. Both classes are named deliberately: it has
-   * to beat `ChatBubble`'s own `.bubble--message { max-width }`, and one class
-   * alone ties with it on specificity, leaving the winner to stylesheet order.
+   * to beat `ChatBubble`'s own `.bubble--talking-head { max-width }`, and one
+   * class alone ties with it on specificity, leaving the winner to stylesheet
+   * order.
    */
   .chat__transcript :global(.chat__bubble.chat__bubble--panel) {
     max-width: none;
@@ -714,10 +721,11 @@ const EVIDENCE: Entry[] = [
   }
 
   /*
-   * The chips' box and type come from `ChatBubble` too — `.chat__answer` is
-   * `response/selection` and `.chat__choice` is `request/selection`, including
-   * the undesigned hover this page introduced. Only the row layout above and
-   * the breakpoint override below belong to the page.
+   * The chips' boxes and states come from `ChatBubble` too:
+   * `.chat__answer` is `visitor/selected` and `.chat__choice` is
+   * `visitor/default`, whose designed interactive hover/focus state uses the
+   * explicit `user/hover` shadow. Only the row layout above and the breakpoint
+   * override below belong to the page.
    */
 
   @media (min-width: 48rem) {
@@ -736,6 +744,7 @@ const EVIDENCE: Entry[] = [
 <script>
   import { AXIS_IDS, type AxisId } from '../config/match';
   import { statement, verdict, type Answer, type Entry } from '../lib/match';
+  import { BETWEEN, PER_CHAR, type } from '../lib/chat-typing';
 
   const payload =
     document.querySelector<HTMLScriptElement>('script[data-match]');
@@ -760,35 +769,7 @@ const EVIDENCE: Entry[] = [
   if (steps.length) {
     const still = matchMedia('(prefers-reduced-motion: reduce)');
 
-    /** Typing pace, in ms. PER_CHAR is the one Max signed off on. */
-    const PER_CHAR = 18;
-    const BETWEEN = 240; // beat between two paragraphs in the same bubble
     const ENTRANCE = 240; // --duration-base: the bubble's own arrival
-
-    /** Rebuild a paragraph as per-character spans, then reveal them in turn. */
-    const type = (el: HTMLElement, startDelay: number) => {
-      const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
-      const texts: Text[] = [];
-      for (let n = walker.nextNode(); n; n = walker.nextNode()) {
-        texts.push(n as Text);
-      }
-
-      let i = 0;
-      for (const node of texts) {
-        const frag = document.createDocumentFragment();
-        // Array.from, not split(''), so an emoji or accent stays one unit.
-        for (const ch of Array.from(node.data)) {
-          const span = document.createElement('span');
-          span.textContent = ch;
-          span.className = 'chat__char';
-          span.style.setProperty('--c', String(i++));
-          frag.append(span);
-        }
-        node.replaceWith(frag);
-      }
-      el.style.setProperty('--start', `${startDelay}ms`);
-      el.dataset.typed = 'true';
-    };
 
     const play = (stepEl: HTMLElement) => {
       if (stepEl.dataset.played) return;
@@ -1009,21 +990,3 @@ const EVIDENCE: Entry[] = [
     );
   }
 </script>
-
-<style is:global>
-  /*
-   * Global only because the script creates these spans after the scoped
-   * styles have been hashed — a scoped rule would never match them.
-   */
-  .chat__char {
-    opacity: 0;
-    animation: chat-key 1ms linear forwards;
-    animation-delay: calc(var(--start, 0ms) + var(--c) * 18ms);
-  }
-
-  @keyframes chat-key {
-    to {
-      opacity: 1;
-    }
-  }
-</style>

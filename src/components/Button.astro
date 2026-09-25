@@ -9,7 +9,8 @@ import type { HTMLAttributes } from 'astro/types';
  * namespaced Variant axis only sub-selects the two nav colours. Inline/Primary
  * therefore records `btn--v-primary` even though no rule consumes it: that is
  * fidelity to Figma's sparse matrix, not dead code. Figma's `State` axis is
- * CSS `:hover`, not a component prop.
+ * CSS `:hover` with the same treatment on `:focus-visible`, not a component
+ * prop.
  */
 /*
  * Extends the anchor attributes so the `...rest` passthrough is typed rather
@@ -111,12 +112,12 @@ const label = await Astro.slots.render('default');
     white-space: nowrap;
   }
 
-  /* Figma text style: Typography/Mono - Small. Effect: Elevation / md. */
+  /* Figma text style: Typography/Mono - Small. Effect: Elevation / sm. */
   .btn--primary {
     padding: var(--space-xs) var(--space-lg);
     background-color: var(--color-lemon-500);
     border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-md);
+    box-shadow: var(--shadow-sm);
     color: var(--color-neutral-800);
     font-family: var(--font-mono);
     font-size: var(--font-size-sm);
@@ -126,16 +127,14 @@ const label = await Astro.slots.render('default');
     transition: box-shadow var(--duration-fast) var(--easing-standard);
   }
 
-  /* Hover swaps to Typography/Mono and Elevation / lg. */
-  .btn--primary:hover {
+  /* Hover swaps to Elevation / lg. */
+  .btn--primary:is(:hover, :focus-visible) {
     box-shadow: var(--shadow-lg);
   }
 
   /*
    * Figma 377:2215 `Icon=ON`: 16 / 12 padding around a 28 icon, so 60 × 52.
-   * Hover draws 64 × 56 by growing the icon to 32; as with .btn__ghost the box
-   * stays at its rest size and the icon scales instead, so hovering one button
-   * in a stack cannot move the next.
+   * The current hover variant keeps that geometry and changes only the shadow.
    */
   .btn--primary.btn--icon {
     padding: var(--space-xs) var(--space-sm);
@@ -147,16 +146,6 @@ const label = await Astro.slots.render('default');
     place-items: center;
     inline-size: 28px;
     block-size: 28px;
-    transition: transform var(--duration-fast) var(--easing-standard);
-  }
-
-  .btn--icon:hover .btn__icon {
-    /* 32 / 28 — the icon size Figma draws for State=Hover. */
-    transform: scale(1.1429);
-  }
-
-  .btn--primary:hover .btn__label {
-    font-size: var(--font-size-base);
   }
 
   /* Figma text style: Typography/Body - Small. */
@@ -168,9 +157,9 @@ const label = await Astro.slots.render('default');
     letter-spacing: var(--letter-spacing-normal);
   }
 
-  .btn--secondary:hover .btn__label {
-    font-size: var(--font-size-base);
-    line-height: var(--line-height-normal);
+  .btn--secondary:is(:hover, :focus-visible) .btn__label {
+    font-weight: var(--font-weight-semibold);
+    letter-spacing: var(--letter-spacing-wide);
   }
 
   /* Figma 109:1378: unbound mono / 16 / regular / 1.6 / wide tracking. */
@@ -190,8 +179,9 @@ const label = await Astro.slots.render('default');
     color: var(--color-neutral-600);
   }
 
-  .btn--nav:hover .btn__label {
+  .btn--nav:is(:hover, :focus-visible) .btn__label {
     font-weight: var(--font-weight-bold);
+    letter-spacing: var(--letter-spacing-extra-wide);
   }
 
   /* The Step 3 plan specifies these serif/semibold Inline declarations
@@ -209,7 +199,11 @@ const label = await Astro.slots.render('default');
     transition: color var(--duration-fast) var(--easing-standard);
   }
 
-  .btn--inline:hover {
+  .btn--inline:is(:hover, :focus-visible) {
     color: var(--color-tomato-600);
+  }
+
+  .btn--inline:is(:hover, :focus-visible) .btn__label {
+    letter-spacing: var(--letter-spacing-wide);
   }
 </style>

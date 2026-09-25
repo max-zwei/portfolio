@@ -6,6 +6,14 @@ import { SITE, withBase } from '../config/site';
 // The browser chrome colour has to be a literal, so read it from the token
 // file rather than retyping the hex.
 const themeColor = tokens.color.neutral['100'].$value;
+const [lemonShadowX, lemonShadowY, lemonShadowBlur] = tokens.shadow[
+  'md-lemon'
+].$value
+  .split(',')[0]
+  .trim()
+  .split(/\s+/)
+  .map(Number.parseFloat);
+const lemonShadowSigma = lemonShadowBlur / 2;
 
 interface Props {
   title?: string;
@@ -60,6 +68,44 @@ const ogImage = new URL(withBase(image), Astro.site ?? 'http://localhost:4321');
     <slot name="head" />
   </head>
   <body>
+    <svg
+      width="0"
+      height="0"
+      aria-hidden="true"
+      focusable="false"
+      style="position: absolute"
+    >
+      <filter
+        id="md-lemon-alpha"
+        x="-400%"
+        y="-400%"
+        width="900%"
+        height="900%"
+        color-interpolation-filters="sRGB"
+      >
+        <feGaussianBlur
+          in="SourceAlpha"
+          stdDeviation={lemonShadowSigma}
+          result="blurred-alpha"></feGaussianBlur>
+        <feOffset
+          in="blurred-alpha"
+          dx={lemonShadowX}
+          dy={lemonShadowY}
+          result="offset-alpha"></feOffset>
+        <feFlood flood-color="var(--color-lemon-500)" result="lemon-color"
+        ></feFlood>
+        <feComposite
+          in="lemon-color"
+          in2="offset-alpha"
+          operator="in"
+          result="lemon-glow"></feComposite>
+        <feMerge>
+          <feMergeNode in="lemon-glow"></feMergeNode>
+          <feMergeNode in="lemon-glow"></feMergeNode>
+          <feMergeNode in="SourceGraphic"></feMergeNode>
+        </feMerge>
+      </filter>
+    </svg>
     <a class="skip-link" href="#main">Skip to content</a>
     <slot />
   </body>

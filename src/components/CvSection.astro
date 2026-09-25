@@ -1,10 +1,11 @@
 ---
 /**
- * Figma component set `CV section` (node `114:640`).
+ * Figma component set `CV section` (node `477:2204`).
  *
  * The component mirrors one entry in the `resume` content collection. Its
  * summary remains slotted so markdown content stays owned by the calling page.
  */
+import type { ImageMetadata } from 'astro';
 import ProjectPreview from './ProjectPreview.astro';
 import Icon from './Icon.astro';
 import { formatRange } from '../lib/dates';
@@ -25,10 +26,17 @@ interface Props {
   documentLabel?: string;
   /** Figma `State`. */
   state?: 'default' | 'pdf';
+  /** Zero-based position within the containing CV list. */
+  index?: number;
   /** Optional heading level to match the styleguide examples. */
   level?: 2 | 3 | 4;
-  /** Project destinations associated with this CV entry. */
-  projectUrls?: ReadonlyArray<string>;
+  /** Rich project previews associated with this CV entry. */
+  projects?: ReadonlyArray<{
+    href: string;
+    title: string;
+    caption: string;
+    artefacts: ReadonlyArray<{ src: ImageMetadata; alt: string }>;
+  }>;
   /** Additional class names for the section wrapper. */
   class?: string;
 }
@@ -41,8 +49,9 @@ const {
   documentUrl,
   documentLabel,
   state = 'default',
+  index = 0,
   level = 3,
-  projectUrls = [],
+  projects = [],
   class: className,
 } = Astro.props;
 
@@ -64,17 +73,12 @@ const slugify = (value: string) =>
     .replace(/^-|-$/g, '');
 
 const sectionId = `cv-${slugify(`${company ?? ''}-${role}-${start}`) || 'section'}`;
-
-const titleFromUrl = (url: string, index: number) => {
-  const path = url.split(/[?#]/)[0].replace(/\/+$/, '');
-  const segment = path.split('/').filter(Boolean).at(-1);
-  return segment ? segment.replace(/[-_]+/g, ' ') : `Project ${index + 1}`;
-};
 ---
 
 <section
   class:list={['cv-section', `cv-section--${state}`, className]}
   aria-labelledby={`${sectionId}-role`}
+  style={`--mark-turn: ${index * 16}deg`}
 >
   <div class="cv-section__rail">
     <div class="cv-section__logo">
@@ -120,16 +124,17 @@ const titleFromUrl = (url: string, index: number) => {
     </div>
 
     {
-      projectUrls.length > 0 && (
+      state !== 'pdf' && projects.length > 0 && (
         <div class="cv-section__projects">
-          {projectUrls.map((href, index) => (
-            // The page decides the real project caption and title. This URL-only
-            // interface supplies short, deterministic labels until it does.
+          {projects.map((project, index) => (
             <ProjectPreview
               id={`${sectionId}-project-${index + 1}`}
-              caption={`Project ${index + 1}`}
-              title={titleFromUrl(href, index)}
-              href={href}
+              caption={project.caption}
+              title={project.title}
+              artefacts={project.artefacts}
+              href={project.href}
+              state="collapsed"
+              size="small"
             />
           ))}
         </div>
@@ -180,6 +185,7 @@ const titleFromUrl = (url: string, index: number) => {
   .cv-section__logo :global(.cv-section__mark) {
     inline-size: 30px;
     block-size: 30px;
+    rotate: var(--mark-turn, 0deg);
   }
 
   /* Figma 476:513: a 1px line in neutral-200 filling the column under the
@@ -196,7 +202,7 @@ const titleFromUrl = (url: string, index: number) => {
 
   .cv-section__content {
     display: grid;
-    /* Figma 114:640: 16 between Header, Media and Description. */
+    /* Figma 114:640: Header → project previews → Description, 16 apart. */
     row-gap: var(--space-sm);
     flex: 1 1 auto;
     min-inline-size: 0;
@@ -258,11 +264,6 @@ const titleFromUrl = (url: string, index: number) => {
    * the note rail does not exist, and a nowrap role ran off the right edge —
    * content lost rather than moved. Recorded in design/components.json.
    */
-  @media (max-width: 48rem) {
-    .cv-section__role-label {
-      white-space: normal;
-    }
-  }
 
   .cv-section__role-link:hover .cv-section__role-label {
     font-size: var(--font-size-xl);
@@ -285,37 +286,7 @@ const titleFromUrl = (url: string, index: number) => {
   .cv-section__projects {
     display: flex;
     flex-wrap: wrap;
-    /* Token-chosen while Figma is unreachable; not a value read from the set. */
     gap: var(--space-sm);
-  }
-  /*
-   * Max's ask, not a Figma prototype: the default mark carries on turning in
-   * the direction it is drawn — a further 16° as its entry crosses the
-   * viewport. @keyframes on a view() timeline, so the motion ceiling holds.
-   * Figma −16 is clockwise on screen, so CSS continues it with a positive
-   * rotate.
-   *
-   * The reduced-motion guard is local, against the usual rule, because
-   * global.css's blanket animation-duration override cannot stop a
-   * progress-driven timeline — duration is not what advances it.
-   */
-  @keyframes cv-section-mark-turn {
-    from {
-      rotate: 0deg;
-    }
-
-    to {
-      rotate: 16deg;
-    }
-  }
-
-  @supports (animation-timeline: view()) {
-    @media (prefers-reduced-motion: no-preference) {
-      .cv-section--default :global(.cv-section__mark) {
-        animation: cv-section-mark-turn linear both;
-        animation-timeline: view();
-      }
-    }
   }
 
   /* Figma 477:2203 (State=PDF): the rail tightens to 12 with no top inset, the
@@ -371,6 +342,22 @@ const titleFromUrl = (url: string, index: number) => {
     line-height: var(--line-height-relaxed);
   }
 
+  @media (max-width: 48rem) {
+    .cv-section__role-label {
+      white-space: normal;
+    }
+
+    .cv-section--pdf .cv-section__header {
+      display: grid;
+      min-inline-size: 0;
+      align-items: start;
+      gap: var(--space-xs);
+    }
+
+    .cv-section--pdf .cv-section__position {
+      overflow-wrap: anywhere;
+    }
+  }
   /* Figma 477:2191: PDF copy uses the full content column rather than the
      global paragraph measure. */
   .cv-section--pdf .cv-section__summary :global(p) {

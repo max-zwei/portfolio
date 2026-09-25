@@ -1,30 +1,32 @@
 ---
-/**
- * Figma component set `Icons` (`109:1374`).
- *
- * The eight social/AI marks are members of this set, but they ship as raw
- * `<img>` driven by `SOCIALS` in `src/config/site.ts` because each needs its
- * own light and dark export — that pairing has no home in this component's
- * one-colour-per-icon shape. `NavBar.astro` stays on that path; migrating it
- * is not in scope here.
- */
+/** Figma component set `Icons` (`109:1374`). */
 import { withBase } from '../config/site';
 
-type IconName =
+export type IconName =
   | 'cursor'
   | 'figma-make'
   | 'download'
   | 'share'
   | 'triangle'
   | 'mail'
-  | 'phone';
-type IconColor = 'black' | 'lemon' | 'herbs' | 'tomato';
+  | 'phone'
+  | 'figma'
+  | 'github'
+  | 'dribbble'
+  | 'behance'
+  | 'linkedin'
+  | 'anthropic'
+  | 'openai'
+  | 'perplexity';
+type IconColor = 'black' | 'lemon' | 'herbs' | 'tomato' | 'white';
 
 interface Props {
   /** Figma `Icon`. */
   icon: IconName;
   /** Figma `Color`. Defaults to the one colour the set draws for this icon. */
   color?: IconColor;
+  /** Figma `State`. Hover adds the component set's lemon elevation. */
+  state?: 'default' | 'hover';
   /** Required: an icon with no meaning is the caller's decision to make explicit. */
   alt: string;
   /** Additional classes applied to the image. */
@@ -36,8 +38,8 @@ const ICONS = {
   cursor: { width: 40, height: 40, src: { lemon: '/cursor.svg' } },
   // Figma `Icon=Figma Make, Color=Black` (`140:1095`).
   'figma-make': {
-    width: 80,
-    height: 80,
+    width: 56,
+    height: 56,
     src: { black: '/icons/figma-make.svg' },
   },
   // Figma `Icon=download, Color=Black` (`377:2133`).
@@ -56,12 +58,62 @@ const ICONS = {
   mail: { width: 16, height: 16, src: { black: '/icons/mail.svg' } },
   // Figma `Icon=phone, Color=Black` (`492:2530`).
   phone: { width: 16, height: 16, src: { black: '/icons/phone.svg' } },
+  // Figma social and AI marks, redrawn at a 16px height.
+  figma: {
+    width: 12,
+    height: 16,
+    src: { black: '/icons/figma.svg', white: '/icons/dark/figma.svg' },
+  },
+  github: {
+    width: 16,
+    height: 16,
+    src: { black: '/icons/github.svg', white: '/icons/dark/github.svg' },
+  },
+  dribbble: {
+    width: 16,
+    height: 16,
+    src: { black: '/icons/dribbble.svg', white: '/icons/dark/dribbble.svg' },
+  },
+  behance: {
+    width: 19,
+    height: 16,
+    src: { black: '/icons/behance.svg', white: '/icons/dark/behance.svg' },
+  },
+  linkedin: {
+    width: 16,
+    height: 16,
+    src: { black: '/icons/linkedin.svg', white: '/icons/dark/linkedin.svg' },
+  },
+  anthropic: {
+    width: 16,
+    height: 16,
+    src: {
+      black: '/icons/explore-claude.svg',
+      white: '/icons/dark/explore-claude.svg',
+    },
+  },
+  openai: {
+    width: 16,
+    height: 16,
+    src: {
+      black: '/icons/explore-openai.svg',
+      white: '/icons/dark/explore-openai.svg',
+    },
+  },
+  perplexity: {
+    width: 14,
+    height: 16,
+    src: {
+      black: '/icons/explore-3.svg',
+      white: '/icons/dark/explore-3.svg',
+    },
+  },
 } as const satisfies Record<
   IconName,
   { width: number; height: number; src: Partial<Record<IconColor, string>> }
 >;
 
-const { icon, color, alt, class: className } = Astro.props;
+const { icon, color, state = 'default', alt, class: className } = Astro.props;
 const asset = ICONS[icon];
 const src_ = asset.src as Partial<Record<IconColor, string>>;
 const names = Object.keys(src_) as IconColor[];
@@ -78,5 +130,17 @@ if (!src) {
   alt={alt}
   width={asset.width}
   height={asset.height}
-  class:list={[className]}
+  class:list={['icon', state === 'hover' && 'icon--hover', className]}
 />
+
+<style>
+  .icon {
+    transition: filter var(--duration-fast) var(--easing-standard);
+  }
+
+  .icon--hover {
+    /* Each shared glow layer starts from SourceAlpha, rather than shadowing the
+       previous layer as chained drop-shadow() filters would. */
+    filter: url(#md-lemon-alpha);
+  }
+</style>
