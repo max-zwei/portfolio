@@ -6,12 +6,10 @@ import type { IconName } from '../components/Icon.astro';
  */
 
 /**
- * Prefixes a path in public/ with the deploy base.
+ * Applies Astro's configured base to hand-authored paths.
  *
- * GitHub Pages serves this as a project page, so everything sits under
- * /portfolio. Astro rewrites the URLs it generates itself, but not the ones
- * written by hand in a template — those come through here. When a custom
- * domain lands and `base` goes away, this quietly becomes a no-op.
+ * Astro rewrites the URLs it generates, but template paths come through here.
+ * With the default / base, they remain root-relative.
  */
 export const withBase = (path: string) =>
   `${import.meta.env.BASE_URL.replace(/\/$/, '')}${path}`;
