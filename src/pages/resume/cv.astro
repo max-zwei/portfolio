@@ -181,7 +181,8 @@ const profiles = CV_PROFILES.map((label) => {
     background-color: #fff;
   }
 
-  /* Figma 267:4053: a 64 margin on every side, its blocks 40 apart. */
+  /* Figma 267:4053 is the A4 sheet itself, so its 39.685 inset is the print
+     margin and belongs to @page. This padding frames the same document on screen. */
   .cv {
     display: grid;
     row-gap: var(--space-lg);
@@ -247,14 +248,14 @@ const profiles = CV_PROFILES.map((label) => {
     font-weight: var(--font-weight-bold);
   }
 
-  /* Figma 492:2529: the two contact columns 40 apart. */
+  /* Figma 492:2529: the two contact columns 16 apart. */
   .cv__contact {
     display: flex;
-    gap: var(--space-lg);
+    gap: var(--space-sm);
   }
 
   /* Figma 492:2528 and 477:1918: rows 8 apart, mark and text 8 apart,
-     Typography/Body - Small in neutral-800. */
+     Typography/Captions in neutral-800. */
   .cv__reach,
   .cv__profiles {
     display: grid;
@@ -262,7 +263,7 @@ const profiles = CV_PROFILES.map((label) => {
     padding: 0;
     margin: 0;
     list-style: none;
-    font-size: var(--font-size-sm);
+    font-size: var(--font-size-xs);
     line-height: var(--line-height-relaxed);
     color: var(--color-neutral-800);
   }
@@ -283,11 +284,11 @@ const profiles = CV_PROFILES.map((label) => {
     gap: var(--space-2xs);
   }
 
-  /* 18 is the size the header draws every mark at (Figma 477:2404, 477:2385) —
+  /* 12 is the size the A4 header draws every mark at (Figma 477:2404, 477:2385) —
      a drawn size with no token, recorded in design/components.json unbound. */
   :global(.cv__mark) {
     flex-shrink: 0;
-    inline-size: 18px;
+    inline-size: 12px;
     block-size: auto;
   }
 
@@ -319,18 +320,6 @@ const profiles = CV_PROFILES.map((label) => {
     list-style: none;
   }
 
-  /* Figma 477:1955: Education is drawn 866 wide inside the 1152 column. A4 is a
-     narrower sheet, so the ratio transfers and the pixels do not. */
-  .cv__section--education {
-    inline-size: 75.2%;
-  }
-
-  /* Figma 477:1961: Tech & Tools is drawn 422 wide in the 1152 column — the same
-     four-of-ten columns /resume gives it. Ratio again, not pixels. */
-  :global(.cv__tools) {
-    inline-size: 36.6%;
-  }
-
   @media screen and (max-width: 48rem) {
     .cv {
       min-inline-size: 0;
@@ -360,15 +349,10 @@ const profiles = CV_PROFILES.map((label) => {
     .cv__contact a {
       overflow-wrap: anywhere;
     }
-
-    .cv__section--education,
-    :global(.cv__tools) {
-      inline-size: 100%;
-    }
   }
 
-  /* @page cannot read custom properties. 10.5mm is the proportional inset:
-     210mm × 64 / 1280 from Figma frame 267:4053. */
+  /* @page cannot read custom properties. Handoff §13: the sheet's 39.68503937
+     inset on Figma frame 267:4053 is 10.5mm at 96 units to the inch. */
   @page {
     size: A4;
     margin: 10.5mm;
