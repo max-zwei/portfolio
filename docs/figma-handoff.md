@@ -254,8 +254,8 @@ arrival stagger (index.astro:567-571)
   duration: [x] duration/base
   easing:   [x] easing/entrance
   if CSS cannot do it exactly, it must still: keep the rows in order
-typing pace — 18ms per character, a 240ms beat between paragraphs in one bubble
-  — is a page-level constant, deliberately not a token (index.astro:724-727)
+typing pace — 12ms per character, a 160ms beat between paragraphs in one bubble
+  — is a page-level constant, deliberately not a token (src/lib/chat-typing.ts:1-2)
 Notes: nothing here is defined in Figma — there are no prototype connections,
 so get_motion_context returns nothing for this page. global.css:149-162 zeroes
 durations under prefers-reduced-motion: reduce but not animation-delay.

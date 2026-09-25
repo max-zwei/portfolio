@@ -1,25 +1,86 @@
 ---
-import BlankSection from '../components/BlankSection.astro';
+import { getCollection } from 'astro:content';
 import NavBar from '../components/NavBar.astro';
+import ProjectPreview from '../components/ProjectPreview.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { withBase } from '../config/site';
+
+const projects = await getCollection('projects');
+const CASE_SECTION_KEYS = [
+  'context',
+  'hmw',
+  'exploration',
+  'definition',
+  'development',
+  'feedback',
+  'learning',
+  'behindTheScenes',
+] as const;
+const projectArtefacts = (project: (typeof projects)[number]) =>
+  CASE_SECTION_KEYS.flatMap((key) => project.data[key]?.artefacts ?? []).slice(
+    0,
+    6,
+  );
 ---
 
 <BaseLayout title="Projects">
-  <main id="main" class="container projects">
-    <BlankSection level={1}>
-      <p>
-        I have a lot of great ideas for this section. But my daughter is
-        requesting “naked pasta” and expecting them now.
-      </p>
-      <p>I’ll hopefully return to this section soon!</p>
-    </BlankSection>
+  <main id="main" class="projects">
+    <h1 class="visually-hidden">Projects</h1>
+    <div class="projects__canvas container">
+      {
+        projects.map((entry) => {
+          const slug = entry.id.replace(/\.md$/, '');
+          return (
+            <div class="projects__row">
+              <ProjectPreview
+                id={`project-${slug}`}
+                caption={entry.data.company}
+                title={entry.data.hmw?.description.trim() ?? entry.data.title}
+                artefacts={projectArtefacts(entry)}
+                href={withBase(`/projects/${slug}`)}
+                state="collapsed"
+                size="default"
+                class="project-preview--index"
+              />
+            </div>
+          );
+        })
+      }
+    </div>
   </main>
 
   <NavBar mode="dark" label="Site" />
 </BaseLayout>
 
 <style>
-  .projects {
+  :global(body:has(.projects)) {
+    background-color: var(--color-neutral-100);
+  }
+
+  .projects__canvas {
+    container: project-previews / inline-size;
+    display: grid;
+    gap: var(--space-xl);
     padding-block: var(--space-3xl);
+  }
+
+  .projects__row {
+    position: relative;
+    display: flex;
+    min-inline-size: 0;
+    justify-content: flex-start;
+  }
+
+  .projects__row:nth-child(odd) {
+    justify-content: flex-end;
+  }
+
+  .projects__row > :global(.project-preview--index) {
+    flex: none;
+  }
+
+  .projects__row:hover,
+  .projects__row:focus-within {
+    z-index: 1;
   }
 </style>

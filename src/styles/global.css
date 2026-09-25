@@ -117,6 +117,10 @@ a {
   text-underline-offset: 0.2em;
 }
 
+::selection {
+  background-color: var(--color-pickled-500);
+}
+
 /* ---------------------------------------------------------------
  * Accessibility
  * ------------------------------------------------------------- */
@@ -155,6 +159,18 @@ a {
   transform: translateY(0);
 }
 
+/* Shared by chat pages whose scripts add per-character spans at runtime. */
+.chat__char {
+  opacity: 0;
+  animation: chat-key 1ms linear forwards;
+  animation-delay: calc(var(--start, 0ms) + var(--c) * var(--per-char, 12ms));
+}
+
+@keyframes chat-key {
+  to {
+    opacity: 1;
+  }
+}
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;

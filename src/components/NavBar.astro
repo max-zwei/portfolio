@@ -7,7 +7,8 @@
  * arranged in a 1280×220 frame.
  */
 import Button from './Button.astro';
-import { EXPLORE_WITH, NAV, SOCIALS, withBase } from '../config/site';
+import Icon from './Icon.astro';
+import { EXPLORE_WITH, NAV, SOCIALS } from '../config/site';
 
 interface Props {
   /**
@@ -46,12 +47,16 @@ const { mode = 'default', label = 'Site', class: className } = Astro.props;
           {
             EXPLORE_WITH.map((mark) => (
               <li>
-                <a href={mark.href} aria-label={`Explore with ${mark.label}`}>
-                  <img
-                    src={withBase(mode === 'dark' ? mark.iconDark : mark.icon)}
+                <a
+                  href={mark.href}
+                  aria-label={`Explore with ${mark.label}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <Icon
+                    icon={mark.icon}
+                    color={mode === 'dark' ? 'white' : 'black'}
                     alt=""
-                    width="16"
-                    height="16"
                   />
                 </a>
               </li>
@@ -106,14 +111,16 @@ const { mode = 'default', label = 'Site', class: className } = Astro.props;
           {
             SOCIALS.map((social) => (
               <li>
-                <a href={social.href} aria-label={social.label}>
-                  <img
-                    src={withBase(
-                      mode === 'dark' ? social.iconDark : social.icon,
-                    )}
+                <a
+                  href={social.href}
+                  aria-label={social.label}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <Icon
+                    icon={social.icon}
+                    color={mode === 'dark' ? 'white' : 'black'}
                     alt=""
-                    width={social.width}
-                    height={social.height}
                   />
                 </a>
               </li>
@@ -133,6 +140,7 @@ const { mode = 'default', label = 'Site', class: className } = Astro.props;
     padding: var(--space-lg) var(--space-xl);
     overflow: clip;
     background-color: var(--color-neutral-100);
+    min-block-size: calc(var(--space-3xl) + var(--space-xl) + var(--space-xs));
   }
 
   .navbar--dark {
@@ -146,6 +154,7 @@ const { mode = 'default', label = 'Site', class: className } = Astro.props;
     align-items: flex-start;
     justify-content: space-between;
     gap: var(--space-2xl);
+    min-block-size: calc(var(--space-3xl) - var(--space-3xs));
   }
 
   /* Figma 114:190 `Impressum Container`: #impressum at the top, the explore
@@ -224,36 +233,17 @@ const { mode = 'default', label = 'Site', class: className } = Astro.props;
     align-items: flex-start;
   }
 
-  .navbar__marks a {
-    display: block;
+  .navbar__marks a,
+  .navbar__socials a {
+    display: inline-flex;
+    border-radius: var(--radius-sm);
   }
 
-  .navbar__marks img {
-    /* Locks the box against the 17×16 OpenAI mark so scaling on hover moves
-       nothing else in the row. */
-    inline-size: var(--space-sm);
-    block-size: var(--space-sm);
-    transition: transform var(--duration-fast) var(--easing-standard);
-    /* This is an unbound literal in Figma, not an Elevation effect style;
-       the SVG no longer carries its own copy (design/components.json). */
-    filter: drop-shadow(
-      0 1px 2px color-mix(in srgb, var(--color-lemon-500) 25%, transparent)
-    );
-  }
-
-  /* 18 / 16 — Figma draws no separate hover state for these marks; this
-     mirrors Button's .btn__icon no-reflow enlargement pattern. */
-  .navbar__marks a:hover img,
-  .navbar__marks a:focus-visible img {
-    transform: scale(1.125);
-  }
-
-  /* Figma 385:2254/2256/2262: the dark instance's marks draw the same
-     shadow at 75% instead of 25%. */
-  .navbar--dark .navbar__marks img {
-    filter: drop-shadow(
-      0 1px 2px color-mix(in srgb, var(--color-lemon-500) 75%, transparent)
-    );
+  .navbar__marks a:hover :global(.icon),
+  .navbar__marks a:focus-visible :global(.icon),
+  .navbar__socials a:hover :global(.icon),
+  .navbar__socials a:focus-visible :global(.icon) {
+    filter: url(#md-lemon-alpha);
   }
 
   .navbar__socials {

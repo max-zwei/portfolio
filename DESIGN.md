@@ -158,7 +158,7 @@ rounded:
 shadows:
   sm: '0 1px 2px rgb(20 17 15 / 0.06)'
   md: '0 4px 16px rgb(20 17 15 / 0.08)'
-  md-lemon: '0 4px 16px #f0e511'
+  md-lemon: '0 8px 32px #f0e511, 0 8px 32px #f0e511'
   lg: '0 12px 40px rgb(20 17 15 / 0.12)'
 motion:
   duration:
@@ -356,11 +356,12 @@ recorded in `design/components.json` under `outstanding.variableWrites`.
 
 The Figma effect styles `Elevation / sm|md|lg` map to `--shadow-sm|md|lg` by
 name. Read the style name, not the drop-shadow the MCP emits; the two agree
-today and both must change together. `--shadow-md-lemon` is the one exception:
-the lift on the `/resume` social marks (`377:2104`) is `Elevation/md`'s
-geometry with lemon-500 colour baked in — a raw effect on that node, not an
-effect style, because Figma effect styles carry no colour override per
-instance.
+today and both must change together. The Figma effect style `md-lemon` maps to
+`--shadow-md-lemon`: two identical lemon-500 layers, each at x 0, y 8,
+blur 32, spread 0 and full opacity. Layering increases color density without
+changing the geometry or the color token. Icon glows merge two independent
+copies of the same blurred source alpha; chained drop-shadows would instead
+cast a second shadow from the first and enlarge the effect.
 
 ## Shapes
 
@@ -400,9 +401,9 @@ invites invention.
 - Arrival is staggered by `animation-delay`, and with the script running a row
   arrives when its own first character does, not on a fixed index stagger
   (`index.astro:567-571`).
-- The typing pace — 18ms per character, a 240ms beat between paragraphs in one
+- The typing pace — 12ms per character, a 160ms beat between paragraphs in one
   bubble — is a page-level constant Max signed off, deliberately not a token
-  (`index.astro:724-727`).
+  (`src/lib/chat-typing.ts:1-2`).
 - Four prototype connections exist on /home — the `Chat` instances (`115:806`,
   `118:1469`, `128:93`, `128:117`) navigate to `home - skip` (`117:898`) — but
   each carries `transition: null`, so no duration or easing is named in Figma

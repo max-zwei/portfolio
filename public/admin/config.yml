@@ -524,13 +524,18 @@ collections:
         required: false
         hint: 'One or two sentences: what the work was, and what came of it. Leave blank to show no summary.'
 
-      - label: Project URLs
-        name: projectUrls
-        widget: list
+      - label: Projects
+        name: projects
+        widget: relation
+        collection: projects
+        value_field: '{{slug}}'
+        display_fields: ['{{title}} — {{company}}']
+        search_fields: [title, company]
+        multiple: true
         required: false
         max: 3
         default: []
-        hint: Up to three things to point at. Ordered — the first one leads.
+        hint: Up to three portfolio projects connected to this entry.
 
       - label: Document URL
         name: documentUrl

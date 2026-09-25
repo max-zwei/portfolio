@@ -1,3 +1,5 @@
+import type { IconName } from '../components/Icon.astro';
+
 /**
  * Site-wide constants. Anything that appears in more than one place —
  * or that you would otherwise be tempted to retype — belongs here.
@@ -71,14 +73,29 @@ export const CV_CONTACT = {
  */
 export const CV_PROFILES = ['GitHub', 'Behance', 'LinkedIn'] as const;
 
-/**
- * Tool tiles for Tech & Tools, on both résumé surfaces. Placeholder until the
- * logos exist (Figma /resume Handoff §12).
- */
-export const CV_TOOLS = Array.from({ length: 18 }, () => ({
-  name: '[tool]',
-  icon: '/icons/figma.svg',
-}));
+/** Tool tiles for Tech & Tools, on both résumé surfaces. */
+export const CV_TOOLS = [
+  { name: 'Lucid', icon: '/icons/tools/lucid.svg' },
+  { name: 'Figma', icon: '/icons/tools/figma.svg' },
+  { name: 'Jira', icon: '/icons/tools/jira.svg' },
+  { name: 'UserGuiding', icon: '/icons/tools/userguiding.png' },
+  { name: 'Miro', icon: '/icons/tools/miro.svg' },
+  { name: 'Notion', icon: '/icons/tools/notion.svg' },
+  { name: 'Atlassian', icon: '/icons/tools/atlassian.svg' },
+  { name: '[tool]', icon: '/icons/tools/tool-08.png' },
+  { name: '[tool]', icon: '/icons/tools/tool-09.svg' },
+  { name: '[tool]', icon: '/icons/tools/tool-10.png' },
+  { name: 'Asana', icon: '/icons/tools/asana.svg' },
+  { name: 'Webflow', icon: '/icons/tools/webflow.svg' },
+  { name: '[tool]', icon: '/icons/tools/tool-13.svg' },
+  { name: 'WordPress', icon: '/icons/tools/wordpress.png' },
+  { name: 'Visio', icon: '/icons/tools/visio.png' },
+  { name: 'Marvel', icon: '/icons/tools/marvel.png' },
+  { name: 'GitHub', icon: '/icons/tools/github-tool.svg' },
+  { name: 'Excel', icon: '/icons/tools/excel.png' },
+  { name: '[tool]', icon: '/icons/tools/tool-19.svg' },
+  { name: 'Canva', icon: '/icons/tools/canva.png' },
+] as const;
 
 /**
  * The footer's own navigation, from the Figma NavBar. Labels retain the
@@ -93,79 +110,63 @@ export const NAV = {
     { label: '#inspiration', href: withBase('/inspiration') },
   ],
   about: [
-    { label: '#aboutme', href: withBase('/aboutme') },
+    { label: '#aboutme', href: withBase('/resume') },
     { label: '#behindthescenes', href: withBase('/behind-the-scenes') },
   ],
 } as const;
 
-/**
- * Social marks the footer draws, and the same row on /resume.
- *
- * `width` is each mark's own drawn width at a 16 height, so the asset is never
- * stretched. `iconDark` is the same artwork as Figma's `Mode=Dark` NavBar
- * paints it — neutral-white instead of neutral-800.
- */
+/** Social marks the footer draws, and the same row on /resume. */
 export const SOCIALS = [
   {
     label: 'Figma',
     href: 'https://www.figma.com/@maxpinkert',
-    icon: '/icons/figma.svg',
-    iconDark: '/icons/dark/figma.svg',
-    width: 12,
-    height: 16,
+    icon: 'figma',
   },
   {
     label: 'GitHub',
     href: 'https://github.com/max-zwei',
-    icon: '/icons/github.svg',
-    iconDark: '/icons/dark/github.svg',
-    width: 17,
-    height: 16,
+    icon: 'github',
   },
   {
     label: 'Dribbble',
     href: 'https://dribbble.com/maxzwei',
-    icon: '/icons/dribbble.svg',
-    iconDark: '/icons/dark/dribbble.svg',
-    width: 16,
-    height: 16,
+    icon: 'dribbble',
   },
   {
     label: 'Behance',
     href: 'https://www.behance.net/maxpinkert',
-    icon: '/icons/behance.svg',
-    iconDark: '/icons/dark/behance.svg',
-    width: 19,
-    height: 16,
+    icon: 'behance',
   },
   {
     label: 'LinkedIn',
     href: 'https://www.linkedin.com/in/max-pinkert/',
-    icon: '/icons/linkedin.svg',
-    iconDark: '/icons/dark/linkedin.svg',
-    width: 17,
-    height: 16,
+    icon: 'linkedin',
   },
-] as const;
+] as const satisfies ReadonlyArray<{
+  label: string;
+  href: string;
+  icon: IconName;
+}>;
 
 /** The three marks beside "explore with". */
 export const EXPLORE_WITH = [
   {
     label: 'Claude',
-    href: 'https://claude.ai/',
-    icon: '/icons/explore-claude.svg',
-    iconDark: '/icons/dark/explore-claude.svg',
+    icon: 'anthropic',
+    href: 'https://claude.ai/new?q=Summarise%20this%20page%20for%20me%3A%20https%3A%2F%2Fzwei.berlin%2Fsummary',
   },
   {
     label: 'OpenAI',
-    href: 'https://openai.com/',
-    icon: '/icons/explore-openai.svg',
-    iconDark: '/icons/dark/explore-openai.svg',
+    icon: 'openai',
+    href: 'https://chatgpt.com/?q=Summarise%20this%20page%20for%20me%3A%20https%3A%2F%2Fzwei.berlin%2Fsummary',
   },
   {
-    label: '3',
-    href: '#',
-    icon: '/icons/explore-3.svg',
-    iconDark: '/icons/dark/explore-3.svg',
+    label: 'Perplexity',
+    icon: 'perplexity',
+    href: 'https://www.perplexity.ai/search?q=Summarise%20this%20page%20for%20me%3A%20https%3A%2F%2Fzwei.berlin%2Fsummary',
   },
-] as const;
+] as const satisfies ReadonlyArray<{
+  label: string;
+  href: string;
+  icon: IconName;
+}>;
