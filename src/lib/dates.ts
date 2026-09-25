@@ -27,9 +27,10 @@ export function formatMonth(value: string): string {
 }
 
 /**
- * Formats a CV date span, writing a shared year only once.
+ * Formats a CV date span, with a year on both ends so the mono date column
+ * reads the same width down the page.
  *
- * The spaced hyphen-minus in `Mar - Oct 2026` is the glyph drawn by the
+ * The spaced hyphen-minus in `Feb 2026 - May 2026` is the glyph drawn by the
  * Figma `CV section`, rather than an en dash chosen by code.
  */
 export function formatRange(start: string, end?: string): string {
@@ -37,15 +38,6 @@ export function formatRange(start: string, end?: string): string {
   const startFormatted = formatMonth(start);
   const endFormatted = formatMonth(end);
   if (startFormatted === endFormatted) return startFormatted;
-
-  const [startYear, startMonth] = start.split('-');
-  const [endYear, endMonth] = end.split('-');
-
-  if (startYear === endYear && startMonth && endMonth) {
-    const startLabel = MONTHS[Number(startMonth) - 1];
-    const endLabel = MONTHS[Number(endMonth) - 1];
-    return `${startLabel} - ${endLabel} ${startYear}`;
-  }
 
   return `${startFormatted} - ${endFormatted}`;
 }
