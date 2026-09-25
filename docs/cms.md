@@ -137,7 +137,7 @@ committed PDF goes stale.
 | `summary`     | string                                   | no          | One or two sentences: what the work was, and what came of it. Blank hides the summary.          |
 | `logo`        | image                                    | no          | Company or institution mark.                                                                    |
 | `logoAlt`     | string                                   | conditional | **Required whenever `logo` is set.**                                                            |
-| `projectUrls` | URL[] (max 3)                            | no          | Up to three things to point at. Ordered — the first one leads.                                  |
+| `projects`    | project reference[] (max 3)              | no          | Existing portfolio projects connected to this entry. Shown as linked previews on /resume.       |
 | `documentUrl` | path (`/letters/…` or `/certificates/…`) | no          | The Arbeitszeugnis or certificate scan for this entry. Shown on /resume, not on the printed CV. |
 | `match`       | object of four id lists                  | No          | What the /home questionnaire matches this entry on.                                             |
 

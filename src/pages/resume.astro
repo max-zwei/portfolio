@@ -24,6 +24,40 @@ const CV_PDF = withBase('/cv/max-pinkert-cv.pdf');
 const SHARE_URL = new URL(withBase('/resume'), Astro.site).href;
 
 const entries = await getCollection('resume');
+const projectEntries = await getCollection('projects');
+const projectsById = new Map(
+  projectEntries.map((project) => [project.id.replace(/\.md$/, ''), project]),
+);
+const CASE_SECTION_KEYS = [
+  'context',
+  'hmw',
+  'exploration',
+  'definition',
+  'development',
+  'feedback',
+  'learning',
+  'behindTheScenes',
+] as const;
+const projectArtefacts = (project: (typeof projectEntries)[number]) =>
+  CASE_SECTION_KEYS.flatMap((key) => project.data[key]?.artefacts ?? []).slice(
+    0,
+    6,
+  );
+const resolvedProjects = (entry: (typeof entries)[number]) =>
+  (entry.data.projects ?? []).flatMap((reference) => {
+    const project = projectsById.get(reference.id.replace(/\.md$/, ''));
+    if (!project) return [];
+
+    const slug = project.id.replace(/\.md$/, '');
+    return [
+      {
+        href: withBase(`/projects/${slug}`),
+        title: project.data.hmw?.description.trim() ?? project.data.title,
+        caption: project.data.company,
+        artefacts: projectArtefacts(project),
+      },
+    ];
+  });
 const byNewest = (a: (typeof entries)[number], b: (typeof entries)[number]) =>
   b.data.start.localeCompare(a.data.start);
 const work = entries
@@ -36,27 +70,27 @@ const education = entries
 const documentLabel = (url: string) =>
   url.startsWith('/letters/') ? 'Reference letter (PDF)' : 'Certificate (PDF)';
 
-const FOCUS_AREAS = Array.from({ length: 6 }, () => '[focus area]');
+const FOCUS_AREAS = ['User Experience', 'Branding'];
 
-/*
- * Handoff §7: the notes' copy is not written yet; the drawn text is the set's
- * own placeholder. Handoff §13: the notes hang off the combined Experience +
- * Education list rather than off either section, so one rail runs the length
- * of both and the four colours cycle in the page's own order (`251:3244`,
- * `251:3248`, `251:3255`, `251:3262`).
- *
- * The count follows the combined row count — two notes every five rows, plus
- * the one that closes the rail — and the rail spreads them over the real
- * height of the list, so the clear space between notes stays in the drawn
- * 300–400px band as entries are added. Measured at 1280 with today's 15
- * rows: 7 notes, 314px apart.
- */
-const NOTE_COLORS = ['herbs', 'tomato', 'lemon', 'pickled'] as const;
-const rows = work.length + education.length;
-const notes = Array.from(
-  { length: Math.round((rows * 2) / 5) + 1 },
-  (_, index) => NOTE_COLORS[index % NOTE_COLORS.length],
-);
+const REPORT_PDF = withBase('/report/101225_LPP_Report_Pinkert_Max.pdf');
+const NOTES = [
+  {
+    color: 'herbs',
+    text: 'You demonstrate an unconventional approach to thinking and acting. Even when it comes to solving problems, you like to break new ground and explore alternative approaches.',
+  },
+  {
+    color: 'tomato',
+    text: 'You have no problem questioning the status quo or taking a critical look at existing norms and value systems. Nor do you spare hierarchies or leadership from your criticism.',
+  },
+  {
+    color: 'lemon',
+    text: 'You are characterised by a great openness to ideas, concepts and discussions. You take an interest in the latest findings and discuss abstract ideas with like-minded people.',
+  },
+  {
+    color: 'pickled',
+    text: 'Creativity and value-driven behaviour are your key motivation factors. Your aim is to realise your own creative potential and to work in a meaningful environment.',
+  },
+] as const;
 ---
 
 <BaseLayout
@@ -87,12 +121,7 @@ const notes = Array.from(
                 SOCIALS.map((social) => (
                   <li>
                     <a href={social.href} aria-label={social.label}>
-                      <img
-                        src={withBase(social.icon)}
-                        alt=""
-                        width={social.width}
-                        height={social.height}
-                      />
+                      <Icon icon={social.icon} color="black" alt="" />
                     </a>
                   </li>
                 ))
@@ -124,13 +153,16 @@ const notes = Array.from(
           <h2 id="h-experience" class="cv__section-title">Experience</h2>
           <ol class="cv__list">
             {
-              work.map((entry) => (
+              work.map((entry, index) => (
                 <li class="cv__row">
                   <CvSection
                     role={entry.data.role}
                     company={entry.data.company}
                     start={entry.data.start}
                     end={entry.data.end}
+                    index={index}
+                    state="default"
+                    projects={resolvedProjects(entry)}
                     documentUrl={entry.data.documentUrl}
                     documentLabel={
                       entry.data.documentUrl &&
@@ -156,13 +188,16 @@ const notes = Array.from(
           <h2 id="h-education" class="cv__section-title">Education</h2>
           <ol class="cv__list">
             {
-              education.map((entry) => (
+              education.map((entry, index) => (
                 <li class="cv__row">
                   <CvSection
                     role={entry.data.role}
                     company={entry.data.company}
                     start={entry.data.start}
                     end={entry.data.end}
+                    index={index}
+                    state="default"
+                    projects={resolvedProjects(entry)}
                     documentUrl={entry.data.documentUrl}
                     documentLabel={
                       entry.data.documentUrl &&
@@ -180,9 +215,11 @@ const notes = Array.from(
 
       <ul class="cv__notes">
         {
-          notes.map((color) => (
+          NOTES.map((note) => (
             <li>
-              <PostIt color={color}>[a note]</PostIt>
+              <PostIt color={note.color} href={REPORT_PDF}>
+                {note.text}
+              </PostIt>
             </li>
           ))
         }
@@ -266,16 +303,14 @@ const notes = Array.from(
     list-style: none;
   }
 
-  /* Figma 377:2104: the mark lifts on Elevation/md geometry in lemon-500.
-     inline-flex so the shadow traces the mark, not the line box. */
+  /* Figma 377:2104: the mark lifts on md-lemon geometry. */
   .cv__socials a {
     display: inline-flex;
-    border-radius: var(--radius-sm);
-    transition: box-shadow var(--duration-fast) var(--easing-standard);
   }
 
-  .cv__socials a:hover {
-    box-shadow: var(--shadow-md-lemon);
+  .cv__socials a:hover :global(.icon),
+  .cv__socials a:focus-visible :global(.icon) {
+    filter: url(#md-lemon-alpha);
   }
 
   /* Figma 251:2560: the two icon buttons stack 16 apart, right-aligned. */
@@ -344,7 +379,7 @@ const notes = Array.from(
   }
 
   /*
-   * Handoff §10 via IntersectionObserver: entries outside the middle 60% of
+   * Handoff §16 via IntersectionObserver: entries outside the middle 33% of
    * the viewport fade to neutral-300 (Handoff §14 — the contrast failure is
    * intended, the dimmed entry is not meant to be read), and the rail's line
    * fades neutral-200 → neutral-100 with them. CvSection colours its own
@@ -421,34 +456,12 @@ const notes = Array.from(
 </style>
 
 <script>
-  // Handoff §10: dim every entry outside the middle 33% of the viewport.
+  import { observeFocusBand } from '../lib/focus-dim';
+
   const rows = document.querySelectorAll<HTMLElement>('.cv__row');
-  if (rows.length > 0 && 'IntersectionObserver' in window) {
-    const dim = (records: IntersectionObserverEntry[]) => {
-      for (const record of records) {
-        record.target.classList.toggle(
-          'cv__row--dimmed',
-          !record.isIntersecting,
-        );
-      }
-    };
-
-    // Percentage rootMargin resolves against root *width* (Intersection
-    // Observer spec), not height, so a height-based band has to be computed
-    // in pixels and rebuilt whenever the viewport height changes.
-    let observer: IntersectionObserver | undefined;
-    const observeRows = () => {
-      observer?.disconnect();
-      const inset = document.documentElement.clientHeight * 0.335;
-      observer = new IntersectionObserver(dim, {
-        rootMargin: `-${inset}px 0px -${inset}px 0px`,
-      });
-      for (const row of rows) observer.observe(row);
-    };
-
-    observeRows();
-    window.addEventListener('resize', observeRows);
-  }
+  observeFocusBand(rows, (row, active) => {
+    row.classList.toggle('cv__row--dimmed', !active);
+  });
 
   // Handoff §6: Share copies this page's URL. Without the script the button is
   // still a link to that URL.

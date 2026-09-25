@@ -71,8 +71,8 @@ const HeadingTag = `h${level}` as 'h2' | 'h3' | 'h4';
 
   .toolbox__tools {
     display: grid;
-    grid-template-columns: repeat(6, minmax(0, 1fr));
-    gap: var(--space-sm);
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: var(--space-md);
     padding: 0;
     list-style: none;
   }
@@ -81,17 +81,22 @@ const HeadingTag = `h${level}` as 'h2' | 'h3' | 'h4';
     display: flex;
     align-items: center;
     justify-content: center;
-    aspect-ratio: 57 / 59.33;
-    background-color: var(--color-neutral-white);
+    inline-size: 38px;
+    block-size: 38px;
     text-align: center;
   }
 
+  .toolbox__tool img {
+    inline-size: 100%;
+    block-size: 100%;
+    object-fit: contain;
+  }
+
   /*
-   * An explicit rule preserves the set's exact six-column desktop matrix, then
-   * reduces it to two columns at the site's sole breakpoint so tiles stay useful
-   * on narrow screens. The source design has no readable mobile frame. Scoped
-   * to the web usage so the nine-column print grid (Usage=PDF, 477:2461) is
-   * never collapsed by a print viewport that happens to fall under 48rem.
+   * Preserve the seven-column web matrix, then reduce it to two columns at the
+   * site's sole breakpoint so tiles stay useful on narrow screens. The source
+   * design has no readable mobile frame. Scoped to web so the eleven-column
+   * print grid is never collapsed by a print viewport under 48rem.
    */
   @media (max-width: 48rem) {
     .toolbox--web .toolbox__tools {
@@ -99,17 +104,18 @@ const HeadingTag = `h${level}` as 'h2' | 'h3' | 'h4';
     }
   }
 
-  /* Figma 477:2461 (Usage=PDF): the title drops to Typography/H3 and the same
-     eighteen slots lie in nine columns of 32.67 × 32 tiles. */
+  /* Figma 533:3380 (Usage=PDF): eleven equal columns with 27px logo boxes. */
   .toolbox--pdf .toolbox__title {
     font-size: var(--font-size-xl);
   }
 
   .toolbox--pdf .toolbox__tools {
-    grid-template-columns: repeat(9, minmax(0, 1fr));
+    grid-template-columns: repeat(11, minmax(0, 1fr));
+    gap: var(--space-xs);
   }
 
   .toolbox--pdf .toolbox__tool {
-    aspect-ratio: 32.67 / 32;
+    inline-size: 27px;
+    block-size: 27px;
   }
 </style>

@@ -2,9 +2,9 @@
 /**
  * Figma component set `curiosity` (node `114:610`).
  *
- * This composes the library's existing avatar and message bubble without
- * restyling either one. It maps to the `curiosity` content collection's paired
- * `thought` and `question` fields.
+ * This composes the library's existing avatar and talking-head/default bubble
+ * without restyling either one. It maps to the `curiosity` content
+ * collection's paired `thought` and `question` fields.
  */
 import Avatar, { type AvatarUser } from './Avatar.astro';
 import ChatBubble from './ChatBubble.astro';
@@ -21,7 +21,7 @@ const { user, class: className } = Astro.props;
 
 <div class:list={['row', className]}>
   <Avatar user={user} />
-  <ChatBubble type="message"><slot /></ChatBubble>
+  <ChatBubble user="talking-head" state="default"><slot /></ChatBubble>
 </div>
 
 <style>

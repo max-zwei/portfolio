@@ -1,25 +1,17 @@
 ---
-/**
- * Figma component set `project preview` (`114:646`).
- *
- * The decorative paper scraps are intentionally absent until their exact
- * untokenised geometry can be read from Figma. The component still exposes and
- * progressively enhances the two drawn presentation states.
- */
+/** Figma component set `project preview` (`114:646`); corrected small frame `562:5072`. */
+import type { ImageMetadata } from 'astro';
+import { Image } from 'astro:assets';
+
 interface Props {
-  /** Required identity for this independently enhanced preview. */
   id: string;
-  /** Figma `State`; also the state rendered without JavaScript. */
   state?: 'collapsed' | 'exploded';
-  /** Figma `Size`. */
   size?: 'default' | 'small';
-  /** Typography/Captions copy, drawn uppercase. */
   caption: string;
-  /** The serif project line. */
   title: string;
-  /** Present → makes the text block a link. */
+  /** Up to six artefacts, in source order; absent slots stay absent. */
+  artefacts?: ReadonlyArray<{ src: ImageMetadata; alt: string }>;
   href?: string;
-  /** Additional class supplied by the composing page. */
   class?: string;
 }
 
@@ -29,127 +21,338 @@ const {
   size = 'default',
   caption,
   title,
+  artefacts = [],
   href,
   class: className,
 } = Astro.props;
+const visibleArtefacts = artefacts.slice(0, 6);
+const ContentTag = href ? 'a' : 'div';
 ---
 
 <article
   id={id}
   class:list={['project-preview', `project-preview--${size}`, className]}
-  data-project-preview
   data-state={state}
 >
-  <!-- The absolutely positioned, aria-hidden white paper-scrap collage is
-       pending an exact read of node 114:646. Its per-scrap offsets, sizes, and
-       rotations are untokenised geometry, so literals are correct only once
-       those exact values are available; no placeholder geometry is invented. -->
-
-  {
-    href ? (
-      <a class="project-preview__text" href={href}>
-        <span class="project-preview__caption">{caption}</span>
-        <span class="project-preview__title">{title}</span>
-      </a>
-    ) : (
-      <div class="project-preview__text">
-        <span class="project-preview__caption">{caption}</span>
-        <span class="project-preview__title">{title}</span>
-      </div>
-    )
-  }
-
-  <!-- This is a toggle, not a disclosure: the exploded state rearranges the
-       same content and reveals nothing new. -->
-  <button
-    type="button"
-    class="project-preview__toggle"
-    aria-pressed={state === 'exploded'}
+  <ContentTag
+    class="project-preview__content"
+    href={href}
+    aria-labelledby={href ? `${id}-caption ${id}-title` : undefined}
   >
-    <span aria-hidden="true">↗</span>
-    <span class="visually-hidden">Toggle the arrangement of {title}</span>
-  </button>
+    <div class="project-preview__text-envelope">
+      <div class="project-preview__text">
+        <span id={`${id}-caption`} class="project-preview__caption">
+          {caption}
+        </span>
+        <span id={`${id}-title`} class="project-preview__title">
+          {title}
+        </span>
+      </div>
+    </div>
+    {
+      visibleArtefacts.length > 0 && (
+        <div class="project-preview__scraps">
+          {visibleArtefacts.map((artefact, index) => (
+            <span
+              class={`project-preview__scrap project-preview__scrap--${index + 1}`}
+            >
+              <Image src={artefact.src} alt={artefact.alt} />
+            </span>
+          ))}
+        </div>
+      )
+    }
+  </ContentTag>
 </article>
 
-<script>
-  document
-    .querySelectorAll<HTMLElement>('[data-project-preview]')
-    .forEach((root) => {
-      const button = root.querySelector<HTMLButtonElement>(
-        '.project-preview__toggle',
-      );
-
-      button?.addEventListener('click', () => {
-        const state =
-          root.dataset.state === 'exploded' ? 'collapsed' : 'exploded';
-        root.dataset.state = state;
-        button.setAttribute('aria-pressed', String(state === 'exploded'));
-      });
-    });
-
-  /* Figma defines no state motion, so the swap is instantaneous; inventing an
-     animation would be a fidelity violation. With scripts blocked, the prop's
-     state remains rendered and the toggle is inert by accepted design. */
-</script>
-
 <style>
+  /* Unbound Figma collage geometry: 562:5259, 562:5297, 562:5072. */
   .project-preview {
+    --preview-width: 426.759px;
+    --preview-gap: var(--space-lg);
+    --collage-height: 256.804px;
+    --title-size: var(--font-size-lg);
+    --caption-size: var(--font-size-base);
+    --caption-line-height: var(--line-height-normal);
+    --caption-case: none;
+    --text-rotation: 0deg;
+    --text-envelope: 0px;
+    --scrap-1-x: 39px;
+    --scrap-1-y: 43.776px;
+    --scrap-1-width: 100px;
+    --scrap-1-height: 100px;
+    --scrap-1-rotation: -2deg;
+    --scrap-2-x: 3.49px;
+    --scrap-2-y: 117.286px;
+    --scrap-2-width: 100px;
+    --scrap-2-height: 100px;
+    --scrap-2-rotation: 2deg;
+    --scrap-3-x: 227.52px;
+    --scrap-3-y: 57.001px;
+    --scrap-3-width: 200px;
+    --scrap-3-height: 112.5px;
+    --scrap-3-rotation: 5deg;
+    --scrap-4-x: 75.715px;
+    --scrap-4-y: 129.952px;
+    --scrap-4-width: 200px;
+    --scrap-4-height: 112.5px;
+    --scrap-4-rotation: -4deg;
+    --scrap-5-x: 128.715px;
+    --scrap-5-y: 9.805px;
+    --scrap-5-width: 200px;
+    --scrap-5-height: 112.5px;
+    --scrap-5-rotation: 85deg;
+    --scrap-6-x: 395.126px;
+    --scrap-6-y: 56.926px;
+    --scrap-6-width: 200px;
+    --scrap-6-height: 112.5px;
+    --scrap-6-rotation: 92deg;
+
     position: relative;
-    display: inline-grid;
-    align-items: start;
-    justify-items: start;
-    color: var(--color-neutral-800);
+    inline-size: var(--preview-width);
+    overflow: visible;
+  }
+  .project-preview__content {
+    display: grid;
+    gap: var(--preview-gap);
+    inline-size: 100%;
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .project-preview--default:where(
+    [data-state='exploded'],
+    [data-state='collapsed']:hover,
+    [data-state='collapsed']:has(.project-preview__content:focus-visible)
+  ) {
+    --preview-width: 665.135px;
+    --preview-gap: var(--space-md);
+    --collage-height: 408.787px;
+    --title-size: var(--font-size-xl);
+    --text-rotation: -4deg;
+    /* Half of the sample's 136.178 rotated envelope minus its 90 text height. */
+    --text-envelope: 23.089px;
+    --scrap-1-x: 64.674px;
+    --scrap-1-y: 79.758px;
+    --scrap-1-width: 150px;
+    --scrap-1-height: 150px;
+    --scrap-1-rotation: -8deg;
+    --scrap-2-x: 15.679px;
+    --scrap-2-y: 175.791px;
+    --scrap-2-width: 150px;
+    --scrap-2-height: 150px;
+    --scrap-2-rotation: 6deg;
+    --scrap-3-x: 368.828px;
+    --scrap-3-y: 37.117px;
+    --scrap-3-width: 300px;
+    --scrap-3-height: 168.75px;
+    --scrap-3-rotation: 9deg;
+    --scrap-4-x: 120px;
+    --scrap-4-y: 215.543px;
+    --scrap-4-width: 300px;
+    --scrap-4-height: 168.75px;
+    --scrap-4-rotation: -8deg;
+    --scrap-5-x: 194.369px;
+    --scrap-5-y: 29.303px;
+    --scrap-5-width: 300px;
+    --scrap-5-height: 168.75px;
+    --scrap-5-rotation: 80deg;
+    --scrap-6-x: 597.183px;
+    --scrap-6-y: 110.43px;
+    --scrap-6-width: 300px;
+    --scrap-6-height: 168.75px;
+    --scrap-6-rotation: 96deg;
+  }
+
+  .project-preview--small {
+    --preview-width: 220.522px;
+    --preview-gap: var(--space-2xs);
+    --collage-height: 128.402px;
+    --title-size: var(--font-size-base);
+    --caption-size: var(--font-size-xs);
+    --caption-line-height: var(--line-height-relaxed);
+    --caption-case: uppercase;
+    --text-rotation: 0deg;
+    --text-envelope: 0px;
+    --scrap-1-x: 19.5px;
+    --scrap-1-y: 21.888px;
+    --scrap-1-width: 50px;
+    --scrap-1-height: 50px;
+    --scrap-1-rotation: -2deg;
+    --scrap-2-x: 1.745px;
+    --scrap-2-y: 58.643px;
+    --scrap-2-width: 50px;
+    --scrap-2-height: 50px;
+    --scrap-2-rotation: 2deg;
+    --scrap-3-x: 120.903px;
+    --scrap-3-y: 30px;
+    --scrap-3-width: 100px;
+    --scrap-3-height: 56.25px;
+    --scrap-3-rotation: 5deg;
+    --scrap-4-x: 37.857px;
+    --scrap-4-y: 64.976px;
+    --scrap-4-width: 100px;
+    --scrap-4-height: 56.25px;
+    --scrap-4-rotation: -4deg;
+    --scrap-5-x: 64.357px;
+    --scrap-5-y: 4.903px;
+    --scrap-5-width: 100px;
+    --scrap-5-height: 56.25px;
+    --scrap-5-rotation: 85deg;
+    --scrap-6-x: 197.563px;
+    --scrap-6-y: 28.463px;
+    --scrap-6-width: 100px;
+    --scrap-6-height: 56.25px;
+    --scrap-6-rotation: 92deg;
+  }
+
+  .project-preview__text-envelope {
+    padding-block: var(--text-envelope);
   }
 
   .project-preview__text {
-    position: relative;
-    z-index: 1;
     display: grid;
-    gap: var(--space-3xs);
-    padding: var(--space-sm);
-    color: inherit;
-    text-decoration: none;
-    transform-origin: center;
+    overflow-wrap: anywhere;
+    transform: rotate(var(--text-rotation));
+    transition: transform var(--duration-slow) var(--easing-standard);
   }
 
-  /* The exploded state currently has no visual expression. Its drawn
-     difference is the paper-scrap spread, whose geometry is pending a Figma
-     read, so the state is observable only through `data-state` and
-     `aria-pressed`. */
-
-  /* Typography/Captions — the frame draws this line uppercase. */
+  /* Figma Typography/Body; Captions for small. */
   .project-preview__caption {
+    color: var(--color-neutral-600);
     font-family: var(--font-sans);
-    font-size: var(--font-size-xs);
+    font-size: var(--caption-size);
     font-weight: var(--font-weight-regular);
-    line-height: var(--line-height-relaxed);
+    line-height: var(--caption-line-height);
     letter-spacing: var(--letter-spacing-normal);
-    text-transform: uppercase;
+    text-transform: var(--caption-case);
   }
 
+  /* Figma Typography/H4, H3 exploded, H5 small. */
   .project-preview__title {
+    color: var(--color-neutral-800);
     font-family: var(--font-serif);
-    font-size: var(--font-size-base);
+    font-size: var(--title-size);
     font-weight: var(--font-weight-semibold);
-    line-height: var(--line-height-snug);
+    line-height: var(--line-height-none);
     letter-spacing: var(--letter-spacing-normal);
   }
 
-  .project-preview--small .project-preview__title {
-    font-size: var(--font-size-sm);
+  .project-preview__scraps {
+    position: relative;
+    block-size: var(--collage-height);
   }
 
-  .project-preview__toggle {
-    position: relative;
-    z-index: 2;
-    justify-self: end;
-    padding: var(--space-3xs);
-    border: 0;
-    background: none;
-    color: var(--color-neutral-800);
-    font-family: var(--font-mono);
-    font-size: var(--font-size-base);
-    line-height: var(--line-height-none);
-    cursor: pointer;
+  .project-preview__scrap {
+    --scrap-flip: 1;
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline-start: 0;
+    inline-size: var(--scrap-width);
+    block-size: var(--scrap-height);
+    overflow: hidden;
+    transform-origin: top left;
+    transform: translate(var(--scrap-x), var(--scrap-y))
+      rotate(var(--scrap-rotation)) scaleY(var(--scrap-flip));
+    transition: transform var(--duration-slow) var(--easing-standard);
+  }
+
+  .project-preview__scrap :global(img) {
+    inline-size: 100%;
+    block-size: 100%;
+    object-fit: cover;
+  }
+
+  .project-preview__scrap--1 {
+    --scrap-x: var(--scrap-1-x);
+    --scrap-y: var(--scrap-1-y);
+    --scrap-width: var(--scrap-1-width);
+    --scrap-height: var(--scrap-1-height);
+    --scrap-rotation: var(--scrap-1-rotation);
+  }
+
+  .project-preview__scrap--2 {
+    --scrap-x: var(--scrap-2-x);
+    --scrap-y: var(--scrap-2-y);
+    --scrap-width: var(--scrap-2-width);
+    --scrap-height: var(--scrap-2-height);
+    --scrap-rotation: var(--scrap-2-rotation);
+  }
+
+  .project-preview__scrap--3 {
+    --scrap-x: var(--scrap-3-x);
+    --scrap-y: var(--scrap-3-y);
+    --scrap-width: var(--scrap-3-width);
+    --scrap-height: var(--scrap-3-height);
+    --scrap-rotation: var(--scrap-3-rotation);
+  }
+
+  .project-preview__scrap--4 {
+    --scrap-x: var(--scrap-4-x);
+    --scrap-y: var(--scrap-4-y);
+    --scrap-width: var(--scrap-4-width);
+    --scrap-height: var(--scrap-4-height);
+    --scrap-rotation: var(--scrap-4-rotation);
+  }
+
+  .project-preview__scrap--5 {
+    --scrap-x: var(--scrap-5-x);
+    --scrap-y: var(--scrap-5-y);
+    --scrap-width: var(--scrap-5-width);
+    --scrap-height: var(--scrap-5-height);
+    --scrap-rotation: var(--scrap-5-rotation);
+    --scrap-flip: -1;
+  }
+
+  .project-preview__scrap--6 {
+    --scrap-x: var(--scrap-6-x);
+    --scrap-y: var(--scrap-6-y);
+    --scrap-width: var(--scrap-6-width);
+    --scrap-height: var(--scrap-6-height);
+    --scrap-rotation: var(--scrap-6-rotation);
+  }
+
+  @container project-previews (max-width: 665.135px) {
+    .project-preview.project-preview--index {
+      --preview-width: 220.522px;
+      --preview-gap: var(--space-2xs);
+      --collage-height: 128.402px;
+      --title-size: var(--font-size-base);
+      --caption-size: var(--font-size-xs);
+      --caption-line-height: var(--line-height-relaxed);
+      --caption-case: uppercase;
+      --text-rotation: 0deg;
+      --text-envelope: 0px;
+      --scrap-1-x: 19.5px;
+      --scrap-1-y: 21.888px;
+      --scrap-1-width: 50px;
+      --scrap-1-height: 50px;
+      --scrap-1-rotation: -2deg;
+      --scrap-2-x: 1.745px;
+      --scrap-2-y: 58.643px;
+      --scrap-2-width: 50px;
+      --scrap-2-height: 50px;
+      --scrap-2-rotation: 2deg;
+      --scrap-3-x: 120.903px;
+      --scrap-3-y: 30px;
+      --scrap-3-width: 100px;
+      --scrap-3-height: 56.25px;
+      --scrap-3-rotation: 5deg;
+      --scrap-4-x: 37.857px;
+      --scrap-4-y: 64.976px;
+      --scrap-4-width: 100px;
+      --scrap-4-height: 56.25px;
+      --scrap-4-rotation: -4deg;
+      --scrap-5-x: 64.357px;
+      --scrap-5-y: 4.903px;
+      --scrap-5-width: 100px;
+      --scrap-5-height: 56.25px;
+      --scrap-5-rotation: 85deg;
+      --scrap-6-x: 197.563px;
+      --scrap-6-y: 28.463px;
+      --scrap-6-width: 100px;
+      --scrap-6-height: 56.25px;
+      --scrap-6-rotation: 92deg;
+    }
   }
 </style>

@@ -91,13 +91,7 @@ const profiles = CV_PROFILES.map((label) => {
             {
               profiles.map((social) => (
                 <li>
-                  <img
-                    src={withBase(social.icon)}
-                    alt=""
-                    width={social.width}
-                    height={social.height}
-                    class="cv__mark"
-                  />
+                  <Icon icon={social.icon} alt="" class="cv__mark" />
                   <a href={social.href}>{social.href}</a>
                 </li>
               ))
@@ -118,13 +112,14 @@ const profiles = CV_PROFILES.map((label) => {
       <ol class="cv__list">
         {
           work.map((entry, index) => (
-            <li class="cv__row" style={`--cv-mark-index: ${index}`}>
+            <li class="cv__row">
               <CvSection
                 state="pdf"
                 role={entry.data.role}
                 company={entry.data.company}
                 start={entry.data.start}
                 end={entry.data.end}
+                index={index}
               >
                 <Icon
                   slot="logo"
@@ -149,13 +144,14 @@ const profiles = CV_PROFILES.map((label) => {
       <ol class="cv__list">
         {
           education.map((entry, index) => (
-            <li class="cv__row" style={`--cv-mark-index: ${index}`}>
+            <li class="cv__row">
               <CvSection
                 state="pdf"
                 role={entry.data.role}
                 company={entry.data.company}
                 start={entry.data.start}
                 end={entry.data.end}
+                index={index}
               >
                 <Icon
                   slot="logo"
@@ -178,11 +174,11 @@ const profiles = CV_PROFILES.map((label) => {
 
 <style>
   :global(body:has(.cv-document)) {
-    background-color: var(--color-neutral-white);
+    background-color: #fff;
   }
 
   .cv-document :global(.toolbox--pdf .toolbox__tool) {
-    background-color: var(--color-neutral-white);
+    background-color: #fff;
   }
 
   /* Figma 267:4053: a 64 margin on every side, its blocks 40 apart. */
@@ -335,11 +331,40 @@ const profiles = CV_PROFILES.map((label) => {
     inline-size: 36.6%;
   }
 
-  /* Handoff §12: each entry's mark carries on turning, restarting at the top of
-     each section. Figma −16 is clockwise on screen, so CSS continues it with a
-     positive rotate. */
-  .cv__row :global(.cv-section__mark) {
-    rotate: calc(16deg * var(--cv-mark-index, 0));
+  @media screen and (max-width: 48rem) {
+    .cv {
+      min-inline-size: 0;
+      padding: var(--space-md);
+    }
+
+    .cv > *,
+    .cv__section,
+    .cv__list,
+    .cv__row {
+      min-inline-size: 0;
+    }
+
+    .cv__contact {
+      display: grid;
+      min-inline-size: 0;
+      gap: var(--space-md);
+    }
+
+    .cv__reach,
+    .cv__profiles,
+    .cv__reach li,
+    .cv__profiles li {
+      min-inline-size: 0;
+    }
+
+    .cv__contact a {
+      overflow-wrap: anywhere;
+    }
+
+    .cv__section--education,
+    :global(.cv__tools) {
+      inline-size: 100%;
+    }
   }
 
   /* @page cannot read custom properties. 10.5mm is the proportional inset:

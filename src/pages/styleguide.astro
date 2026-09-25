@@ -34,7 +34,7 @@ import artefact4 from '../assets/styleguide/artefact-4.svg';
 // Everything here is computed at build time from design/tokens.json.
 // No client JS, and no hand-maintained copy of the palette that could go stale.
 
-const shadows = ['sm', 'md', 'lg'];
+const shadows = ['sm', 'md', 'md-lemon', 'lg'];
 
 /** Display name and provenance per style. `inferred` means read off component usage, not yet confirmed in Figma. */
 const TEXT_STYLE_META: Record<string, { name: string; inferred: boolean }> = {
@@ -66,6 +66,15 @@ const demoArtefacts = [
   { src: artefact2, alt: '[placeholder artefact 2]' },
   { src: artefact3, alt: '[placeholder artefact 3]' },
   { src: artefact4, alt: '[placeholder artefact 4]' },
+];
+const previewArtefacts = [...demoArtefacts, demoArtefacts[0], demoArtefacts[1]];
+const previewProjects = [
+  {
+    href: '#h-components',
+    title: '[project title]',
+    caption: '[company]',
+    artefacts: previewArtefacts,
+  },
 ];
 ---
 
@@ -420,19 +429,14 @@ const demoArtefacts = [
         Figma set <code>Chat</code>, node <code>109:1389</code>.
       </p>
       <div class="demo">
-        <ChatBubble type="message" variant="default">
+        <ChatBubble user="talking-head" state="default">
           <p>Hi, my name is Max, nice to meet you!</p>
         </ChatBubble>
-        <ChatBubble type="response" variant="text"
-          >I think this is great</ChatBubble
-        >
-        <ChatBubble type="response" variant="selection">Selected 1</ChatBubble>
-        <ChatBubble type="request" variant="text" href="#h-components"
-          >...</ChatBubble
-        >
-        <ChatBubble type="request" variant="selection" href="#h-components"
-          >Option 1</ChatBubble
-        >
+        <ChatBubble user="visitor" state="default" href="#h-components">
+          Option 1
+        </ChatBubble>
+        <ChatBubble user="user" state="hover">Option 1</ChatBubble>
+        <ChatBubble user="visitor" state="selected">Selected 1</ChatBubble>
       </div>
 
       <h3>User</h3>
@@ -464,6 +468,7 @@ const demoArtefacts = [
       <div class="demo">
         <Icon icon="cursor" alt="Cursor icon" />
         <Icon icon="figma-make" alt="Figma Make icon" />
+        <Icon icon="anthropic" state="hover" alt="Anthropic hover icon" />
       </div>
 
       <h3>Post-it</h3>
@@ -531,6 +536,19 @@ const demoArtefacts = [
           start="2026-03"
           end="2026-10"
           level={4}
+          state="default"
+          projects={previewProjects}
+        >
+          <p>[summary]</p>
+        </CvSection>
+        <CvSection
+          role="[PDF role]"
+          company="[company]"
+          start="2026-03"
+          end="2026-10"
+          level={4}
+          state="pdf"
+          projects={previewProjects}
         >
           <p>[summary]</p>
         </CvSection>
@@ -543,24 +561,36 @@ const demoArtefacts = [
       <div class="demo">
         <ProjectPreview
           id="styleguide-preview-collapsed-small"
+          href="#h-components"
           state="collapsed"
           size="small"
-          caption="[caption]"
+          caption="[company]"
           title="[project title]"
+          artefacts={previewArtefacts}
         />
         <ProjectPreview
           id="styleguide-preview-collapsed-default"
+          href="#h-components"
           state="collapsed"
           size="default"
-          caption="[caption]"
+          caption="[company]"
           title="[project title]"
+          artefacts={previewArtefacts}
         />
         <ProjectPreview
           id="styleguide-preview-exploded-default"
+          href="#h-components"
           state="exploded"
           size="default"
-          caption="[caption]"
+          caption="[company]"
           title="[project title]"
+          artefacts={previewArtefacts}
+        />
+        <ProjectPreview
+          id="styleguide-preview-no-artefacts"
+          size="small"
+          caption="[company]"
+          title="[project without imagery]"
         />
       </div>
 
@@ -710,7 +740,7 @@ const demoArtefacts = [
 
   code {
     font-family: var(--font-mono);
-    font-size: 0.9em;
+    font-size: var(--font-size-sm);
   }
 
   /* Swatches ------------------------------------------------------------- */
@@ -727,7 +757,7 @@ const demoArtefacts = [
 
   .swatches {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(var(--space-3xl), 1fr));
     gap: var(--space-sm);
     padding: 0;
     margin: 0;

@@ -1,0 +1,408 @@
+---
+import { getCollection, type CollectionEntry } from 'astro:content';
+import Avatar from '../../components/Avatar.astro';
+import Button from '../../components/Button.astro';
+import ChatBubble from '../../components/ChatBubble.astro';
+import NavBar from '../../components/NavBar.astro';
+import ProjectSection from '../../components/ProjectSection.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { withBase } from '../../config/site';
+import { renderFrontmatterMarkdown } from '../../lib/markdown';
+
+export async function getStaticPaths() {
+  const projects = await getCollection('projects');
+  return projects.map((entry) => ({
+    params: { slug: entry.id.replace(/\.md$/, '') },
+    props: { entry },
+  }));
+}
+
+interface Props {
+  entry: CollectionEntry<'projects'>;
+}
+
+type CaseSection = NonNullable<
+  CollectionEntry<'projects'>['data']['exploration']
+>;
+interface SectionCandidate {
+  key: string;
+  title: string;
+  section?: CaseSection;
+}
+
+const { entry } = Astro.props;
+const contextHtml = entry.data.context
+  ? await renderFrontmatterMarkdown(entry.data.context.description)
+  : '';
+const hmwHtml = entry.data.hmw
+  ? await renderFrontmatterMarkdown(entry.data.hmw.description)
+  : '';
+const sectionCandidates: SectionCandidate[] = [
+  {
+    key: 'exploration',
+    title: 'Exploration',
+    section: entry.data.exploration,
+  },
+  { key: 'definition', title: 'Definition', section: entry.data.definition },
+  {
+    key: 'development',
+    title: 'Development',
+    section: entry.data.development,
+  },
+  { key: 'feedback', title: 'Feedback', section: entry.data.feedback },
+  { key: 'learning', title: 'Learning', section: entry.data.learning },
+  {
+    key: 'behind-the-scenes',
+    title: 'Behind the scenes',
+    section: entry.data.behindTheScenes,
+  },
+];
+const presentSections = sectionCandidates.filter(
+  (candidate): candidate is SectionCandidate & { section: CaseSection } =>
+    Boolean(candidate.section),
+);
+const sections = await Promise.all(
+  presentSections.map(async (candidate) => ({
+    ...candidate,
+    html: await renderFrontmatterMarkdown(candidate.section.description),
+  })),
+);
+const projectsHref = withBase('/projects');
+---
+
+<BaseLayout title={entry.data.title} description={entry.data.summary}>
+  <script is:inline slot="head">
+    document.documentElement.classList.add('js');
+  </script>
+
+  <main id="main" class="project-page">
+    <h1 class="visually-hidden">{entry.data.title}</h1>
+
+    <section
+      class="container project-intro"
+      aria-labelledby="project-intro-title"
+    >
+      <h2 id="project-intro-title" class="visually-hidden">
+        Introduction to {entry.data.title}
+      </h2>
+
+      <div class="project-intro__transcript">
+        <div class="project-page__back">
+          <Button type="secondary" href={projectsHref}>
+            ← Back to projects
+          </Button>
+        </div>
+
+        <div class="project-intro__conversation">
+          <ol class="project-intro__thread">
+            <li class="project-intro__row" data-chat-row>
+              <Avatar user="max" class="project-intro__avatar" />
+              <ChatBubble
+                user="talking-head"
+                state="default"
+                class="project-intro__bubble"
+              >
+                <p data-type>
+                  Excited to tell you more about the project {entry.data.title}!
+                </p>
+                <p data-type>Let me quickly summarise what this was about:</p>
+                {
+                  contextHtml && (
+                    <div
+                      class="project-intro__markdown"
+                      data-type
+                      set:html={contextHtml}
+                    />
+                  )
+                }
+              </ChatBubble>
+            </li>
+
+            {
+              hmwHtml && (
+                <li class="project-intro__row" data-chat-row>
+                  <ChatBubble
+                    user="talking-head"
+                    state="default"
+                    class="project-intro__bubble"
+                  >
+                    <p data-type>Which resulted in the question:</p>
+                    <div
+                      class="project-intro__markdown"
+                      data-type
+                      set:html={hmwHtml}
+                    />
+                  </ChatBubble>
+                </li>
+              )
+            }
+
+            <li class="project-intro__row" data-chat-row>
+              <ChatBubble
+                user="talking-head"
+                state="default"
+                class="project-intro__bubble"
+              >
+                <p data-type>Enough from me, where do you want to start?</p>
+                <p data-type>Or do you want to read through it by yourself?</p>
+              </ChatBubble>
+            </li>
+          </ol>
+
+          <nav aria-label="Choose a case-study section">
+            <ul class="project-intro__choices" data-chat-choices>
+              <li>
+                <ChatBubble
+                  user="visitor"
+                  state="default"
+                  href="#case-study"
+                  data-reveal-details
+                >
+                  I’ll explore myself!
+                </ChatBubble>
+              </li>
+              {
+                sections.map((section) => (
+                  <li>
+                    <ChatBubble
+                      user="visitor"
+                      state="default"
+                      href={`#${section.key}`}
+                      data-reveal-details
+                    >
+                      {section.title}
+                    </ChatBubble>
+                  </li>
+                ))
+              }
+            </ul>
+          </nav>
+        </div>
+      </div>
+    </section>
+
+    <article id="case-study" class="container project-details">
+      <div class="project-details__sections">
+        {
+          sections.map((section) => (
+            <div
+              id={section.key}
+              class="project-details__section"
+              data-focus-section
+            >
+              <ProjectSection
+                title={section.title}
+                subtitle={section.section.subtitle}
+                artefacts={section.section.artefacts}
+                keyPoints={section.section.keyPoints}
+                level={2}
+                state="active"
+              >
+                <Fragment set:html={section.html} />
+              </ProjectSection>
+            </div>
+          ))
+        }
+      </div>
+
+      <div class="project-page__back">
+        <Button type="secondary" href={projectsHref}>← Back to projects</Button>
+      </div>
+    </article>
+  </main>
+
+  <NavBar mode="dark" label="Site" />
+</BaseLayout>
+
+<style>
+  :global(body:has(.project-page)) {
+    background-color: var(--color-neutral-white);
+  }
+
+  .project-intro {
+    display: flex;
+    min-block-size: 100svh;
+    padding-block: var(--space-2xl);
+  }
+
+  .project-intro__transcript {
+    display: grid;
+    gap: var(--space-md);
+    width: 100%;
+    margin: auto;
+  }
+
+  .project-intro__conversation {
+    display: grid;
+    gap: var(--space-md);
+    width: 100%;
+    max-width: calc(8 * var(--grid-column) + 7 * var(--grid-gutter));
+    margin-inline: auto;
+  }
+
+  .project-intro__thread,
+  .project-intro__choices {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .project-intro__thread {
+    display: grid;
+    gap: var(--space-md);
+  }
+
+  .project-intro__transcript,
+  .project-intro__conversation,
+  .project-intro__thread,
+  .project-intro__row {
+    min-inline-size: 0;
+  }
+
+  .project-intro__row {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-md);
+  }
+
+  .project-intro__row :global(.project-intro__avatar) {
+    flex-shrink: 0;
+  }
+
+  .project-intro__row :global(.project-intro__bubble) {
+    min-inline-size: 0;
+    overflow-wrap: anywhere;
+  }
+
+  .project-intro__row :global(.project-intro__bubble) > p,
+  .project-intro__markdown :global(p) {
+    max-width: none;
+  }
+
+  .project-intro__choices {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    width: 100%;
+    max-width: calc(6 * var(--grid-column) + 5 * var(--grid-gutter));
+    margin-inline-start: auto;
+    gap: var(--space-xs);
+  }
+  :global(html.js) [data-chat-row],
+  :global(html.js) [data-chat-choices] {
+    visibility: hidden;
+    opacity: 0;
+  }
+
+  :global(html.js) [data-arrived] {
+    visibility: visible;
+    animation: project-chat-arrive var(--duration-base) var(--easing-entrance)
+      both;
+  }
+
+  @keyframes project-chat-arrive {
+    from {
+      opacity: 0;
+      transform: translateY(var(--space-md));
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .project-page__back {
+    justify-self: start;
+  }
+
+  @media (max-width: 48rem) {
+    .project-intro__row :global(.project-intro__bubble) {
+      flex: 1 1 0;
+      inline-size: auto;
+      word-break: break-all;
+    }
+  }
+
+  :global(html.js) .project-details:not([data-revealed]) {
+    display: none;
+  }
+
+  .project-details {
+    display: grid;
+    gap: var(--space-3xl);
+    padding-block: var(--space-2xl);
+    scroll-margin-block-start: var(--space-xl);
+  }
+
+  .project-details__sections {
+    display: grid;
+    gap: var(--space-3xl);
+  }
+
+  .project-details__section {
+    scroll-margin-block-start: var(--space-xl);
+  }
+</style>
+
+<script>
+  import { BETWEEN, PER_CHAR, type } from '../../lib/chat-typing';
+  import { observeFocusBand } from '../../lib/focus-dim';
+  const details = document.querySelector<HTMLElement>('.project-details');
+  const reveal = () => details?.setAttribute('data-revealed', '');
+  const revealAndScroll = (chip: HTMLAnchorElement) => {
+    reveal();
+    const target = document.querySelector<HTMLElement>(chip.hash);
+    requestAnimationFrame(() => target?.scrollIntoView());
+  };
+  document
+    .querySelectorAll<HTMLAnchorElement>('[data-reveal-details]')
+    .forEach((chip) =>
+      chip.addEventListener('click', () => revealAndScroll(chip)),
+    );
+  if (location.hash.length > 1) {
+    reveal();
+    requestAnimationFrame(() =>
+      document.querySelector<HTMLElement>(location.hash)?.scrollIntoView(),
+    );
+  }
+
+  const still = matchMedia('(prefers-reduced-motion: reduce)');
+  const rows = document.querySelectorAll<HTMLElement>('[data-chat-row]');
+  const choices = document.querySelector<HTMLElement>('[data-chat-choices]');
+  const ENTRANCE = 240; // --duration-base: the bubble's own arrival
+  const arrive = (element: HTMLElement, delay: number) =>
+    window.setTimeout(() => {
+      element.dataset.arrived = '';
+    }, delay);
+
+  if (still.matches) {
+    rows.forEach((row) => {
+      row.dataset.arrived = '';
+    });
+    if (choices) choices.dataset.arrived = '';
+  } else {
+    let delay = 0;
+    for (const row of rows) {
+      arrive(row, delay);
+      delay += ENTRANCE;
+
+      for (const paragraph of row.querySelectorAll<HTMLElement>(
+        '[data-type]',
+      )) {
+        type(paragraph, delay);
+        delay +=
+          Array.from(paragraph.textContent ?? '').length * PER_CHAR + BETWEEN;
+      }
+    }
+
+    if (choices) arrive(choices, delay);
+  }
+  const focusSections = document.querySelectorAll<HTMLElement>(
+    '[data-focus-section]',
+  );
+  observeFocusBand(focusSections, (wrapper, active) => {
+    const section = wrapper.querySelector<HTMLElement>('.project-section');
+    section?.classList.toggle('project-section--active', active);
+    section?.classList.toggle('project-section--inactive', !active);
+  });
+</script>
