@@ -1,6 +1,6 @@
 ---
 role: 'Digitalization & Innovation'
-company: 'Berliner Bau- und Wohnungsgenossenschaft von 1892 eG'
+company: 'BBWO 1892 eG'
 kind: work
 start: '2024-05'
 end: '2025-09'

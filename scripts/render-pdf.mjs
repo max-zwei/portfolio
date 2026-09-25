@@ -127,9 +127,11 @@ try {
     await page.goto(`http://127.0.0.1:${port}${base}${doc.route}`, {
       waitUntil: 'networkidle',
     });
+    // Print media first: a face used only by @media print is not requested
+    // until then, and document.fonts.ready would resolve without it.
+    await page.emulateMedia({ media: 'print' });
     // Self-hosted fonts load late enough to miss the print if we don't wait.
     await page.evaluate(() => document.fonts.ready);
-    await page.emulateMedia({ media: 'print' });
 
     await mkdir(dirname(output), { recursive: true });
     await page.pdf({

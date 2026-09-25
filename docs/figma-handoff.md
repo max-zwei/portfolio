@@ -37,6 +37,7 @@ prose document that reads the `resume` collection, so it fills section 4.
 | 10 Motion         | anything moves                                              | nothing moves — write `none`                  |
 | 11 Responsive     | always                                                      | never                                         |
 | 12 Open questions | always                                                      | never                                         |
+| 13 PDF rendering  | the page prints to PDF — `/resume/cv`, `/handshake`         | it only ever exists on screen                 |
 
 ## The template
 
@@ -109,6 +110,22 @@ Anything drawn here that is not a library set: [ ] no [ ] yes: ____________
 12 OPEN QUESTIONS — deliberately undecided
 - ____________
 (nothing open: write none)
+
+13 PDF RENDERING — prose documents that print; otherwise: n/a
+Renderer: HTML/CSS -> Chromium PDF, scale 1
+Paper: A4 portrait, 210 x 297mm
+Figma full-sheet frame: 793.7007874 x 1122.5196850
+Units: 1 Figma unit = 1 CSS px; no manual px-to-pt conversion
+Margins: owned by @page; guides mark the same content rectangle
+Calibration margin: 10.5mm = 39.68503937 Figma units on each side
+Type: exact installed/self-hosted font versions and weights
+Text: fixed content width, auto height, explicit numeric line height and tracking
+Flow: normal entries stay together; over-page entries may fragment
+Headings: keep with the beginning of their section
+Overflow: continue onto another sheet; never truncate or shrink to fit
+Hard page breaks: only where explicitly marked in the print design
+Motion: none
+Authority: Figma print composition; Chromium-generated PDF is the physical proof
 ```
 
 The options are the repo's own vocabulary, so they are picked, not substituted:
@@ -121,20 +138,21 @@ decided alone.
 
 ## Why each section is asked
 
-| Section           | Why it is asked                                                                                     |
-| ----------------- | --------------------------------------------------------------------------------------------------- |
-| 1 Archetype       | Decides routing and what has to survive testing.                                                    |
-| 2 What this is    | The question that cost two rewrites on `/home`.                                                     |
-| 3 Frame index     | Stops a frame being read as a page — a frame is a still, and of what is not always visible.         |
-| 4 Content map     | The frame shows one filled-in example; the code faces zero, one and many.                           |
-| 5 Flow            | The whole `/home` graph was reconstructed from button labels, because no frames were wired.         |
-| 6 Link map        | Six chips on `/home` still 404; a link with no page needs a decision, not a guess.                  |
-| 7 Copy            | A `…` run read as final text once; placeholders have a convention, so use it.                       |
-| 8 Components      | Pairs with the library drift check in Step 4 of the skill and `design/components.json`.             |
-| 9 States          | Every state invented on `/home` was one the frames had not drawn.                                   |
-| 10 Motion         | Three prose sentences covered a whole page's motion last time, and it was not enough to build from. |
-| 11 Responsive     | The `Mobile` frame is empty, so everything below `48rem` on `/home` is unreviewed.                  |
-| 12 Open questions | So the next read asks instead of invents.                                                           |
+| Section           | Why it is asked                                                                                                                             |
+| ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1 Archetype       | Decides routing and what has to survive testing.                                                                                            |
+| 2 What this is    | The question that cost two rewrites on `/home`.                                                                                             |
+| 3 Frame index     | Stops a frame being read as a page — a frame is a still, and of what is not always visible.                                                 |
+| 4 Content map     | The frame shows one filled-in example; the code faces zero, one and many.                                                                   |
+| 5 Flow            | The whole `/home` graph was reconstructed from button labels, because no frames were wired.                                                 |
+| 6 Link map        | Six chips on `/home` still 404; a link with no page needs a decision, not a guess.                                                          |
+| 7 Copy            | A `…` run read as final text once; placeholders have a convention, so use it.                                                               |
+| 8 Components      | Pairs with the library drift check in Step 4 of the skill and `design/components.json`.                                                     |
+| 9 States          | Every state invented on `/home` was one the frames had not drawn.                                                                           |
+| 10 Motion         | Three prose sentences covered a whole page's motion last time, and it was not enough to build from.                                         |
+| 11 Responsive     | The `Mobile` frame is empty, so everything below `48rem` on `/home` is unreviewed.                                                          |
+| 12 Open questions | So the next read asks instead of invents.                                                                                                   |
+| 13 PDF rendering  | Paper is a second medium with its own geometry, and a sheet drawn in the wrong coordinate system is the one error a screenshot cannot show. |
 
 ## What not to put in it
 
@@ -146,6 +164,10 @@ decided alone.
   records what, not why.
 - **Nothing the template did not ask for.** If an answer is "nothing", write
   `none` — that is a complete answer, and it is shorter than a paragraph.
+- **Section 13 is the exception to the first bullet.** Its numbers are facts
+  about the medium — paper size, the sheet's Figma dimensions, the unit
+  convention — not token values. Type sizes, colours and spacing still come
+  from the variables.
 
 ---
 

@@ -308,11 +308,9 @@
       "The page grid — 10 columns, 24 gutter, 96 margin on the 1280 frames; 5/16/24 on the 375 Mobile frames. A layout grid is not a variable, so --grid-frame/--grid-margin/--grid-columns/--grid-gutter/--grid-column live only in src/styles/tokens.css.",
       "The CV section divider line (`476:513`) and ProjectSection progress rail (`115:755`) each use a transcribed 1px stroke; no --border-width-* tier exists.",
       "The triangle mark's 29.686 drawn box (`476:1350`) — rounded to 30 in Icon.astro, as the NavBar marks are.",
-      "The /resume/cv header mark size 18px (Figma 477:2404, 477:2385) — a drawn size with no token.",
-      "The /resume/cv Education section width, 75.2% of the content column (Figma 477:1955, 866 of 1152) — a ratio, not the 866 pixel value, because A4 is a narrower sheet than the 1280 frame.",
-      "The /resume/cv Tech & Tools width, 36.6% of the content column (Figma 477:1961, 422 of 1152) — the same four-of-ten columns /resume gives it, again a ratio.",
+      "The /resume/cv header mark size 12px (Figma 477:2404, 477:2385) — a drawn size with no token.",
       "The CV section State=PDF logo box is 40 × 26 (Figma 477:2203); the code transcribes its 26px block size so the 30 mark centres against the title row.",
-      "The /resume/cv @page margin, 16.9mm — the frame's 64px margin (space/xl) converted to the print unit @page requires, since @page cannot read custom properties.",
+      "The /resume/cv @page margin, 10.5mm — the 39.68503937-unit inset on the A4 sheet 267:4053, converted to the print unit @page requires, since @page cannot read custom properties.",
       "The 1px table, section and swatch rules in ProseLayout, /behind-the-scenes and /styleguide — document geometry with no --border-width-* token tier.",
       "The /playground scattered-card coordinates (986,32; 430,332; 763,406; 1101,482) — page placement read from the Figma canvas, with no layout-position token tier.",
       "CvSection's cumulative triangle turn (16deg per entry) and PostIt's 8deg hover delta — interaction geometry approved in their Figma/component behavior, with no angle token tier."
