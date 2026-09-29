@@ -106,6 +106,22 @@ every colour against every background it actually sits on, which is the check.
 A dark mode would be a genuine refactor rather than a remap, should it
 ever be wanted."
 
+## Chat and collection navigation
+
+- On `/` and `/home`, clicking ordinary transcript content reveals the active
+  response and its choices immediately. Enter or Space does the same when the
+  active section is focused. Links keep their native behaviour, and later
+  responses still animate normally. Reduced motion shows responses immediately;
+  without JavaScript, the complete content and hash choices remain available.
+- Recommendations use internal `/projects/<slug>` and
+  `/playground#<slug>` destinations. A playground fragment focuses and brings
+  the matching card wrapper into view without flipping it or activating its
+  external links.
+- On desktop, `/projects` and `/playground` support horizontal and vertical
+  wheel or trackpad panning, plus arrow-key panning while the canvas is focused.
+  Focusing a card brings it into view. Mobile and no-JavaScript navigation use
+  native scrolling instead.
+
 ## Note to myself: How to add content?
 
 Either through the CMS (`/admin`) or by hand: create
