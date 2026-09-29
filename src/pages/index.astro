@@ -191,7 +191,7 @@ const STEPS: Step[] = [
           [
             {
               text: 'How might we rebrand our marketing material?',
-              href: withBase('/projects'),
+              href: withBase('/projects/tailored-butler'),
             },
           ],
         ],
@@ -368,23 +368,22 @@ const tags = (m: {
  * Everything the questionnaire can point at, flattened for the client — the
  * answers only exist in the browser, so the matching has to happen there.
  *
- * `href` is what resolves *today*: the section pages for projects, playground
- * and inspiration do not exist yet, so an entry without an external link is
- * named without being linked rather than pointed at a 404. When those routes
- * land, this is the one place to change. Individual curiosities stay unlinked
- * too: /curious is the section placeholder, not an entry-detail route.
+ * Project evidence links to its case-study route, playground evidence to its
+ * card on the playground index, and inspiration evidence to its source.
+ * Individual curiosities stay unlinked: /curious is the section placeholder,
+ * not an entry-detail route.
  */
 const EVIDENCE: Entry[] = [
   ...(await getCollection('projects')).map((e) => ({
     collection: 'projects' as const,
     label: e.data.title,
-    href: e.data.figmaUrl ?? e.data.repoUrl ?? null,
+    href: withBase(`/projects/${e.id.replace(/\.md$/, '')}`),
     tags: tags(e.data.match),
   })),
   ...(await getCollection('playground')).map((e) => ({
     collection: 'playground' as const,
     label: e.data.title,
-    href: e.data.additionalUrl ?? e.data.githubUrl ?? e.data.figmaUrl ?? null,
+    href: withBase(`/playground#${e.id.replace(/\.md$/, '')}`),
     tags: tags(e.data.match),
   })),
   ...(await getCollection('inspiration')).map((e) => ({
@@ -640,6 +639,18 @@ const EVIDENCE: Entry[] = [
     animation-delay: var(--row-start, 0ms);
   }
 
+  .chat__step--revealed .chat__row,
+  .chat__step--revealed > .chat__choices {
+    opacity: 1;
+    transform: none;
+    animation: none;
+  }
+
+  .chat__transcript .chat__step--revealed :global(.chat__char) {
+    opacity: 1;
+    animation: none;
+  }
+
   @keyframes chat-arrive {
     from {
       opacity: 0;
@@ -686,6 +697,12 @@ const EVIDENCE: Entry[] = [
 
   .chat__transcript :global(.chat__bubble) a {
     color: var(--color-tomato-500);
+    transition: color var(--duration-fast) var(--easing-standard);
+  }
+
+  .chat__transcript :global(.chat__bubble) a:is(:hover, :focus-visible) {
+    color: var(--color-tomato-600);
+    letter-spacing: var(--letter-spacing-wide);
   }
 
   /*
@@ -770,6 +787,43 @@ const EVIDENCE: Entry[] = [
     const still = matchMedia('(prefers-reduced-motion: reduce)');
 
     const ENTRANCE = 240; // --duration-base: the bubble's own arrival
+    const scheduled = new Map<
+      HTMLElement,
+      Set<ReturnType<typeof setTimeout>>
+    >();
+    const pending = new Set<HTMLElement>();
+    let activeStep: HTMLElement | null = null;
+
+    const remember = (
+      stepEl: HTMLElement,
+      handle: ReturnType<typeof setTimeout>,
+    ) => {
+      const handles =
+        scheduled.get(stepEl) ?? new Set<ReturnType<typeof setTimeout>>();
+      handles.add(handle);
+      scheduled.set(stepEl, handles);
+    };
+
+    const forget = (
+      stepEl: HTMLElement,
+      handle: ReturnType<typeof setTimeout>,
+    ) => {
+      const handles = scheduled.get(stepEl);
+      handles?.delete(handle);
+      if (!handles?.size) scheduled.delete(stepEl);
+    };
+
+    const schedule = (
+      stepEl: HTMLElement,
+      at: number,
+      callback: () => void,
+    ) => {
+      const handle = setTimeout(() => {
+        forget(stepEl, handle);
+        callback();
+      }, at);
+      remember(stepEl, handle);
+    };
 
     const play = (stepEl: HTMLElement) => {
       if (stepEl.dataset.played) return;
@@ -782,6 +836,7 @@ const EVIDENCE: Entry[] = [
       }
 
       stepEl.classList.add('chat__step--typed');
+      pending.add(stepEl);
 
       // Walk blocks, not paragraphs: a container appears when its own first
       // character is about to, so the conversation arrives one message at a
@@ -794,7 +849,7 @@ const EVIDENCE: Entry[] = [
       const blocks = stepEl.querySelectorAll<HTMLElement>('.chat__row');
       for (const block of blocks) {
         block.style.setProperty('--row-start', `${delay}ms`);
-        follow(delay + ENTRANCE);
+        follow(stepEl, delay + ENTRANCE);
         // Let the bubble settle before its first character lands.
         delay += ENTRANCE;
         for (const p of block.querySelectorAll<HTMLElement>('[data-type]')) {
@@ -808,7 +863,9 @@ const EVIDENCE: Entry[] = [
       stepEl
         .querySelector<HTMLElement>(':scope > .chat__choices')
         ?.style.setProperty('--row-start', `${delay}ms`);
-      follow(delay + ENTRANCE);
+      const end = delay + ENTRANCE;
+      schedule(stepEl, end, () => pending.delete(stepEl));
+      follow(stepEl, end);
     };
 
     /** What the visitor last said, and every answer the questions collected. */
@@ -858,15 +915,27 @@ const EVIDENCE: Entry[] = [
       { passive: true },
     );
 
-    const follow = (at: number) => {
-      setTimeout(() => {
+    const scrollToEnd = () => {
+      ours = performance.now() + 900; // long enough to cover the glide
+      scrollTo({
+        top: document.body.scrollHeight,
+        behavior: still.matches ? 'auto' : 'smooth',
+      });
+    };
+
+    const follow = (stepEl: HTMLElement, at: number) => {
+      schedule(stepEl, at, () => {
         if (!pinned) return;
-        ours = performance.now() + 900; // long enough to cover the glide
-        scrollTo({
-          top: document.body.scrollHeight,
-          behavior: still.matches ? 'auto' : 'smooth',
-        });
-      }, at);
+        scrollToEnd();
+      });
+    };
+
+    const finish = (stepEl: HTMLElement, followNow = true): void => {
+      const wasPending = pending.delete(stepEl);
+      for (const handle of scheduled.get(stepEl) ?? []) clearTimeout(handle);
+      scheduled.delete(stepEl);
+      stepEl.classList.add('chat__step--revealed');
+      if (wasPending && followNow && pinned) scrollToEnd();
     };
 
     /**
@@ -912,6 +981,11 @@ const EVIDENCE: Entry[] = [
       const stepEl = waiting.get(id);
       if (!stepEl) return;
 
+      if (activeStep && activeStep !== stepEl && pending.has(activeStep)) {
+        finish(activeStep, false);
+      }
+      activeStep = stepEl;
+
       const revisiting = stepEl.parentElement === transcript;
       // Back navigation keeps the transcript where it happened, but unlocks a
       // question so its answer can be replaced. The result is the exception:
@@ -953,7 +1027,15 @@ const EVIDENCE: Entry[] = [
         );
       }
       said = [];
-      if (id === 'step-result') fillResult(stepEl);
+      if (id === 'step-result') {
+        if (revisiting) {
+          finish(stepEl, false);
+          stepEl
+            .querySelector<HTMLElement>(':scope > .chat__choices')
+            ?.removeAttribute('hidden');
+        }
+        fillResult(stepEl);
+      }
 
       if (!revisiting) {
         transcript?.append(stepEl);
@@ -976,6 +1058,44 @@ const EVIDENCE: Entry[] = [
       const axis = link.closest<HTMLElement>('[data-axis]')?.dataset.axis as
         AxisId | undefined;
       if (axis) picks.set(axis, { axis, id: link.dataset.value, label });
+    });
+
+    transcript?.addEventListener('click', (event) => {
+      if (
+        event.button !== 0 ||
+        event.metaKey ||
+        event.ctrlKey ||
+        event.altKey ||
+        event.shiftKey ||
+        !activeStep ||
+        !pending.has(activeStep)
+      )
+        return;
+
+      const target = event.target;
+      const selection = getSelection();
+      if (
+        !(target instanceof Element) ||
+        target.closest(
+          'a, button, input, textarea, select, summary, [contenteditable]',
+        ) ||
+        (selection && !selection.isCollapsed)
+      )
+        return;
+
+      finish(activeStep);
+    });
+
+    transcript?.addEventListener('keydown', (event) => {
+      if (
+        !activeStep ||
+        event.target !== activeStep ||
+        (event.key !== 'Enter' && event.key !== ' ') ||
+        !pending.has(activeStep)
+      )
+        return;
+      if (event.key === ' ') event.preventDefault();
+      finish(activeStep);
     });
 
     addEventListener('hashchange', () =>

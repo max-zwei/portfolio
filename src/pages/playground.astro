@@ -81,7 +81,9 @@ const handshakeHref = withBase('/handshake');
             const slug = entry.id.replace(/\.md$/, '');
             return (
               <div
+                id={slug}
                 class="playground__card"
+                tabindex="-1"
                 style={`--card-x: ${position.x}px; --card-y: ${position.y}px`}
               >
                 <FlipCard
@@ -294,6 +296,50 @@ const handshakeHref = withBase('/handshake');
       world.style.transform = `translate3d(${x}px, ${y}px, 0)`;
     };
 
+    const bringCardIntoView = (card: HTMLElement): void => {
+      const canvasBounds = viewport.getBoundingClientRect();
+      const cardBounds = card.getBoundingClientRect();
+      if (cardBounds.left < canvasBounds.left)
+        x += canvasBounds.left - cardBounds.left;
+      if (cardBounds.right > canvasBounds.right)
+        x -= cardBounds.right - canvasBounds.right;
+      if (cardBounds.top < canvasBounds.top)
+        y += canvasBounds.top - cardBounds.top;
+      if (cardBounds.bottom > canvasBounds.bottom)
+        y -= cardBounds.bottom - canvasBounds.bottom;
+      render();
+    };
+
+    const revealHashTarget = (): void => {
+      if (!location.hash) return;
+
+      let id: string;
+      try {
+        id = decodeURIComponent(location.hash.slice(1));
+      } catch {
+        return;
+      }
+
+      const target = document.getElementById(id);
+      if (
+        !(target instanceof HTMLElement) ||
+        !target.classList.contains('playground__card') ||
+        !world.contains(target)
+      )
+        return;
+
+      if (smallViewport.matches) {
+        target.scrollIntoView({
+          block: 'nearest',
+          inline: 'nearest',
+          behavior: 'instant' as ScrollBehavior,
+        });
+      } else {
+        bringCardIntoView(target);
+      }
+      target.focus({ preventScroll: true });
+    };
+
     viewport.addEventListener(
       'wheel',
       (event) => {
@@ -328,17 +374,7 @@ const handshakeHref = withBase('/handshake');
         '.playground__card',
       );
       if (!card) return;
-      const canvasBounds = viewport.getBoundingClientRect();
-      const cardBounds = card.getBoundingClientRect();
-      if (cardBounds.left < canvasBounds.left)
-        x += canvasBounds.left - cardBounds.left;
-      if (cardBounds.right > canvasBounds.right)
-        x -= cardBounds.right - canvasBounds.right;
-      if (cardBounds.top < canvasBounds.top)
-        y += canvasBounds.top - cardBounds.top;
-      if (cardBounds.bottom > canvasBounds.bottom)
-        y -= cardBounds.bottom - canvasBounds.bottom;
-      render();
+      bringCardIntoView(card);
     });
 
     const syncMode = () => {
@@ -355,8 +391,13 @@ const handshakeHref = withBase('/handshake');
         render();
       }
     };
-    smallViewport.addEventListener('change', syncMode);
+    window.addEventListener('hashchange', revealHashTarget);
+    smallViewport.addEventListener('change', () => {
+      syncMode();
+      requestAnimationFrame(() => requestAnimationFrame(revealHashTarget));
+    });
     syncMode();
+    revealHashTarget();
   }
 
   if (chat && sentinel && viewport && 'IntersectionObserver' in window) {
