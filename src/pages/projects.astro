@@ -24,29 +24,35 @@ const projectArtefacts = (project: (typeof projects)[number]) =>
 ---
 
 <BaseLayout title="Projects">
+  <script is:inline slot="head">
+    document.documentElement.classList.add('js');
+  </script>
+
   <main id="main" class="projects">
     <h1 class="visually-hidden">Projects</h1>
-    <div class="projects__canvas container">
-      {
-        projects.map((entry) => {
-          const slug = entry.id.replace(/\.md$/, '');
-          return (
-            <div class="projects__row">
-              <ProjectPreview
-                id={`project-${slug}`}
-                caption={entry.data.company}
-                title={entry.data.hmw?.description.trim() ?? entry.data.title}
-                artefacts={projectArtefacts(entry)}
-                href={withBase(`/projects/${slug}`)}
-                state="collapsed"
-                size="default"
-                class="project-preview--index"
-              />
-            </div>
-          );
-        })
-      }
-    </div>
+    <section class="projects__viewport" data-canvas aria-label="Projects">
+      <div class="projects__canvas container" data-world>
+        {
+          projects.map((entry) => {
+            const slug = entry.id.replace(/\.md$/, '');
+            return (
+              <div class="projects__row">
+                <ProjectPreview
+                  id={`project-${slug}`}
+                  caption={entry.data.company}
+                  title={entry.data.hmw?.description.trim() ?? entry.data.title}
+                  artefacts={projectArtefacts(entry)}
+                  href={withBase(`/projects/${slug}`)}
+                  state="collapsed"
+                  size="default"
+                  class="project-preview--index"
+                />
+              </div>
+            );
+          })
+        }
+      </div>
+    </section>
   </main>
 
   <NavBar mode="dark" label="Site" />
@@ -62,6 +68,22 @@ const projectArtefacts = (project: (typeof projects)[number]) =>
     display: grid;
     gap: var(--space-xl);
     padding-block: var(--space-3xl);
+  }
+
+  :global(html.js) .projects__viewport {
+    position: relative;
+    block-size: calc(
+      100svh - var(--space-3xl) - var(--space-xl) - var(--space-xs)
+    );
+    overflow: hidden;
+  }
+
+  :global(html.js) .projects__canvas {
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline: 0;
+    transform-origin: left top;
+    will-change: transform;
   }
 
   .projects__row {
@@ -83,4 +105,130 @@ const projectArtefacts = (project: (typeof projects)[number]) =>
   .projects__row:focus-within {
     z-index: 1;
   }
+
+  @media (max-width: 48rem) {
+    :global(html.js) .projects__viewport {
+      block-size: auto;
+      overflow-x: auto;
+    }
+
+    :global(html.js) .projects__canvas {
+      position: static;
+      transform: none !important;
+    }
+  }
 </style>
+
+<script>
+  const viewport = document.querySelector<HTMLElement>('[data-canvas]');
+  const world = document.querySelector<HTMLElement>('[data-world]');
+
+  if (viewport && world) {
+    const smallViewport = matchMedia('(max-width: 48rem)');
+    let x = 0;
+    let y = 0;
+    const measure = document.createElement('span');
+    measure.style.cssText =
+      'position:absolute;inline-size:var(--space-lg);visibility:hidden';
+    viewport.append(measure);
+    const panStep = measure.getBoundingClientRect().width;
+    measure.remove();
+
+    const render = () => {
+      world.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+    };
+
+    const isEditableTarget = (target: EventTarget | null) =>
+      target instanceof Element &&
+      Boolean(target.closest('input, textarea, select, [contenteditable]'));
+
+    const bringPreviewIntoView = (preview: HTMLElement) => {
+      const canvasBounds = viewport.getBoundingClientRect();
+      const previewBounds = preview.getBoundingClientRect();
+      if (previewBounds.left < canvasBounds.left)
+        x += canvasBounds.left - previewBounds.left;
+      if (previewBounds.right > canvasBounds.right)
+        x -= previewBounds.right - canvasBounds.right;
+      if (previewBounds.top < canvasBounds.top)
+        y += canvasBounds.top - previewBounds.top;
+      if (previewBounds.bottom > canvasBounds.bottom)
+        y -= previewBounds.bottom - canvasBounds.bottom;
+      render();
+    };
+    let focusedPreview: HTMLElement | null = null;
+    const focusObserver = new ResizeObserver(() => {
+      if (
+        smallViewport.matches ||
+        !focusedPreview ||
+        !focusedPreview.contains(document.activeElement)
+      )
+        return;
+      bringPreviewIntoView(focusedPreview);
+    });
+
+    const watchFocusedPreview = (preview: HTMLElement) => {
+      focusedPreview = preview;
+      focusObserver.disconnect();
+      focusObserver.observe(preview);
+      bringPreviewIntoView(preview);
+    };
+
+    viewport.addEventListener(
+      'wheel',
+      (event) => {
+        if (smallViewport.matches || isEditableTarget(event.target)) return;
+        event.preventDefault();
+        x -= event.deltaX;
+        y -= event.deltaY;
+        render();
+      },
+      { passive: false },
+    );
+
+    viewport.addEventListener('keydown', (event) => {
+      if (
+        smallViewport.matches ||
+        event.target !== viewport ||
+        isEditableTarget(event.target)
+      )
+        return;
+      const movement: Record<string, [number, number]> = {
+        ArrowLeft: [panStep, 0],
+        ArrowRight: [-panStep, 0],
+        ArrowUp: [0, panStep],
+        ArrowDown: [0, -panStep],
+      };
+      const delta = movement[event.key];
+      if (!delta) return;
+      event.preventDefault();
+      x += delta[0];
+      y += delta[1];
+      render();
+    });
+
+    viewport.addEventListener('focusin', (event) => {
+      if (smallViewport.matches || !(event.target instanceof Element)) return;
+      const preview = event.target.closest<HTMLElement>(
+        '.project-preview--index',
+      );
+      if (!preview || !world.contains(preview)) return;
+      watchFocusedPreview(preview);
+    });
+    const syncMode = () => {
+      if (smallViewport.matches) {
+        viewport.removeAttribute('tabindex');
+        viewport.setAttribute('aria-label', 'Projects');
+        world.style.removeProperty('transform');
+      } else {
+        viewport.tabIndex = 0;
+        viewport.setAttribute(
+          'aria-label',
+          'Explorable projects canvas. Use a trackpad, mouse wheel, or arrow keys to pan.',
+        );
+        render();
+      }
+    };
+    smallViewport.addEventListener('change', syncMode);
+    syncMode();
+  }
+</script>
