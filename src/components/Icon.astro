@@ -1,12 +1,23 @@
 ---
 /** Figma component set `Icons` (`109:1374`). */
 import { withBase } from '../config/site';
+import square from './assets/icons/square.svg?url';
+import perplexity from './assets/icons/perplexity.svg?url';
+import anthropic from './assets/icons/anthropic.svg?url';
+import openai from './assets/icons/openai.svg?url';
+import figma from './assets/icons/figma.svg?url';
+import github from './assets/icons/github.svg?url';
+import dribbble from './assets/icons/dribbble.svg?url';
+import behance from './assets/icons/behance.svg?url';
+import linkedin from './assets/icons/linkedin.svg?url';
 
 export type IconName =
   | 'cursor'
   | 'figma-make'
   | 'download'
   | 'share'
+  | 'circle'
+  | 'square'
   | 'triangle'
   | 'mail'
   | 'phone'
@@ -25,7 +36,7 @@ interface Props {
   icon: IconName;
   /** Figma `Color`. Defaults to the one colour the set draws for this icon. */
   color?: IconColor;
-  /** Figma `State`. Hover adds the component set's lemon elevation. */
+  /** Figma `State`. Only social and AI marks have hover variants. */
   state?: 'default' | 'hover';
   /** Required: an icon with no meaning is the caller's decision to make explicit. */
   alt: string;
@@ -46,13 +57,14 @@ const ICONS = {
   download: { width: 28, height: 28, src: { black: '/icons/download.svg' } },
   // Figma `Icon=share, Color=Black` (`377:2143`).
   share: { width: 28, height: 28, src: { black: '/icons/share.svg' } },
-  // Figma `Icon=triangle, Color=Herbs` (`476:1350`). 29.686 is the drawn box,
-  // rounded as the NavBar marks are. The tomato file is the same polygon with
-  // the fill the /resume/cv Education entries override it to.
+  // Intrinsic dimensions follow the exported SVG canvases.
+  circle: { width: 16, height: 16, src: { black: '/icons/circle.svg' } },
+  square: { width: 19, height: 19, src: { tomato: square } },
+  // Figma `Icon=triangle, Color=Herbs` (`476:1350`).
   triangle: {
     width: 30,
     height: 30,
-    src: { herbs: '/icons/triangle.svg', tomato: '/icons/triangle-tomato.svg' },
+    src: { herbs: '/icons/triangle.svg' },
   },
   // Figma `Icon=mail, Color=Black` (`484:2508`).
   mail: { width: 16, height: 16, src: { black: '/icons/mail.svg' } },
@@ -62,49 +74,49 @@ const ICONS = {
   figma: {
     width: 12,
     height: 16,
-    src: { black: '/icons/figma.svg', white: '/icons/dark/figma.svg' },
+    src: { black: figma, white: '/icons/dark/figma.svg' },
   },
   github: {
-    width: 16,
+    width: 17,
     height: 16,
-    src: { black: '/icons/github.svg', white: '/icons/dark/github.svg' },
+    src: { black: github, white: '/icons/dark/github.svg' },
   },
   dribbble: {
     width: 16,
     height: 16,
-    src: { black: '/icons/dribbble.svg', white: '/icons/dark/dribbble.svg' },
+    src: { black: dribbble, white: '/icons/dark/dribbble.svg' },
   },
   behance: {
     width: 19,
     height: 16,
-    src: { black: '/icons/behance.svg', white: '/icons/dark/behance.svg' },
+    src: { black: behance, white: '/icons/dark/behance.svg' },
   },
   linkedin: {
-    width: 16,
+    width: 17,
     height: 16,
-    src: { black: '/icons/linkedin.svg', white: '/icons/dark/linkedin.svg' },
+    src: { black: linkedin, white: '/icons/dark/linkedin.svg' },
   },
   anthropic: {
     width: 16,
     height: 16,
     src: {
-      black: '/icons/explore-claude.svg',
+      black: anthropic,
       white: '/icons/dark/explore-claude.svg',
     },
   },
   openai: {
-    width: 16,
+    width: 17,
     height: 16,
     src: {
-      black: '/icons/explore-openai.svg',
+      black: openai,
       white: '/icons/dark/explore-openai.svg',
     },
   },
   perplexity: {
-    width: 14,
+    width: 16,
     height: 16,
     src: {
-      black: '/icons/explore-3.svg',
+      black: perplexity,
       white: '/icons/dark/explore-3.svg',
     },
   },
@@ -119,14 +131,28 @@ const src_ = asset.src as Partial<Record<IconColor, string>>;
 const names = Object.keys(src_) as IconColor[];
 const resolved = color ?? names[0];
 const src = src_[resolved];
+const hasHover = [
+  'figma',
+  'github',
+  'dribbble',
+  'behance',
+  'linkedin',
+  'anthropic',
+  'openai',
+  'perplexity',
+].includes(icon);
 
 if (!src) {
   throw new Error(`Icons has no \`Icon=${icon}, Color=${resolved}\` variant.`);
 }
+
+if (state === 'hover' && !hasHover) {
+  throw new Error(`Icons has no \`Icon=${icon}, State=Hover\` variant.`);
+}
 ---
 
 <img
-  src={withBase(src)}
+  src={src.startsWith('/icons/') || src === '/cursor.svg' ? withBase(src) : src}
   alt={alt}
   width={asset.width}
   height={asset.height}
@@ -134,10 +160,6 @@ if (!src) {
 />
 
 <style>
-  .icon {
-    transition: filter var(--duration-fast) var(--easing-standard);
-  }
-
   .icon--hover {
     /* Each shared glow layer starts from SourceAlpha, rather than shadowing the
        previous layer as chained drop-shadow() filters would. */

@@ -1,0 +1,395 @@
+---
+/** Figma component set `Project Bentos` (`639:1884`), all twelve combinations. */
+import type { ImageMetadata } from 'astro';
+import { Image } from 'astro:assets';
+
+export type BentoImage = { src: ImageMetadata | string; alt: string };
+type ImageSlot = 'primary' | 'wide' | 'square' | 'portrait' | 'detail';
+type ExpandedSlot = ImageSlot | 'palette' | 'copy';
+type CompactColumn = 'feature' | 'wide' | 'stack';
+type Variant = '1' | '2' | '3' | '4' | '5' | '6';
+
+interface Props {
+  /** Figma `Variant`. */
+  variant?: Variant;
+  /** Figma `State`; pointer hover and keyboard focus also reveal hover. */
+  state?: 'default' | 'hover';
+  title: string;
+  href: string;
+  /** 0.8h, 0.6h_l, 1_1, 1_2, and 0.6h_s respectively. */
+  images: Record<ImageSlot, BentoImage>;
+  /** Project artwork, not UI tokens: first four compact, all eight expanded. */
+  colors: readonly [
+    string,
+    string,
+    string,
+    string,
+    string,
+    string,
+    string,
+    string,
+  ];
+  class?: string;
+}
+
+const {
+  variant = '1',
+  state = 'default',
+  title,
+  href,
+  images,
+  colors,
+  class: className,
+} = Astro.props;
+
+const compactColumns: Record<Variant, readonly CompactColumn[]> = {
+  '1': ['feature', 'wide', 'stack'],
+  '2': ['wide', 'feature', 'stack'],
+  '3': ['wide', 'stack', 'feature'],
+  '4': ['feature', 'stack', 'wide'],
+  '5': ['wide', 'stack', 'feature'],
+  '6': ['stack', 'wide', 'feature'],
+};
+const expandedRows: Record<Variant, readonly (readonly ExpandedSlot[])[]> = {
+  '1': [
+    ['primary', 'wide', 'palette'],
+    ['square', 'portrait', 'detail', 'copy'],
+  ],
+  '2': [
+    ['primary', 'palette', 'wide'],
+    ['copy', 'square', 'portrait', 'detail'],
+  ],
+  '3': [
+    ['copy', 'square', 'detail', 'portrait'],
+    ['palette', 'primary', 'wide'],
+  ],
+  '4': [
+    ['detail', 'portrait', 'copy', 'square'],
+    ['wide', 'primary', 'palette'],
+  ],
+  '5': [
+    ['detail', 'portrait', 'square', 'copy'],
+    ['palette', 'primary', 'wide'],
+  ],
+  '6': [
+    ['wide', 'palette', 'primary'],
+    ['detail', 'copy', 'portrait', 'square'],
+  ],
+};
+const titleFirst = ['2', '3', '6'].includes(variant);
+const squareFirst = !['4', '5'].includes(variant);
+const pair: readonly ('palette' | 'portrait')[] = ['1', '4', '5'].includes(
+  variant,
+)
+  ? ['palette', 'portrait']
+  : ['portrait', 'palette'];
+---
+
+<a
+  class:list={['project-bento', className]}
+  data-variant={variant}
+  data-state={state}
+  href={href}
+  aria-label={`${title} — explore the project`}
+>
+  <div class="project-bento__compact">
+    {
+      compactColumns[variant].map((column) =>
+        column === 'feature' ? (
+          <div
+            class:list={[
+              'project-bento__feature',
+              titleFirst && 'project-bento__feature--title-first',
+            ]}
+          >
+            <span class="project-bento__image project-bento__image--primary">
+              {typeof images.primary.src === 'string' ? (
+                <img src={images.primary.src} alt={images.primary.alt} />
+              ) : (
+                <Image src={images.primary.src} alt={images.primary.alt} />
+              )}
+            </span>
+            <span class="project-bento__title">{title}</span>
+          </div>
+        ) : column === 'wide' ? (
+          <span class="project-bento__image project-bento__image--wide">
+            {typeof images.wide.src === 'string' ? (
+              <img src={images.wide.src} alt={images.wide.alt} />
+            ) : (
+              <Image src={images.wide.src} alt={images.wide.alt} />
+            )}
+          </span>
+        ) : (
+          <div
+            class:list={[
+              'project-bento__stack',
+              !squareFirst && 'project-bento__stack--pair-first',
+            ]}
+          >
+            <span class="project-bento__image project-bento__image--square">
+              {typeof images.square.src === 'string' ? (
+                <img src={images.square.src} alt={images.square.alt} />
+              ) : (
+                <Image src={images.square.src} alt={images.square.alt} />
+              )}
+            </span>
+            <span class="project-bento__pair">
+              {pair.map((slot) =>
+                slot === 'palette' ? (
+                  <span class="project-bento__palette" aria-hidden="true">
+                    {colors.slice(0, 4).map((color) => (
+                      <span style={{ backgroundColor: color }} />
+                    ))}
+                  </span>
+                ) : (
+                  <span class="project-bento__image project-bento__image--portrait">
+                    {typeof images.portrait.src === 'string' ? (
+                      <img
+                        src={images.portrait.src}
+                        alt={images.portrait.alt}
+                      />
+                    ) : (
+                      <Image
+                        src={images.portrait.src}
+                        alt={images.portrait.alt}
+                      />
+                    )}
+                  </span>
+                ),
+              )}
+            </span>
+          </div>
+        ),
+      )
+    }
+  </div>
+  <div class="project-bento__expanded">
+    {
+      expandedRows[variant].map((row) => (
+        <div
+          class:list={[
+            'project-bento__row',
+            row.includes('primary') && 'project-bento__row--large',
+          ]}
+        >
+          {row.map((slot) =>
+            slot === 'copy' ? (
+              <span class="project-bento__copy">
+                <span class="project-bento__title">{title}</span>
+                <span class="project-bento__cta">explore the project</span>
+              </span>
+            ) : slot === 'palette' ? (
+              <span class="project-bento__palette" aria-hidden="true">
+                {colors.map((color) => (
+                  <span style={{ backgroundColor: color }} />
+                ))}
+              </span>
+            ) : (
+              <span
+                class={`project-bento__image project-bento__image--${slot}`}
+              >
+                {typeof images[slot].src === 'string' ? (
+                  <img
+                    src={images[slot].src as string}
+                    alt={images[slot].alt}
+                  />
+                ) : (
+                  <Image
+                    src={images[slot].src as ImageMetadata}
+                    alt={images[slot].alt}
+                  />
+                )}
+              </span>
+            ),
+          )}
+        </div>
+      ))
+    }
+  </div>
+</a>
+
+<style>
+  /* Unbound drawn boxes: defaults 639:1878–1883, hover 640:2022/643:2652–2656.
+     Compact children intentionally extend six units beyond the clipped frame. */
+  .project-bento {
+    display: block;
+    inline-size: 421px;
+    color: var(--color-neutral-800);
+    text-decoration: none;
+  }
+
+  .project-bento__compact {
+    display: flex;
+    gap: var(--space-xs);
+    block-size: 210px;
+    overflow: clip;
+  }
+
+  .project-bento__expanded {
+    display: none;
+    flex-direction: column;
+    gap: var(--space-md);
+    padding-inline: var(--space-2xl);
+  }
+
+  .project-bento:is([data-state='hover'], :hover, :focus-visible) {
+    inline-size: 1280px;
+  }
+
+  .project-bento:is([data-state='hover'], :hover, :focus-visible)
+    .project-bento__compact {
+    display: none;
+  }
+
+  .project-bento:is([data-state='hover'], :hover, :focus-visible)
+    .project-bento__expanded {
+    display: flex;
+  }
+
+  .project-bento__image,
+  .project-bento__palette {
+    display: flex;
+    flex: none;
+    overflow: clip;
+    border-radius: var(--radius-md);
+  }
+
+  .project-bento__image img {
+    display: block;
+    inline-size: 100%;
+    block-size: 100%;
+    object-fit: cover;
+  }
+
+  .project-bento__feature,
+  .project-bento__stack {
+    display: flex;
+    flex: none;
+    flex-direction: column;
+    gap: var(--space-xs);
+  }
+
+  .project-bento__feature {
+    inline-size: 199px;
+  }
+
+  .project-bento__feature > * {
+    inline-size: 198px;
+  }
+
+  .project-bento__feature .project-bento__image {
+    flex: 1;
+    min-block-size: 0;
+  }
+
+  .project-bento__feature--title-first .project-bento__title,
+  .project-bento__stack--pair-first .project-bento__pair {
+    order: -1;
+  }
+
+  /* Typography/H5 and H3 share the unbound 120% line height. */
+  .project-bento__title {
+    font-family: var(--font-serif);
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-semibold);
+    line-height: 1.2;
+    letter-spacing: var(--letter-spacing-normal);
+    overflow-wrap: anywhere;
+  }
+
+  .project-bento__compact > .project-bento__image--wide {
+    inline-size: 105px;
+    block-size: 210px;
+  }
+
+  .project-bento__stack,
+  .project-bento__stack > .project-bento__image {
+    inline-size: 99px;
+  }
+
+  .project-bento__stack > .project-bento__image,
+  .project-bento__pair {
+    block-size: 99px;
+  }
+
+  .project-bento__pair {
+    display: flex;
+    gap: var(--space-xs);
+  }
+
+  .project-bento__pair > * {
+    inline-size: 44px;
+  }
+
+  .project-bento__palette {
+    flex-direction: column;
+  }
+
+  .project-bento__palette > span {
+    flex: 1;
+  }
+
+  .project-bento__row {
+    display: flex;
+    gap: var(--space-md);
+    block-size: 198px;
+  }
+
+  .project-bento__row--large {
+    block-size: 316px;
+  }
+
+  .project-bento__expanded .project-bento__image,
+  .project-bento__expanded .project-bento__palette {
+    border-radius: var(--radius-lg);
+  }
+
+  .project-bento__expanded .project-bento__image--primary {
+    inline-size: 421px;
+  }
+  .project-bento__expanded .project-bento__image--wide {
+    inline-size: 532px;
+  }
+  .project-bento__expanded .project-bento__image--square {
+    inline-size: 198px;
+  }
+  .project-bento__expanded .project-bento__image--portrait {
+    inline-size: 88px;
+  }
+  .project-bento__expanded .project-bento__image--detail {
+    inline-size: 310px;
+  }
+  .project-bento__expanded .project-bento__palette {
+    inline-size: 87px;
+  }
+
+  .project-bento__copy {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    justify-content: space-between;
+    min-inline-size: 0;
+    gap: var(--space-md);
+    text-align: right;
+  }
+
+  .project-bento__copy .project-bento__title {
+    color: var(--color-neutral-white);
+    font-size: var(--font-size-xl);
+  }
+
+  /* Primary button instance 643:2382 is right-aligned and fills its column.
+     A span avoids nesting a second interactive target inside the card link. */
+  .project-bento__cta {
+    padding: var(--space-xs) var(--space-lg);
+    border-radius: var(--radius-lg);
+    background: var(--color-lemon-500);
+    box-shadow: var(--shadow-sm);
+    color: var(--color-neutral-800);
+    font-family: var(--font-mono);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-regular);
+    line-height: var(--line-height-loose);
+    letter-spacing: var(--letter-spacing-extra-wide);
+  }
+</style>

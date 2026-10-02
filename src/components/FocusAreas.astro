@@ -1,5 +1,5 @@
 ---
-/** Figma component set `focus areas` (`115:703`). */
+/** Figma standalone component `Focus` (`115:703`). */
 interface Props {
   /** Section heading; defaults to the heading drawn in Figma. */
   title?: string;
@@ -26,7 +26,7 @@ const HeadingTag = `h${level}` as 'h2' | 'h3' | 'h4';
  */
 ---
 
-<section class:list={['focus-areas', className]}>
+<section class:list={['focus-areas', className]} aria-label={title}>
   <HeadingTag class="focus-areas__title">{title}</HeadingTag>
   <slot />
   {
@@ -47,9 +47,14 @@ const HeadingTag = `h${level}` as 'h2' | 'h3' | 'h4';
     gap: var(--space-md);
   }
 
-  /* Typography/H1 on an h2. Only the size differs from global.css. */
+  /* Typography/H2: Figma's 1.2 line height is not a variable. */
   .focus-areas__title {
-    font-size: var(--font-size-3xl);
+    font-family: var(--font-serif);
+    font-size: var(--font-size-2xl);
+    font-weight: var(--font-weight-semibold);
+    line-height: 1.2;
+    letter-spacing: var(--letter-spacing-normal);
+    color: var(--color-neutral-black);
   }
 
   .focus-areas__list {
@@ -67,6 +72,7 @@ const HeadingTag = `h${level}` as 'h2' | 'h3' | 'h4';
     align-items: center;
     /* Figma 114:311: 13, which no space token holds. Unbound, not chosen. */
     gap: 13px;
+    color: var(--color-neutral-800);
   }
 
   /*
