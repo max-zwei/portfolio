@@ -201,9 +201,9 @@ const NOTES = {
   },
   'lineHeight.none': {
     css: [
-      '/* Set solid — the Figma heading styles H1–H5 all bind line-height 1. */',
+      '/* Existing code-side solid leading; no live Figma variable holds it. */',
     ],
-    json: 'Set solid. The Figma heading styles H1–H5 all bind it.',
+    json: 'Existing code-side solid leading. Live Figma heading styles use unbound 1.2 instead.',
   },
   'lineHeight.loose': {
     css: [
@@ -246,7 +246,7 @@ const NOTES = {
   },
   'layout.measure': { blankBefore: true, inline: 'readable line length' },
   sizes: {
-    json: 'Widths read off the /home chat frames. chat-choice is the only one the site ships as a token: the message column and bubble are computed as 8- and 5-column spans of the page grid. size/chat-column and size/chat-bubble remain in the Figma Size collection pending deletion (design/components.json outstanding.variableWrites).',
+    json: 'Widths held in the live Figma Size collection: chat-column 866px, chat-bubble 531px and chat-choice 400px. Existing pages may still compute column spans; the token export follows Figma without deleting its variables.',
   },
   'sizes.chat-choice': {
     css: block(
@@ -285,7 +285,7 @@ const JSON_DESCRIPTION =
   'W3C DTCG-shaped token export, generated from DESIGN.md by scripts/build-tokens.mjs — do not hand-edit. This is the exchange format between Figma Variables and the design system. Collection names here map 1:1 to Figma Variable collections; token paths map to Figma variable names (e.g. color/lemon/500 -> `color/lemon/500`). One tier only — there is no role/semantic layer, by decision. src/styles/tokens.css is generated from the same source and is what ships.';
 
 const TEXT_DESCRIPTION =
-  'The twelve named Figma text styles. Each leg holds a CSS custom property name — text styles are Figma *styles*, not variables, so there is nothing here for a variable importer to read.';
+  'The fourteen named Figma text styles. Each leg holds a CSS custom property name for a token reference, or a literal CSS value as a string for an unbound style metric. Only names beginning with -- belong inside var(). Text styles are Figma styles, not variables.';
 
 // --- Conversions ------------------------------------------------------------
 
@@ -488,6 +488,16 @@ function resolveReference(reference, front, path) {
   return `${spec.css}${key}`;
 }
 
+/** Unbound text-style metrics stay literal; they do not create variables. */
+function textStyleValue(value, front, path) {
+  if (typeof value === 'number' && Number.isFinite(value)) return String(value);
+  if (typeof value !== 'string' || !value.trim())
+    fail(`${path}: expected a token reference or a CSS value`);
+  if (value.includes('{') || value.includes('}'))
+    return resolveReference(value, front, path);
+  return value;
+}
+
 function buildText(front) {
   const styles = front.typography;
   if (!styles || typeof styles !== 'object') {
@@ -499,7 +509,7 @@ function buildText(front) {
     for (const [leg, reference] of Object.entries(legs)) {
       value.set(
         leg,
-        resolveReference(reference, front, `typography.${name}.${leg}`),
+        textStyleValue(reference, front, `typography.${name}.${leg}`),
       );
     }
     out.set(

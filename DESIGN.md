@@ -39,35 +39,47 @@ colors:
   neutral-800: '#171613'
   neutral-black: '#040302'
 typography:
+  title:
+    fontFamily: '{fontFamily.serif}'
+    fontSize: 6.75rem
+    fontWeight: '{fontWeight.semibold}'
+    lineHeight: 1.2
+    letterSpacing: '{letterSpacing.normal}'
   h1:
     fontFamily: '{fontFamily.serif}'
     fontSize: '{fontSize.3xl}'
     fontWeight: '{fontWeight.semibold}'
-    lineHeight: '{lineHeight.none}'
+    lineHeight: 1.2
     letterSpacing: '{letterSpacing.normal}'
   h2:
     fontFamily: '{fontFamily.serif}'
     fontSize: '{fontSize.2xl}'
     fontWeight: '{fontWeight.semibold}'
-    lineHeight: '{lineHeight.none}'
+    lineHeight: 1.2
     letterSpacing: '{letterSpacing.normal}'
   h3:
     fontFamily: '{fontFamily.serif}'
     fontSize: '{fontSize.xl}'
     fontWeight: '{fontWeight.semibold}'
-    lineHeight: '{lineHeight.none}'
+    lineHeight: 1.2
     letterSpacing: '{letterSpacing.normal}'
   h4:
     fontFamily: '{fontFamily.serif}'
     fontSize: '{fontSize.lg}'
     fontWeight: '{fontWeight.semibold}'
-    lineHeight: '{lineHeight.none}'
+    lineHeight: 1.2
     letterSpacing: '{letterSpacing.normal}'
   h5:
     fontFamily: '{fontFamily.serif}'
     fontSize: '{fontSize.base}'
     fontWeight: '{fontWeight.semibold}'
-    lineHeight: '{lineHeight.none}'
+    lineHeight: 1.2
+    letterSpacing: '{letterSpacing.normal}'
+  h6:
+    fontFamily: '{fontFamily.serif}'
+    fontSize: '{fontSize.sm}'
+    fontWeight: '{fontWeight.semibold}'
+    lineHeight: '{lineHeight.relaxed}'
     letterSpacing: '{letterSpacing.normal}'
   body:
     fontFamily: '{fontFamily.sans}'
@@ -83,7 +95,7 @@ typography:
     letterSpacing: '{letterSpacing.normal}'
   body-large:
     fontFamily: '{fontFamily.sans}'
-    fontSize: '{fontSize.lg}'
+    fontSize: 1.25rem
     fontWeight: '{fontWeight.regular}'
     lineHeight: '{lineHeight.normal}'
     letterSpacing: '{letterSpacing.normal}'
@@ -169,6 +181,8 @@ motion:
     standard: [0.2, 0, 0, 1]
     entrance: [0, 0, 0, 1]
 sizes:
+  chat-column: 54.125rem
+  chat-bubble: 33.1875rem
   chat-choice: 25rem
 layout:
   grid-frame: 80rem
@@ -227,23 +241,46 @@ reported, then corrected to follow Figma, never the other way round.
 Group names in the front matter are the CSS custom property name minus its
 prefix, which is how the one-to-one Figma ↔ CSS mapping survives generation:
 
-| Front-matter group | CSS custom property  | `tokens.json` path     | `$type`       | In export                      |
-| ------------------ | -------------------- | ---------------------- | ------------- | ------------------------------ |
-| `colors`           | `--color-*`          | `color/<ramp>/<step>`  | `color`       | yes                            |
-| `typography`       | none                 | `text/*`               | `typography`  | yes, as CSS names              |
-| `fontFamily`       | `--font-*`           | `font/family/*`        | `fontFamily`  | yes                            |
-| `fontSize`         | `--font-size-*`      | `font/size/*`          | `dimension`   | yes                            |
-| `fontWeight`       | `--font-weight-*`    | `font/weight/*`        | `fontWeight`  | yes                            |
-| `lineHeight`       | `--line-height-*`    | `font/lineHeight/*`    | `number`      | yes                            |
-| `letterSpacing`    | `--letter-spacing-*` | `font/letterSpacing/*` | `dimension`   | yes                            |
-| `spacing`          | `--space-*`          | `space/*`              | `dimension`   | yes                            |
-| `rounded`          | `--radius-*`         | `radius/*`             | `dimension`   | yes                            |
-| `shadows`          | `--shadow-*`         | `shadow/*`             | `shadow`      | yes                            |
-| `motion.duration`  | `--duration-*`       | `motion/duration/*`    | `duration`    | yes                            |
-| `motion.easing`    | `--easing-*`         | `motion/easing/*`      | `cubicBezier` | yes                            |
-| `sizes`            | `--size-*`           | `size/*`               | `dimension`   | yes                            |
-| `layout`           | `--<key>`            | —                      | —             | no — Figma holds no variable   |
-| `focus`            | `--focus-*`          | —                      | —             | no — accessibility, not design |
+| Front-matter group | CSS custom property  | `tokens.json` path     | `$type`       | In export                           |
+| ------------------ | -------------------- | ---------------------- | ------------- | ----------------------------------- |
+| `colors`           | `--color-*`          | `color/<ramp>/<step>`  | `color`       | yes                                 |
+| `typography`       | none                 | `text/*`               | `typography`  | yes, as CSS names or literal values |
+| `fontFamily`       | `--font-*`           | `font/family/*`        | `fontFamily`  | yes                                 |
+| `fontSize`         | `--font-size-*`      | `font/size/*`          | `dimension`   | yes                                 |
+| `fontWeight`       | `--font-weight-*`    | `font/weight/*`        | `fontWeight`  | yes                                 |
+| `lineHeight`       | `--line-height-*`    | `font/lineHeight/*`    | `number`      | yes                                 |
+| `letterSpacing`    | `--letter-spacing-*` | `font/letterSpacing/*` | `dimension`   | yes                                 |
+| `spacing`          | `--space-*`          | `space/*`              | `dimension`   | yes                                 |
+| `rounded`          | `--radius-*`         | `radius/*`             | `dimension`   | yes                                 |
+| `shadows`          | `--shadow-*`         | `shadow/*`             | `shadow`      | yes                                 |
+| `motion.duration`  | `--duration-*`       | `motion/duration/*`    | `duration`    | yes                                 |
+| `motion.easing`    | `--easing-*`         | `motion/easing/*`      | `cubicBezier` | yes                                 |
+| `sizes`            | `--size-*`           | `size/*`               | `dimension`   | yes                                 |
+| `layout`           | `--<key>`            | —                      | —             | no — Figma holds no variable        |
+| `focus`            | `--focus-*`          | —                      | —             | no — accessibility, not design      |
+
+### Library sync — 2 October 2026
+
+Read all 78 local variables across the seven single-`Value` collections: Color
+(32), Typography (21), Spacing (9), Radius (4), Motion (5), Elevation (4) and
+Size (3). All colors, spacing, radii, motion and shadow values match the source,
+including the four local effect styles. Font family registration suffixes,
+fluid type maxima, tracking units and the pill radius retain their documented
+web translations rather than pretending Figma supports them directly.
+
+The two live Size variables `size/chat-column` (866px) and `size/chat-bubble`
+(531px) are restored to the source. No deletion or other Figma mutation is
+part of this read-only sync. `layout` and `focus` remain CSS-only exceptions,
+not local variable collections.
+
+Three existing code primitives still have no Figma variable:
+`font-weight-bold` (700), `line-height-none` (1) and `line-height-relaxed`
+(1.4). They remain for existing consumers outside this library-only sync;
+they are not evidence of matching variable definitions. The live text styles
+do draw bold text and 1.4 line heights, but headings no longer use 1.
+`Typography/Body - Bold` renders Satoshi Bold while its weight binding points
+to `font/weight/semibold` (600); the style transcription keeps the drawn Bold
+weight and records that Figma inconsistency rather than changing the binding.
 
 ## Colors
 
@@ -300,16 +337,27 @@ Used for the chat interaction and subtitles.
 
 ### Text styles
 
-The five Figma heading styles live centrally in `src/styles/global.css` as
-element rules on `h1`–`h5`. Body, Mono and Captions styles are deliberately
-transcribed per component under a `/* Figma text style: … */` comment so each
-component's Figma diff remains readable. `/styleguide`'s **Text styles** table
-is the live index of all twelve named styles. The nav button at `109:1378` is
-the exception: its raw mono settings are not the `Typography/Mono` style.
+All fourteen local text styles were read directly on 2 October 2026: Title,
+H1–H6, Body - Large, Body, Body - Bold, Body - Small, Mono, Mono - Small and
+Captions. Title is 108px; H1–H5 retain their 72/48/32/24/16px sizes but now use
+1.2 line height. H6 is 12px with 1.4 line height. Body - Large is 20px, not the
+24px `font/size/lg` step. No style is inferred from component usage.
 
-Five of the twelve — `body`, `body-large`, `body-bold`, `mono` and `captions` —
-are **inferred** from component usage rather than transcribed from a Figma text
-style, and still need confirming against the file.
+The front matter keeps variable references where they exist. Raw style metrics
+remain literal values, not invented variables or a semantic alias tier.
+`text/*` in the JSON contains CSS custom-property names for token references
+and strings for literals (`"1.2"`, `"6.75rem"` and `"1.25rem"`). Consumers must
+wrap only names beginning with `--` in `var()`. Title remains fixed-size
+because Figma supplies no fluid range for it.
+
+`src/styles/global.css` and pages are intentionally not migrated in this
+library-only sync. Components apply their live text-style metrics explicitly;
+the existing global H1–H5 rules and page presentation may therefore differ.
+Body, Mono and Captions styling stays local to each component. The nav button
+at `109:1378` has raw mono settings rather than the `Typography/Mono` style.
+The existing `/styleguide` text-style table still wraps every value in `var()`;
+its new literal metrics will not render correctly until a separate page
+migration. That known limitation is not hidden by inventing style tokens.
 
 ## Layout
 
@@ -333,30 +381,26 @@ group: a CSS-only group, generated into `src/styles/tokens.css` and excluded
 from `design/tokens.json` because Figma holds no variable for them. `focus` is
 the other such group.
 
-**The chat widths, reclassified.** Both are layout, so both are column spans
-rather than tokens: the message column is 8 columns (54.1rem, against the 866
-drawn on `home - chat`) and a message bubble is 5 columns (33.25rem, against
-531). Computing them costs 0.4px and 1px respectively, and buys `/projects`
-the same maths instead of two more per-page widths. `--size-chat-choice`
-(400px) is the only `--size-*` left: four columns is 420.8px, so 400 is the
-component's own cap — and the design's own chip instances exceed it.
+**The chat widths.** The Size collection holds `--size-chat-column` (866px),
+`--size-chat-bubble` (531px) and `--size-chat-choice` (400px). All three are
+transcribed, without replacing the first two by near-matching grid spans.
+Existing pages still compute their own eight- and five-column spans; page
+migration is outside this library sync. The 400px choice cap is not a column
+span either — four columns would be 420.8px.
 
 **The page container.** `--content-max: 72rem` is retired. No frame drew 1152;
 the drawn frame is 1280 with 96px margins, so `.container` is now
 `max-width: var(--grid-frame)` with `var(--grid-margin)` of padding above
-48rem and `--space-md` (24px, the `Mobile` frame's margin) below it. `NavBar`
-follows the same frame — `210:1625` `Mode=Default` is 1280 wide with its own
-64px padding.
-
-`size/chat-column` (866) and `size/chat-bubble` (531) still exist in the Figma
-`Size` collection with nothing in the CSS reading them. Their deletion is
-recorded in `design/components.json` under `outstanding.variableWrites`.
+48rem and `--space-md` (24px, the `Mobile` frame's margin) below it. The live
+NavBar is the standalone component `210:1624`, not the removed `210:1625`
+Mode set; its component-specific layout is recorded in the manifest.
 
 ## Elevation & Depth
 
-The Figma effect styles `Elevation / sm|md|lg` map to `--shadow-sm|md|lg` by
-name. Read the style name, not the drop-shadow the MCP emits; the two agree
-today and both must change together. The Figma effect style `md-lemon` maps to
+The Figma effect styles `Elevation / sm`, `Elevation/md` and `Elevation / lg`
+map to `--shadow-sm|md|lg` by name. Read the style name, not the drop-shadow
+the MCP emits; the effects and variables agree and must change together.
+The effect style `md-lemon` maps to
 `--shadow-md-lemon`: two identical lemon-500 layers, each at x 0, y 8,
 blur 32, spread 0 and full opacity. Layering increases color density without
 changing the geometry or the color token. Icon glows merge two independent
@@ -382,7 +426,90 @@ https://www.figma.com/design/8SQOIPl0teOTvoFH1EffaB/Portfolio?node-id=114-15
 
 A component set **published in those library pages** may become a file in
 `src/components/` before its first page use; anything not in the library stays
-inline on the page until its second use (CLAUDE.md R8).
+inline on the page until its second use (AGENT.md R8).
+
+### Current library boundary
+
+The 2 October 2026 read contains five atom sets (logo, Icons, Buttons, Chat and
+user) and nine organism entries (NavBar, Flipcard, Post-it, Text, CV, Focus,
+Release Notes, Tech and Project Bentos). `design/components.json` records the
+live node IDs and sparse variant matrices, not an assumed Cartesian product.
+Text, Focus and NavBar are standalone components, not variant sets.
+
+`Text` maps directly to `TextSection.astro`; `BlankSection.astro` is its
+existing named-content composition. CuriosityRow and ProjectPreview remain
+reusable code, but their old Figma nodes have no page parent. ProjectSection's
+former set now lives on `Graveyard`, not Organisms. These are recorded under
+the manifest's `compositions` rather than pretending they are current library
+entries. Their existence is not permission to substitute them for Project
+Bentos, nor a reason to remove still-used page dependencies.
+
+This is a library cutover, not a page migration. Removed variant props and
+changed component contracts are not hidden behind compatibility aliases;
+existing pages can require a separate update.
+
+`Button` now exposes `state="default" | "hover"` as well as interactive
+hover/focus. Secondary hover keeps regular weight 400. `ChatBubble` accepts
+only `user="talking-head" | "visitor"`; the former `user="user"` hover specimen
+is now `user="visitor" state="hover"`. Talking-head bubbles use the live
+531px cap rather than a near-matching grid span.
+
+`Icon` accepts only drawn name/color/state combinations. Only the eight
+AI/social marks have hover variants; all other marks are default-only.
+Triangle is herbs, square is tomato and circle is black. Unsupported
+combinations are errors, not recoloring requests. The atom library defines
+no prototype reactions or timed motion, so Button, ChatBubble and Icon do
+not introduce transition durations.
+
+`TextSection` now transcribes Text's two-column 977px layout and uppercase
+108px Title style, rather than a vertical H1 section. `FocusAreas` uses H2;
+`ToolBox` uses H2 for Web and H3 for PDF, with each tool's actual intrinsic
+asset dimensions. Their changed heading line heights are local component
+styles, not a global heading migration.
+
+`CvSection.projects` now receives `{ href, title, image: { src, alt },
+detailImage: { src, alt }, colors: [string, string, string, string] }` entries.
+The inline CV-specific preview replaces `caption`/`artefacts` and the old
+ProjectPreview dependency. PDF still suppresses project previews.
+`ReleaseNote.screenshots` and its slideshow are removed because neither live
+state contains them. `NavBar.mode` is removed: the live standalone footer has
+one black ground and white marks. No old prop is retained as an alias.
+
+Narrow-width reflow in these compositions is an accessibility fallback,
+not a claim that Figma supplies mobile library variants.
+
+`ProjectBento.astro` implements the new six-variant Project Bentos set. It
+requires `title`, `href`, five named images (`primary`, `wide`, `square`,
+`portrait`, `detail`, each with `src` and `alt`) and eight `colors`. `variant`
+is `"1"`–`"6"`; `state` is `"default"` or `"hover"`. Real hover and visible
+keyboard focus expose the same expanded design as the explicit hover state,
+without inventing an animation. Artwork is caller data, not baked-in Figma
+checkerboard content. The transparent expanded card retains its drawn
+neutral-white title; on neutral-white that is a 1:1 contrast failure, reported
+rather than repainted.
+
+PostIt's initial rotation applies to the paper, not the pin. Its black copy
+and the Flipcard back's black copy are the unbound `#000000` Figma fills,
+not near-matching neutral tokens. The Flipcard small variant uses small
+elevation; its existing fitting and flip interaction remain unchanged.
+
+### Library verification — 2026-10-02
+
+The isolated Astro component matrix builds successfully; component-only checking
+reports 19 files, zero errors and zero warnings. Browser checks cover all six
+compact (421 × 210) and expanded (1280 × 538) Bento layouts, hover, visible
+keyboard focus and link navigation, Flipcard controls, and the no-JavaScript
+content baseline. No page files were migrated.
+
+Two visual findings remain design/environment facts, not silent corrections:
+
+- Release Notes' inactive neutral-600 copy on neutral-white measures **3.85:1**,
+  below AA for normal-sized text. The Figma colors are retained.
+- Text's 310px title column uses the drawn 108px/120%, weight 600 and zero
+  tracking. The loaded self-hosted Erode Variable wraps “HONEST” as “HONE / ST”
+  in the desktop browser, while Figma's Erode Semibold render shows “HON / EST”.
+  No artificial width, tracking or content break was added to conceal that
+  font-rendering difference.
 
 ### States to draw
 

@@ -1,21 +1,12 @@
 ---
 /**
- * Figma `NavBar` set (`210:1625`).
- *
- * Although the frame is named NavBar, it reads as the site footer: a legal
- * link, an “explore with” credit, seven section links, and five social marks
- * arranged in a 1280×220 frame.
+ * Figma standalone `NavBar` (`210:1624`): the black site footer.
  */
 import Button from './Button.astro';
 import Icon from './Icon.astro';
 import { EXPLORE_WITH, NAV, SOCIALS } from '../config/site';
 
 interface Props {
-  /**
-   * Figma `Mode`. This is a ground colour per instance, NOT a colour scheme;
-   * a `prefers-color-scheme` block is therefore forbidden here.
-   */
-  mode?: 'default' | 'dark';
   /**
    * Accessible name for the inner navigation landmark. `/styleguide` renders
    * two instances, and `unique-landmark: error` rejects two `<nav>` elements
@@ -26,17 +17,17 @@ interface Props {
   class?: string;
 }
 
-const { mode = 'default', label = 'Site', class: className } = Astro.props;
+const { label = 'Site', class: className } = Astro.props;
 ---
 
-<footer class:list={['navbar', `navbar--${mode}`, className]}>
+<footer class:list={['navbar', className]}>
   <nav class="navbar__row" aria-label={label}>
     <div class="navbar__legal">
       <Button
         type="nav"
         variant="secondary"
         href={NAV.impressum.href}
-        class="navbar__link"
+        class="navbar__link navbar__link--muted"
       >
         {NAV.impressum.label}
       </Button>
@@ -53,11 +44,7 @@ const { mode = 'default', label = 'Site', class: className } = Astro.props;
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  <Icon
-                    icon={mark.icon}
-                    color={mode === 'dark' ? 'white' : 'black'}
-                    alt=""
-                  />
+                  <Icon icon={mark.icon} color="white" alt="" />
                 </a>
               </li>
             ))
@@ -97,7 +84,7 @@ const { mode = 'default', label = 'Site', class: className } = Astro.props;
                   href={link.href}
                   class:list={[
                     'navbar__link',
-                    link.label === '#behindthescenes' && 'navbar__link--behind',
+                    link.label === '#behindthescenes' && 'navbar__link--muted',
                   ]}
                 >
                   {link.label}
@@ -117,11 +104,7 @@ const { mode = 'default', label = 'Site', class: className } = Astro.props;
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  <Icon
-                    icon={social.icon}
-                    color={mode === 'dark' ? 'white' : 'black'}
-                    alt=""
-                  />
+                  <Icon icon={social.icon} color="white" alt="" />
                 </a>
               </li>
             ))
@@ -139,12 +122,8 @@ const { mode = 'default', label = 'Site', class: className } = Astro.props;
     width: 100%;
     padding: var(--space-lg) var(--space-xl);
     overflow: clip;
-    background-color: var(--color-neutral-100);
-    min-block-size: calc(var(--space-3xl) + var(--space-xl) + var(--space-xs));
-  }
-
-  .navbar--dark {
     background-color: var(--color-neutral-black);
+    min-block-size: calc(var(--space-3xl) + var(--space-xl) + var(--space-xs));
   }
 
   /* Figma 114:189 `Left Section`: the legal column and the links section sit
@@ -202,15 +181,12 @@ const { mode = 'default', label = 'Site', class: className } = Astro.props;
     gap: var(--space-xs);
   }
 
-  /* In the dark instance the navigation is white except for the deliberately
-     muted #behindthescenes link. These global selectors reach Button's root.
-     The extra `.btn` raises specificity above Button's scoped nav-colour rules
-     so the override is deterministic rather than dependent on sheet order. */
-  .navbar--dark :global(.btn.navbar__link) {
+  /* The standalone black footer keeps legal/behind-the-scenes links muted. */
+  .navbar :global(.btn.navbar__link) {
     color: var(--color-neutral-white);
   }
 
-  .navbar--dark :global(.btn.navbar__link--behind) {
+  .navbar :global(.btn.navbar__link--muted) {
     color: var(--color-neutral-600);
   }
 

@@ -4,13 +4,9 @@ import type { HTMLAttributes } from 'astro/types';
 /**
  * Figma component set `Buttons` (`109:1382`).
  *
- * Figma: Primary/Default, Secondary/Default, Nav/Primary, Nav/Secondary and
- * Inline/Primary. Type classes select the style branch; the separately
- * namespaced Variant axis only sub-selects the two nav colours. Inline/Primary
- * therefore records `btn--v-primary` even though no rule consumes it: that is
- * fidelity to Figma's sparse matrix, not dead code. Figma's `State` axis is
- * CSS `:hover` with the same treatment on `:focus-visible`, not a component
- * prop.
+ * The sparse Type × Variant × State × Icon matrix is the library contract.
+ * Hover specimens can be rendered explicitly; interactive elements also apply
+ * that state on hover and keyboard focus.
  */
 /*
  * Extends the anchor attributes so the `...rest` passthrough is typed rather
@@ -23,6 +19,8 @@ interface Props extends Omit<HTMLAttributes<'a'>, 'type'> {
   type?: 'primary' | 'secondary' | 'nav' | 'inline';
   /** Figma `Variant`. Only `nav` uses it; the matrix is sparse, as in Figma. */
   variant?: 'default' | 'primary' | 'secondary';
+  /** Figma `State`. */
+  state?: 'default' | 'hover';
   /**
    * Figma `Icon`. `on` draws the icon slot alone — the default slot stays the
    * accessible name and is rendered visually hidden. Only Type=Primary has the
@@ -38,6 +36,7 @@ interface Props extends Omit<HTMLAttributes<'a'>, 'type'> {
 const {
   type = 'primary',
   variant = 'default',
+  state = 'default',
   icon = 'off',
   href,
   class: className,
@@ -46,7 +45,14 @@ const {
 
 const variantClass = variant === 'default' ? undefined : `btn--v-${variant}`;
 const iconClass = icon === 'on' ? 'btn--icon' : undefined;
-const classes = ['btn', `btn--${type}`, variantClass, iconClass, className];
+const classes = [
+  'btn',
+  `btn--${type}`,
+  variantClass,
+  state === 'hover' && 'btn--hover',
+  iconClass,
+  className,
+];
 const label = await Astro.slots.render('default');
 ---
 
@@ -124,11 +130,10 @@ const label = await Astro.slots.render('default');
     font-weight: var(--font-weight-regular);
     line-height: var(--line-height-loose);
     letter-spacing: var(--letter-spacing-extra-wide);
-    transition: box-shadow var(--duration-fast) var(--easing-standard);
   }
 
   /* Hover swaps to Elevation / lg. */
-  .btn--primary:is(:hover, :focus-visible) {
+  .btn--primary:is(:hover, :focus-visible, .btn--hover) {
     box-shadow: var(--shadow-lg);
   }
 
@@ -153,12 +158,12 @@ const label = await Astro.slots.render('default');
     color: var(--color-pickled-500);
     font-family: var(--font-sans);
     font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-regular);
     line-height: var(--line-height-relaxed);
     letter-spacing: var(--letter-spacing-normal);
   }
 
-  .btn--secondary:is(:hover, :focus-visible) .btn__label {
-    font-weight: var(--font-weight-semibold);
+  .btn--secondary:is(:hover, :focus-visible, .btn--hover) .btn__label {
     letter-spacing: var(--letter-spacing-wide);
   }
 
@@ -179,13 +184,12 @@ const label = await Astro.slots.render('default');
     color: var(--color-neutral-600);
   }
 
-  .btn--nav:is(:hover, :focus-visible) .btn__label {
+  .btn--nav:is(:hover, :focus-visible, .btn--hover) .btn__label {
     font-weight: var(--font-weight-bold);
     letter-spacing: var(--letter-spacing-extra-wide);
   }
 
-  /* The Step 3 plan specifies these serif/semibold Inline declarations
-     without naming a Figma text style. */
+  /* Figma 109:1379 and 251:2553: unbound Erode Semibold / 16 / 1.4. */
   .btn--inline {
     color: var(--color-tomato-500);
     font-family: var(--font-serif);
@@ -196,14 +200,13 @@ const label = await Astro.slots.render('default');
     text-decoration: underline;
     text-decoration-style: solid;
     text-underline-position: from-font;
-    transition: color var(--duration-fast) var(--easing-standard);
   }
 
-  .btn--inline:is(:hover, :focus-visible) {
+  .btn--inline:is(:hover, :focus-visible, .btn--hover) {
     color: var(--color-tomato-600);
   }
 
-  .btn--inline:is(:hover, :focus-visible) .btn__label {
+  .btn--inline:is(:hover, :focus-visible, .btn--hover) .btn__label {
     letter-spacing: var(--letter-spacing-wide);
   }
 </style>

@@ -90,7 +90,7 @@
   --font-weight-semibold: 600;
   --font-weight-bold: 700;
 
-  /* Set solid — the Figma heading styles H1–H5 all bind line-height 1. */
+  /* Existing code-side solid leading; no live Figma variable holds it. */
   --line-height-none: 1;
   --line-height-tight: 1.1;
   --line-height-snug: 1.3;
@@ -154,6 +154,8 @@
 
   --measure: 68ch; /* readable line length */
 
+  --size-chat-column: 54.125rem; /* 866px */
+  --size-chat-bubble: 33.1875rem; /* 531px */
   /*
    * The one width that is a component's own. 400px is not a column span — four
    * columns is 420.8 — and the design's own chip instances exceed it.

@@ -1,6 +1,6 @@
 ---
 /**
- * Figma component set `post-it` (`114:581`).
+ * Figma component set `Post-it` (`114:581`).
  *
  * The note is content supplied by its caller; this component owns only the
  * paper, pin colour, and Figma typography treatment.
@@ -52,15 +52,13 @@ const { color = 'herbs', href, class: className } = Astro.props;
     position: relative;
     inline-size: var(--post-it-width);
     block-size: var(--post-it-height);
-    /* Figma's rotation is counter-clockwise-positive, CSS's is clockwise, so
-       the sign is inverted from the value the file shows. */
-    rotate: var(--post-it-rotate);
+    rotate: 0deg;
     transition: rotate var(--duration-fast) var(--easing-standard);
   }
 
   .post-it:hover,
   .post-it:has(a:focus-visible) {
-    rotate: calc(var(--post-it-rotate) + 8deg);
+    rotate: 8deg;
   }
 
   .post-it__link {
@@ -79,11 +77,14 @@ const { color = 'herbs', href, class: className } = Astro.props;
     justify-content: space-between;
     inline-size: 181px;
     block-size: 181px;
+    /* Figma's positive rotations are counter-clockwise; CSS uses the inverse. */
+    rotate: var(--post-it-rotate);
     padding: var(--space-lg) var(--space-sm) var(--space-sm);
     overflow: clip;
     background-color: var(--color-neutral-white);
     box-shadow: var(--shadow-md);
-    color: var(--color-neutral-800);
+    /* Unbound black fill on 114:174 and its sibling text layers. */
+    color: #000;
   }
 
   /* Figma 114:175 and its three siblings: a 40 disc, placed per variant. */
@@ -104,6 +105,11 @@ const { color = 'herbs', href, class: className } = Astro.props;
     --post-it-rotate: -5deg;
     --post-it-dot-x: 104px;
     --post-it-dot-y: 0;
+  }
+
+  .post-it--herbs .post-it__paper {
+    /* 114:173 has a scaled, detached effect rather than Elevation / md. */
+    box-shadow: 0 3.6330276px 14.5321102px rgb(20 17 15 / 0.08);
   }
 
   .post-it--tomato {
