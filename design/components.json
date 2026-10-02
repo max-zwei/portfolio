@@ -1,7 +1,7 @@
 {
-  "$comment": "Figma↔code mapping for published component sets. The counterpart of design/tokens.json, which does the same job for variables. Component sets are named for how they read on canvas, not mechanically, so this file is what makes non-obvious pairings (Buttons → Button.astro, curiosity → CuriosityRow.astro) safe to rely on. Each component file also opens with a comment naming its set and node id, so the mapping is discoverable from either end.",
+  "$comment": "Read-only Figma library snapshot and code mappings. `sets` includes component sets and standalone components currently on Atoms and Organisms. `compositions` records reusable code whose former source is detached or outside the live library; it is not a second library inventory. Notes document deliberate code names and API contracts.",
   "figmaFile": "8SQOIPl0teOTvoFH1EffaB",
-  "readOn": "2026-09-24",
+  "readOn": "2026-10-02",
   "pages": {
     "Atoms": "114:14",
     "Organisms": "114:15"
@@ -32,7 +32,7 @@
         "Inline/Primary/Default/OFF",
         "Inline/Primary/Hover/OFF"
       ],
-      "notes": "The matrix is deliberately sparse: Type × Variant × State × Icon yields the twelve combinations above, not every possible cross-product. State is a CSS :hover/:focus-visible treatment rather than a prop. Renders <a> when href is present, <button type=\"button\"> otherwise, and .btn__ghost keeps state changes from reflowing surrounding layout. Primary changes Elevation / sm to Elevation / lg while retaining its text and icon geometry. Secondary hover keeps Body - Small sizing and pickled/500, changing to semibold with wide tracking. Nav hover changes to bold with extra-wide tracking; Inline hover changes to tomato/600 with wide tracking. Icon=ON (`377:2215`) exists on Type=Primary only: 16 / 12 padding around a 28 icon (60 × 52), no label drawn — the component keeps the default slot as the accessible name and hides it visually; hover retains the 28 icon and 60 × 52 frame."
+      "notes": "The matrix is deliberately sparse: twelve Type × Variant × State × Icon combinations, not a full cross-product. state='default'|'hover' exposes the drawn states alongside CSS hover/focus-visible. Renders an anchor with href and a button otherwise; a ghost label prevents text treatment from reflowing surrounding layout. Primary uses shadow-sm then shadow-lg. Secondary hover retains regular weight 400, Body - Small sizing and pickled-500 with wide tracking. Nav hover uses bold with extra-wide tracking; Inline hover uses tomato-600 and wide tracking. Icon=ON exists only on Primary: a 28 icon, 16/12 padding and 60 × 52 frame; slot content remains its visually hidden accessible name. No timed transition is invented: the live atom subtrees have no prototype reactions."
     },
     {
       "figmaName": "Chat",
@@ -40,16 +40,16 @@
       "page": "Atoms",
       "component": "src/components/ChatBubble.astro",
       "variantProperties": {
-        "User": ["Talking head", "Visitor", "User"],
+        "User": ["Talking head", "Visitor"],
         "State": ["Default", "hover", "selected"]
       },
       "combinations": [
         "Talking head/Default",
         "Visitor/Default",
-        "User/hover",
+        "Visitor/hover",
         "Visitor/selected"
       ],
-      "notes": "Named ChatBubble because the set draws one bubble, not the thread. Re-read 2026-09-24 after the library cleanup: the sparse User × State matrix contains Talking head/Default (109:1387), Visitor/Default (109:1386), User/hover (109:1385), and Visitor/selected (109:1388). Talking head is neutral-100 with a square top-left corner. Visitor/Default and User/hover share a neutral-white ground, 2px lemon-500 stroke and fully rounded corners, using shadow-sm and shadow-lg respectively; Visitor/selected is lemon-200, square top-right and shadowless. --size-chat-choice (400px) caps the three visitor/user combinations and is unbound in Figma; the set's 879px talking-head width is its library canvas, not a site cap. Interactive Visitor/Default anchors promote to shadow-lg on hover/focus-visible; selected stays shadowless."
+      "notes": "Named ChatBubble because the set draws one bubble. user='talking-head'|'visitor' replaces the obsolete 'user' role; state='default'|'hover'|'selected' follows the sparse matrix, with hover now a Visitor state. Talking head uses neutral-100, square top-left and the live size/chat-bubble cap (531px). Visitor choices use size/chat-choice (400px) and nowrap; default/hover share neutral-white, a 2px lemon-500 stroke and fully rounded corners, with shadow-sm/shadow-lg. Selected uses lemon-200, square top-right and no shadow. Default visitor links expose hover elevation on pointer hover and keyboard focus. No invented timed transition."
     },
     {
       "figmaName": "user",
@@ -113,13 +113,9 @@
       },
       "combinations": [
         "Cursor/Lemon/Default",
-        "Cursor/Lemon/Hover",
         "Figma Make/Black/Default",
-        "Figma Make/Black/Hover",
         "download/Black/Default",
-        "download/Black/Hover",
         "share/Black/Default",
-        "share/Black/Hover",
         "perplexity/Black/Default",
         "perplexity/Black/Hover",
         "perplexity/White/Default",
@@ -153,20 +149,15 @@
         "linkedin/White/Default",
         "linkedin/White/Hover",
         "circle/Black/Default",
-        "circle/Black/Hover",
         "square/Tomato/Default",
-        "square/Tomato/Hover",
         "triangle/Herbs/Default",
-        "triangle/Herbs/Hover",
         "mail/Black/Default",
-        "mail/Black/Hover",
-        "phone/Black/Default",
-        "phone/Black/Hover"
+        "phone/Black/Default"
       ],
-      "notes": "Rebuilt by Max on 10 Sep 2026 as the single source for every mark. The published axes are Icon (17) × Color (5) × State (2); only the combinations listed above are drawn because the colour matrix is intentionally sparse. Hover adds the `md-lemon` effect style without changing a glyph or its colour. The eight footer marks belong to this set and their black/white exports are owned by Icon.astro. Cursor (`109:1373`) is 40×40; Figma Make (`140:1095`) is 56×56; download/share are 28×28; social, AI, mail and phone marks are 16 high. Circle remains a CSS mask consumed by ReleaseNote, square is unused, and every other used entry is ported through Icon.astro. Icon hover/focus uses the shared alpha-following SVG filter: two independent layers with x 0, y 8 and Gaussian sigma 16 each, matching the two Figma md-lemon shadows at blur radius 32. Both layers start from SourceAlpha rather than chaining CSS drop-shadows or shadowing the image box."
+      "notes": "Seventeen icons retain their sparse Color × State matrix. Only the eight AI/social marks have hover variants (both Black and White); Cursor, Figma Make, download, share, circle, square, triangle, mail and phone are Default-only. Unsupported color or hover combinations throw rather than silently recolor or invent a state. Circle/Black and square/Tomato are implemented; triangle exists only in Herbs. Eight fresh black AI/social SVGs and square live under src/components/assets/icons; their ink is the live neutral-black #040302 rather than the previous public asset #171613. Public assets remain untouched. md-lemon hover uses two independent blurred SourceAlpha layers (y 8, sigma 16) rather than shadowing the image rectangle or chaining shadows. Intrinsic export canvases include perplexity 16, github/openai/linkedin 17, figma 12, triangle 30 and square 19."
     },
     {
-      "figmaName": "post-it",
+      "figmaName": "Post-it",
       "nodeId": "114:581",
       "page": "Organisms",
       "component": "src/components/PostIt.astro",
@@ -174,10 +165,10 @@
         "Color": ["herbs", "tomato", "lemon", "pickled"]
       },
       "combinations": ["herbs", "tomato", "lemon", "pickled"],
-      "notes": "Each variant is its own geometry, so PostIt carries four sets of custom properties rather than one shared offset. The paper is 181 × 181 with 40 / 16 / 16 padding, Elevation / md and its own clip; the 500-step disc is 40 × 40 and sits at (104, 0) herbs, (41, 0) tomato, (32, 18.5) lemon, (43, 11) pickled inside boxes of 197 × 211, 192 × 211, 188 × 222 and 200 × 227. Figma rotations herbs +5, tomato −3, lemon +2 and pickled −6 become CSS rotate(-5deg), rotate(3deg), rotate(-2deg) and rotate(6deg) because Figma is counter-clockwise-positive while CSS is clockwise-positive."
+      "notes": "Each Color variant keeps its own 181 × 181 paper, 40 × 40 pin, per-variant box and offsets. Only the paper rotates; the pin stays fixed. Figma rotations herbs +5, tomato −3, lemon +2 and pickled −6 become CSS -5, +3, -2 and +6 degrees. Copy is the drawn raw #000000, not a substituted neutral. The herbs paper has an unbound scaled shadow (0 3.6330276px 14.5321102px rgb(20 17 15 / 0.08)); the other papers use shadow-md. Existing interactive tilt remains."
     },
     {
-      "figmaName": "flipcard",
+      "figmaName": "Flipcard",
       "nodeId": "114:569",
       "page": "Organisms",
       "component": "src/components/FlipCard.astro",
@@ -185,28 +176,19 @@
         "State": ["Front", "Back", "small"]
       },
       "combinations": ["Front", "Back", "small"],
-      "notes": "Front 114:568 and Back 114:567 use radius/md and Elevation/lg, with no curl. Their 200 × 300 mock is the 200px base width and 2:3 no-teaser fallback, not an image-backed ratio constraint: normal cards use local teaser metadata, or a string image’s loaded natural dimensions, then uniformly enlarge both faces until full back content fits (one-pixel tolerance). A failed 16-step bracket falls back to readable stacked faces and reachable links; successful refitting restores the chosen face. One per-card rAF scheduler covers initial layout, fonts, image completion and resize. The neutral-100 Back uses 16 inline / 12 block padding, H5 and Body - Small; Footer 171:1132 keeps independent Figma/GitHub marks and CTA precedence additionalUrl → githubUrl → figmaUrl. Click/tap/Enter/Space flips with duration/base and easing/standard; hover never flips. Fine-pointer normal-card hover scales only the nonrotating stage to 1.16 while the front is showing; the back has no hover scale, and exit returns to 1, without a focus-within latch. The stage owns one large shadow outside clipped artwork planes; no-JS retains per-face large shadows and both faces in natural flow. State=small retains 87 × 130.5 and radius/sm, now large elevation; its front-only hover/focus magnification remains 2.2989 with adjacent front-state small siblings at 1.5162. Back-state small cards do not scale. The full-face flip buttons inherit the global lemon cursor; there is no component pointer override."
+      "notes": "Front 114:568 and Back 114:567 retain radius-md and shadow-lg. State=small is 87 × 130.5, radius-sm and shadow-sm. Back H5 uses the live unbound 1.2 line height; title and summary retain raw #000000 Figma fills. Existing content-fitting, no-JS readable faces, click/tap/keyboard flip behavior and image-driven proportions remain; no library redraw changes those interaction contracts. Footer keeps separate Figma/GitHub marks and additionalUrl → githubUrl → figmaUrl CTA precedence."
     },
     {
-      "figmaName": "curiosity",
-      "nodeId": "114:610",
-      "page": "Organisms",
-      "component": "src/components/CuriosityRow.astro",
-      "variantProperties": {},
-      "combinations": ["Default"],
-      "notes": "Named CuriosityRow because the set is one row, not the section. It is an Avatar beside a ChatBubble User=Talking head, State=Default and nothing more, so the component composes those two rather than restyling either. Maps to the curiosity collection (thought + question)."
-    },
-    {
-      "figmaName": "blank section",
+      "figmaName": "Text",
       "nodeId": "114:636",
       "page": "Organisms",
-      "component": "src/components/BlankSection.astro",
+      "component": "src/components/TextSection.astro",
       "variantProperties": {},
       "combinations": ["Default"],
-      "notes": "The frame's copy (`Let’s be honest`) is final in Max's voice, not placeholder, so it is the prop default. BlankSection is the set's named instance of the general heading-plus-body layout in TextSection.astro. TextSection has no Figma set and therefore no separate sets entry. Body arrives through the default slot because the source is markdown in collection frontmatter. Geometry verified 2026-09-22: the set is one vertical auto-layout with gap 24, and its body is a single Description text layer at y=96 holding both paragraphs — so paragraphs sit on the body line-height with no inter-paragraph gap. The heading binds Typography/H1 with letter-spacing normal, not the tight tracking global.css gives headings; Description is --color-neutral-800."
+      "notes": "The standalone Text component maps directly to TextSection. Its desktop layout is horizontal: 310 title + 135 gap + 532 body, 977 total. Heading is uppercase Typography/Title at 108px with 1.2 line height and text-box trimming; these are unbound style metrics, not H1 tokens. Content arrives through the heading prop and default body slot. BlankSection remains a named-content composition around it, not a separate live library mapping. Narrow-width stacking is an accessibility fallback, not a newly drawn mobile variant."
     },
     {
-      "figmaName": "CV section",
+      "figmaName": "CV",
       "nodeId": "477:2204",
       "page": "Organisms",
       "component": "src/components/CvSection.astro",
@@ -214,26 +196,10 @@
         "State": ["Default", "PDF"]
       },
       "combinations": ["State=Default", "State=PDF"],
-      "notes": "Renders one position. Mirrors the resume collection in src/content.config.ts. The date range is formatted by src/lib/dates.ts formatRange; the hyphen-minus in \"Mar - Oct 2026\" is the design's glyph, not an en dash. Re-read 2026-09-22 for the /resume/cv redesign: the set gained a State axis. Corrected State=Default (`114:640`) is Header → captioned collapsed/small ProjectPreview → summary in normal flow with 16 gaps; the speculative three-image media row is gone. Previews wrap with the same 16 gap; uppercase company captions are retained. PDF suppresses all project previews even when passed the same payload. State=PDF (`477:2203`, 1152 × 72) tightens the rail to gap 12 with no top inset, shrinks the logo box to 40 × 26, drops the content gap to 12, turns Header Container horizontal (gap 40, centre-aligned), and drops Description to Typography/Body - Small; Media Container is hidden. Text styles confirmed on the PDF variant, and unchanged from Default: Date is Mono - Small in neutral-600, Role is Body - Bold, Company is Body, Description is Body(-Small in PDF) in neutral-800 — the code already matches; the 2026-09-10 note claiming the reverse role/company weights was stale and is corrected here. The PDF Date node hugs (textAutoResize WIDTH_AND_HEIGHT); its drawn 140 width is the measured width of \"Mar - Oct 2026\", not a fixed date column. The logo column (`377:1946`) is 40 wide with 8 of top padding in Default. The logo column holds Line 2 (`476:513`) under the 40 slot: a 1px stroke bound to color/neutral/200, filling the column with a 16 gap so each entry carries its own segment of the divider."
+      "notes": "Renders one position with state='default'|'pdf'. Default uses 24 content gaps, 64 bottom padding and a 581-wide content maximum; PDF content gap is 4 and its project previews are suppressed. Rail bottom padding is 16 in Default and zero in PDF; the triangle retains its exact 29.686 intrinsic box. projects now takes {href,title,image:{src,alt},detailImage:{src,alt},colors:readonly [string,string,string,string]}; caption/artefacts and the old ProjectPreview dependency are removed. The inline CV-only preview 643:2846 uses 99/44/44 by 99 artwork, 8 gap, then 12 gap to 132-wide H6 title plus secondary Explore. Date formatting remains shared through formatRange. Narrow-layout reflow is an accessibility fallback, not a Figma mobile variant."
     },
     {
-      "figmaName": "project preview",
-      "nodeId": "114:646",
-      "page": "Organisms",
-      "component": "src/components/ProjectPreview.astro",
-      "variantProperties": {
-        "State": ["collapsed", "exploded"],
-        "Size": ["small", "Default"]
-      },
-      "combinations": [
-        "collapsed/small",
-        "collapsed/Default",
-        "exploded/Default"
-      ],
-      "notes": "Corrected nodes: collapsed/Default 562:5259, exploded/Default 562:5297, collapsed/small 562:5072; exploded/small does not exist. One conditional content wrapper surrounds the text and relative collage in normal flow and grows with real copy: it is a full-frame anchor when href is supplied and a div otherwise. Width/gap/collage-height: 426.759/40/256.804, 665.135/24/408.787, 220.522/8/128.402. All titles are neutral-800 (H4, H3, H5 respectively), captions neutral-600 (Body at Default, uppercase Captions at small). Caption is required: every preview begins with its company, and small reuses the caption styling present in corrected CV 114:640. Exploded text rotates -4deg inside 23.089px envelope padding above and below; layout sizes switch immediately, only transforms use duration/slow and easing/standard. Six ordered supplied assets maximum, with no empty slots or duplicates; zero assets removes the collage and gap. Scraps use top-left translate/rotate/scaleY with reflected slot 5 and remain inside the anchor's hit-tested subtree. Hover, full-frame-link focus-visible and explicit exploded state share the complete presentation. On /projects, rows flow in the normal 1280px container with 144px block padding, 96px desktop inline insets and 64px gaps, alternating right/left. The project-previews inline-size container switches index instances to the existing small geometry at widths <=665.135px, including hover/focus."
-    },
-    {
-      "figmaName": "Tech&Tools",
+      "figmaName": "Tech",
       "nodeId": "477:2462",
       "page": "Organisms",
       "component": "src/components/ToolBox.astro",
@@ -241,19 +207,19 @@
         "Usage": ["Web", "PDF"]
       },
       "combinations": ["Usage=Web", "Usage=PDF"],
-      "notes": "Renamed from `tool box` to `Tech&Tools` on 2026-09-22, and gained a Usage axis. Usage=Web (`114:685`) is seven columns of 38×38 tiles with a 24 gap. Usage=PDF (`477:2461`) is eleven columns of 27×27 tiles with a 12 gap. Both render the same twenty ordered entries. Five intentionally unfilled entries display `[tool]`; an entry with an icon uses the exported mark and keeps its name as accessible text. The code file remains ToolBox.astro because the Figma relabel did not create a second component."
+      "notes": "Live name is Tech; ToolBox remains the code name. Usage=Web has H2 and seven columns with 24 gaps across 411.302307; Usage=PDF has H3 and eleven columns with 12 gaps across 412.529053. Both headings use the live unbound 1.2 line height. The twenty ordered entries use their own intrinsic Web/PDF asset geometry, not uniform 38/27 square boxes. Empty entries retain explicit placeholder labels. The existing narrow-width fallback is retained, not claimed as a designed mobile variant."
     },
     {
-      "figmaName": "focus areas",
+      "figmaName": "Focus",
       "nodeId": "115:703",
       "page": "Organisms",
       "component": "src/components/FocusAreas.astro",
       "variantProperties": {},
       "combinations": ["Default"],
-      "notes": "The tomato dot is a ::before disc, not a ::marker — ::marker colour is not reliably settable. No content collection exists, so /styleguide passes placeholders."
+      "notes": "Live name is Focus; FocusAreas remains the code name. The heading uses H2 (48px desktop maximum), not H1, with unbound 1.2 line height. The tomato dot remains a before-element and the live 13px marker gap is unbound. Content is caller-supplied."
     },
     {
-      "figmaName": "release notes",
+      "figmaName": "Release Notes",
       "nodeId": "115:706",
       "page": "Organisms",
       "component": "src/components/ReleaseNote.astro",
@@ -261,77 +227,99 @@
         "State": ["active", "inactive"]
       },
       "combinations": ["active", "inactive"],
-      "notes": "Renders ONE note, not the feed. Re-read after the redraw on 22 Sep 2026: a rail dot and connecting line were added; a Description line sits under the date; fixed 320 × 180 slides on a solid ground replace the 1px-framed images; the button is drawn in both states; and section labels now inherit the note colour. Inactive colours are transcribed as neutral-600 text/dot/slides, neutral-100 rail line and lemon-100 button rather than chosen. The design's third section label remains `tools`, while the releaseNotes schema field is `tech`."
-    },
-    {
-      "figmaName": "project sections",
-      "nodeId": "115:755",
-      "page": "Organisms",
-      "component": "src/components/ProjectSection.astro",
-      "variantProperties": {
-        "State": ["active", "inactive"]
-      },
-      "combinations": ["active", "inactive"],
-      "notes": "Renders ONE case-study section, not the whole study, and mirrors caseSection in src/content.config.ts. Re-read from inactive `115:753` and the current active/inactive set `115:755` on 2026-09-23. Both states share one 934-wide main geometry: a two-column header of 489 title + 421 key points with a 24 gap, the 934-wide description 24 below, then the artefact strip after a 64 gap. Active uses neutral-black title ink and neutral-800 for all other copy; inactive uses neutral-600 throughout. Both key-point lists use 12 bullets and 12 gaps; active has a 12 top inset and inactive has none. Both states retain the 16 progress square and 1px rail: active is tomato-300 at -12deg with a pickled-200 line; inactive is tomato-200 at 12deg with a pickled-100 line. Slides stay fixed at 320×180, borderless, and contain their images; their grounds are neutral-800 active and neutral-600 inactive. The frame binds a stray variable `Sizes/L: 24` outside the seven real collections; --space-md supplies the matching authored gap. The frame's prose is lorem ipsum, so /styleguide passes bracketed copy. Scoped scrollbar-width:none and ::-webkit-scrollbar display:none hide strip chrome only; native labelled keyboard/touch/wheel scrolling and the existing 40px/s interaction-latched, reduced-motion-aware drift remain."
+      "notes": "Renders one release note, not the feed. Live active node 655:3769 and inactive 115:704 contain no screenshots, so the screenshots prop, slideshow and its script are removed. Root gap is 95, rail gap/bottom inset 24, body bottom padding 144; the obsolete eight-column cap is removed. Active dot is neutral-black and the line graduates neutral-black to neutral-300. Inactive dot is neutral-300, line neutral-200, copy neutral-600 and button lemon-100. Date is bold Mono - Small, neutral-black active and neutral-600 inactive. Header/changes gap is 4, content gap 24 and closing-button gap 40. Unsupported state transitions are removed. The drawn tools section still reads the existing tech schema field. Narrow-width reflow is an accessibility fallback."
     },
     {
       "figmaName": "NavBar",
-      "nodeId": "210:1625",
+      "nodeId": "210:1624",
       "page": "Organisms",
       "component": "src/components/NavBar.astro",
+      "variantProperties": {},
+      "combinations": ["Default"],
+      "notes": "NavBar is now standalone component 210:1624, a fixed neutral-black footer with white icon marks. The former Mode set 210:1625 no longer exists; mode is removed from the code API, not accepted as a compatibility alias. Legal and behind-the-scenes links use neutral-600. The label prop retains accessible landmark naming. Existing narrow-width stacking remains an accessibility fallback rather than a live mobile design."
+    },
+    {
+      "figmaName": "Project Bentos",
+      "nodeId": "639:1884",
+      "page": "Organisms",
+      "component": "src/components/ProjectBento.astro",
       "variantProperties": {
-        "Mode": ["default", "dark"]
+        "Variant": ["1", "2", "3", "4", "5", "6"],
+        "State": ["Default", "hover"]
       },
-      "combinations": ["default", "dark"],
-      "notes": "Named NavBar in Figma but reads as the site footer: legal link, an \"explore with\" credit, seven section links and five social marks. Claude, ChatGPT and Perplexity are accessible links configured in src/config/site.ts. Layout as drawn (`114:189`): #impressum and the explore credit at the two ends of the left column; the four section links, then the about links over the social marks, on the right. Icon.astro owns the exported mark paths and dimensions; the current GitHub and LinkedIn assets are 16px wide. Mode is a ground colour per instance, NOT a colour scheme: Mode=Dark paints every mark neutral-white, so public/icons/dark/ holds the same eight artworks with that fill. The bar is full-bleed at every viewport — it has no max-width. The label prop keeps the two /styleguide landmarks unique. Below 48rem the row stacks; Figma's Mobile frame (`103:1103`) is empty, so that decision is undesigned. Icon hover/focus uses the shared alpha-following SVG filter: two independent layers with x 0, y 8 and Gaussian sigma 16 each, matching the two Figma md-lemon shadows at blur radius 32. Both layers start from SourceAlpha rather than chaining CSS drop-shadows or shadowing the image box. Project detail routes render one dark Site navbar immediately after main, outside the detail-reveal conditional."
+      "combinations": [
+        "1/Default",
+        "1/hover",
+        "2/Default",
+        "2/hover",
+        "3/Default",
+        "3/hover",
+        "4/Default",
+        "4/hover",
+        "5/Default",
+        "5/hover",
+        "6/Default",
+        "6/hover"
+      ],
+      "notes": "ProjectBento has variant='1'..'6' (default '1') and state='default'|'hover'. title and href are required; images is a required record of primary, wide, square, portrait and detail, each with src (ImageMetadata or string) and alt. colors is an eight-item tuple: four appear compact and all eight expanded. The caller supplies project artwork rather than baking Figma checkerboard placeholders into the component. Compact is 421 × 210 with clipped child overflow; expanded is 1280 × 538 with 96 side insets and 316/198 rows separated by 24. Hover, focus-visible and explicit hover state share the expanded presentation with no invented animation or JS. H5/H3 use unbound 1.2 line height. Expanded title is neutral-white on a transparent ground: invisible on a neutral-white host is a design finding, not corrected with a new background."
+    }
+  ],
+  "compositions": [
+    {
+      "component": "src/components/CuriosityRow.astro",
+      "formerNodeId": "114:610",
+      "status": "detached",
+      "notes": "The former curiosity component returns no parent or page in the live file. Retained as the reusable Avatar plus ChatBubble composition; it is not a current Organisms entry."
+    },
+    {
+      "component": "src/components/ProjectPreview.astro",
+      "formerNodeId": "114:646",
+      "status": "detached",
+      "notes": "The former project preview set returns no parent or page in the live file. Retained for existing page consumers; it does not stand in for the new Project Bentos library set."
+    },
+    {
+      "component": "src/components/ProjectSection.astro",
+      "formerNodeId": "115:755",
+      "status": "graveyard",
+      "notes": "The former project sections set now belongs to Graveyard (503:2669), not Organisms. Existing case-study composition and page behavior remain outside the current library inventory."
+    },
+    {
+      "component": "src/components/BlankSection.astro",
+      "formerNodeId": "114:636",
+      "status": "composition",
+      "notes": "The live node is now Text and maps directly to TextSection. BlankSection remains the existing named-content composition around TextSection, not an additional Figma component."
     }
   ],
   "unbound": {
-    "$comment": "Values the design uses that no Figma variable holds. Each is a literal in code with a comment saying so. Listed here so the next sync can see them without re-reading the file.",
+    "$comment": "Current library measurements and existing code-only exceptions. A literal transcribes the Figma value when no variable exists; a nearby token is not a substitute. Page and retained-composition geometry is outside this library read.",
     "items": [
-      "--size-chat-choice (400px) — the max-width on the three visitor/user Chat combinations.",
-      "ChatBubble's 2px stroke (`109:1385`, `109:1386`, `109:1388`) — no --border-width-* token tier exists.",
-      "The 48rem breakpoint in NavBar, ToolBox and global.css — CSS custom properties cannot be used in media-query conditions.",
-      "focus areas item gap 13px (`114:311`) — no spacing token holds it.",
-      "The #ffffff fill on slot placeholders — tool box tile (`114:272`) and CV section Logo (`114:255`). One step off neutral-white and unbound; code paints them neutral-white, invisible against the page ground. The corrected Default CV no longer contains the obsolete three-image placeholder row.",
-      "w-[383.108px] on the NavBar impressum column — a magic number, dropped in code.",
-      "The corrected project-preview geometry (562:5259, 562:5297, 562:5072): slots in [x,y,width,height,CSS angle,flipY] order; top-left translate(x,y) rotate(angle) scaleY(flipY). {\"collapsed\":[[39,43.776,100,100,-2,1],[3.49,117.286,100,100,2,1],[227.52,57.001,200,112.5,5,1],[75.715,129.952,200,112.5,-4,1],[128.715,9.805,200,112.5,85,-1],[395.126,56.926,200,112.5,92,1]],\"exploded\":[[64.674,79.758,150,150,-8,1],[15.679,175.791,150,150,6,1],[368.828,37.117,300,168.75,9,1],[120,215.543,300,168.75,-8,1],[194.369,29.303,300,168.75,80,-1],[597.183,110.43,300,168.75,96,1]],\"small\":[[19.5,21.888,50,50,-2,1],[1.745,58.643,50,50,2,1],[120.903,30,100,56.25,5,1],[37.857,64.976,100,56.25,-4,1],[64.357,4.903,100,56.25,85,-1],[197.563,28.463,100,56.25,92,1]]}. Exploded text envelope padding: 23.089px above/below; widths and collage heights as recorded in the set note.",
-      "flipcard state=small at 87×130.5.",
-      "Sizes/L: 24 in project sections — a stray variable outside the seven collections, already marked for deletion.",
-      "The post-it geometry — the 181 paper, the 40 disc, and the four per-variant boxes and offsets (`114:577`-`114:580`).",
-      "The post-it copy's #000000 fill (`114:174`) — the only unbound text fill in the set; code keeps neutral-800 rather than introduce a second near-black.",
-      "The share icon's two #000000 strokes beside its #040302 discs (`377:2143`) — exported verbatim.",
-      "The .btn--icon 28 / 32 icon box (`377:2215`, `377:2217`) — an icon size, not a spacing step.",
-      "The active release-note body fill is raw #000000 (`I476:78;114:335`); Max chose --color-neutral-800 for the shipped component.",
-      "The release-note slide box is 320 × 180 (`I476:78;114:349`). Its white 220 × 124 inner rectangle is placeholder art, not a bezel, and is not transcribed.",
-      "The release-note date line has a JetBrains Mono Bold override (`I476:78;114:337`) against the Regular Typography/Mono - Small text style.",
-      "The page grid — 10 columns, 24 gutter, 96 margin on the 1280 frames; 5/16/24 on the 375 Mobile frames. A layout grid is not a variable, so --grid-frame/--grid-margin/--grid-columns/--grid-gutter/--grid-column live only in src/styles/tokens.css.",
-      "The CV section divider line (`476:513`) and ProjectSection progress rail (`115:755`) each use a transcribed 1px stroke; no --border-width-* tier exists.",
-      "The triangle mark's 29.686 drawn box (`476:1350`) — rounded to 30 in Icon.astro, as the NavBar marks are.",
-      "The /resume/cv header mark size 12px (Figma 477:2404, 477:2385) — a drawn size with no token.",
-      "The CV section State=PDF logo box is 40 × 26 (Figma 477:2203); the code transcribes its 26px block size so the 30 mark centres against the title row.",
-      "The /resume/cv @page margin, 10.5mm — the 39.68503937-unit inset on the A4 sheet 267:4053, converted to the print unit @page requires, since @page cannot read custom properties.",
-      "The 1px table, section and swatch rules in ProseLayout, /behind-the-scenes and /styleguide — document geometry with no --border-width-* token tier.",
-      "The /playground scattered-card coordinates (986,32; 430,332; 763,406; 1101,482) — page placement read from the Figma canvas, with no layout-position token tier.",
-      "CvSection's cumulative triangle turn (16deg per entry) and PostIt's 8deg hover delta — interaction geometry approved in their Figma/component behavior, with no angle token tier."
+      "Title is 108px; Title and H1–H5 line heights are 1.2; Body - Large is 20px. These are raw local text-style metrics, not Figma variables.",
+      "ChatBubble's 2px stroke has no border-width variable.",
+      "Post-it uses a 181 × 181 paper and 40 × 40 pin with per-variant offsets and rotations; only the paper rotates. Its copy is raw #000000.",
+      "The herbs Post-it paper shadow is 0 3.6330276px 14.5321102px rgb(20 17 15 / 0.08), a scaled unbound effect rather than shadow-md.",
+      "Flipcard small is 87 × 130.5. Back title and summary use raw #000000; H5 line height is 1.2.",
+      "Project Bentos compact is 421 × 210; expanded is 1280 × 538 with 96 side insets. Large/small rows are 316/198 high with 24 between. The geometry is intrinsic artwork layout, not a new size scale.",
+      "The share icon includes #000000 strokes beside neutral-black discs; SVG paths retain their original paints.",
+      "Intrinsic icon dimensions, one-pixel divider strokes and component rotations remain direct geometry, not additions to the spacing scale.",
+      "Text uses 310/532 columns, 135 gap and 977 total width; Release Notes uses 95 root gap and 1px rail stroke.",
+      "CV preview art uses 99/44/44 dimensions and 132-wide copy; Default content maximum is 581 and the mark is 29.686. Tech uses per-asset fractional geometry and 411.302307/412.529053 grid widths.",
+      "The existing page grid and focus ring are CSS-only source groups; neither is a local Figma variable collection.",
+      "Existing page/retained-composition decisions such as 48rem responsiveness, ProjectPreview collage coordinates, ProjectSection native-scroll enhancement, print margins and playground positions are not newly verified library design."
     ]
   },
   "outstanding": {
-    "$comment": "The Figma MCP server is reachable again. The blocked reads, geometry reads and asset exports are complete; public/favicon.svg differed and Figma's neutral-white ground won. `variableWrites` is now unblocked and is the only Figma mutation still outstanding. `unverifiedChoices` are deliberately deferred code-sync work, not authentication blockers.",
-    "variableWrites": [
-      "Typography collection is missing font/weight/bold = 700, line-height/none = 1 and line-height/relaxed = 1.4. All three already exist in src/styles/tokens.css and design/tokens.json, so the three-file rule is two-thirds done. Each needs a value, a description, scopes, and WEB code syntax (var(--font-weight-bold), var(--line-height-none), var(--line-height-relaxed)) — without the code syntax the MCP emits var(--line-height\\/none), which is not valid CSS. The collection has one mode, named Value.",
-      "Re-bind the text styles that still hold raw numbers: Typography/H1–H5 → line-height/none; Typography/Body - Small and Typography/Captions → line-height/relaxed. Until then get_variable_defs reports floats instead of names.",
-      "Delete size/chat-column (866) and size/chat-bubble (531) from the Size collection. Both are now computed from the page grid in CSS — 8 and 5 columns — so the variables have no code counterpart. size/chat-choice (400) stays: it is not a column span."
+    "$comment": "Read-only synchronization findings, not instructions or authorization to mutate Figma.",
+    "variableFindings": [
+      "All 78 local variables were read in seven single-Value collections. Existing code-only font/weight/bold=700, line-height/none=1 and line-height/relaxed=1.4 still have no local variable counterpart.",
+      "Typography/Body - Bold renders Satoshi Bold but binds font/weight/semibold=600. Code preserves the drawn Bold face; the conflicting binding is reported.",
+      "size/chat-column=866 and size/chat-bubble=531 remain authoritative local variables and are restored to DESIGN.md; the obsolete proposed deletion is withdrawn."
     ],
-    "assetExports": [],
-    "unverifiedChoices": [
-      "Spacing gap still awaiting a Figma read: CuriosityRow's avatar gap.",
-      "NavBar mode=default ground = --color-neutral-100. Only the dark ground was transcribed.",
-      "NavBar's columns stack below 48rem, and the row itself no longer wraps — the drawn 1280 frame is now full-bleed at every width, so the wrap that stopped #aboutme being clipped is unnecessary.",
-      "CvSection's role label drops white-space: nowrap below 48rem, for the reason the NavBar row wrapped: a long role ran off the right edge instead of reflowing.",
-      "/resume stacks its note rail under the timeline below 48rem. The Mobile frame (`103:1124`) is unfinished, so where the notes go on a phone is undrawn.",
-      "ToolBox drops 7 columns to 2 below 48rem. A second undesigned mobile decision beyond the NavBar one.",
-      "ProjectSection's artefact strip auto-scrolls: endless 40 px/s drift, latched off by pointer, wheel, touch, key or focus, temporarily paused on hover. Requested directly; no prototype connection exists in project sections (115:755), so nothing about the timing is Figma-read."
+    "designFindings": [
+      "Project Bentos expanded title is neutral-white over a transparent ground. On neutral-white its contrast is 1:1; the sync does not invent a background or substitute ink."
+    ],
+    "pageMigration": [
+      "Pages and global.css intentionally remain outside scope. Existing removed component props and layouts may break until a separately requested migration.",
+      "Typography JSON now permits literal CSS-value strings as well as custom-property names. The existing styleguide table wraps all strings in var(), so it does not correctly render the new literal metrics."
     ]
   }
 }

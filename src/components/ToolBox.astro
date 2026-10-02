@@ -1,5 +1,5 @@
 ---
-/** Figma component set `Tech&Tools` (`477:2462`). */
+/** Figma component set `Tech` (`477:2462`). */
 import { withBase } from '../config/site';
 
 interface Tool {
@@ -31,28 +31,64 @@ const {
 } = Astro.props;
 const HeadingTag = `h${level}` as 'h2' | 'h3' | 'h4';
 
-/*
- * Source prose is markdown held in content-collection frontmatter. When prose
- * accompanies this organism, the page renders it through the default slot and
- * the component only lays it out; tool records remain the component's data.
- */
+/* Intrinsic asset boxes from Web 533:3380 and PDF 533:3515, not square tiles. */
+const iconBoxes: Record<string, readonly [number, number, number, number]> = {
+  'lucid.svg': [38.186, 40.923, 26.594, 28.5],
+  'figma.svg': [20, 30, 12.5, 18.75],
+  'jira.svg': [30, 30, 18.75, 18.75],
+  'userguiding.png': [38.186, 37.831, 26.594, 26.346],
+  'miro.svg': [30.189, 30.189, 18.868, 18.868],
+  'notion.svg': [30, 30, 18.75, 18.75],
+  'atlassian.svg': [30, 30, 18.75, 18.75],
+  'tool-08.png': [38.186, 38.186, 26.594, 26.594],
+  'tool-09.svg': [30.189, 34.07, 18.868, 21.294],
+  'tool-10.png': [38.186, 38.186, 26.594, 26.594],
+  'asana.svg': [30.189, 27.444, 18.868, 17.153],
+  'webflow.svg': [38.186, 23.546, 26.594, 16.398],
+  'tool-13.svg': [30, 15.849, 18.75, 9.906],
+  'wordpress.png': [38.186, 37.831, 26.594, 26.346],
+  'visio.png': [38.186, 36.396, 26.594, 25.347],
+  'marvel.png': [38.186, 37.831, 26.594, 26.346],
+  'github-tool.svg': [38.186, 37.059, 26.594, 25.809],
+  'excel.png': [38.186, 35.561, 26.594, 24.765],
+  'tool-19.svg': [30.189, 30.189, 18.868, 18.868],
+  'canva.png': [38.186, 37.831, 26.594, 26.346],
+};
+const boxOffset = usage === 'pdf' ? 2 : 0;
 ---
 
-<section class:list={['toolbox', `toolbox--${usage}`, className]}>
+<section
+  class:list={['toolbox', `toolbox--${usage}`, className]}
+  aria-label={title}
+>
   <HeadingTag class="toolbox__title">{title}</HeadingTag>
   <slot />
   {
     tools.length > 0 && (
       <ul class="toolbox__tools">
-        {tools.map((tool) => (
-          <li class="toolbox__tool">
-            {tool.icon ? (
-              <img src={withBase(tool.icon)} alt={tool.name} />
-            ) : (
-              <span>{tool.name}</span>
-            )}
-          </li>
-        ))}
+        {tools.map((tool) => {
+          const box = tool.icon && iconBoxes[tool.icon.split('/').pop() ?? ''];
+          return (
+            <li class="toolbox__tool">
+              {tool.icon ? (
+                <img
+                  src={withBase(tool.icon)}
+                  alt={tool.name}
+                  style={
+                    box
+                      ? {
+                          inlineSize: `${box[boxOffset]}px`,
+                          blockSize: `${box[boxOffset + 1]}px`,
+                        }
+                      : undefined
+                  }
+                />
+              ) : (
+                <span>{tool.name}</span>
+              )}
+            </li>
+          );
+        })}
       </ul>
     )
   }
@@ -61,18 +97,26 @@ const HeadingTag = `h${level}` as 'h2' | 'h3' | 'h4';
 <style>
   .toolbox {
     display: grid;
-    /* Token-chosen while Figma is unreachable; not a value read from the set. */
+    /* Figma Web and PDF variants share a 24 gap. */
     gap: var(--space-md);
   }
 
+  /* Typography/H2 uses an unbound 1.2 line height. */
   .toolbox__title {
-    font-size: var(--font-size-3xl);
+    font-family: var(--font-serif);
+    font-size: var(--font-size-2xl);
+    font-weight: var(--font-weight-semibold);
+    line-height: 1.2;
+    letter-spacing: var(--letter-spacing-normal);
+    color: var(--color-neutral-black);
   }
 
   .toolbox__tools {
     display: grid;
     grid-template-columns: repeat(7, minmax(0, 1fr));
     gap: var(--space-md);
+    inline-size: 411.302307px;
+    max-inline-size: 100%;
     padding: 0;
     list-style: none;
   }
@@ -81,15 +125,13 @@ const HeadingTag = `h${level}` as 'h2' | 'h3' | 'h4';
     display: flex;
     align-items: center;
     justify-content: center;
-    inline-size: 38px;
-    block-size: 38px;
+    min-inline-size: 0;
     text-align: center;
   }
 
   .toolbox__tool img {
-    inline-size: 100%;
-    block-size: 100%;
     object-fit: contain;
+    max-inline-size: 100%;
   }
 
   /*
@@ -104,7 +146,7 @@ const HeadingTag = `h${level}` as 'h2' | 'h3' | 'h4';
     }
   }
 
-  /* Figma 533:3380 (Usage=PDF): eleven equal columns with 27px logo boxes. */
+  /* Figma 533:3515: eleven columns; native marks are scaled to 62.5%. */
   .toolbox--pdf .toolbox__title {
     font-size: var(--font-size-xl);
   }
@@ -112,10 +154,6 @@ const HeadingTag = `h${level}` as 'h2' | 'h3' | 'h4';
   .toolbox--pdf .toolbox__tools {
     grid-template-columns: repeat(11, minmax(0, 1fr));
     gap: var(--space-xs);
-  }
-
-  .toolbox--pdf .toolbox__tool {
-    inline-size: 27px;
-    block-size: 27px;
+    inline-size: 412.529053px;
   }
 </style>
