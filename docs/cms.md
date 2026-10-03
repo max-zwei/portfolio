@@ -31,36 +31,130 @@ there is a real case study.
 
 ## projects
 
-The case study, told in eight sections. Everything above them is card and
-listing data.
+The case study has two optional Markdown introductions and six optional narrative
+sections. Metadata, colors, and image slots are top-level fields.
 
-| Field                 | Type                    | Required    | Purpose                                                      |
-| --------------------- | ----------------------- | ----------- | ------------------------------------------------------------ |
-| `title`               | string                  | yes         | Project name. Used as the page `<h1>` and in listings.       |
-| `summary`             | string (≤ 280)          | yes         | Card copy and meta description. One or two sentences.        |
-| `company`             | string                  | yes         | Who the work was for.                                        |
-| `year`                | number                  | yes         | Year the work was done, or started for ongoing work.         |
-| `tags`                | string[]                | no          | Discipline and domain tags, e.g. `["uxresearch", "edtech"]`. |
-| `teaserVertical`      | image                   | no          | Portrait teaser, for tall cards.                             |
-| `teaserVerticalAlt`   | string                  | conditional | **Required whenever `teaserVertical` is set.**               |
-| `teaserHorizontal`    | image                   | no          | Landscape teaser, for wide cards.                            |
-| `teaserHorizontalAlt` | string                  | conditional | **Required whenever `teaserHorizontal` is set.**             |
-| `figmaUrl`            | URL                     | no          | The Figma file or frame the work was designed in.            |
-| `repoUrl`             | URL                     | no          | The GitHub repository, where the project has one.            |
-| `match`               | object of four id lists | No          | What the /home questionnaire matches this entry on.          |
+| Field      | Type                    | Required | Purpose                                                    |
+| ---------- | ----------------------- | -------- | ---------------------------------------------------------- |
+| `title`    | string                  | yes      | Project name. Used as the page `<h1>` and in listings.     |
+| `summary`  | string (≤ 280)          | yes      | Card copy and meta description. One or two sentences.      |
+| `company`  | string                  | yes      | Who the work was for.                                      |
+| `year`     | number                  | yes      | Year the work was done, or started for ongoing work.       |
+| `tags`     | string[]                | no       | Discipline and domain tags; defaults to `[]`.              |
+| `figmaUrl` | URL                     | no       | The Figma file or frame the work was designed in.          |
+| `repoUrl`  | URL                     | no       | The GitHub repository, where the project has one.          |
+| `match`    | object of four id lists | no       | What the /home questionnaire matches this entry on.        |
+| `context`  | Markdown string         | no       | The project's context, directly in frontmatter.            |
+| `hmw`      | Markdown string         | no       | The question guiding the project, directly in frontmatter. |
 
-Then the eight sections, in narrative order — `context`, `hmw`, `exploration`,
-`definition`, `development`, `feedback`, `learning`, `behindTheScenes`. Each is
-**optional** (not every project earns all eight) and each has the same shape:
+### Colors
 
-| Field         | Type           | Required | Purpose                                                 |
-| ------------- | -------------- | -------- | ------------------------------------------------------- |
-| `subtitle`    | string         | no       | Sits next to the section heading.                       |
-| `description` | markdown       | no       | The section itself. Required once the section exists.   |
-| `artefacts`   | list of images | no       | Each needs `src` and `alt`. Alt text is never optional. |
-| `keyPoints`   | string[]       | no       | The section in bullets, for a reader in a hurry.        |
+`color1`, `color2`, `color3`, `color4`, `color5`, `color6`, `color7`, and `color8`
+are independent optional strings. Each supplied value must be exactly `#RRGGBB`
+(six hexadecimal digits, either case). Quote hex values in YAML so `#` is not
+treated as a comment. No palette or default values are supplied; unused colors
+remain absent. The CMS uses string controls with the same hex pattern rather
+than a color picker that would introduce an initial color.
 
-There is no markdown body — the eight sections _are_ the case study.
+Clearing a previously saved optional scalar in Decap writes `""`, rather than
+removing its YAML key. The project schema treats that exact empty string as
+absence for colors, image slots, `context`, and `hmw`; it supplies no replacement
+value. Nonempty colors still must match the full six-digit pattern, and an image
+still requires nonblank alt text. This normalization is limited to these project
+fields, not required summaries or other collections.
+
+### Images
+
+Seven independent, optional image slots live directly in frontmatter:
+
+| Image key    | Companion alt-text key |
+| ------------ | ---------------------- |
+| `img_0.8h`   | `img_0.8h_alt`         |
+| `img_0.6h_l` | `img_0.6h_l_alt`       |
+| `img_0.6h_s` | `img_0.6h_s_alt`       |
+| `img_1_2_l`  | `img_1_2_l_alt`        |
+| `img_1_2_s`  | `img_1_2_s_alt`        |
+| `img_1_1`    | `img_1_1_alt`          |
+| `img_1_2`    | `img_1_2_alt`          |
+
+Each image requires its companion **nonblank alt text** when supplied. Both
+controls are optional in Decap so an unused pair can remain absent; the schema
+enforces the conditional requirement. Slots have no defaults. Do not populate
+them with old teasers or section artefacts automatically.
+
+The dots are **literal characters in top-level keys**, not object paths. Write
+`'img_0.8h': ./_media/example.jpg`, not an `img_0` object. The admin shell in
+[`src/pages/admin/index.astro`](../src/pages/admin/index.astro) pins Decap **3.15.1**.
+In that version, the
+[editor's `getFieldValue`](https://github.com/decaporg/decap-cms/blob/decap-cms%403.15.1/packages/decap-cms-core/src/components/Editor/EditorControlPane/EditorControlPane.js)
+reads `['data', field.get('name')]`, and the
+[draft reducer](https://github.com/decaporg/decap-cms/blob/decap-cms%403.15.1/packages/decap-cms-core/src/reducers/entryDraft.js)
+writes `['entry', ...dataPath, name]`. Neither splits the field name.
+The [frontmatter formatter](https://github.com/decaporg/decap-cms/blob/decap-cms%403.15.1/packages/decap-cms-core/src/formats/frontmatter.ts)
+passes metadata to the [YAML formatter](https://github.com/decaporg/decap-cms/blob/decap-cms%403.15.1/packages/decap-cms-core/src/formats/yaml.ts),
+which uses `yaml.createNode(data)` and `doc.toJSON()`: dotted keys stay literal
+through serialization. This is a source-level finding, not a claim that every
+dot-aware CMS feature treats names literally: the editor's `focus(path)` splits
+on dots, so automatic error-focus navigation can fail for these fields.
+
+### Narrative sections
+
+`exploration`, `definition`, `development`, `feedback`, `learning`, and
+`behindTheScenes` are optional objects with exactly these fields:
+
+| Field       | Type            | Required              | Purpose                                 |
+| ----------- | --------------- | --------------------- | --------------------------------------- |
+| `summary`   | Markdown string | yes, if object exists | The section itself; must be nonempty.   |
+| `keyPoints` | string[]        | no                    | Takeaways in bullets; defaults to `[]`. |
+
+The section summary is rich text, unlike the short top-level card `summary`.
+The CMS retains the established optional-object pattern: `required: false` on
+the object and its child controls, with a hint explaining the schema-enforced
+summary requirement. This is deliberate:
+[Decap's object control](https://github.com/decaporg/decap-cms/blob/decap-cms%403.15.1/packages/decap-cms-widget-object/src/ObjectControl.js)
+validates every child even when an optional parent is absent, and
+[widget presence validation](https://github.com/decaporg/decap-cms/blob/decap-cms%403.15.1/packages/decap-cms-core/src/components/Editor/EditorControlPane/Widget.js)
+does not condition a child's `required` flag on the parent. Making the CMS
+summary control unconditionally required would also require omitted sections.
+The build therefore rejects any existing section object without a nonempty
+summary, including `{}` or an object containing only key points. Collapsing a
+section does not remove it; remove the whole object from frontmatter to omit it.
+
+The CMS `keyPoints` control deliberately has **no default**. Giving it `[]`
+materializes all six otherwise untouched section objects on a new entry, which
+then fail the summary requirement. The schema supplies `[]` only after an
+included section has a valid summary.
+
+There is no Markdown body. The migration preserves former `context.description`
+and `hmw.description` as their top-level strings, and the six other section
+descriptions as `summary`. Subtitles, artefacts, legacy aliases, and project
+teaser fields are no longer part of the contract.
+
+Project images and résumé project previews remain absent until replacement
+images and an explicit mapping from these slots to the page components are
+provided. No fallback image, palette, or old-media mapping is inferred. Unrelated
+styleguide image fixtures remain in use.
+
+### Verified editor roundtrip
+
+The local Decap 3.15.1 editor was exercised against an isolated filesystem
+backend with a disposable entry and image. Publishing and reopening preserved
+all three dotted image keys and their dotted alt keys as literal top-level YAML
+keys; Astro loaded the uploaded image metadata from each. The same roundtrip
+preserved Markdown in `context`, `hmw`, and all six section summaries, together
+with their key-point lists. An untouched new entry omitted all optional sections
+and image slots. No fixture or image was added to the real project content.
+
+The editor rejected `#abc` and saved `#AaBb09`. Runtime schema probes covered all
+eight color fields, all seven image/alt pairs (including omitted, empty, and
+whitespace-only alt text), optional fields, and missing section summaries.
+Clearing a saved color and image was also saved through Decap and loaded as
+absent values. Saving whitespace-only alt text for a populated dotted image
+produced the expected Astro loader error naming that literal alt key; restoring
+alt text allowed the entry to load again.
+Existing projects and release notes loaded successfully, and the release form
+had no screenshots control. This focused smoke does not imply that unrelated
+page-component type errors or the résumé icon build error are resolved.
 
 ## playground
 
@@ -146,15 +240,14 @@ so it lives in [`src/config/site.ts`](../src/config/site.ts) as `CV_INTRO`.
 
 ## releaseNotes
 
-| Field            | Type           | Required | Purpose                                                        |
-| ---------------- | -------------- | -------- | -------------------------------------------------------------- |
-| `date`           | date           | yes      | When the release happened.                                     |
-| `description`    | string         | no       | One sentence under the date.                                   |
-| `userExperience` | markdown       | no       | What changed in how the site behaves.                          |
-| `userInterface`  | markdown       | no       | What changed in how it looks.                                  |
-| `tech`           | markdown       | no       | What changed under it — build, CMS, tokens, workflow.          |
-| `screenshots`    | list of images | no       | Each needs `src` and `alt`.                                    |
-| `file`           | path or URL    | no       | An optional attachment, under `/releases`, or an absolute URL. |
+| Field            | Type        | Required | Purpose                                                        |
+| ---------------- | ----------- | -------- | -------------------------------------------------------------- |
+| `date`           | date        | yes      | When the release happened.                                     |
+| `description`    | string      | no       | One sentence under the date.                                   |
+| `userExperience` | markdown    | no       | What changed in how the site behaves.                          |
+| `userInterface`  | markdown    | no       | What changed in how it looks.                                  |
+| `tech`           | markdown    | no       | What changed under it — build, CMS, tokens, workflow.          |
+| `file`           | path or URL | no       | An optional attachment, under `/releases`, or an absolute URL. |
 
 All three category fields are optional because a release rarely moves all three
 at once. `file` is the **one upload that does not live in `src/`** — an uploaded
@@ -183,9 +276,8 @@ answer carries no id and matches nothing.
 ## Conventions
 
 - **Every image needs alt text.** Optional images pair with an optional alt
-  field and the schema fails the build if one is set without the other. Images
-  inside a list (`artefacts`, `screenshots`) require `alt` outright — there is no
-  escape there at all.
+  field and the schema fails the build if an image is set without nonblank alt
+  text. Project slots use the exact companion keys listed above.
 - **Images live next to the entry**, in the collection's `_media/` folder,
   referenced as `./_media/name.jpg`. That keeps them inside `src/` where Astro
   can optimise and hash them. `public/` is served as-is with no optimisation,
@@ -198,12 +290,11 @@ answer carries no id and matches nothing.
 
 ### Rich text in frontmatter
 
-Section `description`s and the three release-note categories are markdown held in
-**frontmatter**, not in the entry body. Astro's `render()` only renders a body, so
-these need an explicit build-time markdown pass when the pages get built — use
-`createMarkdownProcessor` from `@astrojs/markdown-remark` (already a transitive
-Astro dependency; add it to `package.json` explicitly at that point). Build-time
-only, so it stays zero client JS.
+Project `context`, `hmw`, the six section `summary` fields, and the three
+release-note categories are Markdown held in **frontmatter**, not in the entry
+body. Astro's `render()` only renders a body, so these fields need an explicit
+build-time Markdown pass rather than `<Content />`. This stays build-time only,
+with no Markdown-rendering JavaScript sent to the client.
 
 This is the price of a project having eight rich-text sections instead of one
 body, and it is worth knowing before you go looking for `<Content />`.
@@ -212,32 +303,24 @@ body, and it is worth knowing before you go looking for `<Content />`.
 
 ```markdown
 ---
-title: Lesekiste
-company: Selbstständig
-summary: A tangible reading companion that turns daily practice into a shared
-  ritual between child and parent.
+title: '[Project name]'
+company: '[Company]'
+summary: '[One or two sentences about the project.]'
 year: 2026
-tags:
-  - UX Research
-  - EdTech
-teaserVertical: ./_media/lesekiste-tall.jpg
-teaserVerticalAlt: A wooden box with illustrated cards spread on a kitchen table
-figmaUrl: https://figma.com/design/xxxx/Lesekiste
-context:
-  subtitle: Evening reading had become a fight
-  description: |
-    Six-year-olds are asked to read for ten minutes a day. **Most of that time
-    is spent negotiating.**
+tags: []
+context: |
+  [The project's context, with **Markdown** if needed.]
+hmw: |
+  [The question guiding the project.]
+exploration:
+  summary: |
+    [What was explored and why.]
   keyPoints:
-    - Ten minutes is the target; nobody enjoys them
-  artefacts:
-    - src: ./_media/lesekiste-flow.png
-      alt: Service blueprint showing the evening routine from box to bedtime
-hmw:
-  description: |
-    How might we make reading practice feel like play?
+    - '[A takeaway from exploration.]'
 ---
 ```
+
+Unused colors, image slots, and narrative sections are intentionally absent.
 
 ## Adding a field
 
@@ -306,14 +389,14 @@ integrity-checked. Not deploying the page is what contains that.
 
 **`required` is deliberately not symmetric with the zod schema. Don't "fix" it.**
 
-- A case-study section's `description`. Decap validates `required` sub-fields
+- A case-study section's `summary`. Decap validates `required` sub-fields
   inside an object widget even when the object is optional and untouched, so
-  marking it required made all eight sections mandatory. It is `required: false`
-  in the CMS; zod rejects a section that exists without one.
-- Alt text (`teaserVerticalAlt`, `teaserHorizontalAlt`, `teaserAlt`, `logoAlt`).
-  The CMS cannot express "required only when the image is set", so the
-  `.refine()` calls in `src/content.config.ts` are the enforcement. The CMS lets
-  you save; the build then fails.
+  marking it required would make all six section objects mandatory. It is
+  `required: false` in the CMS; zod rejects a section that exists without one.
+- Alt text (the seven project `img_*_alt` fields, `teaserAlt`, and `logoAlt`).
+  The CMS cannot express "required only when the image is set", so schema
+  refinements in `src/content.config.ts` enforce it. The CMS lets you save;
+  the build then fails.
 
 The CMS blocks what it can express. zod is the backstop for anything
 conditional.
