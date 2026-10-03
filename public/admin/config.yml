@@ -85,32 +85,132 @@ collections:
         default: []
         hint: Reuse existing tags before inventing new ones, e.g. UX Research, EdTech.
 
-      - label: Teaser (vertical)
-        name: teaserVertical
-        widget: image
-        required: false
-        hint: Portrait teaser, for tall cards. Stored next to the entry so Astro can optimise it.
-
-      - label: Teaser (vertical) alt text
-        name: teaserVerticalAlt
+      - label: Color 1
+        name: color1
         widget: string
         required: false
-        hint: >-
-          REQUIRED if the vertical teaser is set — the build fails without it.
-          Describe the image; don't repeat the title.
+        pattern: ['^#[0-9A-Fa-f]{6}$', 'Use a six-digit hex color: #RRGGBB.']
 
-      - label: Teaser (horizontal)
-        name: teaserHorizontal
-        widget: image
-        required: false
-        hint: Landscape teaser, for wide cards.
-
-      - label: Teaser (horizontal) alt text
-        name: teaserHorizontalAlt
+      - label: Color 2
+        name: color2
         widget: string
         required: false
-        hint: >-
-          REQUIRED if the horizontal teaser is set — the build fails without it.
+        pattern: ['^#[0-9A-Fa-f]{6}$', 'Use a six-digit hex color: #RRGGBB.']
+
+      - label: Color 3
+        name: color3
+        widget: string
+        required: false
+        pattern: ['^#[0-9A-Fa-f]{6}$', 'Use a six-digit hex color: #RRGGBB.']
+
+      - label: Color 4
+        name: color4
+        widget: string
+        required: false
+        pattern: ['^#[0-9A-Fa-f]{6}$', 'Use a six-digit hex color: #RRGGBB.']
+
+      - label: Color 5
+        name: color5
+        widget: string
+        required: false
+        pattern: ['^#[0-9A-Fa-f]{6}$', 'Use a six-digit hex color: #RRGGBB.']
+
+      - label: Color 6
+        name: color6
+        widget: string
+        required: false
+        pattern: ['^#[0-9A-Fa-f]{6}$', 'Use a six-digit hex color: #RRGGBB.']
+
+      - label: Color 7
+        name: color7
+        widget: string
+        required: false
+        pattern: ['^#[0-9A-Fa-f]{6}$', 'Use a six-digit hex color: #RRGGBB.']
+
+      - label: Color 8
+        name: color8
+        widget: string
+        required: false
+        pattern: ['^#[0-9A-Fa-f]{6}$', 'Use a six-digit hex color: #RRGGBB.']
+
+      # Dots are literal field-name characters, not nested object paths.
+      - label: Image 0.8h
+        name: 'img_0.8h'
+        widget: image
+        required: false
+        hint: Optional image slot. Leave unset until an image is chosen.
+
+      - label: Image 0.8h alt text
+        name: 'img_0.8h_alt'
+        widget: string
+        required: false
+        hint: Required when img_0.8h is set; the build enforces this.
+
+      - label: Image 0.6h large
+        name: 'img_0.6h_l'
+        widget: image
+        required: false
+
+      - label: Image 0.6h large alt text
+        name: 'img_0.6h_l_alt'
+        widget: string
+        required: false
+        hint: Required when img_0.6h_l is set; the build enforces this.
+
+      - label: Image 0.6h small
+        name: 'img_0.6h_s'
+        widget: image
+        required: false
+
+      - label: Image 0.6h small alt text
+        name: 'img_0.6h_s_alt'
+        widget: string
+        required: false
+        hint: Required when img_0.6h_s is set; the build enforces this.
+
+      - label: Image 1_2 large
+        name: img_1_2_l
+        widget: image
+        required: false
+
+      - label: Image 1_2 large alt text
+        name: img_1_2_l_alt
+        widget: string
+        required: false
+        hint: Required when img_1_2_l is set; the build enforces this.
+
+      - label: Image 1_2 small
+        name: img_1_2_s
+        widget: image
+        required: false
+
+      - label: Image 1_2 small alt text
+        name: img_1_2_s_alt
+        widget: string
+        required: false
+        hint: Required when img_1_2_s is set; the build enforces this.
+
+      - label: Image 1_1
+        name: img_1_1
+        widget: image
+        required: false
+
+      - label: Image 1_1 alt text
+        name: img_1_1_alt
+        widget: string
+        required: false
+        hint: Required when img_1_1 is set; the build enforces this.
+
+      - label: Image 1_2
+        name: img_1_2
+        widget: image
+        required: false
+
+      - label: Image 1_2 alt text
+        name: img_1_2_alt
+        widget: string
+        required: false
+        hint: Required when img_1_2 is set; the build enforces this.
 
       - label: Figma URL
         name: figmaUrl
@@ -126,64 +226,40 @@ collections:
         pattern: ['^https?://.+', 'Must be a full URL starting with http(s)://']
         hint: Where the code lives, if the project has a repo.
 
-      # The case study, in narrative order. All eight sections are the same
-      # shape, so the field list is written once here and aliased below —
-      # keeping eight copies in step by hand is how they drift.
       - label: Context
         name: context
+        widget: markdown
+        required: false
+        hint: The project's context. Leave unset to omit it.
+
+      - label: How might we?
+        name: hmw
+        widget: markdown
+        required: false
+        hint: The question guiding the project. Leave unset to omit it.
+
+      # Optional objects need optional child controls in Decap. The schema
+      # requires summary once the object exists; see docs/cms.md.
+      - label: Exploration
+        name: exploration
         widget: object
         required: false
         collapsed: true
         fields: &case_section
-          - label: Sub-title
-            name: subtitle
-            widget: string
-            required: false
-            hint: Sits next to the section heading.
-
-          - label: Description
-            name: description
+          - label: Summary
+            name: summary
             widget: markdown
             required: false
             hint: >-
-              The section itself. Leave the whole section empty to omit it; the
-              build rejects a section that has anything else but no description.
-
-          - label: Artefacts
-            name: artefacts
-            widget: list
-            required: false
-            label_singular: Artefact
-            summary: '{{fields.alt}}'
-            hint: >-
-              Sketches, flows, screens, photos. Alt text is required on every one —
-              the build fails without it.
-            fields:
-              - { label: Image, name: src, widget: image }
-              - label: Alt text
-                name: alt
-                widget: string
-                hint: Describe what the image shows. Not optional.
+              Required whenever this section exists, including when it only has
+              key points. The build rejects a section without a nonempty summary.
+              Omit the whole object in frontmatter to remove the section.
 
           - label: Key points
             name: keyPoints
             widget: list
             required: false
             hint: The section in bullets — what a reader in a hurry should take away.
-
-      - label: How might we?
-        name: hmw
-        widget: object
-        required: false
-        collapsed: true
-        fields: *case_section
-
-      - label: Exploration
-        name: exploration
-        widget: object
-        required: false
-        collapsed: true
-        fields: *case_section
 
       - label: Definition
         name: definition
@@ -607,20 +683,6 @@ collections:
         widget: markdown
         required: false
         hint: What changed under it — build, CMS, tokens, workflow.
-
-      - label: Screenshots
-        name: screenshots
-        widget: list
-        required: false
-        label_singular: Screenshot
-        summary: '{{fields.alt}}'
-        hint: Alt text is required on every one — the build fails without it.
-        fields:
-          - { label: Image, name: src, widget: image }
-          - label: Alt text
-            name: alt
-            widget: string
-            hint: Describe what the image shows. Not optional.
 
       - label: File
         name: file
