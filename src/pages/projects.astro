@@ -6,21 +6,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import { withBase } from '../config/site';
 
 const projects = await getCollection('projects');
-const CASE_SECTION_KEYS = [
-  'context',
-  'hmw',
-  'exploration',
-  'definition',
-  'development',
-  'feedback',
-  'learning',
-  'behindTheScenes',
-] as const;
-const projectArtefacts = (project: (typeof projects)[number]) =>
-  CASE_SECTION_KEYS.flatMap((key) => project.data[key]?.artefacts ?? []).slice(
-    0,
-    6,
-  );
 ---
 
 <BaseLayout title="Projects">
@@ -40,8 +25,7 @@ const projectArtefacts = (project: (typeof projects)[number]) =>
                 <ProjectPreview
                   id={`project-${slug}`}
                   caption={entry.data.company}
-                  title={entry.data.hmw?.description.trim() ?? entry.data.title}
-                  artefacts={projectArtefacts(entry)}
+                  title={entry.data.hmw?.trim() ?? entry.data.title}
                   href={withBase(`/projects/${slug}`)}
                   state="collapsed"
                   size="default"

@@ -24,40 +24,6 @@ const CV_PDF = withBase('/cv/max-pinkert-cv.pdf');
 const SHARE_URL = new URL(withBase('/resume'), Astro.site).href;
 
 const entries = await getCollection('resume');
-const projectEntries = await getCollection('projects');
-const projectsById = new Map(
-  projectEntries.map((project) => [project.id.replace(/\.md$/, ''), project]),
-);
-const CASE_SECTION_KEYS = [
-  'context',
-  'hmw',
-  'exploration',
-  'definition',
-  'development',
-  'feedback',
-  'learning',
-  'behindTheScenes',
-] as const;
-const projectArtefacts = (project: (typeof projectEntries)[number]) =>
-  CASE_SECTION_KEYS.flatMap((key) => project.data[key]?.artefacts ?? []).slice(
-    0,
-    6,
-  );
-const resolvedProjects = (entry: (typeof entries)[number]) =>
-  (entry.data.projects ?? []).flatMap((reference) => {
-    const project = projectsById.get(reference.id.replace(/\.md$/, ''));
-    if (!project) return [];
-
-    const slug = project.id.replace(/\.md$/, '');
-    return [
-      {
-        href: withBase(`/projects/${slug}`),
-        title: project.data.hmw?.description.trim() ?? project.data.title,
-        caption: project.data.company,
-        artefacts: projectArtefacts(project),
-      },
-    ];
-  });
 const byNewest = (a: (typeof entries)[number], b: (typeof entries)[number]) =>
   b.data.start.localeCompare(a.data.start);
 const work = entries
@@ -162,7 +128,6 @@ const NOTES = [
                     end={entry.data.end}
                     index={index}
                     state="default"
-                    projects={resolvedProjects(entry)}
                     documentUrl={entry.data.documentUrl}
                     documentLabel={
                       entry.data.documentUrl &&
@@ -197,7 +162,6 @@ const NOTES = [
                     end={entry.data.end}
                     index={index}
                     state="default"
-                    projects={resolvedProjects(entry)}
                     documentUrl={entry.data.documentUrl}
                     documentLabel={
                       entry.data.documentUrl &&

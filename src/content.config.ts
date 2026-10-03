@@ -1,4 +1,4 @@
-import { defineCollection, reference, type SchemaContext } from 'astro:content';
+import { defineCollection, reference } from 'astro:content';
 import { glob } from 'astro/loaders';
 import { existsSync, readdirSync } from 'node:fs';
 import { z } from 'zod';
@@ -15,52 +15,41 @@ import { tagIds } from './config/match';
  * costs three files to maintain, so speculative fields are expensive.
  */
 
-/** The `image()` helper Astro hands to each schema. Named so helpers can take it. */
-type ImageFn = SchemaContext['image'];
-
 /** `YYYY` or `YYYY-MM`. Sorted as a string, so the zero padding is load-bearing. */
 const yearMonth = z
   .string()
   .regex(/^\d{4}(?:-(0[1-9]|1[0-2]))?$/, 'Use YYYY or YYYY-MM, e.g. 2025-03');
 
-/**
- * Supporting images — sketches, flows, screens, photos of the thing.
- * Alt text is required on every one; there is no optional-image escape here.
- */
-const artefacts = (image: ImageFn) =>
+/** Markdown held in frontmatter needs a build-time markdown pass. */
+const caseSection = z
+  .object({
+    summary: z.string().min(1),
+    keyPoints: z.array(z.string().min(1)).default([]),
+  })
+  .optional();
+
+/** Decap writes an empty string when an optional scalar field is cleared. */
+const optionalProjectField = <T extends z.ZodType>(schema: T) =>
+  z.preprocess(
+    (value) => (value === '' ? undefined : value),
+    schema.optional(),
+  );
+
+const projectColor = optionalProjectField(
   z
-    .array(
-      z.object({
-        src: image(),
-        alt: z.string().min(1),
-      }),
-    )
-    .default([]);
+    .string()
+    .regex(/^#[0-9a-fA-F]{6}$/, 'Use a six-digit hex color, e.g. #AABBCC'),
+);
 
-/**
- * One movement of a case study. The eight below are the same shape — what
- * differs between them is the narrative position, not the fields, so the
- * shape is written once.
- *
- * `description` is markdown held in frontmatter. Astro's `render()` only
- * renders an entry's body, so this needs a build-time markdown pass whenever
- * the case-study page gets built. See docs/cms.md.
- */
-const caseSection = (image: ImageFn) =>
-  z
-    .object({
-      /** Sits next to the section heading. */
-      subtitle: z.string().min(1).optional(),
-
-      /** The section itself, as markdown. */
-      description: z.string().min(1),
-
-      artefacts: artefacts(image),
-
-      /** The section in bullets — what a reader in a hurry should take away. */
-      keyPoints: z.array(z.string().min(1)).default([]),
-    })
-    .optional();
+const projectImageSlots = [
+  'img_0.8h',
+  'img_0.6h_l',
+  'img_0.6h_s',
+  'img_1_2_l',
+  'img_1_2_s',
+  'img_1_1',
+  'img_1_2',
+] as const;
 
 /**
  * What the /home questionnaire matches an entry on. Every option comes from
@@ -98,13 +87,30 @@ const projects = defineCollection({
         /** Free-form tags, e.g. ["UX Research", "EdTech"]. */
         tags: z.array(z.string().min(1)).default([]),
 
-        /** Portrait teaser, for tall cards. Relative to the entry file. */
-        teaserVertical: image().optional(),
-        teaserVerticalAlt: z.string().optional(),
+        color1: projectColor,
+        color2: projectColor,
+        color3: projectColor,
+        color4: projectColor,
+        color5: projectColor,
+        color6: projectColor,
+        color7: projectColor,
+        color8: projectColor,
 
-        /** Landscape teaser, for wide cards. Relative to the entry file. */
-        teaserHorizontal: image().optional(),
-        teaserHorizontalAlt: z.string().optional(),
+        /** Literal top-level keys; image paths are relative to the entry. */
+        'img_0.8h': optionalProjectField(image()),
+        'img_0.8h_alt': z.string().optional(),
+        'img_0.6h_l': optionalProjectField(image()),
+        'img_0.6h_l_alt': z.string().optional(),
+        'img_0.6h_s': optionalProjectField(image()),
+        'img_0.6h_s_alt': z.string().optional(),
+        img_1_2_l: optionalProjectField(image()),
+        img_1_2_l_alt: z.string().optional(),
+        img_1_2_s: optionalProjectField(image()),
+        img_1_2_s_alt: z.string().optional(),
+        img_1_1: optionalProjectField(image()),
+        img_1_1_alt: z.string().optional(),
+        img_1_2: optionalProjectField(image()),
+        img_1_2_alt: z.string().optional(),
 
         /** Link to the Figma file or frame the work was designed in. */
         figmaUrl: z.url().optional(),
@@ -112,35 +118,30 @@ const projects = defineCollection({
         /** Link to the GitHub repository, where the project has one. */
         repoUrl: z.url().optional(),
 
-        /* The case study, in narrative order. Every section is optional —
-           not every project earns all eight — but a section that exists has
-           something to say, so `description` is required inside it. */
-        context: caseSection(image),
-        hmw: caseSection(image),
-        exploration: caseSection(image),
-        definition: caseSection(image),
-        development: caseSection(image),
-        feedback: caseSection(image),
-        learning: caseSection(image),
-        behindTheScenes: caseSection(image),
+        context: optionalProjectField(z.string().min(1)),
+        hmw: optionalProjectField(z.string().min(1)),
+
+        /** Sections are optional, but each included section needs a summary. */
+        exploration: caseSection,
+        definition: caseSection,
+        development: caseSection,
+        feedback: caseSection,
+        learning: caseSection,
+        behindTheScenes: caseSection,
         match,
       })
-      // An image without alt text is an accessibility bug, so fail the build.
-      .refine(
-        (data) => !data.teaserVertical || Boolean(data.teaserVerticalAlt),
-        {
-          message: 'teaserVerticalAlt is required when teaserVertical is set',
-          path: ['teaserVerticalAlt'],
-        },
-      )
-      .refine(
-        (data) => !data.teaserHorizontal || Boolean(data.teaserHorizontalAlt),
-        {
-          message:
-            'teaserHorizontalAlt is required when teaserHorizontal is set',
-          path: ['teaserHorizontalAlt'],
-        },
-      ),
+      .superRefine((data, ctx) => {
+        for (const slot of projectImageSlots) {
+          const alt = `${slot}_alt` as const;
+          if (data[slot] && !data[alt]?.trim()) {
+            ctx.addIssue({
+              code: 'custom',
+              message: `${alt} is required when ${slot} is set`,
+              path: [alt],
+            });
+          }
+        }
+      }),
 });
 
 /** Small self-directed builds. Shown as a grid of cards that link out. */
@@ -318,27 +319,24 @@ const resume = defineCollection({
 /** What changed on the site, and when. */
 const releaseNotes = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/release-notes' }),
-  schema: ({ image }) =>
-    z.object({
-      date: z.coerce.date(),
-      /** The line under the date — one sentence on what this release was. */
-      description: z.string().min(1).optional(),
+  schema: z.object({
+    date: z.coerce.date(),
+    /** The line under the date — one sentence on what this release was. */
+    description: z.string().min(1).optional(),
 
-      /* The three things a release can touch. Markdown, and all optional —
-         a release rarely moves all three at once. */
-      userExperience: z.string().min(1).optional(),
-      userInterface: z.string().min(1).optional(),
-      tech: z.string().min(1).optional(),
+    /* The three things a release can touch. Markdown, and all optional —
+       a release rarely moves all three at once. */
+    userExperience: z.string().min(1).optional(),
+    userInterface: z.string().min(1).optional(),
+    tech: z.string().min(1).optional(),
 
-      screenshots: artefacts(image),
-
-      /**
-       * An optional attachment. A path under /releases, or an absolute
-       * http(s) URL — not an `image()`, since this is served or linked as-is
-       * rather than run through Astro's optimiser.
-       */
-      file: z.string().min(1).optional(),
-    }),
+    /**
+     * An optional attachment. A path under /releases, or an absolute
+     * http(s) URL — not an `image()`, since this is served or linked as-is
+     * rather than run through Astro's optimiser.
+     */
+    file: z.string().min(1).optional(),
+  }),
 });
 
 export const collections = {

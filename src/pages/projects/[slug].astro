@@ -32,10 +32,10 @@ interface SectionCandidate {
 
 const { entry } = Astro.props;
 const contextHtml = entry.data.context
-  ? await renderFrontmatterMarkdown(entry.data.context.description)
+  ? await renderFrontmatterMarkdown(entry.data.context)
   : '';
 const hmwHtml = entry.data.hmw
-  ? await renderFrontmatterMarkdown(entry.data.hmw.description)
+  ? await renderFrontmatterMarkdown(entry.data.hmw)
   : '';
 const sectionCandidates: SectionCandidate[] = [
   {
@@ -64,7 +64,7 @@ const presentSections = sectionCandidates.filter(
 const sections = await Promise.all(
   presentSections.map(async (candidate) => ({
     ...candidate,
-    html: await renderFrontmatterMarkdown(candidate.section.description),
+    html: await renderFrontmatterMarkdown(candidate.section.summary),
   })),
 );
 const projectsHref = withBase('/projects');
@@ -192,8 +192,6 @@ const projectsHref = withBase('/projects');
             >
               <ProjectSection
                 title={section.title}
-                subtitle={section.section.subtitle}
-                artefacts={section.section.artefacts}
                 keyPoints={section.section.keyPoints}
                 level={2}
                 state="active"
