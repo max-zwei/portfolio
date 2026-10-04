@@ -148,6 +148,7 @@ full case study, whose sections are inline page markup, not selection buttons
 or a `ProjectSection` component. Deep section anchors and the no-JavaScript
 baseline keep the content reachable. The sticky 180px image strip loops
 horizontally at 40px/s, even when the original artwork fits the viewport.
+Its scrollbar is hidden without disabling native touch or keyboard scrolling.
 Hover, focus, and active pointer/touch gestures pause it temporarily; it resumes
 from the current scroll position afterward. Reduced motion stops the loop and
 removes cloned images while preserving native scrolling. `summary`, `year` and
