@@ -146,10 +146,12 @@ all seven slots with local WebP artwork and descriptive companion alt text.
 Project detail opens with the back/“SHOW ME” chat choice. “SHOW ME” reveals the
 full case study, whose sections are inline page markup, not selection buttons
 or a `ProjectSection` component. Deep section anchors and the no-JavaScript
-baseline keep the content reachable. The sticky 180px image strip scrolls
-horizontally, pauses on hover or focus, and stops with no cloned images under
-reduced motion. `summary`, `year` and `tags` remain metadata rather than
-visible case-study copy.
+baseline keep the content reachable. The sticky 180px image strip loops
+horizontally at 40px/s, even when the original artwork fits the viewport.
+Hover, focus, and active pointer/touch gestures pause it temporarily; it resumes
+from the current scroll position afterward. Reduced motion stops the loop and
+removes cloned images while preserving native scrolling. `summary`, `year` and
+`tags` remain metadata rather than visible case-study copy.
 
 Optional `figmaUrl` and `repoUrl` links appear as 32px icons in the final
 “Behind the scenes” row, even when that narrative section is absent.
