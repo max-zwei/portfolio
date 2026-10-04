@@ -16,23 +16,26 @@
         "Type": ["Primary", "Secondary", "Nav", "Inline"],
         "Variant": ["Default", "Primary", "Secondary"],
         "State": ["Default", "Hover"],
-        "Icon": ["OFF", "ON"]
+        "Icon": ["OFF", "ON"],
+        "Orientation": ["Default", "Right", "Left"]
       },
       "combinations": [
-        "Primary/Default/Default/OFF",
-        "Primary/Default/Hover/OFF",
-        "Primary/Default/Default/ON",
-        "Primary/Default/Hover/ON",
-        "Secondary/Default/Default/OFF",
-        "Secondary/Default/Hover/OFF",
-        "Nav/Primary/Default/OFF",
-        "Nav/Primary/Hover/OFF",
-        "Nav/Secondary/Default/OFF",
-        "Nav/Secondary/Hover/OFF",
-        "Inline/Primary/Default/OFF",
-        "Inline/Primary/Hover/OFF"
+        "Primary/Default/Default/OFF/Default",
+        "Primary/Default/Hover/OFF/Default",
+        "Primary/Default/Default/ON/Default",
+        "Primary/Default/Hover/ON/Default",
+        "Secondary/Default/Default/OFF/Right",
+        "Secondary/Default/Hover/OFF/Right",
+        "Secondary/Default/Default/OFF/Left",
+        "Secondary/Default/Hover/OFF/Left",
+        "Nav/Primary/Default/OFF/Default",
+        "Nav/Primary/Hover/OFF/Default",
+        "Nav/Secondary/Default/OFF/Default",
+        "Nav/Secondary/Hover/OFF/Default",
+        "Inline/Primary/Default/OFF/Default",
+        "Inline/Primary/Hover/OFF/Default"
       ],
-      "notes": "The matrix is deliberately sparse: twelve Type × Variant × State × Icon combinations, not a full cross-product. state='default'|'hover' exposes the drawn states alongside CSS hover/focus-visible. Renders an anchor with href and a button otherwise; a ghost label prevents text treatment from reflowing surrounding layout. Primary uses shadow-sm then shadow-lg. Secondary hover retains regular weight 400, Body - Small sizing and pickled-500 with wide tracking. Nav hover uses bold with extra-wide tracking; Inline hover uses tomato-600 and wide tracking. Icon=ON exists only on Primary: a 28 icon, 16/12 padding and 60 × 52 frame; slot content remains its visually hidden accessible name. No timed transition is invented: the live atom subtrees have no prototype reactions."
+      "notes": "The matrix is deliberately sparse: fourteen Type × Variant × State × Icon × Orientation combinations, not a full cross-product. state='default'|'hover' exposes the drawn states alongside CSS hover/focus-visible. orientation='default'|'right'|'left' preserves Right for existing secondary callers when omitted or default; other types are unchanged. Left Default 676:5490 draws ← label in Satoshi 12 regular, 1.4 line height, normal tracking and gap 4; Left Hover 676:5493 retains ← label in bold with wide tracking and gap 8. Only the decorative arrow is mirrored; accessible names never include arrows. Renders an anchor with href and a button otherwise; an aria-hidden ghost label always sizes the rest state to prevent surrounding reflow. Primary uses shadow-sm then shadow-lg. Secondary hover uses bold, Body - Small sizing and pickled-500 with wide tracking. Nav hover uses bold with extra-wide tracking; Inline hover uses tomato-600 and extra-wide tracking. Icon=ON exists only on Primary: a 28 icon, 16/12 padding and 60 × 52 frame; slot content remains its visually hidden accessible name. No timed transition is invented: the live atom subtrees have no prototype reactions."
     },
     {
       "figmaName": "Chat",
@@ -154,7 +157,7 @@
         "mail/Black/Default",
         "phone/Black/Default"
       ],
-      "notes": "Seventeen icons retain their sparse Color × State matrix. Only the eight AI/social marks have hover variants (both Black and White); Cursor, Figma Make, download, share, circle, square, triangle, mail and phone are Default-only. Unsupported color or hover combinations throw rather than silently recolor or invent a state. Circle/Black and square/Tomato are implemented; triangle exists only in Herbs. Eight fresh black AI/social SVGs and square live under src/components/assets/icons; their ink is the live neutral-black #040302 rather than the previous public asset #171613. Public assets remain untouched. md-lemon hover uses two independent blurred SourceAlpha layers (y 8, sigma 16) rather than shadowing the image rectangle or chaining shadows. Intrinsic export canvases include perplexity 16, github/openai/linkedin 17, figma 12, triangle 30 and square 19."
+      "notes": "Seventeen icons retain their sparse Color × State matrix. Only the eight AI/social marks have hover variants (both Black and White); Cursor, Figma Make, download, share, circle, square, triangle, mail and phone are Default-only. Unsupported color or hover combinations throw rather than silently recolor or invent a state. Circle/Black and square/Tomato are implemented; triangle exists only in Herbs. Eight black AI/social SVGs and square live under src/components/assets/icons; their ink is the live neutral-black #040302 rather than the previous public asset #171613. Figma Black 389:2974 and White 389:2969 use refreshed whole-component exports with a square 16×16 canvas. The live 16×16.02746 frame is centered by trimming 0.013730049px of transparent padding at top and bottom; exported paths and strokes are unchanged. md-lemon hover uses four independent blurred SourceAlpha layers at offsets (0, 8), (-4, 4), (4, -4) and (0, -8), each with sigma 8 (Figma blur 16) and full-opacity lemon-500, merged behind the source including its transparent areas rather than shadowing the image rectangle or chaining shadows. Intrinsic export canvases include perplexity/figma 16, github/openai/linkedin 17, triangle 30 and square 19."
     },
     {
       "figmaName": "Post-it",
@@ -196,7 +199,7 @@
         "State": ["Default", "PDF"]
       },
       "combinations": ["State=Default", "State=PDF"],
-      "notes": "Renders one position with state='default'|'pdf'. Default uses 24 content gaps, 64 bottom padding and a 581-wide content maximum; PDF content gap is 4 and its project previews are suppressed. Rail bottom padding is 16 in Default and zero in PDF; the triangle retains its exact 29.686 intrinsic box. projects now takes {href,title,image:{src,alt},detailImage:{src,alt},colors:readonly [string,string,string,string]}; caption/artefacts and the old ProjectPreview dependency are removed. The inline CV-only preview 643:2846 uses 99/44/44 by 99 artwork, 8 gap, then 12 gap to 132-wide H6 title plus secondary Explore. Date formatting remains shared through formatRange. Narrow-layout reflow is an accessibility fallback, not a Figma mobile variant."
+      "notes": "Renders one position with state='default'|'pdf'. Default uses 24 content gaps, 64 bottom padding and a 581-wide content maximum; PDF content gap is 4 and its project previews are suppressed. Rail bottom padding is 16 in Default and zero in PDF; the triangle retains its exact 29.686 intrinsic box. projects entries require href/title and accept optional image/detailImage {src,alt} and optional colors with absent positions. /resume maps img_1_1 to image, img_1_2_s to detailImage, and color1 through color4 to colors. Missing artwork stays hidden. The inline CV-only preview 643:2846 replaces ProjectPreview and uses 99/44/44 by 99 artwork, 8 gap, then 12 gap to 132-wide H6 title plus secondary Explore. Date formatting remains shared through formatRange. Narrow-layout reflow is an accessibility fallback, not a Figma mobile variant."
     },
     {
       "figmaName": "Tech",
@@ -261,7 +264,7 @@
         "6/Default",
         "6/hover"
       ],
-      "notes": "ProjectBento has variant='1'..'6' (default '1') and state='default'|'hover'. title and href are required; images is a required record of primary, wide, square, portrait and detail, each with src (ImageMetadata or string) and alt. colors is an eight-item tuple: four appear compact and all eight expanded. The caller supplies project artwork rather than baking Figma checkerboard placeholders into the component. Compact is 421 × 210 with clipped child overflow; expanded is 1280 × 538 with 96 side insets and 316/198 rows separated by 24. Hover, focus-visible and explicit hover state share the expanded presentation with no invented animation or JS. H5/H3 use unbound 1.2 line height. Expanded title is neutral-white on a transparent ground: invisible on a neutral-white host is a design finding, not corrected with a new background."
+      "notes": "ProjectBento has variant='1'..'6' (default '1') and state='default'|'hover'. title and href are required; optional hmw is the only visible project copy, while title supplies the accessible link name. images is an optional partial record of 0.8h, 0.6h_l, 0.6h_s, 1_2_l, 1_2_s, 1_1 and 1_2, each with src (ImageMetadata or string) and alt, directly matching the content keys without img_. colors is an optional eight-position tuple with optional values: the first four appear compact and all eight expanded. Missing artwork and colors are hidden, not replaced with checkerboard fixtures. Compact reference geometry is 421 × 210; expanded is 1280 × 538 with 96 side insets and 316/198 rows separated by 24. Hover, focus-visible and explicit hover state share the expanded presentation. /projects cycles the six variants, expands the active bento to page width on a black page ground and makes the other bentos invisible and noninteractive. H5/H3 use unbound 1.2 line height."
     }
   ],
   "compositions": [
@@ -270,18 +273,6 @@
       "formerNodeId": "114:610",
       "status": "detached",
       "notes": "The former curiosity component returns no parent or page in the live file. Retained as the reusable Avatar plus ChatBubble composition; it is not a current Organisms entry."
-    },
-    {
-      "component": "src/components/ProjectPreview.astro",
-      "formerNodeId": "114:646",
-      "status": "detached",
-      "notes": "The former project preview set returns no parent or page in the live file. Retained for existing page consumers; it does not stand in for the new Project Bentos library set."
-    },
-    {
-      "component": "src/components/ProjectSection.astro",
-      "formerNodeId": "115:755",
-      "status": "graveyard",
-      "notes": "The former project sections set now belongs to Graveyard (503:2669), not Organisms. Existing case-study composition and page behavior remain outside the current library inventory."
     },
     {
       "component": "src/components/BlankSection.astro",
@@ -304,7 +295,7 @@
       "Text uses 310/532 columns, 135 gap and 977 total width; Release Notes uses 95 root gap and 1px rail stroke.",
       "CV preview art uses 99/44/44 dimensions and 132-wide copy; Default content maximum is 581 and the mark is 29.686. Tech uses per-asset fractional geometry and 411.302307/412.529053 grid widths.",
       "The existing page grid and focus ring are CSS-only source groups; neither is a local Figma variable collection.",
-      "Existing page/retained-composition decisions such as 48rem responsiveness, ProjectPreview collage coordinates, ProjectSection native-scroll enhancement, print margins and playground positions are not newly verified library design."
+      "Page decisions such as 48rem responsiveness, the sticky project image strip, print margins and playground positions are not library token values. The 2026-10-03 page refresh contract is recorded in docs/figma-handoff.md."
     ]
   },
   "outstanding": {
@@ -314,12 +305,7 @@
       "Typography/Body - Bold renders Satoshi Bold but binds font/weight/semibold=600. Code preserves the drawn Bold face; the conflicting binding is reported.",
       "size/chat-column=866 and size/chat-bubble=531 remain authoritative local variables and are restored to DESIGN.md; the obsolete proposed deletion is withdrawn."
     ],
-    "designFindings": [
-      "Project Bentos expanded title is neutral-white over a transparent ground. On neutral-white its contrast is 1:1; the sync does not invent a background or substitute ink."
-    ],
-    "pageMigration": [
-      "Pages and global.css intentionally remain outside scope. Existing removed component props and layouts may break until a separately requested migration.",
-      "Typography JSON now permits literal CSS-value strings as well as custom-property names. The existing styleguide table wraps all strings in var(), so it does not correctly render the new literal metrics."
-    ]
+    "designFindings": [],
+    "pageMigration": []
   }
 }

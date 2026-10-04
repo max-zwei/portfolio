@@ -79,12 +79,12 @@ const { label = 'Site', class: className } = Astro.props;
                 <Button
                   type="nav"
                   variant={
-                    link.label === '#behindthescenes' ? 'secondary' : 'primary'
+                    link.label === 'behindthescenes' ? 'secondary' : 'primary'
                   }
                   href={link.href}
                   class:list={[
                     'navbar__link',
-                    link.label === '#behindthescenes' && 'navbar__link--muted',
+                    link.label === 'behindthescenes' && 'navbar__link--muted',
                   ]}
                 >
                   {link.label}

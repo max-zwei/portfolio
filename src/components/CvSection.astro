@@ -35,9 +35,10 @@ interface Props {
   projects?: ReadonlyArray<{
     href: string;
     title: string;
-    image: { src: ImageMetadata; alt: string };
-    detailImage: { src: ImageMetadata; alt: string };
-    colors: readonly [string, string, string, string];
+    image?: { src: ImageMetadata; alt: string };
+    detailImage?: { src: ImageMetadata; alt: string };
+    /** The four palette positions; an absent value leaves that slot unfilled. */
+    colors?: readonly (string | undefined)[];
   }>;
   /** Additional class names for the section wrapper. */
   class?: string;
@@ -130,27 +131,44 @@ const sectionId = `cv-${slugify(`${company ?? ''}-${role}-${start}`) || 'section
         <div class="cv-section__projects">
           {projects.map((project) => (
             <div class="cv-section__project">
-              <div class="cv-section__project-art">
-                <Image
-                  class="cv-section__project-image"
-                  src={project.image.src}
-                  alt={project.image.alt}
-                />
-                <div class="cv-section__project-colors" aria-hidden="true">
-                  {project.colors.map((color) => (
-                    <span style={{ backgroundColor: color }} />
-                  ))}
+              {(project.image ||
+                project.detailImage ||
+                project.colors?.some(Boolean)) && (
+                <div class="cv-section__project-art">
+                  {project.image && (
+                    <Image
+                      class="cv-section__project-image"
+                      src={project.image.src}
+                      alt={project.image.alt}
+                    />
+                  )}
+                  {project.colors?.some(Boolean) && (
+                    <div class="cv-section__project-colors" aria-hidden="true">
+                      {project.colors.slice(0, 4).map((color, index) =>
+                        color ? (
+                          <span
+                            style={{
+                              backgroundColor: color,
+                              gridRow: index + 1,
+                            }}
+                          />
+                        ) : null,
+                      )}
+                    </div>
+                  )}
+                  {project.detailImage && (
+                    <Image
+                      class="cv-section__project-detail"
+                      src={project.detailImage.src}
+                      alt={project.detailImage.alt}
+                    />
+                  )}
                 </div>
-                <Image
-                  class="cv-section__project-detail"
-                  src={project.detailImage.src}
-                  alt={project.detailImage.alt}
-                />
-              </div>
+              )}
               <div class="cv-section__project-copy">
                 <p class="cv-section__project-title">{project.title}</p>
                 <Button type="secondary" href={project.href}>
-                  Explore →
+                  Explore
                 </Button>
               </div>
             </div>
@@ -207,8 +225,7 @@ const sectionId = `cv-${slugify(`${company ?? ''}-${role}-${start}`) || 'section
 
   /* Figma 476:513: a 1px line in neutral-200 filling the column under the
      logo, so it runs from 16 below the mark to the foot of the entry. No
-     --border-width-* tier exists, so 1px is a literal, as it is in
-     ProjectSection and ReleaseNote. */
+     --border-width-* tier exists, so 1px is a literal, as in ReleaseNote. */
   .cv-section__rail::after {
     content: '';
     flex: 1 1 auto;
@@ -307,7 +324,7 @@ const sectionId = `cv-${slugify(`${company ?? ''}-${role}-${start}`) || 'section
     gap: var(--space-sm);
   }
 
-  /* Figma 643:2846: compact CV-only project composition, not ProjectPreview. */
+  /* Figma 643:2846: compact CV-only project composition. */
   .cv-section__project {
     display: flex;
     align-items: stretch;
@@ -316,21 +333,31 @@ const sectionId = `cv-${slugify(`${company ?? ''}-${role}-${start}`) || 'section
   }
 
   .cv-section__project-art {
-    display: grid;
-    grid-template-columns: 99px 44px 44px;
+    display: flex;
     gap: var(--space-2xs);
     block-size: 99px;
+    flex: 0 0 auto;
   }
 
   .cv-section__project-art :global(img) {
-    inline-size: 100%;
+    flex: 0 0 auto;
     block-size: 100%;
     object-fit: cover;
     border-radius: var(--radius-md);
   }
 
+  .cv-section__project-art :global(.cv-section__project-image) {
+    inline-size: 99px;
+  }
+
+  .cv-section__project-art :global(.cv-section__project-detail) {
+    inline-size: 44px;
+  }
+
   .cv-section__project-colors {
     display: grid;
+    inline-size: 44px;
+    flex: 0 0 auto;
     grid-template-rows: repeat(4, 1fr);
     overflow: clip;
     border-radius: var(--radius-md);

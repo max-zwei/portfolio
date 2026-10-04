@@ -170,7 +170,7 @@ rounded:
 shadows:
   sm: '0 1px 2px rgb(20 17 15 / 0.06)'
   md: '0 4px 16px rgb(20 17 15 / 0.08)'
-  md-lemon: '0 8px 32px #f0e511, 0 8px 32px #f0e511'
+  md-lemon: '0 8px 16px #f0e511, -4px 4px 16px #f0e511, 4px -4px 16px #f0e511, 0 -8px 16px #f0e511'
   lg: '0 12px 40px rgb(20 17 15 / 0.12)'
 motion:
   duration:
@@ -350,14 +350,12 @@ and strings for literals (`"1.2"`, `"6.75rem"` and `"1.25rem"`). Consumers must
 wrap only names beginning with `--` in `var()`. Title remains fixed-size
 because Figma supplies no fluid range for it.
 
-`src/styles/global.css` and pages are intentionally not migrated in this
-library-only sync. Components apply their live text-style metrics explicitly;
-the existing global H1–H5 rules and page presentation may therefore differ.
-Body, Mono and Captions styling stays local to each component. The nav button
-at `109:1378` has raw mono settings rather than the `Typography/Mono` style.
-The existing `/styleguide` text-style table still wraps every value in `var()`;
-its new literal metrics will not render correctly until a separate page
-migration. That known limitation is not hidden by inventing style tokens.
+The 3 October 2026 page refresh applies the same literal 1.2 line height to
+global H1–H5 rules. H6 uses serif semibold at 12px/1.4 with normal tracking.
+The `/styleguide` text-style table handles literal values directly and wraps
+only custom-property names in `var()`. Body, Mono and Captions styling stays
+local to each component. The nav button at `109:1378` has raw mono settings
+rather than the `Typography/Mono` style. No additional style tokens are needed.
 
 ## Layout
 
@@ -384,9 +382,9 @@ the other such group.
 **The chat widths.** The Size collection holds `--size-chat-column` (866px),
 `--size-chat-bubble` (531px) and `--size-chat-choice` (400px). All three are
 transcribed, without replacing the first two by near-matching grid spans.
-Existing pages still compute their own eight- and five-column spans; page
-migration is outside this library sync. The 400px choice cap is not a column
-span either — four columns would be 420.8px.
+Page layouts may compute their own column spans; those spans are not substitutes
+for the chat component widths. The 400px choice cap is not a column span either
+— four columns would be 420.8px.
 
 **The page container.** `--content-max: 72rem` is retired. No frame drew 1152;
 the drawn frame is 1280 with 96px margins, so `.container` is now
@@ -401,11 +399,11 @@ The Figma effect styles `Elevation / sm`, `Elevation/md` and `Elevation / lg`
 map to `--shadow-sm|md|lg` by name. Read the style name, not the drop-shadow
 the MCP emits; the effects and variables agree and must change together.
 The effect style `md-lemon` maps to
-`--shadow-md-lemon`: two identical lemon-500 layers, each at x 0, y 8,
-blur 32, spread 0 and full opacity. Layering increases color density without
-changing the geometry or the color token. Icon glows merge two independent
-copies of the same blurred source alpha; chained drop-shadows would instead
-cast a second shadow from the first and enlarge the effect.
+`--shadow-md-lemon`: four lemon-500 layers at (0, 8), (-4, 4), (4, -4)
+and (0, -8), each with blur 16, spread 0 and full opacity. Shadows show
+behind transparent areas. Icon glows share one blurred source alpha and merge
+four independently offset, colored copies behind the source; chained
+drop-shadows would instead cast shadows from earlier shadows.
 
 ## Shapes
 
@@ -437,20 +435,20 @@ live node IDs and sparse variant matrices, not an assumed Cartesian product.
 Text, Focus and NavBar are standalone components, not variant sets.
 
 `Text` maps directly to `TextSection.astro`; `BlankSection.astro` is its
-existing named-content composition. CuriosityRow and ProjectPreview remain
-reusable code, but their old Figma nodes have no page parent. ProjectSection's
-former set now lives on `Graveyard`, not Organisms. These are recorded under
-the manifest's `compositions` rather than pretending they are current library
-entries. Their existence is not permission to substitute them for Project
-Bentos, nor a reason to remove still-used page dependencies.
+existing named-content composition. CuriosityRow remains reusable code, but
+its old Figma node has no page parent. The obsolete ProjectPreview and
+ProjectSection components have been removed: CV previews are inline within
+`CvSection`, and case-study sections are inline on the project detail page.
+ProjectSection's former Figma set remains in `Graveyard`, not Organisms.
 
-This is a library cutover, not a page migration. Removed variant props and
-changed component contracts are not hidden behind compatibility aliases;
-existing pages can require a separate update.
+The 3 October 2026 page migration consumes the current library contracts
+without compatibility aliases. Its interaction and content decisions are
+recorded in [`docs/figma-handoff.md`](docs/figma-handoff.md).
 
 `Button` now exposes `state="default" | "hover"` as well as interactive
-hover/focus. Secondary hover keeps regular weight 400. `ChatBubble` accepts
-only `user="talking-head" | "visitor"`; the former `user="user"` hover specimen
+hover/focus. Secondary hover keeps regular weight 400. Button slots contain
+plain labels; the component owns decorative nav `#` and secondary `→` marks.
+`ChatBubble` accepts only `user="talking-head" | "visitor"`; the former `user="user"` hover specimen
 is now `user="visitor" state="hover"`. Talking-head bubbles use the live
 531px cap rather than a near-matching grid span.
 
@@ -464,13 +462,14 @@ not introduce transition durations.
 `TextSection` now transcribes Text's two-column 977px layout and uppercase
 108px Title style, rather than a vertical H1 section. `FocusAreas` uses H2;
 `ToolBox` uses H2 for Web and H3 for PDF, with each tool's actual intrinsic
-asset dimensions. Their changed heading line heights are local component
-styles, not a global heading migration.
+asset dimensions. Global and component headings now share the refreshed
+line-height contract.
 
-`CvSection.projects` now receives `{ href, title, image: { src, alt },
-detailImage: { src, alt }, colors: [string, string, string, string] }` entries.
-The inline CV-specific preview replaces `caption`/`artefacts` and the old
-ProjectPreview dependency. PDF still suppresses project previews.
+`CvSection.projects` entries require `href` and `title`, with optional
+`image`/`detailImage` (`{ src, alt }`) and optional palette positions. `/resume`
+maps `img_1_1`, `img_1_2_s` and `color1`–`color4` directly; missing artwork is
+hidden. The inline CV-specific preview replaces `caption`/`artefacts` and the
+old ProjectPreview dependency. PDF still suppresses project previews.
 `ReleaseNote.screenshots` and its slideshow are removed because neither live
 state contains them. `NavBar.mode` is removed: the live standalone footer has
 one black ground and white marks. No old prop is retained as an alias.
@@ -478,15 +477,17 @@ one black ground and white marks. No old prop is retained as an alias.
 Narrow-width reflow in these compositions is an accessibility fallback,
 not a claim that Figma supplies mobile library variants.
 
-`ProjectBento.astro` implements the new six-variant Project Bentos set. It
-requires `title`, `href`, five named images (`primary`, `wide`, `square`,
-`portrait`, `detail`, each with `src` and `alt`) and eight `colors`. `variant`
-is `"1"`–`"6"`; `state` is `"default"` or `"hover"`. Real hover and visible
-keyboard focus expose the same expanded design as the explicit hover state,
-without inventing an animation. Artwork is caller data, not baked-in Figma
-checkerboard content. The transparent expanded card retains its drawn
-neutral-white title; on neutral-white that is a 1:1 contrast failure, reported
-rather than repainted.
+`ProjectBento.astro` implements the six-variant Project Bentos set. It requires
+`title` and `href`; optional `hmw` supplies the only visible project copy.
+`images` is an optional partial record of `0.8h`, `0.6h_l`, `0.6h_s`, `1_2_l`,
+`1_2_s`, `1_1` and `1_2` (`{ src, alt }`), matching the content keys without
+`img_`. The eight `colors` positions are optional too. Missing slots are
+hidden, never replaced with Figma checkerboard fixtures.
+`variant` is `"1"`–`"6"`; `state` is `"default"` or `"hover"`. Real hover and
+visible keyboard focus expose the expanded design. On `/projects`, the six
+variants cycle and the active bento expands to page width on a black page
+ground; other bentos are invisible and noninteractive. That host ground
+provides contrast for the drawn neutral-white expanded copy.
 
 PostIt's initial rotation applies to the paper, not the pin. Its black copy
 and the Flipcard back's black copy are the unbound `#000000` Figma fills,

@@ -47,7 +47,7 @@ const hasTools = Astro.slots.has('tools');
       </header>
       {
         hasUserExperience && (
-          <section class="release-note__change" aria-label="user experience">
+          <section class="release-note__change">
             <SubheadingTag class="release-note__label">
               user experience
             </SubheadingTag>
@@ -59,7 +59,7 @@ const hasTools = Astro.slots.has('tools');
       }
       {
         hasUserInterface && (
-          <section class="release-note__change" aria-label="user interface">
+          <section class="release-note__change">
             <SubheadingTag class="release-note__label">
               user interface
             </SubheadingTag>
@@ -71,7 +71,7 @@ const hasTools = Astro.slots.has('tools');
       }
       {
         hasTools && (
-          <section class="release-note__change" aria-label="tools">
+          <section class="release-note__change">
             <SubheadingTag class="release-note__label">tools</SubheadingTag>
             <div class="release-note__copy">
               <slot name="tools" />

@@ -47,6 +47,37 @@ body {
   }
 }
 
+.cursor-trail {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.cursor-trail > span {
+  position: absolute;
+  top: 0;
+  left: 0;
+  /* Preserve public/cursor-pointer.svg's intrinsic dimensions. */
+  width: 16px;
+  height: 16px;
+  background: var(--cursor-url) no-repeat;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .cursor-trail {
+    display: block;
+  }
+}
+
+@media print {
+  .cursor-trail {
+    display: none;
+  }
+}
+
 img,
 picture,
 svg,
@@ -68,7 +99,9 @@ p,
 h1,
 h2,
 h3,
-h4 {
+h4,
+h5,
+h6 {
   overflow-wrap: break-word;
 }
 
@@ -80,12 +113,13 @@ h1,
 h2,
 h3,
 h4,
-h5 {
-  /* Figma Typography/H1–H5 all bind --font-serif; DESIGN.md § Typography. */
+h5,
+h6 {
+  /* Figma Typography/H1–H6 all bind --font-serif; DESIGN.md § Typography. */
   font-family: var(--font-serif);
   font-weight: var(--font-weight-semibold);
-  /* The Figma heading styles H1–H5 all bind line-height 1. */
-  line-height: var(--line-height-none);
+  /* H1–H5 use the literal Figma style metric; no variable binds 1.2. */
+  line-height: 1.2;
   letter-spacing: var(--letter-spacing-tight);
   text-wrap: balance;
 }
@@ -104,6 +138,11 @@ h4 {
 }
 h5 {
   font-size: var(--font-size-base);
+}
+h6 {
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-relaxed);
+  letter-spacing: var(--letter-spacing-normal);
 }
 
 p {
@@ -174,6 +213,10 @@ a {
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
+  }
+
+  .cursor-trail {
+    display: none;
   }
 
   *,

@@ -15,6 +15,9 @@ const still = matchMedia('(prefers-reduced-motion: reduce)');
 document
   .querySelectorAll<HTMLElement>('[data-artefact-strip]')
   .forEach((strip) => {
+    if (!('IntersectionObserver' in window) || !('ResizeObserver' in window)) {
+      return;
+    }
     const items = Array.from(strip.children) as HTMLElement[];
     if (items.length === 0) return;
 
@@ -34,6 +37,7 @@ document
       for (const item of items) {
         const copy = item.cloneNode(true) as HTMLElement;
         copy.setAttribute('aria-hidden', 'true');
+        copy.inert = true;
         copy.dataset.artefactClone = 'true';
         // A lazy copy would pop in mid-lap; it is one viewport away.
         copy.querySelector('img')?.setAttribute('loading', 'eager');
