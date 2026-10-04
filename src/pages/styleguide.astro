@@ -11,7 +11,7 @@ import {
   textStyles as textStyleTokens,
 } from '../lib/tokens';
 import Avatar from '../components/Avatar.astro';
-import BlankSection from '../components/BlankSection.astro';
+import TextSection from '../components/TextSection.astro';
 import Button from '../components/Button.astro';
 import ChatBubble from '../components/ChatBubble.astro';
 import CuriosityRow from '../components/CuriosityRow.astro';
@@ -22,8 +22,7 @@ import Icon from '../components/Icon.astro';
 import Logo from '../components/Logo.astro';
 import NavBar from '../components/NavBar.astro';
 import PostIt from '../components/PostIt.astro';
-import ProjectPreview from '../components/ProjectPreview.astro';
-import ProjectSection from '../components/ProjectSection.astro';
+import ProjectBento from '../components/ProjectBento.astro';
 import ReleaseNote from '../components/ReleaseNote.astro';
 import ToolBox from '../components/ToolBox.astro';
 import artefact1 from '../assets/styleguide/artefact-1.svg';
@@ -36,44 +35,70 @@ import artefact4 from '../assets/styleguide/artefact-4.svg';
 
 const shadows = ['sm', 'md', 'md-lemon', 'lg'];
 
-/** Display name and provenance per style. `inferred` means read off component usage, not yet confirmed in Figma. */
-const TEXT_STYLE_META: Record<string, { name: string; inferred: boolean }> = {
-  h1: { name: 'Typography/H1', inferred: false },
-  h2: { name: 'Typography/H2', inferred: false },
-  h3: { name: 'Typography/H3', inferred: false },
-  h4: { name: 'Typography/H4', inferred: false },
-  h5: { name: 'Typography/H5', inferred: false },
-  body: { name: 'Typography/Body', inferred: true },
-  'body-small': { name: 'Typography/Body - Small', inferred: false },
-  'body-large': { name: 'Typography/Body - Large', inferred: true },
-  'body-bold': { name: 'Typography/Body - Bold', inferred: true },
-  mono: { name: 'Typography/Mono', inferred: true },
-  'mono-small': { name: 'Typography/Mono - Small', inferred: false },
-  captions: { name: 'Typography/Captions', inferred: true },
+const TEXT_STYLE_NAMES: Record<string, string> = {
+  title: 'Typography/Title',
+  h1: 'Typography/H1',
+  h2: 'Typography/H2',
+  h3: 'Typography/H3',
+  h4: 'Typography/H4',
+  h5: 'Typography/H5',
+  h6: 'Typography/H6',
+  body: 'Typography/Body',
+  'body-small': 'Typography/Body - Small',
+  'body-large': 'Typography/Body - Large',
+  'body-bold': 'Typography/Body - Bold',
+  mono: 'Typography/Mono',
+  'mono-small': 'Typography/Mono - Small',
+  captions: 'Typography/Captions',
 };
 
 const textStyles = textStyleTokens.map((style) => ({
   ...style,
-  ...TEXT_STYLE_META[style.key],
+  name: TEXT_STYLE_NAMES[style.key],
 }));
+const styleValue = (value: string) =>
+  value.startsWith('--') ? `var(${value})` : value;
 
 const placeholderTools = Array.from({ length: 6 }, () => ({ name: '[tool]' }));
 const releaseDate = new Date('2026-02-06');
 
-/** The strip has no content collection; four bracketed stand-ins. */
-const demoArtefacts = [
-  { src: artefact1, alt: '[placeholder artefact 1]' },
-  { src: artefact2, alt: '[placeholder artefact 2]' },
-  { src: artefact3, alt: '[placeholder artefact 3]' },
-  { src: artefact4, alt: '[placeholder artefact 4]' },
-];
-const previewArtefacts = [...demoArtefacts, demoArtefacts[0], demoArtefacts[1]];
+/** Bracketed specimen assets only; these are never project-content fallbacks. */
+const demoImages = {
+  '0.8h': { src: artefact1, alt: '[placeholder 0.8h artwork]' },
+  '0.6h_l': { src: artefact2, alt: '[placeholder 0.6h_l artwork]' },
+  '0.6h_s': { src: artefact3, alt: '[placeholder 0.6h_s artwork]' },
+  '1_2_l': { src: artefact4, alt: '[placeholder 1_2_l artwork]' },
+  '1_2_s': { src: artefact2, alt: '[placeholder 1_2_s artwork]' },
+  '1_1': { src: artefact3, alt: '[placeholder 1_1 artwork]' },
+  '1_2': { src: artefact4, alt: '[placeholder 1_2 artwork]' },
+};
+const demoColors = [
+  'var(--color-lemon-100)',
+  'var(--color-lemon-300)',
+  'var(--color-lemon-500)',
+  'var(--color-pickled-500)',
+  'var(--color-herbs-100)',
+  'var(--color-herbs-500)',
+  'var(--color-tomato-100)',
+  'var(--color-tomato-500)',
+] as const;
+const bentoVariants = ['1', '2', '3', '4', '5', '6'] as const;
 const previewProjects = [
   {
     href: '#h-components',
     title: '[project title]',
-    caption: '[company]',
-    artefacts: previewArtefacts,
+    image: demoImages['1_1'],
+    detailImage: demoImages['1_2_s'],
+    colors: [
+      demoColors[0],
+      demoColors[1],
+      demoColors[2],
+      demoColors[3],
+    ] as const,
+  },
+  {
+    href: '#h-components',
+    title: '[project without artwork]',
   },
 ];
 ---
@@ -253,12 +278,11 @@ const previewProjects = [
 
       <h3>Text styles</h3>
       <p class="note">
-        The design defines twelve named text styles. All twelve are recorded in <code
-          >DESIGN.md</code
-        >&rsquo;s front matter and generated into <code>design/tokens.json</code
-        >, which is where this table reads them from. Seven are transcribed from
-        the design; the five marked <strong>inferred</strong> are read off component
-        usage and still need confirming against Figma.
+        The design defines fourteen named text styles, all confirmed in Figma.
+        They are recorded in <code>DESIGN.md</code>&rsquo;s front matter and
+        generated into <code>design/tokens.json</code>, which is where this
+        table reads them from. Unbound style metrics remain literal values;
+        variable references use the same flat token names as components.
       </p>
       <div class="table-wrap">
         <table class="text-styles">
@@ -266,7 +290,7 @@ const previewProjects = [
             <tr>
               <th scope="col">Style</th>
               <th scope="col">Live specimen</th>
-              <th scope="col">Tokens</th>
+              <th scope="col">Tokens / literal metrics</th>
             </tr>
           </thead>
           <tbody>
@@ -275,14 +299,11 @@ const previewProjects = [
                 <tr>
                   <th scope="row">
                     <code>{style.name}</code>
-                    {style.inferred && (
-                      <span class="text-styles__marker">inferred</span>
-                    )}
                   </th>
                   <td>
                     <span
                       class="text-styles__sample"
-                      style={`font-family:var(${style.fontFamily});font-size:var(${style.fontSize});font-weight:var(${style.fontWeight});line-height:var(${style.lineHeight});letter-spacing:var(${style.letterSpacing})`}
+                      style={`font-family:${styleValue(style.fontFamily)};font-size:${styleValue(style.fontSize)};font-weight:${styleValue(style.fontWeight)};line-height:${styleValue(style.lineHeight)};letter-spacing:${styleValue(style.letterSpacing)}`}
                     >
                       I care about experiences.
                     </span>
@@ -413,14 +434,32 @@ const previewProjects = [
           >go back in time</Button
         >
         <Button type="secondary" variant="default" href="#h-components"
-          >Mehr erfahren →</Button
+          >Mehr erfahren</Button
         >
         <Button type="nav" variant="primary" href="#h-components"
-          >#aboutme</Button
+          >aboutme</Button
         >
-        <Button type="nav" variant="secondary">#behindthescenes</Button>
+        <Button type="nav" variant="secondary" href="#h-components"
+          >behindthescenes</Button
+        >
         <Button type="inline" variant="primary" href="#h-components"
           >How might we rebrand our marketing materials?</Button
+        >
+      </div>
+      <p class="note">
+        Secondary Left: default (<code>676:5490</code>) and hover/focus (<code
+          >676:5493</code
+        >).
+      </p>
+      <div class="demo">
+        <Button type="secondary" orientation="left" href="#h-components"
+          >Mehr erfahren</Button
+        >
+        <Button
+          type="secondary"
+          orientation="left"
+          state="hover"
+          href="#h-components">Mehr erfahren</Button
         >
       </div>
 
@@ -435,7 +474,7 @@ const previewProjects = [
         <ChatBubble user="visitor" state="default" href="#h-components">
           Option 1
         </ChatBubble>
-        <ChatBubble user="user" state="hover">Option 1</ChatBubble>
+        <ChatBubble user="visitor" state="hover">Option 1</ChatBubble>
         <ChatBubble user="visitor" state="selected">Selected 1</ChatBubble>
       </div>
 
@@ -515,19 +554,19 @@ const previewProjects = [
         </CuriosityRow>
       </div>
 
-      <h3>Blank section</h3>
+      <h3>Text section</h3>
       <p class="note">
-        Figma set <code>blank section</code>, node <code>114:636</code>.
+        Figma component <code>Text</code>, node <code>114:636</code>.
       </p>
       <div class="demo demo--stack">
-        <BlankSection level={4}>
+        <TextSection title="[section title]" level={4}>
           <p>[section body]</p>
-        </BlankSection>
+        </TextSection>
       </div>
 
       <h3>CV section</h3>
       <p class="note">
-        Figma set <code>CV section</code>, node <code>114:640</code>.
+        Figma set <code>CV</code>, node <code>477:2204</code>.
       </p>
       <div class="demo demo--stack">
         <CvSection
@@ -554,44 +593,48 @@ const previewProjects = [
         </CvSection>
       </div>
 
-      <h3>Project preview</h3>
+      <h3>Project bentos</h3>
       <p class="note">
-        Figma set <code>project preview</code>, node <code>114:646</code>.
+        Figma set <code>Project Bentos</code>, node <code>639:1884</code>. Six
+        variants, default and expanded. Artwork and palette below are bracketed
+        specimens, not real project content.
       </p>
-      <div class="demo">
-        <ProjectPreview
-          id="styleguide-preview-collapsed-small"
-          href="#h-components"
-          state="collapsed"
-          size="small"
-          caption="[company]"
-          title="[project title]"
-          artefacts={previewArtefacts}
-        />
-        <ProjectPreview
-          id="styleguide-preview-collapsed-default"
-          href="#h-components"
-          state="collapsed"
-          size="default"
-          caption="[company]"
-          title="[project title]"
-          artefacts={previewArtefacts}
-        />
-        <ProjectPreview
-          id="styleguide-preview-exploded-default"
-          href="#h-components"
-          state="exploded"
-          size="default"
-          caption="[company]"
-          title="[project title]"
-          artefacts={previewArtefacts}
-        />
-        <ProjectPreview
-          id="styleguide-preview-no-artefacts"
-          size="small"
-          caption="[company]"
-          title="[project without imagery]"
-        />
+      <div class="demo demo--stack">
+        {
+          bentoVariants.map((variant) => (
+            <Fragment>
+              <p class="note">Variant {variant}</p>
+              <div class="demo__bento">
+                <ProjectBento
+                  variant={variant}
+                  title="[project title]"
+                  hmw="[How might we frame this project?]"
+                  href="#h-components"
+                  images={demoImages}
+                  colors={demoColors}
+                />
+              </div>
+              <div class="demo__bento demo__bento--expanded">
+                <ProjectBento
+                  variant={variant}
+                  state="hover"
+                  title="[project title]"
+                  hmw="[How might we frame this project?]"
+                  href="#h-components"
+                  images={demoImages}
+                  colors={demoColors}
+                />
+              </div>
+            </Fragment>
+          ))
+        }
+        <div class="demo__bento">
+          <ProjectBento
+            title="[project without artwork]"
+            hmw="[How might we show a project without artwork?]"
+            href="#h-components"
+          />
+        </div>
       </div>
 
       <h3>Tool box</h3>
@@ -600,7 +643,7 @@ const previewProjects = [
       </p>
       <div class="demo demo--stack">
         <ToolBox tools={placeholderTools} level={4} />
-        <ToolBox tools={[]} level={4} />
+        <ToolBox title="[empty tool box]" tools={[]} level={4} />
       </div>
 
       <h3>Focus areas</h3>
@@ -612,7 +655,7 @@ const previewProjects = [
           areas={['[focus area]', '[focus area]', '[focus area]']}
           level={4}
         />
-        <FocusAreas areas={[]} level={4} />
+        <FocusAreas title="[empty focus areas]" areas={[]} level={4} />
       </div>
 
       <h3>Release notes</h3>
@@ -642,42 +685,12 @@ const previewProjects = [
         </ReleaseNote>
       </div>
 
-      <h3>Project sections</h3>
-      <p class="note">
-        Figma set <code>project sections</code>, node <code>115:755</code>.
-      </p>
-      <div class="demo demo--stack">
-        <ProjectSection
-          state="active"
-          title="[case study section]"
-          subtitle="[section subtitle]"
-          artefacts={demoArtefacts}
-          keyPoints={['[key point]', '[key point]']}
-          level={4}
-        >
-          <p>[section description]</p>
-        </ProjectSection>
-        <ProjectSection
-          state="inactive"
-          title="[case study section]"
-          subtitle="[section subtitle]"
-          artefacts={demoArtefacts}
-          keyPoints={['[key point]', '[key point]']}
-          level={4}
-        >
-          <p>[section description]</p>
-        </ProjectSection>
-      </div>
-
       <h3>NavBar</h3>
       <p class="note">
         Figma set <code>NavBar</code>, node <code>210:1625</code>.
       </p>
       <div class="demo demo--stack">
-        <NavBar mode="default" label="Footer, light" />
-        <div class="demo__dark">
-          <NavBar mode="dark" label="Footer, dark" />
-        </div>
+        <NavBar label="Footer specimen" />
       </div>
     </section>
 
@@ -693,7 +706,15 @@ const previewProjects = [
 
 <style>
   .guide {
+    --guide-gutter: var(--space-md);
     padding-block: var(--space-xl) var(--space-2xl);
+    padding-inline: var(--guide-gutter);
+  }
+
+  @media (min-width: 48rem) {
+    .guide {
+      --guide-gutter: var(--grid-margin);
+    }
   }
 
   .guide section {
@@ -922,20 +943,6 @@ const previewProjects = [
     max-width: none;
   }
 
-  .text-styles__marker {
-    display: inline-block;
-    padding: var(--space-3xs) var(--space-2xs);
-    margin-inline-start: var(--space-2xs);
-    border-radius: var(--radius-sm);
-    background: var(--color-lemon-100);
-    color: var(--color-neutral-800);
-    font-family: var(--font-mono);
-    font-size: var(--font-size-xs);
-    font-weight: var(--font-weight-regular);
-    line-height: var(--line-height-relaxed);
-    letter-spacing: var(--letter-spacing-normal);
-  }
-
   .text-styles__tokens {
     display: flex;
     flex-wrap: wrap;
@@ -1052,10 +1059,28 @@ const previewProjects = [
     align-items: stretch;
   }
 
-  .demo__dark {
-    inline-size: 100%;
-    padding: var(--space-md);
+  .demo__bento {
+    /* Keep the expanded frame full-width while compact cards follow its gutters. */
+    --demo-bento-gutter: var(--space-2xl);
+    --bento-expanded-width: calc(100cqi + 2 * var(--demo-bento-gutter));
+    --bento-offset: calc(-1 * var(--demo-bento-gutter));
+    container-type: inline-size;
+    inline-size: calc(100% + 2 * var(--guide-gutter));
+    margin-inline: calc(-1 * var(--guide-gutter));
+    padding: var(--space-md) var(--demo-bento-gutter);
+    background: var(--color-neutral-white);
+  }
+
+  .demo__bento--expanded,
+  :global(.demo__bento:has(.project-bento:hover)),
+  :global(.demo__bento:has(.project-bento:focus-visible)) {
     background: var(--color-neutral-black);
+  }
+
+  @media (max-width: 48rem) {
+    .demo__bento {
+      --demo-bento-gutter: var(--space-md);
+    }
   }
 
   .guide__foot {

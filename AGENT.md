@@ -1,4 +1,4 @@
-# CLAUDE.md
+# AGENT.md
 
 Operating rules for any agent working in this repository. Read fully before the
 first edit.

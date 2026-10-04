@@ -1,218 +1,128 @@
 ---
 import { getCollection } from 'astro:content';
 import NavBar from '../components/NavBar.astro';
-import ProjectPreview from '../components/ProjectPreview.astro';
+import ProjectBento, {
+  type BentoImage,
+  type ImageSlot,
+} from '../components/ProjectBento.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { withBase } from '../config/site';
 
 const projects = await getCollection('projects');
+const imageSlots = [
+  '0.8h',
+  '0.6h_l',
+  '0.6h_s',
+  '1_2_l',
+  '1_2_s',
+  '1_1',
+  '1_2',
+] as const;
+const variants = ['1', '2', '3', '4', '5', '6'] as const;
+const projectBentos = projects.map((entry, index) => {
+  const slug = entry.id.replace(/\.md$/, '');
+  const images: Partial<Record<ImageSlot, BentoImage>> = {};
+  for (const slot of imageSlots) {
+    const src = entry.data[`img_${slot}`];
+    const alt = entry.data[`img_${slot}_alt`];
+    if (src && alt) images[slot] = { src, alt };
+  }
+  return {
+    variant: variants[index % variants.length],
+    title: entry.data.title,
+    hmw: entry.data.hmw,
+    href: withBase(`/projects/${slug}`),
+    images,
+    colors: [
+      entry.data.color1,
+      entry.data.color2,
+      entry.data.color3,
+      entry.data.color4,
+      entry.data.color5,
+      entry.data.color6,
+      entry.data.color7,
+      entry.data.color8,
+    ] as const,
+  };
+});
 ---
 
 <BaseLayout title="Projects">
-  <script is:inline slot="head">
-    document.documentElement.classList.add('js');
-  </script>
-
   <main id="main" class="projects">
     <h1 class="visually-hidden">Projects</h1>
-    <section class="projects__viewport" data-canvas aria-label="Projects">
-      <div class="projects__canvas container" data-world>
-        {
-          projects.map((entry) => {
-            const slug = entry.id.replace(/\.md$/, '');
-            return (
-              <div class="projects__row">
-                <ProjectPreview
-                  id={`project-${slug}`}
-                  caption={entry.data.company}
-                  title={entry.data.hmw?.trim() ?? entry.data.title}
-                  href={withBase(`/projects/${slug}`)}
-                  state="collapsed"
-                  size="default"
-                  class="project-preview--index"
-                />
-              </div>
-            );
-          })
-        }
-      </div>
+    <section class="projects__grid" aria-label="Projects">
+      {
+        projectBentos.map((project) => (
+          <div class="projects__item">
+            <ProjectBento {...project} />
+          </div>
+        ))
+      }
     </section>
   </main>
-
-  <NavBar mode="dark" label="Site" />
+  <NavBar label="Site" />
 </BaseLayout>
 
 <style>
   :global(body:has(.projects)) {
-    background-color: var(--color-neutral-100);
+    background-color: var(--color-neutral-white);
+    transition: background-color var(--duration-slow) var(--easing-standard);
   }
 
-  .projects__canvas {
-    container: project-previews / inline-size;
+  :global(body:has(.projects .project-bento:is(:hover, :focus-visible))) {
+    background-color: var(--color-neutral-black);
+  }
+
+  .projects {
+    padding-block: var(--space-2xl) var(--space-3xl);
+  }
+
+  .projects__grid {
+    container-type: inline-size;
     display: grid;
-    gap: var(--space-xl);
-    padding-block: var(--space-3xl);
+    grid-template-columns: repeat(2, minmax(0, 26.3125rem));
+    justify-content: center;
+    align-items: start;
+    gap: var(--space-2xl);
+    max-inline-size: var(--grid-frame);
+    margin-inline: auto;
   }
 
-  :global(html.js) .projects__viewport {
-    position: relative;
-    block-size: calc(
-      100svh - var(--space-3xl) - var(--space-xl) - var(--space-xs)
+  .projects__item {
+    --bento-expanded-width: 100cqw;
+    --bento-offset: calc(
+      min(26.3125rem, (100cqw - var(--space-2xl)) / 2) + var(--space-2xl) / 2 -
+        50cqw
     );
-    overflow: hidden;
-  }
-
-  :global(html.js) .projects__canvas {
-    position: absolute;
-    inset-block-start: 0;
-    inset-inline: 0;
-    transform-origin: left top;
-    will-change: transform;
-  }
-
-  .projects__row {
-    position: relative;
-    display: flex;
     min-inline-size: 0;
-    justify-content: flex-start;
+    transition: opacity var(--duration-slow) var(--easing-standard);
   }
 
-  .projects__row:nth-child(odd) {
-    justify-content: flex-end;
+  .projects__item:nth-child(even) {
+    --bento-offset: calc(-50cqw - var(--space-2xl) / 2);
   }
 
-  .projects__row > :global(.project-preview--index) {
-    flex: none;
-  }
-
-  .projects__row:hover,
-  .projects__row:focus-within {
-    z-index: 1;
+  /* Keep every grid position in place: the expanded descendant is the hit region,
+     including its gaps and CTA. Moving outside it naturally ends :hover. */
+  .projects
+    :global(
+      .projects__grid:has(.project-bento:is(:hover, :focus-visible))
+        .projects__item:not(:has(.project-bento:is(:hover, :focus-visible)))
+    ) {
+    opacity: 0;
+    pointer-events: none;
   }
 
   @media (max-width: 48rem) {
-    :global(html.js) .projects__viewport {
-      block-size: auto;
-      overflow-x: auto;
+    .projects {
+      padding-inline: var(--space-md);
     }
-
-    :global(html.js) .projects__canvas {
-      position: static;
-      transform: none !important;
+    .projects__grid {
+      grid-template-columns: minmax(0, 26.3125rem);
+    }
+    .projects__item,
+    .projects__item:nth-child(even) {
+      --bento-offset: calc((min(26.3125rem, 100cqw) - 100cqw) / 2);
     }
   }
 </style>
-
-<script>
-  const viewport = document.querySelector<HTMLElement>('[data-canvas]');
-  const world = document.querySelector<HTMLElement>('[data-world]');
-
-  if (viewport && world) {
-    const smallViewport = matchMedia('(max-width: 48rem)');
-    let x = 0;
-    let y = 0;
-    const measure = document.createElement('span');
-    measure.style.cssText =
-      'position:absolute;inline-size:var(--space-lg);visibility:hidden';
-    viewport.append(measure);
-    const panStep = measure.getBoundingClientRect().width;
-    measure.remove();
-
-    const render = () => {
-      world.style.transform = `translate3d(${x}px, ${y}px, 0)`;
-    };
-
-    const isEditableTarget = (target: EventTarget | null) =>
-      target instanceof Element &&
-      Boolean(target.closest('input, textarea, select, [contenteditable]'));
-
-    const bringPreviewIntoView = (preview: HTMLElement) => {
-      const canvasBounds = viewport.getBoundingClientRect();
-      const previewBounds = preview.getBoundingClientRect();
-      if (previewBounds.left < canvasBounds.left)
-        x += canvasBounds.left - previewBounds.left;
-      if (previewBounds.right > canvasBounds.right)
-        x -= previewBounds.right - canvasBounds.right;
-      if (previewBounds.top < canvasBounds.top)
-        y += canvasBounds.top - previewBounds.top;
-      if (previewBounds.bottom > canvasBounds.bottom)
-        y -= previewBounds.bottom - canvasBounds.bottom;
-      render();
-    };
-    let focusedPreview: HTMLElement | null = null;
-    const focusObserver = new ResizeObserver(() => {
-      if (
-        smallViewport.matches ||
-        !focusedPreview ||
-        !focusedPreview.contains(document.activeElement)
-      )
-        return;
-      bringPreviewIntoView(focusedPreview);
-    });
-
-    const watchFocusedPreview = (preview: HTMLElement) => {
-      focusedPreview = preview;
-      focusObserver.disconnect();
-      focusObserver.observe(preview);
-      bringPreviewIntoView(preview);
-    };
-
-    viewport.addEventListener(
-      'wheel',
-      (event) => {
-        if (smallViewport.matches || isEditableTarget(event.target)) return;
-        event.preventDefault();
-        x -= event.deltaX;
-        y -= event.deltaY;
-        render();
-      },
-      { passive: false },
-    );
-
-    viewport.addEventListener('keydown', (event) => {
-      if (
-        smallViewport.matches ||
-        event.target !== viewport ||
-        isEditableTarget(event.target)
-      )
-        return;
-      const movement: Record<string, [number, number]> = {
-        ArrowLeft: [panStep, 0],
-        ArrowRight: [-panStep, 0],
-        ArrowUp: [0, panStep],
-        ArrowDown: [0, -panStep],
-      };
-      const delta = movement[event.key];
-      if (!delta) return;
-      event.preventDefault();
-      x += delta[0];
-      y += delta[1];
-      render();
-    });
-
-    viewport.addEventListener('focusin', (event) => {
-      if (smallViewport.matches || !(event.target instanceof Element)) return;
-      const preview = event.target.closest<HTMLElement>(
-        '.project-preview--index',
-      );
-      if (!preview || !world.contains(preview)) return;
-      watchFocusedPreview(preview);
-    });
-    const syncMode = () => {
-      if (smallViewport.matches) {
-        viewport.removeAttribute('tabindex');
-        viewport.setAttribute('aria-label', 'Projects');
-        world.style.removeProperty('transform');
-      } else {
-        viewport.tabIndex = 0;
-        viewport.setAttribute(
-          'aria-label',
-          'Explorable projects canvas. Use a trackpad, mouse wheel, or arrow keys to pan.',
-        );
-        render();
-      }
-    };
-    smallViewport.addEventListener('change', syncMode);
-    syncMode();
-  }
-</script>

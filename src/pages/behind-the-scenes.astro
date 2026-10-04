@@ -2,7 +2,7 @@
 import { getCollection } from 'astro:content';
 import readmeSource from '../../README.md?raw';
 import designSource from '../../DESIGN.md?raw';
-import Button from '../components/Button.astro';
+import Icon from '../components/Icon.astro';
 import NavBar from '../components/NavBar.astro';
 import ReleaseNote from '../components/ReleaseNote.astro';
 import { PORTFOLIO_SOURCE, withBase } from '../config/site';
@@ -23,13 +23,13 @@ const releaseBlocks = await Promise.all(
   releases.map(async (entry) => ({
     entry,
     userExperience: entry.data.userExperience
-      ? await renderFrontmatterMarkdown(entry.data.userExperience)
+      ? await renderFrontmatterMarkdown(entry.data.userExperience, 2)
       : undefined,
     userInterface: entry.data.userInterface
-      ? await renderFrontmatterMarkdown(entry.data.userInterface)
+      ? await renderFrontmatterMarkdown(entry.data.userInterface, 2)
       : undefined,
     tech: entry.data.tech
-      ? await renderFrontmatterMarkdown(entry.data.tech)
+      ? await renderFrontmatterMarkdown(entry.data.tech, 2)
       : undefined,
   })),
 );
@@ -46,7 +46,7 @@ figmaEmbedUrl.searchParams.set('embed-host', 'max-pinkert-portfolio');
 <BaseLayout title="How I built this">
   <main id="main" class="container bts">
     <header class="bts__hero">
-      <h1>How I <br />built this</h1>
+      <h1 class="bts__title">How I <br />built this</h1>
       <p>
         Welcome to the meta case study of how I built this website. For this
         project I can actually just share the raw data. Browse through my Figma
@@ -56,18 +56,27 @@ figmaEmbedUrl.searchParams.set('embed-host', 'max-pinkert-portfolio');
 
     <div class="bts__cards">
       <section class="bts-card bts-card--design" aria-labelledby="h-design">
-        <h2 id="h-design">Design</h2>
-        <Button type="secondary" href={PORTFOLIO_SOURCE.figma}
-          >Figma file →</Button
-        >
-        <p>
-          My one and only Figma. Since starting my rookie journey as a
-          about-to-be designer, Figma has always been my place to play around,
-          no matter which use case. Affinity also started playing a role a bit,
-          especially when it comes to print design. But Figma is my home turf
-          and I enjoy working in it. Here the file where all the website came to
-          life. I tried to keep a bit more artifacts than usually, take a look:
-        </p>
+        <div class="bts-card__intro">
+          <header class="bts-card__header">
+            <h2 id="h-design">Design</h2>
+            <a
+              class="bts-card__source bts-card__source--figma"
+              href={PORTFOLIO_SOURCE.figma}
+              aria-label="Figma file"
+            >
+              <Icon icon="figma" color="black" alt="" />
+            </a>
+          </header>
+          <p>
+            My one and only Figma. Since starting my rookie journey as a
+            about-to-be designer, Figma has always been my place to play around,
+            no matter which use case. Affinity also started playing a role a
+            bit, especially when it comes to print design. But Figma is my home
+            turf and I enjoy working in it. Here the file where all the website
+            came to life. I tried to keep a bit more artifacts than usually,
+            take a look:
+          </p>
+        </div>
         <iframe
           class="bts-card__embed"
           src={figmaEmbedUrl.href}
@@ -78,18 +87,26 @@ figmaEmbedUrl.searchParams.set('embed-host', 'max-pinkert-portfolio');
       </section>
 
       <section class="bts-card bts-card--code" aria-labelledby="h-code">
-        <h2 id="h-code">Code</h2>
-        <Button type="secondary" href={PORTFOLIO_SOURCE.repository}
-          >GitHub repository →</Button
-        >
-        <p>
-          This isn’t the first try at coding a website, my journey started with
-          a blog in Jimdo, evolved to Webflow where we build the website for
-          2zero and ultimately went back to pure HTML/CSS. I still have to rely
-          on coding agents to do the heavy lifting but I at least can understand
-          the generated code and structure which helps to question the output of
-          LLMs and also to do changes on my own. Take a look:
-        </p>
+        <div class="bts-card__intro">
+          <header class="bts-card__header">
+            <h2 id="h-code">code</h2>
+            <a
+              class="bts-card__source bts-card__source--github"
+              href={PORTFOLIO_SOURCE.repository}
+              aria-label="GitHub repository"
+            >
+              <Icon icon="github" color="black" alt="" />
+            </a>
+          </header>
+          <p>
+            This isn’t the first try at coding a website, my journey started
+            with a blog in Jimdo, evolved to Webflow where we build the website
+            for 2zero and ultimately went back to pure HTML/CSS. I still have to
+            rely on coding agents to do the heavy lifting but I at least can
+            understand the generated code and structure which helps to question
+            the output of LLMs and also to do changes on my own. Take a look:
+          </p>
+        </div>
 
         <div class="bts-doc">
           <section
@@ -118,66 +135,69 @@ figmaEmbedUrl.searchParams.set('embed-host', 'max-pinkert-portfolio');
     </div>
 
     <section class="bts__credits" aria-labelledby="h-credits">
-      <h2 id="h-credits">Credits</h2>
-      <p>
-        I enjoy trying out different tools and playing around with them. And
-        also as part of this portfolio website I took to several helpers and
-        here is a small way to say thank you and at least credit your work so
-        hopefully people read this and try them out themselves:
-      </p>
-      <ul class="bts-credits__list">
-        <li>
-          <span
-            ><a href="https://www.fontshare.com/fonts/erode">Erode</a>, Typeface
-            by Indian Type Foundry, via Fontshare</span
-          >
-        </li>
-        <li>
-          <span
-            ><a href="https://www.fontshare.com/fonts/satoshi">Satoshi</a>,
-            Typeface by Indian Type Foundry, via Fontshare</span
-          >
-        </li>
-        <li>
-          <span
-            ><a href="https://oklch.com">OKLCH</a>, Color picker by Evil
-            Martians</span
-          >
-        </li>
-        <li><span>Bauhaus, Figma Weave</span></li>
-        <li>
-          <span
-            ><a href="https://www.figma.com/community/plugin/733590967040604714"
-              >Brandfetch</a
-            >, Figma Plugin</span
-          >
-        </li>
-        <li>
-          <span
-            ><a
-              href="https://www.figma.com/community/plugin/1181873200384736932"
-              >WebP Exporter</a
-            >, Figma Plugin</span
-          >
-        </li>
-        <li>
-          <span
-            >Rename Layers, Figma, I love structure, but renaming layers just
-            takes too much time.</span
-          >
-        </li>
-        <li>
-          <span
-            >And yes, I did use LLMs, Coding Agents, AI, however you want to
-            call it. <a href={withBase('/ai')}>Find out more!</a></span
-          >
-        </li>
-      </ul>
+      <h2 class="bts__title" id="h-credits">Credits</h2>
+      <div class="bts-credits__body">
+        <p>
+          I enjoy trying out different tools and playing around with them. And
+          also as part of this portfolio website I took to several helpers and
+          here is a small way to say thank you and at least credit your work so
+          hopefully people read this and try them out themselves:
+        </p>
+        <ul class="bts-credits__list">
+          <li>
+            <span
+              ><a href="https://www.fontshare.com/fonts/erode">Erode</a>,
+              Typeface by Indian Type Foundry, via Fontshare</span
+            >
+          </li>
+          <li>
+            <span
+              ><a href="https://www.fontshare.com/fonts/satoshi">Satoshi</a>,
+              Typeface by Indian Type Foundry, via Fontshare</span
+            >
+          </li>
+          <li>
+            <span
+              ><a href="https://oklch.com">OKLCH</a>, Color picker by Evil
+              Martians</span
+            >
+          </li>
+          <li><span>Bauhaus, Figma Weave</span></li>
+          <li>
+            <span
+              ><a
+                href="https://www.figma.com/community/plugin/733590967040604714"
+                >Brandfetch</a
+              >, Figma Plugin</span
+            >
+          </li>
+          <li>
+            <span
+              ><a
+                href="https://www.figma.com/community/plugin/1181873200384736932"
+                >WebP Exporter</a
+              >, Figma Plugin</span
+            >
+          </li>
+          <li>
+            <span
+              >Rename Layers, Figma, I love structure, but renaming layers just
+              takes too much time.</span
+            >
+          </li>
+          <li>
+            <span
+              >And yes, I did use LLMs, Coding Agents, AI, however you want to
+              call it. <a href={withBase('/ai')}>Find out more!</a></span
+            >
+          </li>
+        </ul>
+      </div>
     </section>
 
     <section class="bts__releases" aria-labelledby="h-releases">
       <header class="bts-releases__header">
-        <h2 id="h-releases">Release Notes</h2>
+        <h2 class="bts__title" id="h-releases">Re<br />lease Notes</h2>
         <p>
           I have tried multiple approaches for my portfolio. To give you some
           idea of my iterations, I created this collection of release notes,
@@ -225,7 +245,7 @@ figmaEmbedUrl.searchParams.set('embed-host', 'max-pinkert-portfolio');
     </section>
   </main>
 
-  <NavBar mode="dark" label="Site" />
+  <NavBar label="Site" />
 </BaseLayout>
 
 <style>
@@ -240,21 +260,34 @@ figmaEmbedUrl.searchParams.set('embed-host', 'max-pinkert-portfolio');
     color: var(--color-neutral-800);
   }
 
+  /* Figma 103:1117: 310 / 643 columns and an unbound 135 gap. */
   .bts__hero,
-  .bts__credits,
   .bts-releases__header {
-    width: 100%;
-    max-width: calc(6 * var(--grid-column) + 5 * var(--grid-gutter));
+    display: grid;
+    grid-template-columns: minmax(0, 310fr) minmax(0, 643fr);
+    align-items: start;
+    gap: 135px;
   }
 
-  .bts__hero {
-    display: grid;
-    gap: var(--space-md);
+  .bts__hero > p {
+    max-inline-size: calc(4 * var(--grid-column) + 3 * var(--grid-gutter));
+  }
+
+  /* Typography/Title has no size or line-height variable in Figma. */
+  .bts__title {
+    font-size: 6.75rem;
+    line-height: 1.2;
+    letter-spacing: var(--letter-spacing-normal);
+    text-transform: uppercase;
+    text-wrap: wrap;
+    overflow-wrap: anywhere;
+    text-box-trim: trim-both;
+    text-box-edge: cap alphabetic;
   }
 
   .bts__cards {
     display: grid;
-    grid-template-columns: minmax(0, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: var(--space-md);
   }
 
@@ -275,15 +308,64 @@ figmaEmbedUrl.searchParams.set('embed-host', 'max-pinkert-portfolio');
     background-color: var(--color-herbs-100);
   }
 
-  .bts h2 {
-    font-size: var(--font-size-3xl);
+  .bts-card__intro {
+    display: grid;
+    align-content: start;
+    gap: var(--space-md);
+    min-block-size: 278px;
+    inline-size: 100%;
+  }
+
+  .bts-card__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-md);
+  }
+
+  .bts-card__header h2 {
+    font-size: var(--font-size-xl);
+    line-height: 1.2;
+    letter-spacing: var(--letter-spacing-normal);
+  }
+
+  .bts-card--code h2 {
+    font-family: var(--font-mono);
+  }
+
+  .bts-card--code .bts-card__intro > p,
+  .bts-doc__label {
+    font-family: var(--font-mono);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-regular);
+    line-height: var(--line-height-loose);
+    letter-spacing: var(--letter-spacing-extra-wide);
+  }
+
+  .bts-card__source {
+    display: block;
+    flex-shrink: 0;
+  }
+
+  .bts-card__source :global(.icon) {
+    inline-size: 100%;
+    block-size: var(--space-md);
+  }
+
+  /* Intrinsic marks at the frame's 24-high icon size. */
+  .bts-card__source--figma {
+    inline-size: var(--space-md);
+  }
+
+  .bts-card__source--github {
+    inline-size: 24.665308px;
   }
 
   .bts-card__embed {
     display: block;
     width: 100%;
     height: auto;
-    aspect-ratio: 4 / 3;
+    aspect-ratio: 484 / 317;
     border: 0;
   }
 
@@ -296,7 +378,7 @@ figmaEmbedUrl.searchParams.set('embed-host', 'max-pinkert-portfolio');
   .bts-doc__body {
     width: 100%;
     min-height: 0;
-    aspect-ratio: 4 / 3;
+    aspect-ratio: 484 / 317;
     padding: var(--space-sm);
     overflow: auto;
     background-color: var(--color-neutral-100);
@@ -319,17 +401,14 @@ figmaEmbedUrl.searchParams.set('embed-host', 'max-pinkert-portfolio');
 
   .bts-doc__body :global(h3) {
     margin-top: 0;
-    font-size: var(--font-size-2xl);
   }
 
   .bts-doc__body :global(h4) {
     margin-top: var(--space-xl);
-    font-size: var(--font-size-lg);
   }
 
   .bts-doc__body :global(h5) {
     margin-top: var(--space-lg);
-    font-size: var(--font-size-base);
   }
 
   .bts-doc__body :global(p),
@@ -403,17 +482,26 @@ figmaEmbedUrl.searchParams.set('embed-host', 'max-pinkert-portfolio');
 
   .bts__credits {
     display: grid;
+    grid-template-columns: minmax(0, 643fr) minmax(0, 310fr);
+    align-items: start;
+    gap: 135px;
+  }
+
+  .bts__credits > h2 {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .bts-credits__body {
+    display: grid;
+    grid-column: 1;
+    grid-row: 1;
     gap: var(--space-md);
   }
 
   .bts__releases {
     display: grid;
-    gap: var(--space-lg);
-  }
-
-  .bts-releases__header {
-    display: grid;
-    gap: var(--space-md);
+    gap: var(--space-2xl);
   }
 
   .bts-releases__list {
@@ -445,14 +533,23 @@ figmaEmbedUrl.searchParams.set('embed-host', 'max-pinkert-portfolio');
     border-radius: var(--radius-full);
   }
 
-  @media (min-width: 48rem) {
-    .bts__hero {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      align-items: end;
+  @media (max-width: 48rem) {
+    .bts__hero,
+    .bts__cards,
+    .bts__credits,
+    .bts-releases__header {
+      grid-template-columns: minmax(0, 1fr);
+      gap: var(--space-md);
     }
 
-    .bts__cards {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+    .bts__credits > h2,
+    .bts-credits__body {
+      grid-column: auto;
+      grid-row: auto;
+    }
+
+    .bts-card__intro {
+      min-block-size: 0;
     }
   }
 </style>

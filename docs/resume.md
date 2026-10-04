@@ -60,6 +60,16 @@ one the PDF is printed from: the designed page does not survive A4, and making i
 do so would have cost the design. Both read the same collection, so neither can
 drift from the other on content.
 
+The 2026-10-03 refresh applies the current Figma heading styles and the portrait's
+154px corner treatment. Screen social icons are 24px high with their native
+aspect ratios; the shared Figma mark has a square canvas. The focus areas
+include **User Research** and **Data Science**. Linked project previews are
+inline `CvSection` compositions:
+`img_1_1` supplies the main image, `img_1_2_s` the detail image, and
+`color1`–`color4` the palette. Every artwork slot is optional and missing
+artwork stays hidden, without placeholder assets. The printed CV continues to
+suppress these project previews.
+
 ## Changing how it looks
 
 Screen and print styles for the printed CV live in `src/pages/resume/cv.astro`.

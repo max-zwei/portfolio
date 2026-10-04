@@ -36,8 +36,8 @@ sections. Metadata, colors, and image slots are top-level fields.
 
 | Field      | Type                    | Required | Purpose                                                    |
 | ---------- | ----------------------- | -------- | ---------------------------------------------------------- |
-| `title`    | string                  | yes      | Project name. Used as the page `<h1>` and in listings.     |
-| `summary`  | string (≤ 280)          | yes      | Card copy and meta description. One or two sentences.      |
+| `title`    | string                  | yes      | Project name and accessible listing link label.            |
+| `summary`  | string (≤ 280)          | yes      | Metadata description, not visible project card copy.       |
 | `company`  | string                  | yes      | Who the work was for.                                      |
 | `year`     | number                  | yes      | Year the work was done, or started for ongoing work.       |
 | `tags`     | string[]                | no       | Discipline and domain tags; defaults to `[]`.              |
@@ -107,7 +107,7 @@ on dots, so automatic error-focus navigation can fail for these fields.
 | `summary`   | Markdown string | yes, if object exists | The section itself; must be nonempty.   |
 | `keyPoints` | string[]        | no                    | Takeaways in bullets; defaults to `[]`. |
 
-The section summary is rich text, unlike the short top-level card `summary`.
+The section summary is rich text, unlike the short top-level metadata `summary`.
 The CMS retains the established optional-object pattern: `required: false` on
 the object and its child controls, with a hint explaining the schema-enforced
 summary requirement. This is deliberate:
@@ -130,10 +130,32 @@ and `hmw.description` as their top-level strings, and the six other section
 descriptions as `summary`. Subtitles, artefacts, legacy aliases, and project
 teaser fields are no longer part of the contract.
 
-Project images and résumé project previews remain absent until replacement
-images and an explicit mapping from these slots to the page components are
-provided. No fallback image, palette, or old-media mapping is inferred. Unrelated
-styleguide image fixtures remain in use.
+### Page rendering
+
+`/projects` cycles through the six `ProjectBento` variants. Its only visible
+project copy is `hmw`; `title` names the link for assistive technology. Hover or
+keyboard focus expands the active bento to the page width on a black ground,
+while the other bentos become invisible and noninteractive.
+
+All seven image keys map directly to their matching bento slots (without the
+`img_` prefix); `color1`–`color8` retain their numbered palette positions.
+Missing images and colors are hidden, with no fallback palette, production
+placeholder or automatic old-media mapping. The three current projects supply
+all seven slots with local WebP artwork and descriptive companion alt text.
+
+Project detail opens with the back/“SHOW ME” chat choice. “SHOW ME” reveals the
+full case study, whose sections are inline page markup, not selection buttons
+or a `ProjectSection` component. Deep section anchors and the no-JavaScript
+baseline keep the content reachable. The sticky 180px image strip scrolls
+horizontally, pauses on hover or focus, and stops with no cloned images under
+reduced motion. `summary`, `year` and `tags` remain metadata rather than
+visible case-study copy.
+
+Optional `figmaUrl` and `repoUrl` links appear as 32px icons in the final
+“Behind the scenes” row, even when that narrative section is absent.
+Résumé project previews use `img_1_1`, `img_1_2_s` and the first four colors;
+unprovided artwork stays absent. Unrelated styleguide image fixtures remain
+in use.
 
 ### Verified editor roundtrip
 

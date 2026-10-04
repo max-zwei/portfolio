@@ -141,6 +141,7 @@ export const radii = flatten(tokens.radius).map(({ path, value }) => ({
   value,
 }));
 
+/** Each style leg is a CSS custom-property name or a literal CSS metric. */
 type TextStyleLegs = {
   fontFamily: string;
   fontSize: string;
@@ -154,7 +155,7 @@ const textGroup = tokens.text as Record<
   string | { $value: TextStyleLegs }
 >;
 
-/** The twelve named Figma text styles. Every leg is a CSS custom property name. */
+/** The fourteen named Figma text styles, retaining unbound literal metrics. */
 export const textStyles = Object.entries(textGroup)
   .filter(
     (entry): entry is [string, { $value: TextStyleLegs }] =>

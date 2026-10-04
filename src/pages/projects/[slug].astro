@@ -1,10 +1,11 @@
 ---
 import { getCollection, type CollectionEntry } from 'astro:content';
+import { Image } from 'astro:assets';
 import Avatar from '../../components/Avatar.astro';
 import Button from '../../components/Button.astro';
 import ChatBubble from '../../components/ChatBubble.astro';
+import Icon from '../../components/Icon.astro';
 import NavBar from '../../components/NavBar.astro';
-import ProjectSection from '../../components/ProjectSection.astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { withBase } from '../../config/site';
 import { renderFrontmatterMarkdown } from '../../lib/markdown';
@@ -27,6 +28,7 @@ type CaseSection = NonNullable<
 interface SectionCandidate {
   key: string;
   title: string;
+  titleParts: string[];
   section?: CaseSection;
 }
 
@@ -41,36 +43,84 @@ const sectionCandidates: SectionCandidate[] = [
   {
     key: 'exploration',
     title: 'Exploration',
+    titleParts: ['Ex', 'ploration'],
     section: entry.data.exploration,
   },
-  { key: 'definition', title: 'Definition', section: entry.data.definition },
+  {
+    key: 'definition',
+    title: 'Definition',
+    titleParts: ['Def', 'ini', 'tion'],
+    section: entry.data.definition,
+  },
   {
     key: 'development',
     title: 'Development',
+    titleParts: ['Dev', 'elopment'],
     section: entry.data.development,
   },
-  { key: 'feedback', title: 'Feedback', section: entry.data.feedback },
-  { key: 'learning', title: 'Learning', section: entry.data.learning },
+  {
+    key: 'feedback',
+    title: 'Feedback',
+    titleParts: ['Feed', 'back'],
+    section: entry.data.feedback,
+  },
+  {
+    key: 'learning',
+    title: 'Learning',
+    titleParts: ['Learning'],
+    section: entry.data.learning,
+  },
   {
     key: 'behind-the-scenes',
     title: 'Behind the scenes',
+    titleParts: ['Behind', 'the', 'scenes'],
     section: entry.data.behindTheScenes,
   },
 ];
+const hasSourceLinks = Boolean(entry.data.figmaUrl || entry.data.repoUrl);
 const presentSections = sectionCandidates.filter(
-  (candidate): candidate is SectionCandidate & { section: CaseSection } =>
-    Boolean(candidate.section),
+  (candidate) =>
+    candidate.section ||
+    (candidate.key === 'behind-the-scenes' && hasSourceLinks),
 );
 const sections = await Promise.all(
   presentSections.map(async (candidate) => ({
     ...candidate,
-    html: await renderFrontmatterMarkdown(candidate.section.summary),
+    html: candidate.section
+      ? await renderFrontmatterMarkdown(candidate.section.summary)
+      : '',
   })),
 );
 const projectsHref = withBase('/projects');
+// Slideshow 655:3652: each CMS image fills its identically named frame.
+const imageSlots = [
+  { key: 'img_0.8h', ratio: '225 / 182', largeRadius: false },
+  { key: 'img_1_2_l', ratio: '90 / 180', largeRadius: true },
+  { key: 'img_0.6h_l', ratio: '300 / 180', largeRadius: false },
+  { key: 'img_1_2_s', ratio: '90 / 180', largeRadius: true },
+  { key: 'img_1_1', ratio: '1', largeRadius: false },
+  { key: 'img_1_2', ratio: '90 / 180', largeRadius: false },
+  { key: 'img_0.6h_s', ratio: '300 / 180', largeRadius: true },
+] as const;
+const colors = [
+  entry.data.color1,
+  entry.data.color2,
+  entry.data.color3,
+  entry.data.color4,
+];
+const hasArtwork =
+  imageSlots.some(({ key }) => entry.data[key]) || colors.some(Boolean);
 ---
 
 <BaseLayout title={entry.data.title} description={entry.data.summary}>
+  <Fragment slot="head">
+    <meta name="date" content={String(entry.data.year)} />
+    {
+      entry.data.tags.length > 0 && (
+        <meta name="keywords" content={entry.data.tags.join(', ')} />
+      )
+    }
+  </Fragment>
   <script is:inline slot="head">
     document.documentElement.classList.add('js');
   </script>
@@ -81,18 +131,13 @@ const projectsHref = withBase('/projects');
     <section
       class="container project-intro"
       aria-labelledby="project-intro-title"
+      tabindex="-1"
     >
       <h2 id="project-intro-title" class="visually-hidden">
         Introduction to {entry.data.title}
       </h2>
 
       <div class="project-intro__transcript">
-        <div class="project-page__back">
-          <Button type="secondary" href={projectsHref}>
-            ← Back to projects
-          </Button>
-        </div>
-
         <div class="project-intro__conversation">
           <ol class="project-intro__thread">
             <li class="project-intro__row" data-chat-row>
@@ -105,7 +150,13 @@ const projectsHref = withBase('/projects');
                 <p data-type>
                   Excited to tell you more about the project {entry.data.title}!
                 </p>
-                <p data-type>Let me quickly summarise what this was about:</p>
+                {
+                  contextHtml && (
+                    <p data-type>
+                      Let me quickly summarise what this was about:
+                    </p>
+                  )
+                }
                 {
                   contextHtml && (
                     <div
@@ -143,14 +194,18 @@ const projectsHref = withBase('/projects');
                 state="default"
                 class="project-intro__bubble"
               >
-                <p data-type>Enough from me, where do you want to start?</p>
-                <p data-type>Or do you want to read through it by yourself?</p>
+                <p data-type>Enough from me, let’s dive in!</p>
               </ChatBubble>
             </li>
           </ol>
 
-          <nav aria-label="Choose a case-study section">
+          <nav aria-label="Continue exploring projects">
             <ul class="project-intro__choices" data-chat-choices>
+              <li>
+                <ChatBubble user="visitor" state="default" href={projectsHref}>
+                  Back to the other project, please.
+                </ChatBubble>
+              </li>
               <li>
                 <ChatBubble
                   user="visitor"
@@ -158,58 +213,172 @@ const projectsHref = withBase('/projects');
                   href="#case-study"
                   data-reveal-details
                 >
-                  I’ll explore myself!
+                  SHOW ME!
                 </ChatBubble>
               </li>
-              {
-                sections.map((section) => (
-                  <li>
-                    <ChatBubble
-                      user="visitor"
-                      state="default"
-                      href={`#${section.key}`}
-                      data-reveal-details
-                    >
-                      {section.title}
-                    </ChatBubble>
-                  </li>
-                ))
-              }
             </ul>
           </nav>
         </div>
       </div>
     </section>
 
-    <article id="case-study" class="container project-details">
-      <div class="project-details__sections">
+    <article
+      id="case-study"
+      class="project-details"
+      aria-label="Case study"
+      tabindex="-1"
+      style={{
+        '--project-header-height': hasArtwork
+          ? 'calc(var(--space-2xl) + 180px + var(--space-md) + var(--font-size-sm) * var(--line-height-relaxed))'
+          : 'calc(var(--space-2xl) + var(--font-size-sm) * var(--line-height-relaxed))',
+      }}
+    >
+      <header class="project-details__header">
+        <div class="container project-page__back">
+          <Button type="secondary" orientation="left" href={projectsHref}>
+            Back to projects
+          </Button>
+        </div>
         {
-          sections.map((section) => (
-            <div
-              id={section.key}
-              class="project-details__section"
-              data-focus-section
+          hasArtwork && (
+            <section
+              class="project-details__strip"
+              data-artefact-strip
+              aria-label="Project artwork; focus to pause automatic scrolling"
+              tabindex="0"
             >
-              <ProjectSection
-                title={section.title}
-                keyPoints={section.section.keyPoints}
-                level={2}
-                state="active"
-              >
-                <Fragment set:html={section.html} />
-              </ProjectSection>
-            </div>
+              {imageSlots.map((slot, index) => (
+                <Fragment>
+                  {index === 3 && colors.some(Boolean) && (
+                    <div
+                      class="project-details__palette"
+                      role="img"
+                      aria-label={`Project colors: ${colors.filter(Boolean).join(', ')}`}
+                    >
+                      {colors.map(
+                        (color) =>
+                          color && <span style={{ backgroundColor: color }} />,
+                      )}
+                    </div>
+                  )}
+                  {entry.data[slot.key] && (
+                    <div
+                      class:list={[
+                        'project-details__artwork',
+                        {
+                          'project-details__artwork--large-radius':
+                            slot.largeRadius,
+                        },
+                      ]}
+                      style={{ aspectRatio: slot.ratio }}
+                      data-image-slot={slot.key}
+                    >
+                      <Image
+                        src={entry.data[slot.key]!}
+                        alt={entry.data[`${slot.key}_alt`]!}
+                        loading="eager"
+                      />
+                    </div>
+                  )}
+                </Fragment>
+              ))}
+            </section>
+          )
+        }
+      </header>
+
+      <div class="container project-details__sections">
+        {
+          sections.map((section, index) => (
+            <section
+              id={section.key}
+              class:list={[
+                'project-details__section',
+                { 'project-details__section--reverse': index % 2 === 1 },
+              ]}
+              aria-labelledby={`${section.key}-title`}
+              data-focus-section
+              tabindex="-1"
+              style={{
+                '--step-rotation': `${sectionCandidates.findIndex(({ key }) => key === section.key) * 18}deg`,
+              }}
+            >
+              <div class="project-details__rail">
+                <a
+                  class="project-details__step"
+                  href={`#${section.key}`}
+                  aria-label={`Jump to ${section.title}`}
+                />
+              </div>
+              <div class="project-details__content">
+                <h2 id={`${section.key}-title`} class="project-details__title">
+                  <span class="visually-hidden">{section.title}</span>
+                  <span aria-hidden="true">
+                    {section.titleParts.map((part, partIndex) => (
+                      <Fragment>
+                        {partIndex > 0 && <wbr />}
+                        {part}
+                      </Fragment>
+                    ))}
+                  </span>
+                </h2>
+                <div class="project-details__body">
+                  {section.html && (
+                    <div
+                      class="project-details__prose"
+                      set:html={section.html}
+                    />
+                  )}
+                  {section.section && section.section.keyPoints.length > 0 && (
+                    <ul class="project-details__points">
+                      {section.section.keyPoints.map((point) => (
+                        <li>{point}</li>
+                      ))}
+                    </ul>
+                  )}
+                  {section.key === 'behind-the-scenes' && hasSourceLinks && (
+                    <nav
+                      class="project-details__sources"
+                      aria-label="Project sources"
+                    >
+                      {entry.data.figmaUrl && (
+                        <a
+                          href={entry.data.figmaUrl}
+                          aria-label={`View ${entry.data.title} in Figma`}
+                        >
+                          <Icon
+                            icon="figma"
+                            color="black"
+                            alt=""
+                            class="project-details__source-icon project-details__source-icon--figma"
+                          />
+                        </a>
+                      )}
+                      {entry.data.repoUrl && (
+                        <a
+                          href={entry.data.repoUrl}
+                          aria-label={`View ${entry.data.title} source on GitHub`}
+                        >
+                          <Icon
+                            icon="github"
+                            color="black"
+                            alt=""
+                            class="project-details__source-icon project-details__source-icon--github"
+                          />
+                        </a>
+                      )}
+                    </nav>
+                  )}
+                </div>
+              </div>
+            </section>
           ))
         }
-      </div>
-
-      <div class="project-page__back">
-        <Button type="secondary" href={projectsHref}>← Back to projects</Button>
       </div>
     </article>
   </main>
 
-  <NavBar mode="dark" label="Site" />
+  <NavBar label="Site" />
 </BaseLayout>
 
 <style>
@@ -220,11 +389,16 @@ const projectsHref = withBase('/projects');
   .project-intro {
     display: flex;
     min-block-size: 100svh;
-    padding-block: var(--space-2xl);
+    padding-block: var(--space-3xl);
+  }
+
+  .project-intro[hidden] {
+    display: none;
   }
 
   .project-intro__transcript {
     display: grid;
+    grid-template-columns: minmax(0, 1fr);
     gap: var(--space-md);
     width: 100%;
     margin: auto;
@@ -232,9 +406,10 @@ const projectsHref = withBase('/projects');
 
   .project-intro__conversation {
     display: grid;
+    grid-template-columns: minmax(0, 1fr);
     gap: var(--space-md);
     width: 100%;
-    max-width: calc(8 * var(--grid-column) + 7 * var(--grid-gutter));
+    max-width: var(--size-chat-column);
     margin-inline: auto;
   }
 
@@ -247,12 +422,14 @@ const projectsHref = withBase('/projects');
 
   .project-intro__thread {
     display: grid;
+    grid-template-columns: minmax(0, 1fr);
     gap: var(--space-md);
   }
 
   .project-intro__transcript,
   .project-intro__conversation,
   .project-intro__thread,
+  .project-intro__conversation > nav,
   .project-intro__row {
     min-inline-size: 0;
   }
@@ -269,6 +446,7 @@ const projectsHref = withBase('/projects');
 
   .project-intro__row :global(.project-intro__bubble) {
     min-inline-size: 0;
+    max-inline-size: min(100%, var(--size-chat-bubble));
     overflow-wrap: anywhere;
   }
 
@@ -282,9 +460,19 @@ const projectsHref = withBase('/projects');
     flex-wrap: wrap;
     justify-content: flex-end;
     width: 100%;
-    max-width: calc(6 * var(--grid-column) + 5 * var(--grid-gutter));
     margin-inline-start: auto;
-    gap: var(--space-xs);
+    gap: var(--space-md);
+  }
+
+  .project-intro__choices > li {
+    min-inline-size: 0;
+    max-inline-size: 100%;
+  }
+
+  .project-intro__choices :global(.bubble) {
+    max-inline-size: 100%;
+    white-space: normal;
+    overflow-wrap: anywhere;
   }
   :global(html.js) [data-chat-row],
   :global(html.js) [data-chat-choices] {
@@ -296,6 +484,14 @@ const projectsHref = withBase('/projects');
     visibility: visible;
     animation: project-chat-arrive var(--duration-base) var(--easing-entrance)
       both;
+  }
+
+  :global(html.js) .project-intro[data-finished] [data-arrived],
+  .project-intro[data-finished] :global(.chat__char) {
+    visibility: visible;
+    opacity: 1;
+    transform: none;
+    animation: none;
   }
 
   @keyframes project-chat-arrive {
@@ -310,6 +506,7 @@ const projectsHref = withBase('/projects');
   }
 
   .project-page__back {
+    display: flex;
     justify-self: start;
   }
 
@@ -317,7 +514,7 @@ const projectsHref = withBase('/projects');
     .project-intro__row :global(.project-intro__bubble) {
       flex: 1 1 0;
       inline-size: auto;
-      word-break: break-all;
+      overflow-wrap: anywhere;
     }
   }
 
@@ -326,64 +523,377 @@ const projectsHref = withBase('/projects');
   }
 
   .project-details {
+    padding-block-end: var(--space-3xl);
+  }
+
+  .project-details__header {
+    position: sticky;
+    inset-block-start: 0;
+    z-index: 1;
     display: grid;
-    gap: var(--space-3xl);
-    padding-block: var(--space-2xl);
-    scroll-margin-block-start: var(--space-xl);
+    gap: var(--space-md);
+    padding-block-start: var(--space-2xl);
+    background: var(--color-neutral-white);
+  }
+
+  .project-details__header[data-scrolled] {
+    padding-block-end: var(--space-lg);
+  }
+
+  /* Slideshow 655:3652 has an unbound height of 180 and a native scroll baseline. */
+  .project-details__strip {
+    display: flex;
+    gap: var(--space-md);
+    block-size: 180px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    overscroll-behavior-inline: contain;
+  }
+
+  .project-details__artwork,
+  .project-details__palette {
+    flex: none;
+    block-size: 100%;
+    overflow: hidden;
+    border-radius: var(--radius-md);
+  }
+
+  .project-details__artwork--large-radius {
+    border-radius: var(--radius-lg);
+  }
+
+  .project-details__artwork :global(img) {
+    inline-size: 100%;
+    block-size: 100%;
+    object-fit: cover;
+  }
+
+  .project-details__palette {
+    display: flex;
+    flex-direction: column;
+    aspect-ratio: 90 / 180;
+  }
+
+  .project-details__palette span {
+    flex: 1;
   }
 
   .project-details__sections {
-    display: grid;
-    gap: var(--space-3xl);
+    margin-block-start: var(--space-3xl);
   }
 
+  /* 128:366: 16 rail + 95 gap, then 313/529 columns and an unbound 135 gap. */
   .project-details__section {
-    scroll-margin-block-start: var(--space-xl);
+    display: grid;
+    grid-template-columns: var(--space-sm) minmax(0, 1fr);
+    column-gap: 95px;
+    scroll-margin-block-start: calc(
+      var(--project-header-height) + var(--space-md)
+    );
+  }
+
+  .project-details__rail {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    gap: var(--space-md);
+    padding-block-end: var(--space-md);
+  }
+
+  .project-details__rail::after {
+    content: '';
+    flex: 1;
+    border-inline-start: 1px solid var(--color-tomato-200);
+  }
+
+  .project-details__step {
+    display: block;
+    flex: none;
+    inline-size: var(--space-sm);
+    block-size: var(--space-sm);
+    background: var(--color-tomato-500);
+    transform: rotate(var(--step-rotation));
+    transition: background-color var(--duration-base) var(--easing-standard);
+  }
+
+  .project-details__content {
+    display: grid;
+    grid-template-columns: minmax(0, 313fr) minmax(0, 529fr);
+    gap: 135px;
+    align-items: start;
+    padding-block-end: var(--space-3xl);
+  }
+
+  .project-details__section--reverse .project-details__content {
+    grid-template-columns: minmax(0, 529fr) minmax(0, 313fr);
+  }
+
+  .project-details__section--reverse .project-details__title {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .project-details__section--reverse .project-details__body {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .project-details__title {
+    font-size: 108px;
+    line-height: 1.2;
+    letter-spacing: var(--letter-spacing-normal);
+    text-transform: uppercase;
+    text-wrap: wrap;
+    overflow-wrap: anywhere;
+    text-box-trim: trim-both;
+    text-box-edge: cap alphabetic;
+    color: var(--color-neutral-black);
+    transition: color var(--duration-base) var(--easing-standard);
+  }
+
+  .project-details__body {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-md);
+    min-inline-size: 0;
+    color: var(--color-neutral-800);
+    overflow-wrap: anywhere;
+    transition: color var(--duration-base) var(--easing-standard);
+  }
+
+  .project-details__prose :global(p) {
+    max-inline-size: none;
+  }
+
+  .project-details__prose :global(p + p) {
+    margin-block-start: var(--space-md);
+  }
+
+  .project-details__points {
+    display: grid;
+    gap: var(--space-xs);
+    margin: 0;
+    padding-inline-start: var(--space-md);
+  }
+
+  .project-details__points li::marker {
+    color: var(--color-tomato-500);
+  }
+
+  .project-details__section[data-inactive]:not(:focus-within)
+    .project-details__title,
+  .project-details__section[data-inactive]:not(:focus-within)
+    .project-details__body {
+    color: var(--color-neutral-600);
+  }
+
+  .project-details__section[data-inactive]:not(:focus-within)
+    .project-details__step {
+    background: var(--color-tomato-200);
+  }
+
+  .project-details__sources {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+  }
+
+  .project-details__sources a {
+    display: flex;
+    flex: none;
+  }
+
+  .project-details__sources :global(.project-details__source-icon) {
+    display: block;
+    block-size: 32px;
+    max-inline-size: none;
+  }
+
+  .project-details__sources :global(.project-details__source-icon--figma) {
+    inline-size: auto;
+  }
+
+  .project-details__sources :global(.project-details__source-icon--github) {
+    inline-size: 32.887077px;
+  }
+
+  @media (max-width: 48rem) {
+    .project-details__section {
+      column-gap: var(--space-md);
+    }
+
+    .project-details__content,
+    .project-details__section--reverse .project-details__content {
+      grid-template-columns: minmax(0, 1fr);
+      gap: var(--space-md);
+    }
+
+    .project-details__section--reverse .project-details__title,
+    .project-details__section--reverse .project-details__body {
+      grid-column: auto;
+      grid-row: auto;
+    }
+
+    .project-details__title {
+      font-size: var(--font-size-3xl);
+    }
   }
 </style>
 
 <script>
   import { BETWEEN, PER_CHAR, type } from '../../lib/chat-typing';
   import { observeFocusBand } from '../../lib/focus-dim';
+  import '../../lib/artefact-strip';
+  const intro = document.querySelector<HTMLElement>('.project-intro');
   const details = document.querySelector<HTMLElement>('.project-details');
-  const reveal = () => details?.setAttribute('data-revealed', '');
-  const revealAndScroll = (chip: HTMLAnchorElement) => {
-    reveal();
-    const target = document.querySelector<HTMLElement>(chip.hash);
-    requestAnimationFrame(() => target?.scrollIntoView());
-  };
-  document
-    .querySelectorAll<HTMLAnchorElement>('[data-reveal-details]')
-    .forEach((chip) =>
-      chip.addEventListener('click', () => revealAndScroll(chip)),
-    );
-  if (location.hash.length > 1) {
-    reveal();
-    requestAnimationFrame(() =>
-      document.querySelector<HTMLElement>(location.hash)?.scrollIntoView(),
-    );
-  }
-
+  const header = document.querySelector<HTMLElement>(
+    '.project-details__header',
+  );
   const still = matchMedia('(prefers-reduced-motion: reduce)');
   const rows = document.querySelectorAll<HTMLElement>('[data-chat-row]');
   const choices = document.querySelector<HTMLElement>('[data-chat-choices]');
+  const scheduled = new Set<ReturnType<typeof setTimeout>>();
   const ENTRANCE = 240; // --duration-base: the bubble's own arrival
-  const arrive = (element: HTMLElement, delay: number) =>
-    window.setTimeout(() => {
-      element.dataset.arrived = '';
-    }, delay);
+  let pending = false;
+  let anchorFrame = 0;
 
-  if (still.matches) {
+  const cancelIntro = () => {
+    pending = false;
+    for (const handle of scheduled) clearTimeout(handle);
+    scheduled.clear();
+  };
+  const finishIntro = () => {
+    cancelIntro();
+    intro?.setAttribute('data-finished', '');
     rows.forEach((row) => {
       row.dataset.arrived = '';
     });
     if (choices) choices.dataset.arrived = '';
+  };
+  const schedule = (at: number, callback: () => void) => {
+    const handle = setTimeout(() => {
+      scheduled.delete(handle);
+      callback();
+    }, at);
+    scheduled.add(handle);
+  };
+  const measureHeader = () => {
+    if (details?.hasAttribute('data-revealed') && header) {
+      details.style.setProperty(
+        '--project-header-height',
+        `${header.offsetHeight}px`,
+      );
+    }
+  };
+  const setHeaderScrolled = (scrolled: boolean) => {
+    if (!header || header.hasAttribute('data-scrolled') === scrolled) return;
+    header.toggleAttribute('data-scrolled', scrolled);
+    measureHeader();
+  };
+  const updateHeaderScroll = () => setHeaderScrolled(window.scrollY > 0);
+  const headerObserver =
+    header && 'ResizeObserver' in window
+      ? new ResizeObserver(measureHeader)
+      : null;
+  if (header) headerObserver?.observe(header);
+
+  const hashTarget = (hash: string) => {
+    try {
+      return document.getElementById(decodeURIComponent(hash.slice(1)));
+    } catch {
+      return null;
+    }
+  };
+  const revealHash = (hash: string, focus = false) => {
+    const target = hashTarget(hash);
+    cancelAnimationFrame(anchorFrame);
+    if (!target || !details?.contains(target)) {
+      if (!hash || (target && intro?.contains(target))) {
+        if (intro) {
+          intro.hidden = false;
+          if (details?.contains(document.activeElement)) {
+            intro.focus({ preventScroll: true });
+          }
+        }
+        details?.removeAttribute('data-revealed');
+      }
+      return;
+    }
+    const focusWasInIntro = intro?.contains(document.activeElement);
+    finishIntro();
+    if (intro) intro.hidden = true;
+    details.setAttribute('data-revealed', '');
+    // Measure the destination's header state before calculating its anchor offset.
+    setHeaderScrolled(target !== details);
+    measureHeader();
+    anchorFrame = requestAnimationFrame(() => {
+      target.scrollIntoView();
+      if (focus || focusWasInIntro) target.focus({ preventScroll: true });
+    });
+  };
+  document
+    .querySelectorAll<HTMLAnchorElement>('[data-reveal-details]')
+    .forEach((chip) =>
+      chip.addEventListener('click', (event) => {
+        if (
+          event.button !== 0 ||
+          event.metaKey ||
+          event.ctrlKey ||
+          event.altKey ||
+          event.shiftKey
+        )
+          return;
+        revealHash(chip.hash, true);
+      }),
+    );
+  window.addEventListener('hashchange', () => revealHash(location.hash));
+
+  intro?.addEventListener('click', (event) => {
+    if (
+      event.button !== 0 ||
+      event.metaKey ||
+      event.ctrlKey ||
+      event.altKey ||
+      event.shiftKey ||
+      !pending
+    )
+      return;
+    const target = event.target;
+    const selection = getSelection();
+    if (
+      !(target instanceof Element) ||
+      target.closest(
+        'a, button, input, textarea, select, summary, [contenteditable]',
+      ) ||
+      (selection && !selection.isCollapsed)
+    )
+      return;
+    finishIntro();
+  });
+  intro?.addEventListener('keydown', (event) => {
+    if (
+      event.target !== intro ||
+      (event.key !== 'Enter' && event.key !== ' ') ||
+      !pending
+    )
+      return;
+    if (event.key === ' ') event.preventDefault();
+    finishIntro();
+  });
+  const onMotionChange = () => {
+    if (still.matches) finishIntro();
+  };
+  still.addEventListener('change', onMotionChange);
+  if (still.matches) {
+    finishIntro();
   } else {
+    pending = true;
     let delay = 0;
     for (const row of rows) {
-      arrive(row, delay);
+      schedule(delay, () => {
+        row.dataset.arrived = '';
+      });
       delay += ENTRANCE;
-
       for (const paragraph of row.querySelectorAll<HTMLElement>(
         '[data-type]',
       )) {
@@ -392,15 +902,36 @@ const projectsHref = withBase('/projects');
           Array.from(paragraph.textContent ?? '').length * PER_CHAR + BETWEEN;
       }
     }
-
-    if (choices) arrive(choices, delay);
+    if (choices)
+      schedule(delay, () => {
+        choices.dataset.arrived = '';
+      });
+    schedule(delay + ENTRANCE, () => {
+      pending = false;
+    });
   }
+  window.addEventListener('scroll', updateHeaderScroll, { passive: true });
+  updateHeaderScroll();
+  revealHash(location.hash);
+  window.addEventListener('pagehide', () => {
+    finishIntro();
+    cancelAnimationFrame(anchorFrame);
+    headerObserver?.disconnect();
+    window.removeEventListener('scroll', updateHeaderScroll);
+    still.removeEventListener('change', onMotionChange);
+  });
+  window.addEventListener('pageshow', (event) => {
+    if (!event.persisted) return;
+    if (header) headerObserver?.observe(header);
+    window.addEventListener('scroll', updateHeaderScroll, { passive: true });
+    updateHeaderScroll();
+    measureHeader();
+    still.addEventListener('change', onMotionChange);
+  });
   const focusSections = document.querySelectorAll<HTMLElement>(
     '[data-focus-section]',
   );
-  observeFocusBand(focusSections, (wrapper, active) => {
-    const section = wrapper.querySelector<HTMLElement>('.project-section');
-    section?.classList.toggle('project-section--active', active);
-    section?.classList.toggle('project-section--inactive', !active);
+  observeFocusBand(focusSections, (section, active) => {
+    section.toggleAttribute('data-inactive', !active);
   });
 </script>

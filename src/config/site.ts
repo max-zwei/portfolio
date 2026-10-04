@@ -96,20 +96,20 @@ export const CV_TOOLS = [
 ] as const;
 
 /**
- * The footer's own navigation, from the Figma NavBar. Labels retain the
- * component's hashtag convention while hrefs map to the implemented routes.
+ * The footer's own navigation, from the Figma NavBar. Button owns the decorative
+ * hashtag; labels remain plain text while hrefs map to implemented routes.
  */
 export const NAV = {
-  impressum: { label: '#impressum', href: withBase('/impressum') },
+  impressum: { label: 'impressum', href: withBase('/impressum') },
   sections: [
-    { label: '#projects', href: withBase('/projects') },
-    { label: '#playground', href: withBase('/playground') },
-    { label: '#curiosity', href: withBase('/curious') },
-    { label: '#inspiration', href: withBase('/inspiration') },
+    { label: 'projects', href: withBase('/projects') },
+    { label: 'playground', href: withBase('/playground') },
+    { label: 'curiosity', href: withBase('/curious') },
+    { label: 'inspiration', href: withBase('/inspiration') },
   ],
   about: [
-    { label: '#aboutme', href: withBase('/resume') },
-    { label: '#behindthescenes', href: withBase('/behind-the-scenes') },
+    { label: 'aboutme', href: withBase('/resume') },
+    { label: 'behindthescenes', href: withBase('/behind-the-scenes') },
   ],
 } as const;
 

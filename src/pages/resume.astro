@@ -1,5 +1,5 @@
 ---
-import { getCollection } from 'astro:content';
+import { getCollection, getEntries } from 'astro:content';
 import { Image } from 'astro:assets';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import CvSection from '../components/CvSection.astro';
@@ -8,7 +8,6 @@ import Icon from '../components/Icon.astro';
 import NavBar from '../components/NavBar.astro';
 import PostIt from '../components/PostIt.astro';
 import ToolBox from '../components/ToolBox.astro';
-import Button from '../components/Button.astro';
 import {
   SITE,
   CV_STUDY,
@@ -19,11 +18,24 @@ import {
 } from '../config/site';
 import portrait from '../assets/max-pinkert-portrait.png';
 
-/** Written by scripts/render-pdf.mjs. Kept in one place so page and script agree. */
-const CV_PDF = withBase('/cv/max-pinkert-cv.pdf');
-const SHARE_URL = new URL(withBase('/resume'), Astro.site).href;
-
-const entries = await getCollection('resume');
+const entries = await Promise.all(
+  (await getCollection('resume')).map(async (entry) => ({
+    ...entry,
+    projects: (await getEntries(entry.data.projects)).map(({ id, data }) => ({
+      href: withBase(`/projects/${id.replace(/\.md$/, '')}`),
+      title: data.title,
+      image:
+        data.img_1_1 && data.img_1_1_alt
+          ? { src: data.img_1_1, alt: data.img_1_1_alt }
+          : undefined,
+      detailImage:
+        data.img_1_2_s && data.img_1_2_s_alt
+          ? { src: data.img_1_2_s, alt: data.img_1_2_s_alt }
+          : undefined,
+      colors: [data.color1, data.color2, data.color3, data.color4],
+    })),
+  })),
+);
 const byNewest = (a: (typeof entries)[number], b: (typeof entries)[number]) =>
   b.data.start.localeCompare(a.data.start);
 const work = entries
@@ -36,7 +48,12 @@ const education = entries
 const documentLabel = (url: string) =>
   url.startsWith('/letters/') ? 'Reference letter (PDF)' : 'Certificate (PDF)';
 
-const FOCUS_AREAS = ['User Experience', 'Branding'];
+const FOCUS_AREAS = [
+  'User Experience',
+  'Branding',
+  'User Research',
+  'Data Science',
+];
 
 const REPORT_PDF = withBase('/report/101225_LPP_Report_Pinkert_Max.pdf');
 const NOTES = [
@@ -61,7 +78,7 @@ const NOTES = [
 
 <BaseLayout
   title="Résumé"
-  description={`Curriculum vitae of ${SITE.name} — ${SITE.role}. Positions and education, with a PDF to download.`}
+  description={`Curriculum vitae of ${SITE.name} — ${SITE.role}. Positions, education, and selected projects.`}
 >
   <main id="main" class="container cv">
     <div class="cv__opening">
@@ -71,8 +88,8 @@ const NOTES = [
             class="cv__portrait"
             src={portrait}
             alt={SITE.name}
-            width={198}
-            height={198}
+            width={154}
+            height={154}
           />
           <div class="cv__identity">
             <div class="cv__naming">
@@ -92,22 +109,14 @@ const NOTES = [
                   </li>
                 ))
               }
+              <li>
+                <a href={`mailto:${SITE.email}`} aria-label="Email">
+                  <Icon icon="mail" color="black" alt="" />
+                </a>
+              </li>
             </ul>
           </div>
         </div>
-
-        <div class="cv__actions">
-          <Button icon="on" href={CV_PDF} download>
-            <Icon slot="icon" icon="download" alt="" />
-            Download
-          </Button>
-          <Button icon="on" href={SHARE_URL} class="cv__share" data-share>
-            <Icon slot="icon" icon="share" alt="" />
-            Share
-          </Button>
-        </div>
-
-        <p class="visually-hidden" role="status" data-share-status></p>
       </header>
 
       <p class="cv__intro">{CV_INTRO}</p>
@@ -128,6 +137,7 @@ const NOTES = [
                     end={entry.data.end}
                     index={index}
                     state="default"
+                    projects={entry.projects}
                     documentUrl={entry.data.documentUrl}
                     documentLabel={
                       entry.data.documentUrl &&
@@ -162,6 +172,7 @@ const NOTES = [
                     end={entry.data.end}
                     index={index}
                     state="default"
+                    projects={entry.projects}
                     documentUrl={entry.data.documentUrl}
                     documentLabel={
                       entry.data.documentUrl &&
@@ -196,7 +207,7 @@ const NOTES = [
     </div>
   </main>
 
-  <NavBar mode="dark" label="Site" />
+  <NavBar label="Site" />
 </BaseLayout>
 
 <style>
@@ -204,7 +215,7 @@ const NOTES = [
   .cv {
     display: grid;
     row-gap: var(--space-3xl);
-    padding-block: var(--space-3xl);
+    padding-block: var(--space-2xl) var(--space-3xl);
   }
 
   /* Figma 477:2484: the header and the paragraph 64 apart. */
@@ -213,17 +224,9 @@ const NOTES = [
     row-gap: var(--space-xl);
   }
 
-  /* Figma 477:2483 draws the paragraph across the whole content column, wider
-     than global.css's --measure default for a p. */
+  /* Figma 477:2483 uses the same 866-wide measure as the chat column. */
   .cv__intro {
-    max-width: none;
-  }
-
-  /* Figma 251:2566: the profile and the two actions at opposite ends. */
-  .cv__header {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-md);
+    max-width: var(--size-chat-column);
   }
 
   .cv__profile {
@@ -232,14 +235,13 @@ const NOTES = [
     gap: var(--space-md);
   }
 
-  /* 198 is the asset's own size, not a token (skill §9). */
+  /* Figma 251:2561: 154 square, with only the top-left corner left square. */
   .cv__portrait {
-    border-radius: var(--radius-full);
+    border-radius: 0 var(--radius-full) var(--radius-full) var(--radius-full);
     object-fit: cover;
   }
 
-  /* Figma 251:2564: the naming block and the marks at the ends of a column
-     inset by 16 top and bottom. */
+  /* Figma 251:2564: naming block followed by the social row, 24 apart. */
   .cv__identity {
     display: flex;
     flex-direction: column;
@@ -249,7 +251,6 @@ const NOTES = [
 
   .cv__naming {
     display: grid;
-    row-gap: var(--space-xs);
   }
 
   /* Typography/H2 on the h1: only the size differs from global.css. */
@@ -257,7 +258,7 @@ const NOTES = [
     font-size: var(--font-size-2xl);
   }
 
-  /* Figma 377:2096: five marks in a row, 12 apart, 4 of bottom padding. */
+  /* Figma 377:2096: six marks in a row, 12 apart, 4 of bottom padding. */
   .cv__socials {
     display: flex;
     align-items: center;
@@ -272,33 +273,19 @@ const NOTES = [
     display: inline-flex;
   }
 
+  .cv__socials :global(.icon) {
+    block-size: var(--space-md);
+    inline-size: auto;
+  }
+
   .cv__socials a:hover :global(.icon),
   .cv__socials a:focus-visible :global(.icon) {
     filter: url(#md-lemon-alpha);
   }
 
-  /* Figma 251:2560: the two icon buttons stack 16 apart, right-aligned. */
-  .cv__actions {
-    display: flex;
-    align-items: flex-end;
-    gap: var(--space-sm);
-  }
-
-  /* Handoff §9: Share keeps lemon/200 in both states, deliberately. The class
-     reaches Button's root, hence :global. */
-  :global(.btn.cv__share),
-  :global(.btn.cv__share:hover) {
-    background-color: var(--color-lemon-200);
-  }
-
   .cv__section {
     display: grid;
     row-gap: var(--space-lg);
-  }
-
-  /* Typography/H1 on the h2. */
-  .cv__section-title {
-    font-size: var(--font-size-3xl);
   }
 
   /* Figma 251:2615 and 377:1989: both lists are drawn at 64. */
@@ -368,25 +355,50 @@ const NOTES = [
     --cv-section-line-color: var(--color-neutral-100);
   }
 
-  @media (min-width: 48rem) {
-    .cv__header {
-      flex-direction: row;
-      align-items: flex-start;
-      justify-content: space-between;
+  @media (width < 48rem) {
+    /* Intrinsic toolbox and timeline widths must not widen the page's
+       single-column grid; keep their content in the mobile reading order. */
+    .cv,
+    .cv__opening,
+    .cv__naming,
+    .cv__sections,
+    .cv__section,
+    .cv__list,
+    .cv__row,
+    .cv__strip,
+    .cv__toolbox :global(.toolbox),
+    .cv__focus :global(.focus-areas),
+    .cv__row :global(.cv-section__content) {
+      grid-template-columns: minmax(0, 1fr);
     }
 
+    .cv {
+      overflow-wrap: anywhere;
+    }
+
+    .cv__header,
+    .cv__profile,
+    .cv__identity,
+    .cv__body,
+    .cv__toolbox,
+    .cv__focus {
+      min-inline-size: 0;
+    }
+
+    .cv__socials {
+      flex-wrap: wrap;
+    }
+  }
+
+  @media (min-width: 48rem) {
     .cv__profile {
       flex-direction: row;
       align-items: center;
+      gap: var(--space-lg);
     }
 
     .cv__identity {
       align-self: stretch;
-      padding-block: var(--space-sm);
-    }
-
-    .cv__actions {
-      flex-direction: column;
     }
 
     .cv__body,
@@ -425,16 +437,5 @@ const NOTES = [
   const rows = document.querySelectorAll<HTMLElement>('.cv__row');
   observeFocusBand(rows, (row, active) => {
     row.classList.toggle('cv__row--dimmed', !active);
-  });
-
-  // Handoff §6: Share copies this page's URL. Without the script the button is
-  // still a link to that URL.
-  const share = document.querySelector<HTMLAnchorElement>('[data-share]');
-  const status = document.querySelector<HTMLElement>('[data-share-status]');
-  share?.addEventListener('click', async (event) => {
-    if (!navigator.clipboard) return;
-    event.preventDefault();
-    await navigator.clipboard.writeText(share.href);
-    if (status) status.textContent = 'Link copied';
   });
 </script>

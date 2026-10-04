@@ -16,11 +16,15 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     </BlankSection>
   </main>
 
-  <NavBar mode="dark" label="Site" />
+  <NavBar label="Site" />
 </BaseLayout>
 
 <style>
   .ai {
     padding-block: var(--space-3xl);
+  }
+
+  :global(main.ai > .text-section) {
+    margin-inline-start: 0;
   }
 </style>

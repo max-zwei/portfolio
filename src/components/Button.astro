@@ -4,9 +4,11 @@ import type { HTMLAttributes } from 'astro/types';
 /**
  * Figma component set `Buttons` (`109:1382`).
  *
- * The sparse Type × Variant × State × Icon matrix is the library contract.
+ * The sparse Type × Variant × State × Icon × Orientation matrix is the contract.
  * Hover specimens can be rendered explicitly; interactive elements also apply
  * that state on hover and keyboard focus.
+ * The default slot is Figma's shared Button Text content property. Secondary
+ * arrows and nav hashes are decorative children, not part of that label.
  */
 /*
  * Extends the anchor attributes so the `...rest` passthrough is typed rather
@@ -21,6 +23,8 @@ interface Props extends Omit<HTMLAttributes<'a'>, 'type'> {
   variant?: 'default' | 'primary' | 'secondary';
   /** Figma `State`. */
   state?: 'default' | 'hover';
+  /** Figma `Orientation`. Default preserves the secondary's right arrow. */
+  orientation?: 'default' | 'right' | 'left';
   /**
    * Figma `Icon`. `on` draws the icon slot alone — the default slot stays the
    * accessible name and is rendered visually hidden. Only Type=Primary has the
@@ -38,6 +42,7 @@ const {
   variant = 'default',
   state = 'default',
   icon = 'off',
+  orientation = 'default',
   href,
   class: className,
   ...rest
@@ -50,6 +55,7 @@ const classes = [
   `btn--${type}`,
   variantClass,
   state === 'hover' && 'btn--hover',
+  type === 'secondary' && orientation === 'left' && 'btn--left',
   iconClass,
   className,
 ];
@@ -68,8 +74,20 @@ const label = await Astro.slots.render('default');
         </>
       ) : (
         <>
-          <span class="btn__ghost" aria-hidden="true" set:html={label} />
-          <span class="btn__label" set:html={label} />
+          <span class="btn__ghost" aria-hidden="true">
+            {type === 'nav' && <span>#</span>}
+            <span set:html={label} />
+            {type === 'secondary' && <span>→</span>}
+          </span>
+          <span class="btn__label">
+            {type === 'nav' && <span aria-hidden="true">#</span>}
+            <span set:html={label} />
+            {type === 'secondary' && (
+              <span class="btn__arrow" aria-hidden="true">
+                →
+              </span>
+            )}
+          </span>
         </>
       )}
     </a>
@@ -84,8 +102,20 @@ const label = await Astro.slots.render('default');
         </>
       ) : (
         <>
-          <span class="btn__ghost" aria-hidden="true" set:html={label} />
-          <span class="btn__label" set:html={label} />
+          <span class="btn__ghost" aria-hidden="true">
+            {type === 'nav' && <span>#</span>}
+            <span set:html={label} />
+            {type === 'secondary' && <span>→</span>}
+          </span>
+          <span class="btn__label">
+            {type === 'nav' && <span aria-hidden="true">#</span>}
+            <span set:html={label} />
+            {type === 'secondary' && (
+              <span class="btn__arrow" aria-hidden="true">
+                →
+              </span>
+            )}
+          </span>
         </>
       )}
     </button>
@@ -104,6 +134,14 @@ const label = await Astro.slots.render('default');
     padding: 0;
   }
 
+  .btn__ghost,
+  .btn__label {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+  }
+
   /* Sizes the box at the rest state, so the hover enlargement below cannot
      reflow anything around the button. */
   .btn__ghost {
@@ -113,9 +151,10 @@ const label = await Astro.slots.render('default');
   .btn__label {
     position: absolute;
     inset: 0;
-    display: grid;
-    place-items: center;
-    white-space: nowrap;
+  }
+
+  .btn__label > span {
+    flex-shrink: 0;
   }
 
   /* Figma text style: Typography/Mono - Small. Effect: Elevation / sm. */
@@ -163,8 +202,20 @@ const label = await Astro.slots.render('default');
     letter-spacing: var(--letter-spacing-normal);
   }
 
+  .btn--secondary :is(.btn__ghost, .btn__label) {
+    gap: var(--space-3xs);
+  }
+
   .btn--secondary:is(:hover, :focus-visible, .btn--hover) .btn__label {
+    gap: var(--space-2xs);
+    font-weight: var(--font-weight-bold);
     letter-spacing: var(--letter-spacing-wide);
+  }
+
+  /* Figma Left 676:5490 and 676:5493 both keep ← before the label. */
+  .btn--secondary.btn--left .btn__arrow {
+    order: -1;
+    transform: scaleX(-1);
   }
 
   /* Figma 109:1378: unbound mono / 16 / regular / 1.6 / wide tracking. */
@@ -207,6 +258,6 @@ const label = await Astro.slots.render('default');
   }
 
   .btn--inline:is(:hover, :focus-visible, .btn--hover) .btn__label {
-    letter-spacing: var(--letter-spacing-wide);
+    letter-spacing: var(--letter-spacing-extra-wide);
   }
 </style>

@@ -169,6 +169,59 @@ decided alone.
   convention — not token values. Type sizes, colours and spacing still come
   from the variables.
 
+## Implemented refresh contract — 2026-10-03
+
+This records the agreed page migration after the library sync, not a replacement
+for the template or the historical `/home` example below.
+
+- **Projects index:** cycle through six `ProjectBento` variants. Hover/focus
+  expands the current bento to page width on a black page ground; other bentos
+  are invisible and noninteractive. HMW is the only visible project copy.
+  Seven named optional image slots and eight optional colors map directly from
+  content; missing slots are hidden, never populated with production fixtures.
+- **Project detail:** the back/“SHOW ME” chat gates the full case study, not
+  individual section selection. Clicking noninteractive transcript content
+  finishes the current message sequence up to its choices, as on `/home`.
+  Entering details hides the intro; returning to the intro hash restores it.
+  Render sections inline; deep anchors and no-JavaScript access remain supported.
+  The sticky header retains 96px top padding and gains 40px bottom padding
+  while scrolled; measured section-anchor offsets include both.
+  Its 180px image strip auto-scrolls horizontally, pauses on hover/focus, and
+  stops without clones for reduced motion. Summary/year/tags are metadata only.
+  The final “Behind the scenes” row owns the 32px Figma/GitHub source icons
+  (reference node `668:5181`) and renders for source links alone.
+- **Résumé:** current headings, 154px portrait corner, and inline CV project
+  previews using `img_1_1`, `img_1_2_s` and the first four colors. Focus includes
+  User Research and Data Science. Screen social icons are 24px high, preserving
+  their aspect ratios; PDF previews remain suppressed.
+- **Other routes:** `/behind-the-scenes` uses current Title/heading styles,
+  design/code icon links and `ReleaseNote`. Embedded Markdown headings shift
+  two ranks (H1 → H3), capped at H6, using the rendered rank's typography;
+  code fences are unchanged. `/ai` uses Title and left alignment;
+  `/impressum` uses the updated heading style.
+- **Shared components:** button callers supply plain labels; `Button` owns
+  decorative nav `#` and secondary arrows. The Left secondary variant used for
+  “Back to projects” keeps ← before the label at rest and on hover/focus.
+  Obsolete `ProjectPreview` and `ProjectSection` components are removed,
+  without compatibility aliases. The updated four-layer `md-lemon` effect is
+  recorded in DESIGN.md and regenerated into the existing token.
+  The shared Figma icon uses a square canvas for both Black and White variants.
+- **Cursor:** fine-pointer movement leaves at most 42 copies of the native
+  cursor artwork. The oldest disappears every 30ms, without restarting that
+  timer on movement. The trail never intercepts input; reduced motion, print,
+  pointer exit, hidden pages and loss of window focus suppress or clear it.
+- **Project artwork:** all three projects now supply seven local WebP images
+  with descriptive alt text. Paths are entry-relative (`./_media/...`); supplied
+  palette values are quoted YAML strings, not comments.
+- **Browser verification:** the requested routes fit 320px and 375px viewports
+  without horizontal document overflow. Refreshed Bento/CV specimens fit too,
+  but existing styleguide ToolBox and inline Button specimens still overflow
+  narrow viewports; this is not a claim that the whole styleguide is mobile-fit.
+  Inactive case-study body text retains Figma's neutral-600: at 16px,
+  `rgb(129, 128, 125)` on `rgb(253, 252, 248)` measured 3.85:1, below the
+  4.5:1 normal-text minimum. The supplied color is preserved, not silently
+  substituted.
+
 ---
 
 ## Worked example — /home
