@@ -121,6 +121,9 @@ ever be wanted."
   wheel or trackpad panning, plus arrow-key panning while the canvas is focused.
   Focusing a card brings it into view. Mobile and no-JavaScript navigation use
   native scrolling instead.
+- The `/playground` handshake choice wraps within its available width. Its
+  container grows vertically with the label in both expanded and collapsed
+  chat states, including narrow screens and the no-JavaScript layout.
 
 ## Note to myself: How to add content?
 
