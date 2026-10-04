@@ -116,6 +116,7 @@ const handshakeHref = withBase('/handshake');
 
   .playground__viewport {
     display: grid;
+    grid-template-columns: minmax(0, 1fr);
     gap: var(--space-xl);
     padding: var(--space-md);
     overflow: auto;
@@ -144,8 +145,10 @@ const handshakeHref = withBase('/handshake');
 
   .playground__agreement {
     display: grid;
+    grid-template-columns: minmax(0, 1fr);
     justify-items: start;
     gap: var(--space-xs);
+    min-inline-size: 0;
   }
 
   .playground__message-stack {
@@ -163,6 +166,11 @@ const handshakeHref = withBase('/handshake');
 
   .playground__chat :global(.playground__bubble) p {
     max-width: none;
+  }
+
+  .playground__chat :global(.playground__selection) {
+    max-inline-size: min(100%, var(--size-chat-choice));
+    white-space: normal;
   }
 
   :global(html.js) .playground__viewport {
