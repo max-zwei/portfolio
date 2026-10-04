@@ -186,8 +186,10 @@ for the template or the historical `/home` example below.
   Render sections inline; deep anchors and no-JavaScript access remain supported.
   The sticky header retains 96px top padding and gains 40px bottom padding
   while scrolled; measured section-anchor offsets include both.
-  Its 180px image strip auto-scrolls horizontally, pauses on hover/focus, and
-  stops without clones for reduced motion. Summary/year/tags are metadata only.
+  Its 180px image strip loops horizontally at 40px/s, including on wide screens
+  where the original images fit. Hover, focus, and active gestures pause it
+  temporarily; it resumes from the current position afterward. Reduced motion
+  stops the loop and removes clones. Summary/year/tags are metadata only.
   The final “Behind the scenes” row owns the 32px Figma/GitHub source icons
   (reference node `668:5181`) and renders for source links alone.
 - **Résumé:** current headings, 154px portrait corner, and inline CV project

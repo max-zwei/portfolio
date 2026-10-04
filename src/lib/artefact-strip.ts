@@ -1,12 +1,9 @@
 /*
- * The artefact strip scrolls itself until the visitor takes it over.
- *
- * Motion the Figma file does not define — requested directly: an endless
- * 40 px/s drift, latched off by any deliberate interaction. It drives
- * `scrollLeft` rather than a CSS transform because the strip is already a
- * native scroller: a transformed track would fight the visitor's own
- * scrolling, and CSS cannot latch a pause. `global.css`'s reduced-motion
- * blanket covers CSS duration only, so this checks the query itself.
+ * The artefact strip drifts endlessly at 40 px/s, pausing while the visitor
+ * hovers, focuses, or gestures on it. Native `scrollLeft` keeps manual
+ * navigation available; each resume starts from the visitor's position.
+ * `global.css`'s reduced-motion blanket covers CSS duration only, so this
+ * checks the query itself and leaves only the original items when enabled.
  */
 const SPEED = 40; // px per second
 
@@ -21,9 +18,9 @@ document
     const items = Array.from(strip.children) as HTMLElement[];
     if (items.length === 0) return;
 
-    /** Set by a deliberate interaction. Never cleared: the pause is final. */
-    let latched = false;
     let hovered = false;
+    let pressed = false;
+    let touching = false;
     let onScreen = false;
     let built = false;
     let frame = 0;
@@ -47,22 +44,26 @@ document
 
     /** One lap, plus enough copies that a lap never hits the scroll end. */
     const measure = () => {
-      const copy = strip.children[items.length] as HTMLElement | undefined;
-      if (!copy) return;
-      period = copy.offsetLeft - items[0].offsetLeft;
-      while (period > 0 && strip.scrollWidth - strip.clientWidth < period) {
-        addCopy();
+      period = 0;
+      if (strip.clientWidth > 0 && strip.clientHeight > 0) {
+        const copy = strip.children[items.length] as HTMLElement | undefined;
+        if (copy) {
+          period = copy.offsetLeft - items[0].offsetLeft;
+          while (period > 0 && strip.scrollWidth - strip.clientWidth < period) {
+            addCopy();
+          }
+        }
       }
+      pos = strip.scrollLeft;
+      sync();
     };
 
     const build = () => {
-      // A strip that fits has nothing to scroll.
-      if (built || strip.scrollWidth - strip.clientWidth <= 1) return;
-      pos = strip.scrollLeft;
+      if (built || strip.clientWidth === 0 || strip.clientHeight === 0) return;
       addCopy();
-      measure();
       built = true;
       io.observe(strip);
+      measure();
     };
 
     const teardown = () => {
@@ -97,12 +98,15 @@ document
         built &&
         period > 0 &&
         onScreen &&
-        !latched &&
         !hovered &&
+        !pressed &&
+        !touching &&
+        !strip.contains(document.activeElement) &&
         !still.matches &&
         document.visibilityState === 'visible';
 
       if (run && !frame) {
+        pos = strip.scrollLeft;
         last = 0;
         frame = requestAnimationFrame(step);
       } else if (!run && frame) {
@@ -121,43 +125,60 @@ document
     // viewports.
     new ResizeObserver(() => {
       if (still.matches) return;
-      if (!built) {
-        build();
-        sync();
-        return;
-      }
-      measure();
-      if (strip.clientWidth >= period) {
-        teardown();
-        return;
-      }
-      pos %= period;
+      if (!built) build();
+      else measure();
     }).observe(strip);
 
-    for (const type of [
-      'pointerdown',
-      'wheel',
-      'touchstart',
-      'keydown',
-      'focusin',
-    ]) {
-      strip.addEventListener(
-        type,
-        () => {
-          latched = true;
-          sync();
-        },
-        { passive: true },
-      );
-    }
-
-    strip.addEventListener('mouseenter', () => {
+    strip.addEventListener('pointerenter', (event) => {
+      if (event.pointerType === 'touch') return;
       hovered = true;
       sync();
     });
-    strip.addEventListener('mouseleave', () => {
+    strip.addEventListener('pointerleave', (event) => {
+      if (event.pointerType === 'touch') return;
       hovered = false;
       sync();
+    });
+    strip.addEventListener('pointerdown', () => {
+      pressed = true;
+      sync();
+    });
+    const releasePointer = () => {
+      pressed = false;
+      sync();
+    };
+    window.addEventListener('pointerup', releasePointer);
+    window.addEventListener('pointercancel', releasePointer);
+
+    // Native touch scrolling cancels the pointer before the finger lifts.
+    strip.addEventListener(
+      'touchstart',
+      () => {
+        touching = true;
+        sync();
+      },
+      { passive: true },
+    );
+    const releaseTouch = (event: TouchEvent) => {
+      if (!touching) return;
+      touching = event.touches.length > 0;
+      sync();
+    };
+    window.addEventListener('touchend', releaseTouch, { passive: true });
+    window.addEventListener('touchcancel', releaseTouch, { passive: true });
+    window.addEventListener('blur', () => {
+      pressed = false;
+      touching = false;
+      hovered = false;
+      sync();
+    });
+
+    strip.addEventListener('focusin', sync);
+    strip.addEventListener('focusout', (event) => {
+      if (!strip.contains(event.relatedTarget as Node | null)) {
+        // focusout fires before document.activeElement reflects its new target.
+        queueMicrotask(sync);
+      }
     });
 
     document.addEventListener('visibilitychange', sync);
