@@ -189,7 +189,8 @@ for the template or the historical `/home` example below.
   Its 180px image strip loops horizontally at 40px/s, including on wide screens
   where the original images fit. Hover, focus, and active gestures pause it
   temporarily; it resumes from the current position afterward. Reduced motion
-  stops the loop and removes clones. Summary/year/tags are metadata only.
+  stops the loop and removes clones. The strip's scrollbar is hidden; native
+  touch and keyboard scrolling remain available. Summary/year/tags are metadata only.
   The final “Behind the scenes” row owns the 32px Figma/GitHub source icons
   (reference node `668:5181`) and renders for source links alone.
 - **Résumé:** current headings, 154px portrait corner, and inline CV project
