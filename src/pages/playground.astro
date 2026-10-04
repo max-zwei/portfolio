@@ -9,10 +9,10 @@ import { withBase } from '../config/site';
 
 const entries = await getCollection('playground');
 const positions = [
-  { x: 986, y: 32 },
-  { x: 430, y: 332 },
-  { x: 763, y: 406 },
-  { x: 1101, y: 482 },
+  { x: 986, y: 32, column: 1, row: 0 },
+  { x: 430, y: 332, column: 0, row: 1 },
+  { x: 763, y: 406, column: 1, row: 1 },
+  { x: 1101, y: 482, column: 2, row: 1 },
 ] as const;
 const handshakeHref = withBase('/handshake');
 ---
@@ -84,7 +84,7 @@ const handshakeHref = withBase('/handshake');
                 id={slug}
                 class="playground__card"
                 tabindex="-1"
-                style={`--card-x: ${position.x}px; --card-y: ${position.y}px`}
+                style={`--card-x: calc(${position.x}px + ${position.column} * var(--space-2xl)); --card-y: calc(${position.y}px + ${position.row} * var(--space-2xl))`}
               >
                 <FlipCard
                   id={`playground-${slug}`}
@@ -125,7 +125,7 @@ const handshakeHref = withBase('/handshake');
   .playground__world {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: var(--space-xl);
+    gap: var(--space-2xl);
   }
 
   .playground__sentinel {
@@ -261,7 +261,6 @@ const handshakeHref = withBase('/handshake');
       position: static;
       display: grid;
       grid-template-columns: 1fr;
-      gap: var(--space-xl);
       transform: none !important;
     }
 
