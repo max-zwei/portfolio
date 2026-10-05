@@ -188,8 +188,9 @@ shared components and four page frames.
   or 0/8/8/8px for Small, including animation-stage clipping. Component APIs
   and content remain unchanged.
 - **Navbar:** the desktop contract is a 1280×220px neutral-black footer with
-  40px vertical/64px horizontal padding and a 1152×140px inner area. An
-  unlinked neutral Max avatar is 87px square above the left Explore row.
+  40px vertical/64px horizontal padding and a 1152×140px inner area. A
+  neutral Max avatar is 87px square above the left Explore row and links to
+  `/home`, with the accessible name “Home”.
   Impressum moves into the right About list below Behind the Scenes. Right
   groups retain a 96px gap, with 12px minimum vertical separation in the
   left and rightmost groups. Existing links, social order, hover and focus

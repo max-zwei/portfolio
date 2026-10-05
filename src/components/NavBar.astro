@@ -5,7 +5,7 @@
 import Avatar from './Avatar.astro';
 import Button from './Button.astro';
 import Icon from './Icon.astro';
-import { EXPLORE_WITH, NAV, SOCIALS } from '../config/site';
+import { EXPLORE_WITH, NAV, SOCIALS, withBase } from '../config/site';
 
 interface Props {
   /**
@@ -24,7 +24,9 @@ const { label = 'Site', class: className } = Astro.props;
 <footer class:list={['navbar', className]}>
   <nav class="navbar__row" aria-label={label}>
     <div class="navbar__identity">
-      <Avatar user="max" variant="neutral" />
+      <a href={withBase('/home')} aria-label="Home">
+        <Avatar user="max" variant="neutral" />
+      </a>
 
       <div class="navbar__explore">
         <p>explore with</p>
