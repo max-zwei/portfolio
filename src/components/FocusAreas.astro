@@ -45,6 +45,11 @@ const HeadingTag = `h${level}` as 'h2' | 'h3' | 'h4';
     display: grid;
     /* Figma 115:703: the root vertical auto-layout gap is 24. */
     gap: var(--space-md);
+    min-inline-size: 0;
+    padding: var(--space-lg);
+    overflow-wrap: anywhere;
+    background-color: var(--color-neutral-100);
+    border-radius: 0 var(--radius-xl) var(--radius-xl) var(--radius-xl);
   }
 
   /* Typography/H2: Figma's 1.2 line height is not a variable. */
@@ -68,7 +73,7 @@ const HeadingTag = `h${level}` as 'h2' | 'h3' | 'h4';
   .focus-areas__list li {
     display: grid;
     /* Figma 114:311: the marker track is 8. */
-    grid-template-columns: var(--space-2xs) 1fr;
+    grid-template-columns: var(--space-2xs) minmax(0, 1fr);
     align-items: center;
     /* Figma 114:311: 13, which no space token holds. Unbound, not chosen. */
     gap: 13px;

@@ -88,8 +88,8 @@ const NOTES = [
             class="cv__portrait"
             src={portrait}
             alt={SITE.name}
-            width={154}
-            height={154}
+            width={162}
+            height={162}
           />
           <div class="cv__identity">
             <div class="cv__naming">
@@ -224,9 +224,12 @@ const NOTES = [
     row-gap: var(--space-xl);
   }
 
-  /* Figma 477:2483 uses the same 866-wide measure as the chat column. */
+  /* Figma 699:1243: the surfaced intro retains the 866-wide outer measure. */
   .cv__intro {
     max-width: var(--size-chat-column);
+    padding: var(--space-md);
+    background-color: var(--color-tomato-100);
+    border-radius: 0 var(--radius-lg) var(--radius-lg) var(--radius-lg);
   }
 
   .cv__profile {
@@ -235,7 +238,7 @@ const NOTES = [
     gap: var(--space-md);
   }
 
-  /* Figma 251:2561: 154 square, with only the top-left corner left square. */
+  /* Figma 251:2561: 162 square, with only the top-left corner left square. */
   .cv__portrait {
     border-radius: 0 var(--radius-full) var(--radius-full) var(--radius-full);
     object-fit: cover;
@@ -401,8 +404,7 @@ const NOTES = [
       align-self: stretch;
     }
 
-    .cv__body,
-    .cv__strip {
+    .cv__body {
       display: grid;
       grid-template-columns: repeat(var(--grid-columns), minmax(0, 1fr));
       column-gap: var(--grid-gutter);
@@ -421,12 +423,26 @@ const NOTES = [
       gap: 0;
     }
 
+    /* Figma 251:3127: intrinsic panels at opposite content edges; wrap when
+       their measured widths cannot share a row without shrinking the tools. */
+    .cv__strip {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-start;
+      justify-content: space-between;
+      column-gap: var(--grid-gutter);
+    }
+
     .cv__toolbox {
-      grid-column: 1 / span 4;
+      flex: 0 1 491.302307px;
+      min-inline-size: 0;
+      max-inline-size: 100%;
     }
 
     .cv__focus {
-      grid-column: 7 / span 4;
+      flex: 0 1 419px;
+      min-inline-size: 0;
+      max-inline-size: 100%;
     }
   }
 </style>

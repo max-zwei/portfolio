@@ -6,7 +6,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
 <BaseLayout title="Let's be honest">
   <main id="main" class="container ai">
-    <BlankSection level={1}>
+    <BlankSection level={1} class="ai__text">
       <p>
         I have a lot of great ideas for this section and explaining how I’ve
         used AI for this page and also my use of AI in general. But my daughter
@@ -24,7 +24,17 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     padding-block: var(--space-3xl);
   }
 
-  :global(main.ai > .text-section) {
+  /* Figma 210:1352 fills the page measure with a wider horizontal inset. */
+  .ai > :global(.text-section.ai__text) {
+    inline-size: 100%;
+    max-inline-size: none;
+    padding-inline: var(--space-2xl);
     margin-inline-start: 0;
+  }
+
+  @media (max-width: 48rem) {
+    .ai > :global(.text-section.ai__text) {
+      padding-inline: var(--space-md);
+    }
   }
 </style>

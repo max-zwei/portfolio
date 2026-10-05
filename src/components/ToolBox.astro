@@ -101,6 +101,22 @@ const boxOffset = usage === 'pdf' ? 2 : 0;
     gap: var(--space-md);
   }
 
+  /* Figma Web 114:685: the intrinsic grid plus 40 padding on each side. */
+  .toolbox--web {
+    inline-size: calc(411.302307px + 2 * var(--space-lg));
+    max-inline-size: 100%;
+    min-inline-size: 0;
+    padding: var(--space-lg);
+    overflow-wrap: anywhere;
+    background-color: var(--color-neutral-100);
+    border-radius: 0 var(--radius-xl) var(--radius-xl) var(--radius-xl);
+  }
+
+  .toolbox--web .toolbox__tools {
+    /* The widest intrinsic Web mark sets the track floor; never shrink assets. */
+    grid-template-columns: repeat(auto-fill, minmax(38.186px, 1fr));
+  }
+
   /* Typography/H2 uses an unbound 1.2 line height. */
   .toolbox__title {
     font-family: var(--font-serif);

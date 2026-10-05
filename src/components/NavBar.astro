@@ -2,6 +2,7 @@
 /**
  * Figma standalone `NavBar` (`210:1624`): the black site footer.
  */
+import Avatar from './Avatar.astro';
 import Button from './Button.astro';
 import Icon from './Icon.astro';
 import { EXPLORE_WITH, NAV, SOCIALS } from '../config/site';
@@ -22,15 +23,8 @@ const { label = 'Site', class: className } = Astro.props;
 
 <footer class:list={['navbar', className]}>
   <nav class="navbar__row" aria-label={label}>
-    <div class="navbar__legal">
-      <Button
-        type="nav"
-        variant="secondary"
-        href={NAV.impressum.href}
-        class="navbar__link navbar__link--muted"
-      >
-        {NAV.impressum.label}
-      </Button>
+    <div class="navbar__identity">
+      <Avatar user="max" variant="neutral" />
 
       <div class="navbar__explore">
         <p>explore with</p>
@@ -54,7 +48,7 @@ const { label = 'Site', class: className } = Astro.props;
     </div>
 
     <div class="navbar__right">
-      <ul class="navbar__list">
+      <ul class="navbar__list navbar__list--main">
         {
           NAV.sections.map((link) => (
             <li>
@@ -92,6 +86,16 @@ const { label = 'Site', class: className } = Astro.props;
               </li>
             ))
           }
+          <li>
+            <Button
+              type="nav"
+              variant="secondary"
+              href={NAV.impressum.href}
+              class="navbar__link navbar__link--muted"
+            >
+              {NAV.impressum.label}
+            </Button>
+          </li>
         </ul>
 
         <ul class="navbar__socials">
@@ -126,44 +130,43 @@ const { label = 'Site', class: className } = Astro.props;
     min-block-size: calc(var(--space-3xl) + var(--space-xl) + var(--space-xs));
   }
 
-  /* Figma 114:189 `Left Section`: the legal column and the links section sit
-     at the two ends of one row, both anchored to its top. */
+  /* Figma 385:2247: the two sections share a 140px inner row. */
   .navbar__row {
     display: flex;
+    flex-wrap: wrap;
     align-items: flex-start;
     justify-content: space-between;
     gap: var(--space-2xl);
     min-block-size: calc(var(--space-3xl) - var(--space-3xs));
   }
 
-  /* Figma 114:190 `Impressum Container`: #impressum at the top, the explore
-     credit at the bottom of the same column. */
-  .navbar__legal {
+  /* Figma 385:2248: the neutral avatar above the explore credit. */
+  .navbar__identity {
     display: flex;
     flex: 1;
     flex-direction: column;
     align-items: flex-start;
     justify-content: space-between;
-    gap: var(--space-lg);
+    gap: var(--space-xs);
     align-self: stretch;
   }
 
-  /* Figma 114:206 `Right Section`. */
+  /* Figma 385:2264 `Right Section`. */
   .navbar__right {
     display: flex;
     align-items: flex-start;
+    align-self: stretch;
     justify-content: flex-end;
     gap: var(--space-2xl);
   }
 
-  /* Figma 114:213 `Bottom Links Container`: the two about links at the top,
-     the social marks at the bottom, level with the explore credit opposite. */
+  /* Figma 385:2270: the three about links above the social marks. */
   .navbar__bottom {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
     justify-content: space-between;
-    gap: var(--space-lg);
+    gap: var(--space-xs);
     align-self: stretch;
   }
 
@@ -179,6 +182,11 @@ const { label = 'Site', class: className } = Astro.props;
     flex-direction: column;
     align-items: flex-start;
     gap: var(--space-xs);
+  }
+
+  /* Unbound Figma geometry: retain the column width without its stale text. */
+  .navbar__list--main {
+    inline-size: 263px;
   }
 
   /* The standalone black footer keeps legal/behind-the-scenes links muted. */
@@ -211,7 +219,7 @@ const { label = 'Site', class: className } = Astro.props;
 
   .navbar__marks a,
   .navbar__socials a {
-    display: inline-flex;
+    display: flex;
     border-radius: var(--radius-sm);
   }
 
@@ -235,6 +243,10 @@ const { label = 'Site', class: className } = Astro.props;
     .navbar__right {
       flex-direction: column;
       gap: var(--space-lg);
+    }
+
+    .navbar__list--main {
+      inline-size: auto;
     }
   }
 </style>

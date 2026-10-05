@@ -22,13 +22,20 @@ const HeadingTag = `h${level}` as 'h1' | 'h2' | 'h3' | 'h4';
 </section>
 
 <style>
-  /* Figma 114:636: 310 / 532 columns separated by an unbound 135 gap. */
+  /* Figma 114:636: 310 / 532 columns, an unbound 135 gap and 64 padding. */
   .text-section {
     display: grid;
-    grid-template-columns: minmax(0, 310fr) minmax(0, 532fr);
+    grid-template-columns: minmax(0, 310px) minmax(0, 1fr);
     align-items: start;
-    gap: 135px;
-    max-inline-size: 977px;
+    column-gap: 135px;
+    row-gap: var(--space-md);
+    container-type: inline-size;
+    inline-size: 100%;
+    max-inline-size: 1105px;
+    min-inline-size: 0;
+    padding: var(--space-xl);
+    background-color: var(--color-neutral-100);
+    border-radius: 0 var(--radius-xl) var(--radius-xl) var(--radius-xl);
     margin-inline-start: auto;
   }
 
@@ -49,7 +56,16 @@ const HeadingTag = `h${level}` as 'h1' | 'h2' | 'h3' | 'h4';
 
   .text-section__body {
     min-inline-size: 0;
+    overflow-wrap: anywhere;
     color: var(--color-neutral-800);
+  }
+
+  /* A desktop viewport can still place this panel inside a narrow parent. */
+  @container (max-width: 48rem) {
+    .text-section__title,
+    .text-section__body {
+      grid-column: 1 / -1;
+    }
   }
 
   /* Reflow preserves all content when the drawn desktop columns cannot fit. */
@@ -57,6 +73,7 @@ const HeadingTag = `h${level}` as 'h1' | 'h2' | 'h3' | 'h4';
     .text-section {
       grid-template-columns: minmax(0, 1fr);
       gap: var(--space-md);
+      padding: var(--space-md);
     }
   }
 </style>

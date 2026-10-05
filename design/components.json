@@ -1,7 +1,7 @@
 {
   "$comment": "Read-only Figma library snapshot and code mappings. `sets` includes component sets and standalone components currently on Atoms and Organisms. `compositions` records reusable code whose former source is detached or outside the live library; it is not a second library inventory. Notes document deliberate code names and API contracts.",
   "figmaFile": "8SQOIPl0teOTvoFH1EffaB",
-  "readOn": "2026-10-02",
+  "readOn": "2026-10-05",
   "pages": {
     "Atoms": "114:14",
     "Organisms": "114:15"
@@ -157,7 +157,7 @@
         "mail/Black/Default",
         "phone/Black/Default"
       ],
-      "notes": "Seventeen icons retain their sparse Color × State matrix. Only the eight AI/social marks have hover variants (both Black and White); Cursor, Figma Make, download, share, circle, square, triangle, mail and phone are Default-only. Unsupported color or hover combinations throw rather than silently recolor or invent a state. Circle/Black and square/Tomato are implemented; triangle exists only in Herbs. Eight black AI/social SVGs and square live under src/components/assets/icons; their ink is the live neutral-black #040302 rather than the previous public asset #171613. Figma Black 389:2974 and White 389:2969 use refreshed whole-component exports with a square 16×16 canvas. The live 16×16.02746 frame is centered by trimming 0.013730049px of transparent padding at top and bottom; exported paths and strokes are unchanged. md-lemon hover uses four independent blurred SourceAlpha layers at offsets (0, 8), (-4, 4), (4, -4) and (0, -8), each with sigma 8 (Figma blur 16) and full-opacity lemon-500, merged behind the source including its transparent areas rather than shadowing the image rectangle or chaining shadows. Intrinsic export canvases include perplexity/figma 16, github/openai/linkedin 17, triangle 30 and square 19."
+      "notes": "Seventeen icons retain their sparse Color × State matrix. Only the eight AI/social marks have hover variants (both Black and White); Cursor, Figma Make, download, share, circle, square, triangle, mail and phone are Default-only. Unsupported color or hover combinations throw rather than silently recolor or invent a state. Circle/Black and square/Tomato are implemented; triangle exists only in Herbs. Eight black AI/social SVGs and square live under src/components/assets/icons; their ink is the live neutral-black #040302 rather than the previous public asset #171613. Figma Black 389:2974 and White 389:2969 use refreshed whole-component exports with a square 16×16 canvas. The live 16×16.02746 frame is centered by trimming 0.013730049px of transparent padding at top and bottom; exported paths and strokes are unchanged. Share 377:2143 retains its 28×28 canvas and centered 14.5×16 artwork; the two connecting strokes now bind neutral-black #040302, matching the three discs. This is a paint-only whole-component export to the existing public/icons/share.svg path, not new geometry or an Icon API change. md-lemon hover retains the applied effect's four independent blurred SourceAlpha layers at offsets (0, 8), (-4, 4), (4, -4) and (0, -8), each with sigma 8 (Figma blur 16) and full-opacity lemon-500, merged behind the source including its transparent areas rather than shadowing the image rectangle or chaining shadows. The conflicting shadow STRING is recorded in outstanding.variableFindings, not applied to the unchanged hover artwork. Intrinsic export canvases include perplexity/figma 16, github/openai/linkedin 17, triangle 30 and square 19."
     },
     {
       "figmaName": "Post-it",
@@ -179,7 +179,7 @@
         "State": ["Front", "Back", "small"]
       },
       "combinations": ["Front", "Back", "small"],
-      "notes": "Front 114:568 and Back 114:567 retain radius-md and shadow-lg. State=small is 87 × 130.5, radius-sm and shadow-sm. Back H5 uses the live unbound 1.2 line height; title and summary retain raw #000000 Figma fills. Existing content-fitting, no-JS readable faces, click/tap/keyboard flip behavior and image-driven proportions remain; no library redraw changes those interaction contracts. Footer keeps separate Figma/GitHub marks and additionalUrl → githubUrl → figmaUrl CTA precedence."
+      "notes": "Front 114:568 and Back 114:567 retain 200 × 300 reference geometry and shadow-lg, with top-left square and the other corners radius-lg (16). State=small is 87 × 130.5, top-left square and other corners radius-md (8), with shadow-sm. The shared radius mechanism applies to both faces and the enhanced stage's effective clipping. Back padding stays 12 vertical/16 horizontal on neutral-100. Back H5 uses the live unbound 1.2 line height; title and summary retain raw #000000 Figma fills. Existing content-fitting, no-JS readable faces, click/tap/keyboard flip behavior and image-driven proportions remain; no library redraw changes those interaction contracts or replaces caller imagery with the design's checkerboard placeholder. Footer keeps separate Figma/GitHub marks and additionalUrl → githubUrl → figmaUrl CTA precedence."
     },
     {
       "figmaName": "Text",
@@ -188,7 +188,7 @@
       "component": "src/components/TextSection.astro",
       "variantProperties": {},
       "combinations": ["Default"],
-      "notes": "The standalone Text component maps directly to TextSection. Its desktop layout is horizontal: 310 title + 135 gap + 532 body, 977 total. Heading is uppercase Typography/Title at 108px with 1.2 line height and text-box trimming; these are unbound style metrics, not H1 tokens. Content arrives through the heading prop and default body slot. BlankSection remains a named-content composition around it, not a separate live library mapping. Narrow-width stacking is an accessibility fallback, not a newly drawn mobile variant."
+      "notes": "The standalone Text component maps directly to TextSection. Its desktop surface is neutral-100 with 64 padding and corners 0/40/40/40 (top-left clockwise), bound to radius/xl. Outer maximum is 1105: 310 title + 135 gap + up to 532 body + 128 padding. The title stays fixed while the body shrinks in constrained parents. Heading is uppercase Typography/Title at 108px with 1.2 line height and text-box trimming; these are unbound style metrics, not H1 tokens. Content arrives through the unchanged heading prop and default body slot. BlankSection remains a named-content composition around it, not a separate live library mapping. The /ai instance locally overrides horizontal padding to 96 within a 1088 outer width; it does not force the full library body width. Narrow-width stacking and 24 padding are accessibility fallbacks, not newly drawn mobile variants."
     },
     {
       "figmaName": "CV",
@@ -210,7 +210,7 @@
         "Usage": ["Web", "PDF"]
       },
       "combinations": ["Usage=Web", "Usage=PDF"],
-      "notes": "Live name is Tech; ToolBox remains the code name. Usage=Web has H2 and seven columns with 24 gaps across 411.302307; Usage=PDF has H3 and eleven columns with 12 gaps across 412.529053. Both headings use the live unbound 1.2 line height. The twenty ordered entries use their own intrinsic Web/PDF asset geometry, not uniform 38/27 square boxes. Empty entries retain explicit placeholder labels. The existing narrow-width fallback is retained, not claimed as a designed mobile variant."
+      "notes": "Live name is Tech; ToolBox remains the code name. Usage=Web 114:685 has neutral-100 fill, 40 padding and corners 0/40/40/40 (top-left clockwise), bound to radius/xl. Its H2 and seven-column grid with 24 gaps across 411.302307 remain, yielding 491.302307 outer width. Usage=PDF 477:2461 remains unchanged: no fill, padding or radii, H3, 24 heading gap and eleven columns with 12 gaps across 412.529053 inside the 422-wide root. Both headings use the live unbound 1.2 line height. The twenty ordered entries use their own intrinsic Web/PDF asset geometry, not uniform 38/27 square boxes. Empty entries retain explicit placeholder labels. The existing narrow-width Web fallback is retained, not claimed as a designed mobile variant; Web surface styles do not apply to PDF."
     },
     {
       "figmaName": "Focus",
@@ -219,7 +219,7 @@
       "component": "src/components/FocusAreas.astro",
       "variantProperties": {},
       "combinations": ["Default"],
-      "notes": "Live name is Focus; FocusAreas remains the code name. The heading uses H2 (48px desktop maximum), not H1, with unbound 1.2 line height. The tomato dot remains a before-element and the live 13px marker gap is unbound. Content is caller-supplied."
+      "notes": "Live name is Focus; FocusAreas remains the code name. The 419-wide library surface has neutral-100 fill, 40 padding and corners 0/40/40/40 (top-left clockwise), bound to radius/xl. The heading uses H2 (48px desktop maximum), not H1, with unbound 1.2 line height. Root gap remains 24, list gap 12 and the tomato-500 dot 8. The dot remains a before-element and the live 13px marker gap is unbound. Content is caller-supplied; no API change."
     },
     {
       "figmaName": "Release Notes",
@@ -230,7 +230,7 @@
         "State": ["active", "inactive"]
       },
       "combinations": ["active", "inactive"],
-      "notes": "Renders one release note, not the feed. Live active node 655:3769 and inactive 115:704 contain no screenshots, so the screenshots prop, slideshow and its script are removed. Root gap is 95, rail gap/bottom inset 24, body bottom padding 144; the obsolete eight-column cap is removed. Active dot is neutral-black and the line graduates neutral-black to neutral-300. Inactive dot is neutral-300, line neutral-200, copy neutral-600 and button lemon-100. Date is bold Mono - Small, neutral-black active and neutral-600 inactive. Header/changes gap is 4, content gap 24 and closing-button gap 40. Unsupported state transitions are removed. The drawn tools section still reads the existing tech schema field. Narrow-width reflow is an accessibility fallback."
+      "notes": "Renders one release note, not the feed. Live active node 655:3769 and inactive 115:704 contain no screenshots, so the screenshots prop, slideshow and its script remain absent. Only the inner content panel receives 64 padding and corners 0/40/40/40 (top-left clockwise), bound to radius/xl: active lemon-100, inactive neutral-100. The 16-wide rail, 95 root gap and 144 body bottom padding stay outside the painted panel; rail top inset is 4 and gap/bottom inset 24. Active copy is neutral-800, dot/date neutral-black, line neutral-black to neutral-300 and attachment lemon-500. Inactive dot is neutral-300, line neutral-200, copy/date/button text neutral-600 and attachment lemon-100. Date remains bold Mono - Small. Header/changes gap is 4 and content gap 24. Optional attachment stays outside the panel, 40 below it and right aligned. Absent fields retain their behavior, unsupported state transitions stay absent and the tools section still reads the existing tech schema field. Narrow-width reflow with 24 panel padding and reduced rail gap is an accessibility fallback, not a new variant."
     },
     {
       "figmaName": "NavBar",
@@ -239,7 +239,7 @@
       "component": "src/components/NavBar.astro",
       "variantProperties": {},
       "combinations": ["Default"],
-      "notes": "NavBar is now standalone component 210:1624, a fixed neutral-black footer with white icon marks. The former Mode set 210:1625 no longer exists; mode is removed from the code API, not accepted as a compatibility alias. Legal and behind-the-scenes links use neutral-600. The label prop retains accessible landmark naming. Existing narrow-width stacking remains an accessibility fallback rather than a live mobile design."
+      "notes": "NavBar is standalone component 210:1624, a neutral-black footer with white icon marks and square outer corners. Desktop reference is 1280 × 220 with 40 vertical/64 horizontal padding and a 1152 × 140 space-between inner row. Left column places the existing neutral Max Avatar (87 × 87, no invented link) above Explore With, with vertical space-between and minimum gap 12. The four main links remain projects, playground, curiosity and inspiration. Right groups retain gap 96; the rightmost column uses vertical space-between with minimum gap 12 and a 12-gap about list: aboutme primary, behindthescenes and impressum secondary neutral-600. Impressum moves here from the left. Existing AI/social order, destinations, white marks and hover/focus behavior remain. The main navigation column retains the unbound 263 desktop width measured in Figma; stale invisible 'go back in time' overrides inflate it but are not rendered as labels or accessible names. Footer height remains 220, preserving playground viewport coupling. The former Mode set 210:1625 no longer exists; mode is not accepted as a compatibility alias. Existing label/class API and narrow-width wrapping remain; responsive reflow is an accessibility fallback, not a live mobile design."
     },
     {
       "figmaName": "Project Bentos",
@@ -290,10 +290,10 @@
       "The herbs Post-it paper shadow is 0 3.6330276px 14.5321102px rgb(20 17 15 / 0.08), a scaled unbound effect rather than shadow-md.",
       "Flipcard small is 87 × 130.5. Back title and summary use raw #000000; H5 line height is 1.2.",
       "Project Bentos compact is 421 × 210; expanded is 1280 × 538 with 96 side insets. Large/small rows are 316/198 high with 24 between. The geometry is intrinsic artwork layout, not a new size scale.",
-      "The share icon includes #000000 strokes beside neutral-black discs; SVG paths retain their original paints.",
       "Intrinsic icon dimensions, one-pixel divider strokes and component rotations remain direct geometry, not additions to the spacing scale.",
-      "Text uses 310/532 columns, 135 gap and 977 total width; Release Notes uses 95 root gap and 1px rail stroke.",
+      "Text retains 310/532 intrinsic columns and 135 gap, 977 inner width plus token-bound 64 padding on each side for 1105 outer maximum; the body can shrink in constrained parents. Release Notes retains 95 root gap and 1px rail stroke.",
       "CV preview art uses 99/44/44 dimensions and 132-wide copy; Default content maximum is 581 and the mark is 29.686. Tech uses per-asset fractional geometry and 411.302307/412.529053 grid widths.",
+      "Focus retains a 13px marker gap and 419-wide reference surface. NavBar retains the 87px avatar and measured 263px desktop main column; the latter is geometry, not a token or permission to render stale ghost labels.",
       "The existing page grid and focus ring are CSS-only source groups; neither is a local Figma variable collection.",
       "Page decisions such as 48rem responsiveness, the sticky project image strip, print margins and playground positions are not library token values. The 2026-10-03 page refresh contract is recorded in docs/figma-handoff.md."
     ]
@@ -301,11 +301,16 @@
   "outstanding": {
     "$comment": "Read-only synchronization findings, not instructions or authorization to mutate Figma.",
     "variableFindings": [
-      "All 78 local variables were read in seven single-Value collections. Existing code-only font/weight/bold=700, line-height/none=1 and line-height/relaxed=1.4 still have no local variable counterpart.",
+      "All 79 local variables were read in seven single-Value collections: Color 32, Typography 21, Spacing 9, Radius 5, Motion 5, Elevation 4 and Size 3. Existing code-only font/weight/bold=700, line-height/none=1 and line-height/relaxed=1.4 still have no local variable counterpart.",
       "Typography/Body - Bold renders Satoshi Bold but binds font/weight/semibold=600. Code preserves the drawn Bold face; the conflicting binding is reported.",
+      "New radius/xl (VariableID:697:526) is 40 and maps to rounded.xl=2.5rem / --radius-xl. Its WEB code syntax incorrectly says var(--radius-lg), and Android/iOS say radius.lg. Actual radius/lg remains 16; code follows the real variable name without aliases or a Figma mutation.",
+      "shadow/md-lemon STRING now says '0 8px 32px #f0e511, 0 8px 32px #f0e511', while the applied md-lemon effect still draws four opaque lemon-500 layers with blur 16, spread 0 and offsets (0, 8), (-4, 4), (4, -4), (0, -8). DESIGN.md and the shared icon filter preserve the drawn four-layer effect; this mismatch is reported, not silently applied.",
       "size/chat-column=866 and size/chat-bubble=531 remain authoritative local variables and are restored to DESIGN.md; the obsolete proposed deletion is withdrawn."
     ],
-    "designFindings": [],
+    "designFindings": [
+      "All sparse matrices and component APIs are unchanged in this surface refresh. Buttons, ChatBubble, Avatar, Logo, Icon geometry/API, Post-it, both CV states, Project Bentos and Tech PDF retain their existing contracts; share changes paint only. Empty image-fill frames in CV/Project Bentos do not gain CSS artwork insets merely because Figma stores unused padding.",
+      "NavBar's invisible stale 'go back in time' text overrides inflate the main column to 263px. Keep measured desktop geometry and genuine existing links without copying those bogus labels. No Figma mutation is part of this refresh."
+    ],
     "pageMigration": []
   }
 }

@@ -273,7 +273,7 @@ const ratio =
     --flipcard-block-size: calc(
       var(--flipcard-inline-size) / var(--flipcard-ratio)
     );
-    --flipcard-radius: var(--radius-md);
+    --flipcard-radius: 0 var(--radius-lg) var(--radius-lg) var(--radius-lg);
     --flipcard-shadow: var(--shadow-lg);
 
     position: relative;
@@ -377,7 +377,7 @@ const ratio =
   .flipcard[data-size='small'] {
     --flipcard-inline-size: 87px;
     --flipcard-block-size: 130.5px;
-    --flipcard-radius: var(--radius-sm);
+    --flipcard-radius: 0 var(--radius-md) var(--radius-md) var(--radius-md);
     --flipcard-shadow: var(--shadow-sm);
 
     transition: transform var(--duration-base) var(--easing-standard);

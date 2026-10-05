@@ -289,90 +289,101 @@ const hasArtwork =
 
       <div class="container project-details__sections">
         {
-          sections.map((section, index) => (
-            <section
-              id={section.key}
-              class:list={[
-                'project-details__section',
-                { 'project-details__section--reverse': index % 2 === 1 },
-              ]}
-              aria-labelledby={`${section.key}-title`}
-              data-focus-section
-              tabindex="-1"
-              style={{
-                '--step-rotation': `${sectionCandidates.findIndex(({ key }) => key === section.key) * 18}deg`,
-              }}
-            >
-              <div class="project-details__rail">
-                <a
-                  class="project-details__step"
-                  href={`#${section.key}`}
-                  aria-label={`Jump to ${section.title}`}
-                />
-              </div>
-              <div class="project-details__content">
-                <h2 id={`${section.key}-title`} class="project-details__title">
-                  <span class="visually-hidden">{section.title}</span>
-                  <span aria-hidden="true">
-                    {section.titleParts.map((part, partIndex) => (
-                      <Fragment>
-                        {partIndex > 0 && <wbr />}
-                        {part}
-                      </Fragment>
-                    ))}
-                  </span>
-                </h2>
-                <div class="project-details__body">
-                  {section.html && (
-                    <div
-                      class="project-details__prose"
-                      set:html={section.html}
-                    />
-                  )}
-                  {section.section && section.section.keyPoints.length > 0 && (
-                    <ul class="project-details__points">
-                      {section.section.keyPoints.map((point) => (
-                        <li>{point}</li>
-                      ))}
-                    </ul>
-                  )}
-                  {section.key === 'behind-the-scenes' && hasSourceLinks && (
-                    <nav
-                      class="project-details__sources"
-                      aria-label="Project sources"
-                    >
-                      {entry.data.figmaUrl && (
-                        <a
-                          href={entry.data.figmaUrl}
-                          aria-label={`View ${entry.data.title} in Figma`}
-                        >
-                          <Icon
-                            icon="figma"
-                            color="black"
-                            alt=""
-                            class="project-details__source-icon project-details__source-icon--figma"
-                          />
-                        </a>
-                      )}
-                      {entry.data.repoUrl && (
-                        <a
-                          href={entry.data.repoUrl}
-                          aria-label={`View ${entry.data.title} source on GitHub`}
-                        >
-                          <Icon
-                            icon="github"
-                            color="black"
-                            alt=""
-                            class="project-details__source-icon project-details__source-icon--github"
-                          />
-                        </a>
-                      )}
-                    </nav>
-                  )}
+          sections.map((section) => {
+            const sectionIndex = sectionCandidates.findIndex(
+              ({ key }) => key === section.key,
+            );
+            return (
+              <section
+                id={section.key}
+                class:list={[
+                  'project-details__section',
+                  {
+                    'project-details__section--reverse': sectionIndex % 2 === 1,
+                  },
+                ]}
+                aria-labelledby={`${section.key}-title`}
+                data-focus-section
+                tabindex="-1"
+                style={{
+                  '--step-rotation': `${sectionIndex * 18}deg`,
+                }}
+              >
+                <div class="project-details__rail">
+                  <a
+                    class="project-details__step"
+                    href={`#${section.key}`}
+                    aria-label={`Jump to ${section.title}`}
+                  />
                 </div>
-              </div>
-            </section>
-          ))
+                <div class="project-details__content">
+                  <h2
+                    id={`${section.key}-title`}
+                    class="project-details__title"
+                  >
+                    <span class="visually-hidden">{section.title}</span>
+                    <span aria-hidden="true">
+                      {section.titleParts.map((part, partIndex) => (
+                        <Fragment>
+                          {partIndex > 0 && <wbr />}
+                          {part}
+                        </Fragment>
+                      ))}
+                    </span>
+                  </h2>
+                  <div class="project-details__body">
+                    {section.html && (
+                      <div
+                        class="project-details__prose"
+                        set:html={section.html}
+                      />
+                    )}
+                    {section.section &&
+                      section.section.keyPoints.length > 0 && (
+                        <ul class="project-details__points">
+                          {section.section.keyPoints.map((point) => (
+                            <li>{point}</li>
+                          ))}
+                        </ul>
+                      )}
+                    {section.key === 'behind-the-scenes' && hasSourceLinks && (
+                      <nav
+                        class="project-details__sources"
+                        aria-label="Project sources"
+                      >
+                        {entry.data.figmaUrl && (
+                          <a
+                            href={entry.data.figmaUrl}
+                            aria-label={`View ${entry.data.title} in Figma`}
+                          >
+                            <Icon
+                              icon="figma"
+                              color="black"
+                              alt=""
+                              class="project-details__source-icon project-details__source-icon--figma"
+                            />
+                          </a>
+                        )}
+                        {entry.data.repoUrl && (
+                          <a
+                            href={entry.data.repoUrl}
+                            aria-label={`View ${entry.data.title} source on GitHub`}
+                          >
+                            <Icon
+                              icon="github"
+                              color="black"
+                              alt=""
+                              class="project-details__source-icon project-details__source-icon--github"
+                            />
+                          </a>
+                        )}
+                      </nav>
+                    )}
+                  </div>
+                </div>
+              </section>
+            );
+          })
         }
       </div>
     </article>
@@ -587,7 +598,7 @@ const hasArtwork =
     margin-block-start: var(--space-3xl);
   }
 
-  /* 128:366: 16 rail + 95 gap, then 313/529 columns and an unbound 135 gap. */
+  /* 128:366: unbound 95 rail gap, 310/313 title widths and 135 column gap. */
   .project-details__section {
     display: grid;
     grid-template-columns: var(--space-sm) minmax(0, 1fr);
@@ -623,19 +634,33 @@ const hasArtwork =
 
   .project-details__content {
     display: grid;
-    grid-template-columns: minmax(0, 313fr) minmax(0, 529fr);
+    grid-template-columns: 313px minmax(0, 1fr);
     gap: 135px;
     align-items: start;
-    padding-block-end: var(--space-3xl);
+    min-inline-size: 0;
+    margin-block-end: var(--space-3xl);
+    padding: var(--space-xl);
+    border-radius: 0 var(--radius-xl) var(--radius-xl) var(--radius-xl);
+    background: var(--color-tomato-100);
+    transition: background-color var(--duration-base) var(--easing-standard);
+  }
+
+  :where(#exploration) .project-details__content {
+    grid-template-columns: 310px minmax(0, 1fr);
   }
 
   .project-details__section--reverse .project-details__content {
-    grid-template-columns: minmax(0, 529fr) minmax(0, 313fr);
+    grid-template-columns: minmax(0, 1fr) 313px;
+    border-radius: var(--radius-xl) 0 var(--radius-xl) var(--radius-xl);
   }
 
   .project-details__section--reverse .project-details__title {
     grid-column: 2;
     grid-row: 1;
+  }
+
+  :where(#definition, #feedback) .project-details__title {
+    text-align: right;
   }
 
   .project-details__section--reverse .project-details__body {
@@ -653,7 +678,6 @@ const hasArtwork =
     text-box-trim: trim-both;
     text-box-edge: cap alphabetic;
     color: var(--color-neutral-black);
-    transition: color var(--duration-base) var(--easing-standard);
   }
 
   .project-details__body {
@@ -663,7 +687,6 @@ const hasArtwork =
     min-inline-size: 0;
     color: var(--color-neutral-800);
     overflow-wrap: anywhere;
-    transition: color var(--duration-base) var(--easing-standard);
   }
 
   .project-details__prose :global(p) {
@@ -686,10 +709,8 @@ const hasArtwork =
   }
 
   .project-details__section[data-inactive]:not(:focus-within)
-    .project-details__title,
-  .project-details__section[data-inactive]:not(:focus-within)
-    .project-details__body {
-    color: var(--color-neutral-600);
+    .project-details__content {
+    background: var(--color-neutral-100);
   }
 
   .project-details__section[data-inactive]:not(:focus-within)
@@ -700,7 +721,7 @@ const hasArtwork =
   .project-details__sources {
     display: flex;
     align-items: center;
-    gap: 24px;
+    gap: var(--space-md);
   }
 
   .project-details__sources a {
@@ -726,11 +747,16 @@ const hasArtwork =
     .project-details__section {
       column-gap: var(--space-md);
     }
+  }
 
+  /* Accessibility fallback: the fixed title and inset leave no body below this width. */
+  @media (max-width: 64rem) {
     .project-details__content,
+    :where(#exploration) .project-details__content,
     .project-details__section--reverse .project-details__content {
       grid-template-columns: minmax(0, 1fr);
       gap: var(--space-md);
+      padding: var(--space-md);
     }
 
     .project-details__section--reverse .project-details__title,

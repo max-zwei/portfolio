@@ -169,10 +169,86 @@ decided alone.
   convention — not token values. Type sizes, colours and spacing still come
   from the variables.
 
+## Component surfaces refresh — 2026-10-05
+
+This records the current surface contract and exercised verification for the
+shared components and four page frames.
+
+- **Tokens:** `rounded.xl` adds a 40px radius; `rounded.lg` remains 16px.
+  Spacing tokens are unchanged. The Figma xl variable's lg code syntax is a
+  naming defect, not an alias. Preserve the drawn four-layer, 16px-blur
+  `md-lemon` effect despite the conflicting two-layer, 32px-blur STRING value.
+- **Shared surfaces:** `TextSection` uses neutral-100, 64px padding and
+  0/40/40/40px corners (top-left, top-right, bottom-right, bottom-left).
+  `FocusAreas` and Web `ToolBox` use the same fill/corners with 40px padding;
+  Web ToolBox retains its seven-column desktop grid and tool order. PDF ToolBox
+  remains unpainted and unchanged. `ReleaseNote` paints only its 64px-padded
+  panel, lemon-100 active or neutral-100 inactive; its right-aligned attachment
+  sits outside the panel with a 40px gap. `FlipCard` uses 0/16/16/16px corners,
+  or 0/8/8/8px for Small, including animation-stage clipping. Component APIs
+  and content remain unchanged.
+- **Navbar:** the desktop contract is a 1280×220px neutral-black footer with
+  40px vertical/64px horizontal padding and a 1152×140px inner area. An
+  unlinked neutral Max avatar is 87px square above the left Explore row.
+  Impressum moves into the right About list below Behind the Scenes. Right
+  groups retain a 96px gap, with 12px minimum vertical separation in the
+  left and rightmost groups. Existing links, social order, hover and focus
+  behavior are unchanged. Browser measurements confirm a 220px desktop footer,
+  263px main navigation column and 87px avatar.
+- **Project detail (`128:366`):** active tomato-100 and inactive neutral-100
+  panels replace text fading; neutral-black headings and neutral-800 body copy
+  remain legible in both states. Panels have 64px desktop padding and 40px
+  corners except the square top-left, or top-right on reversed rows. The
+  observer, markers and six optional CMS sections remain; 144px section gaps
+  stay outside the painted surfaces.
+- **Behind the scenes (`103:1117`):** the hero, credits and release heading
+  gain neutral-100 surfaces with 64px padding and 40px corners, square at
+  top-left except the credits' top-right. Design/Code cards retain their fills
+  and padding and gain 0/40/40/40px corners. By explicit user decision, the
+  Code card renders only `DESIGN.md`: the README panel/import/link are removed,
+  not the repository README. The real Figma iframe and DESIGN document retain
+  16px radii; a plain `/Design System` caption sits 8px below the iframe.
+- **Résumé (`103:1123`):** the screen portrait is 162px square, retaining the
+  square top-left and fully rounded remaining corners; the printed CV portrait
+  remains 80px. The introduction uses a tomato-100 surface with 24px padding
+  and 0/16/16/16px corners. Web ToolBox (about 491.3px wide) and FocusAreas
+  (419px wide) sit at opposite edges of the 1088px desktop strip, top-aligned,
+  and stack in source order on mobile.
+- **AI (`103:1120`):** `/ai` uses the neutral-100 TextSection surface within
+  1088px, with a local 96px horizontal/64px vertical desktop padding override.
+  The neutral-white page ground and 144px top/bottom margins remain.
+- **Responsive accessibility fallback:** project-detail and behind-the-scenes
+  surfaces stack below 64rem; TextSection responds to both the 48rem viewport
+  breakpoint and a constrained container. Narrow text panels use 24px padding,
+  including the `/ai` override. Web ToolBox retains its narrow-layout fallback
+  rather than clipping the intrinsic desktop grid. These are accessibility
+  adaptations, not changes to the spacing or radius scales.
+- **Contrast:** neutral-800 body text measures 15.59:1 on neutral-100 and
+  13.19:1 on tomato-100; neutral-black headings measure 17.75:1 and 15.02:1
+  respectively. Inactive ReleaseNote neutral-600 on neutral-100 is 3.40:1,
+  below the 4.5:1 normal-text minimum. The supplied paint is preserved, not
+  silently substituted.
+- **Unchanged scope:** content, CMS schemas, PDF layout, existing strip
+  motion/pause behavior, reduced-motion handling and no-JavaScript access are
+  not redesigned by this surface refresh.
+- **Browser verification:** all four routes fit 320, 375, 768, 1024 and 1280px
+  viewports without horizontal document overflow. Desktop/mobile screenshots,
+  active/inactive release panels, default/small card corners, card flipping,
+  footer keyboard focus and native destinations were checked. Project artwork
+  moved 20px in 500ms, paused on hover, then resumed; reduced motion removed
+  clones. SHOW ME still reveals the case study. At 375px with JavaScript off,
+  project sections and both playground card faces remain available without
+  document overflow. The printed CV retains its 80px portrait and unpainted,
+  unpadded ToolBox.
+
 ## Implemented refresh contract — 2026-10-03
 
 This records the agreed page migration after the library sync, not a replacement
 for the template or the historical `/home` example below.
+
+This dated record is historical; the 2026-10-05 section above supersedes the
+affected surface and portrait contracts. Its browser and contrast observations
+below remain the results recorded on 2026-10-03.
 
 - **Projects index:** cycle through six `ProjectBento` variants. Hover/focus
   expands the current bento to page width on a black page ground; other bentos

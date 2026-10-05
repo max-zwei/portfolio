@@ -137,6 +137,9 @@ const hasTools = Astro.slots.has('tools');
   .release-note__content {
     display: grid;
     gap: var(--space-md);
+    padding: var(--space-xl);
+    border-radius: 0 var(--radius-xl) var(--radius-xl) var(--radius-xl);
+    background-color: var(--color-lemon-100);
   }
 
   .release-note__header,
@@ -178,12 +181,16 @@ const hasTools = Astro.slots.has('tools');
   }
 
   .release-note__file {
-    justify-self: start;
+    justify-self: end;
   }
 
   .release-note--inactive,
   .release-note--inactive .release-note__date {
     color: var(--color-neutral-600);
+  }
+
+  .release-note--inactive .release-note__content {
+    background-color: var(--color-neutral-100);
   }
 
   .release-note--inactive .release-note__dot {
@@ -203,6 +210,10 @@ const hasTools = Astro.slots.has('tools');
   @media (max-width: 48rem) {
     .release-note {
       column-gap: var(--space-md);
+    }
+
+    .release-note__content {
+      padding: var(--space-md);
     }
   }
 </style>
