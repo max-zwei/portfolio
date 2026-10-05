@@ -166,6 +166,7 @@ rounded:
   sm: 0.25rem
   md: 0.5rem
   lg: 1rem
+  xl: 2.5rem
   full: 999rem
 shadows:
   sm: '0 1px 2px rgb(20 17 15 / 0.06)'
@@ -259,14 +260,24 @@ prefix, which is how the one-to-one Figma ↔ CSS mapping survives generation:
 | `layout`           | `--<key>`            | —                      | —             | no — Figma holds no variable        |
 | `focus`            | `--focus-*`          | —                      | —             | no — accessibility, not design      |
 
-### Library sync — 2 October 2026
+### Library sync — 5 October 2026
 
-Read all 78 local variables across the seven single-`Value` collections: Color
-(32), Typography (21), Spacing (9), Radius (4), Motion (5), Elevation (4) and
-Size (3). All colors, spacing, radii, motion and shadow values match the source,
-including the four local effect styles. Font family registration suffixes,
-fluid type maxima, tracking units and the pill radius retain their documented
-web translations rather than pretending Figma supports them directly.
+Read all 79 local variables across the seven single-`Value` collections: Color
+(32), Typography (21), Spacing (9), Radius (5), Motion (5), Elevation (4) and
+Size (3). The new `radius/xl` is 40px (`rounded.xl: 2.5rem`); `radius/lg`
+remains 16px. All other primitive values retain their established translations,
+except the reported shadow STRING/effect disagreement below. Font family
+registration suffixes, fluid type maxima, tracking units and the pill radius
+retain their documented web translations rather than pretending Figma supports
+them directly.
+
+`radius/xl` (`VariableID:697:526`) incorrectly advertises WEB code syntax
+`var(--radius-lg)` and Android/iOS `radius.lg`. Code follows the actual variable
+name with `--radius-xl`, not the misleading syntax or a compatibility alias.
+The `shadow/md-lemon` STRING now says
+`0 8px 32px #f0e511, 0 8px 32px #f0e511`, but the applied `md-lemon` effect
+still draws four 16px-blur layers. The source and icon filter retain that
+drawn effect; neither finding authorizes a Figma mutation.
 
 The two live Size variables `size/chat-column` (866px) and `size/chat-bubble`
 (531px) are restored to the source. No deletion or other Figma mutation is
@@ -386,31 +397,37 @@ Page layouts may compute their own column spans; those spans are not substitutes
 for the chat component widths. The 400px choice cap is not a column span either
 — four columns would be 420.8px.
 
-**The page container.** `--content-max: 72rem` is retired. No frame drew 1152;
-the drawn frame is 1280 with 96px margins, so `.container` is now
+**The page container.** `--content-max: 72rem` is retired. The page frame is
+1280 with 96px margins, so `.container` is now
 `max-width: var(--grid-frame)` with `var(--grid-margin)` of padding above
 48rem and `--space-md` (24px, the `Mobile` frame's margin) below it. The live
 NavBar is the standalone component `210:1624`, not the removed `210:1625`
-Mode set; its component-specific layout is recorded in the manifest.
+Mode set. Its separate 64px side insets yield a 1152px inner row; that footer
+geometry is not a page-container token.
 
 ## Elevation & Depth
 
 The Figma effect styles `Elevation / sm`, `Elevation/md` and `Elevation / lg`
-map to `--shadow-sm|md|lg` by name. Read the style name, not the drop-shadow
-the MCP emits; the effects and variables agree and must change together.
-The effect style `md-lemon` maps to
+map to `--shadow-sm|md|lg` by name. Their effects and variables still agree.
+Read the style name, not the drop-shadow the MCP emits.
+The applied effect style `md-lemon` maps to
 `--shadow-md-lemon`: four lemon-500 layers at (0, 8), (-4, 4), (4, -4)
-and (0, -8), each with blur 16, spread 0 and full opacity. Shadows show
-behind transparent areas. Icon glows share one blurred source alpha and merge
-four independently offset, colored copies behind the source; chained
-drop-shadows would instead cast shadows from earlier shadows.
+and (0, -8), each with blur 16, spread 0 and full opacity. Its conflicting
+two-layer, 32px-blur STRING variable is recorded in the library sync above,
+not substituted for the unchanged drawn effect. Shadows show behind
+transparent areas. Icon glows share one blurred source alpha and merge four
+independently offset, colored copies behind the source; chained drop-shadows
+would instead cast shadows from earlier shadows.
 
 ## Shapes
 
-The `rounded` scale ships as `--radius-sm|md|lg|full` and comes from the Figma
-`Radius` collection. `full` ships `999rem` while the Figma variable holds
-`9999px` — both are a pill, and neither is derived from the other, which is why
-the generator carries that one value as an explicit exchange override.
+The `rounded` scale ships as `--radius-sm|md|lg|xl|full` and comes from the
+five-variable Figma `Radius` collection: sm 4px, md 8px, lg 16px, xl 40px and
+full 9999px. The new xl surfaces keep a square top-left corner unless the
+frame reverses that corner; lg remains the distinct 16px radius, not an alias
+for xl. `full` ships `999rem` while the Figma variable holds `9999px` — both
+are a pill, and neither is derived from the other, which is why the generator
+carries that one value as an explicit exchange override.
 
 ## Components
 
@@ -428,11 +445,12 @@ inline on the page until its second use (AGENT.md R8).
 
 ### Current library boundary
 
-The 2 October 2026 read contains five atom sets (logo, Icons, Buttons, Chat and
-user) and nine organism entries (NavBar, Flipcard, Post-it, Text, CV, Focus,
-Release Notes, Tech and Project Bentos). `design/components.json` records the
-live node IDs and sparse variant matrices, not an assumed Cartesian product.
-Text, Focus and NavBar are standalone components, not variant sets.
+The 5 October 2026 read contains the same five atom sets (logo, Icons, Buttons,
+Chat and user) and nine organism entries (NavBar, Flipcard, Post-it, Text, CV,
+Focus, Release Notes, Tech and Project Bentos). `design/components.json`
+records the live node IDs and unchanged sparse variant matrices, not an assumed
+Cartesian product. Text, Focus and NavBar are standalone components, not
+variant sets. This surface refresh changes no component prop APIs.
 
 `Text` maps directly to `TextSection.astro`; `BlankSection.astro` is its
 existing named-content composition. CuriosityRow remains reusable code, but
@@ -459,11 +477,43 @@ combinations are errors, not recoloring requests. The atom library defines
 no prototype reactions or timed motion, so Button, ChatBubble and Icon do
 not introduce transition durations.
 
-`TextSection` now transcribes Text's two-column 977px layout and uppercase
-108px Title style, rather than a vertical H1 section. `FocusAreas` uses H2;
-`ToolBox` uses H2 for Web and H3 for PDF, with each tool's actual intrinsic
-asset dimensions. Global and component headings now share the refreshed
-line-height contract.
+Share (`377:2143`) keeps its 28px canvas and geometry; only its two connecting
+strokes change from raw black to bound `neutral-black` (`#040302`), matching
+the discs. The Icon API and asset path stay unchanged.
+
+`TextSection` transcribes Text's 1105px outer surface: 64px padding around
+310px title + 135px gap + up to 532px body. Its neutral-100 ground has
+0/40/40/40 corners (top-left clockwise), using radius-xl. The uppercase
+108px/1.2 Title stays; the body shrinks in constrained parents.
+`FocusAreas` uses the same ground and corners with 40px padding, H2, 24px
+root gap, 12px list gap, 13px unbound marker gap and 8px tomato markers.
+`ToolBox` Web adds the same 40px-padded surface around its 411.302307px,
+seven-column intrinsic grid, for 491.302307px overall. Its twenty tools,
+order and assets stay. PDF retains H3, eleven columns, a 412.529053px grid
+and no surface fill, padding or radii. Global and component headings retain
+the existing line-height contract.
+
+`ReleaseNote` paints only its content panel: 64px padding, 0/40/40/40 corners,
+lemon-100 active and neutral-100 inactive. Existing state-specific copy colors
+remain. The 16px rail and unbound 95px rail gap remain outside the panel, as
+does the 144px bottom spacing. Optional attachments sit 40px below the panel,
+right aligned; the content gap remains 24px. Text and release-panel padding
+reduce to 24px on narrow screens as an accessibility fallback.
+
+`NavBar` remains a 220px-high desktop neutral-black footer, with 40px vertical
+and 64px horizontal padding around a 1152 × 140px space-between row. The left
+column now places the existing neutral Max Avatar (87px) above Explore With,
+without inventing a logo link. Impressum moves below Behind the Scenes in the
+right about list; the four main links, AI/social order, destinations and
+hover/focus behavior remain. The right groups retain 96px separation; left
+and rightmost vertical groups use space-between with a 12px minimum gap.
+The main navigation column retains the measured, unbound 263px width. Figma's
+invisible stale “go back in time” overrides inflate that column, but are not
+real link labels or accessible names and are not rendered.
+
+Buttons, ChatBubble, Avatar, Logo, Icon geometry/API, PostIt, CvSection,
+ProjectBento and Tech PDF retain their existing contracts. Stored padding on
+empty image-fill frames does not imply an inset for the artwork.
 
 `CvSection.projects` entries require `href` and `title`, with optional
 `image`/`detailImage` (`{ src, alt }`) and optional palette positions. `/resume`
@@ -491,21 +541,47 @@ provides contrast for the drawn neutral-white expanded copy.
 
 PostIt's initial rotation applies to the paper, not the pin. Its black copy
 and the Flipcard back's black copy are the unbound `#000000` Figma fills,
-not near-matching neutral tokens. The Flipcard small variant uses small
-elevation; its existing fitting and flip interaction remain unchanged.
+not near-matching neutral tokens. Flipcard Front/Back keep their 200 × 300
+reference geometry and shadow-lg, with corners 0/16/16/16 (radius-lg).
+The 87 × 130.5 small variant uses 0/8/8/8 (radius-md) and shadow-sm.
+Faces and enhanced-stage clipping share the same radius; existing fitting,
+image-driven proportions, readable no-JS faces and flip controls remain.
 
-### Library verification — 2026-10-02
+The four-page surface refresh retains existing content and interactions.
+Project detail paints active tomato-100 and inactive neutral-100 panels,
+keeping headings neutral-black and body neutral-800 in both states; 144px
+inter-section gaps remain unpainted. Behind the Scenes adds the same xl
+surfaces, retains equal-height Design/Code cards and shows only DESIGN.md in
+the Code card by explicit user decision, not a rendered README panel. Its
+Figma and document embeds use lg 16px, with a plain `/Design System` caption
+8px below the Figma embed. Résumé uses a 162px screen portrait and an
+866px-wide, 24px-padded tomato-100 intro with 0/16/16/16 corners; print/PDF
+stays separate. The Web ToolBox (491.302307px) and Focus (419px) sit at
+opposite edges of its 1088px strip, top aligned, with source-order mobile
+stacking rather than the obsolete four-column constraint.
+The `/ai` Text instance fills 1088px with 96px horizontal and 64px vertical
+padding, allowing the body to flex rather than forcing the library's full
+532px width. It retains the existing neutral-white page ground: the frame's
+raw `#FFFFFF` is a pre-existing mismatch outside this surface delta, not a
+new token. Current editorial copy, the 40px/s project strip with hidden
+scrollbar, playground wrapping and 96px card spacing remain unchanged.
 
-The isolated Astro component matrix builds successfully; component-only checking
-reports 19 files, zero errors and zero warnings. Browser checks cover all six
-compact (421 × 210) and expanded (1280 × 538) Bento layouts, hover, visible
-keyboard focus and link navigation, Flipcard controls, and the no-JavaScript
-content baseline. No page files were migrated.
+### Historical library verification — 2026-10-02
 
-Two visual findings remain design/environment facts, not silent corrections:
+Before this surface refresh, the isolated Astro component matrix built
+successfully; component-only checking reported 19 files, zero errors and zero
+warnings. Browser checks covered all six compact (421 × 210) and expanded
+(1280 × 538) Bento layouts, hover, visible keyboard focus and link navigation,
+Flipcard controls, and the no-JavaScript content baseline. No page files were
+migrated in that check. These are historical results, not verification of the
+5 October surface refresh.
 
-- Release Notes' inactive neutral-600 copy on neutral-white measures **3.85:1**,
-  below AA for normal-sized text. The Figma colors are retained.
+Two visual findings from that check remain recorded rather than silently
+corrected:
+
+- Release Notes' former inactive neutral-600 copy on neutral-white measured
+  **3.85:1**, below AA for normal-sized text. The new inactive panel is
+  neutral-100; the historical ratio is not a measurement of that new pairing.
 - Text's 310px title column uses the drawn 108px/120%, weight 600 and zero
   tracking. The loaded self-hosted Erode Variable wraps “HONEST” as “HONE / ST”
   in the desktop browser, while Figma's Erode Semibold render shows “HON / EST”.

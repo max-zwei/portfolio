@@ -60,8 +60,11 @@ one the PDF is printed from: the designed page does not survive A4, and making i
 do so would have cost the design. Both read the same collection, so neither can
 drift from the other on content.
 
-The 2026-10-03 refresh applies the current Figma heading styles and the portrait's
-154px corner treatment. Screen social icons are 24px high with their native
+The 2026-10-03 refresh introduced the current Figma heading styles and the
+154px portrait treatment. The 2026-10-05 surface refresh enlarges the screen
+portrait to 162px square, retaining its square top-left and fully rounded
+remaining corners; the printed CV portrait remains 80px. Screen social icons
+are 24px high with their native
 aspect ratios; the shared Figma mark has a square canvas. The focus areas
 include **User Research** and **Data Science**. Linked project previews are
 inline `CvSection` compositions:
@@ -69,6 +72,12 @@ inline `CvSection` compositions:
 `color1`–`color4` the palette. Every artwork slot is optional and missing
 artwork stays hidden, without placeholder assets. The printed CV continues to
 suppress these project previews.
+
+On screen, the introduction uses a tomato-100 panel with 24px padding and
+0/16/16/16px corners (top-left, top-right, bottom-right, bottom-left). The Web
+ToolBox and FocusAreas panels sit at opposite edges of the desktop strip,
+top-aligned, and stack in source order on mobile. The PDF layout and shared
+content are unchanged.
 
 ## Changing how it looks
 

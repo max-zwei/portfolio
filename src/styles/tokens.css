@@ -122,6 +122,7 @@
   --radius-sm: 0.25rem;
   --radius-md: 0.5rem;
   --radius-lg: 1rem;
+  --radius-xl: 2.5rem;
   --radius-full: 999rem;
 
   --shadow-sm: 0 1px 2px rgb(20 17 15 / 0.06);

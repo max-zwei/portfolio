@@ -1,6 +1,5 @@
 ---
 import { getCollection } from 'astro:content';
-import readmeSource from '../../README.md?raw';
 import designSource from '../../DESIGN.md?raw';
 import Icon from '../components/Icon.astro';
 import NavBar from '../components/NavBar.astro';
@@ -10,10 +9,11 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import { renderRepositoryDocument } from '../lib/repository-documents';
 import { renderFrontmatterMarkdown } from '../lib/markdown';
 
-const [readmeHtml, designHtml] = await Promise.all([
-  renderRepositoryDocument(readmeSource, 'readme', PORTFOLIO_SOURCE.repository),
-  renderRepositoryDocument(designSource, 'design', PORTFOLIO_SOURCE.repository),
-]);
+const designHtml = await renderRepositoryDocument(
+  designSource,
+  'design',
+  PORTFOLIO_SOURCE.repository,
+);
 
 const releases = (await getCollection('releaseNotes')).sort(
   (a, b) => b.data.date.getTime() - a.data.date.getTime(),
@@ -34,7 +34,6 @@ const releaseBlocks = await Promise.all(
   })),
 );
 
-const readmeUrl = `${PORTFOLIO_SOURCE.repository}/blob/main/README.md`;
 const designUrl = `${PORTFOLIO_SOURCE.repository}/blob/main/DESIGN.md`;
 const figmaEmbedUrl = new URL(
   PORTFOLIO_SOURCE.figma.replace('www.figma.com', 'embed.figma.com'),
@@ -77,13 +76,16 @@ figmaEmbedUrl.searchParams.set('embed-host', 'max-pinkert-portfolio');
             take a look:
           </p>
         </div>
-        <iframe
-          class="bts-card__embed"
-          src={figmaEmbedUrl.href}
-          title="Portfolio Figma file — Organisms"
-          loading="lazy"
-          allowfullscreen
-          tabindex="0"></iframe>
+        <figure class="bts-card__preview">
+          <iframe
+            class="bts-card__embed"
+            src={figmaEmbedUrl.href}
+            title="Portfolio Figma file — Organisms"
+            loading="lazy"
+            allowfullscreen
+            tabindex="0"></iframe>
+          <figcaption>/Design System</figcaption>
+        </figure>
       </section>
 
       <section class="bts-card bts-card--code" aria-labelledby="h-code">
@@ -105,18 +107,6 @@ figmaEmbedUrl.searchParams.set('embed-host', 'max-pinkert-portfolio');
             rely on coding agents to do the heavy lifting but I at least can
             understand the generated code and structure which helps to question
             the output of LLMs and also to do changes on my own. Take a look:
-          </p>
-        </div>
-
-        <div class="bts-doc">
-          <section
-            class="bts-doc__body"
-            aria-labelledby="bts-readme-label"
-            tabindex="0"
-            set:html={readmeHtml}
-          />
-          <p class="bts-doc__label" id="bts-readme-label">
-            <a href={readmeUrl}>/README.md</a>
           </p>
         </div>
 
@@ -256,21 +246,25 @@ figmaEmbedUrl.searchParams.set('embed-host', 'max-pinkert-portfolio');
   }
 
   .bts p,
+  .bts-card__preview figcaption,
   .bts-credits__list {
     color: var(--color-neutral-800);
   }
 
-  /* Figma 103:1117: 310 / 643 columns and an unbound 135 gap. */
+  /* Figma 103:1117: fixed 310 title and unbound 135 gap inside the surface. */
   .bts__hero,
   .bts-releases__header {
     display: grid;
-    grid-template-columns: minmax(0, 310fr) minmax(0, 643fr);
+    grid-template-columns: 310px minmax(0, 1fr);
     align-items: start;
     gap: 135px;
+    padding: var(--space-xl);
+    background-color: var(--color-neutral-100);
+    border-radius: 0 var(--radius-xl) var(--radius-xl) var(--radius-xl);
   }
 
   .bts__hero > p {
-    max-inline-size: calc(4 * var(--grid-column) + 3 * var(--grid-gutter));
+    max-inline-size: 421px;
   }
 
   /* Typography/Title has no size or line-height variable in Figma. */
@@ -298,6 +292,7 @@ figmaEmbedUrl.searchParams.set('embed-host', 'max-pinkert-portfolio');
     align-items: start;
     gap: var(--space-md);
     padding: var(--space-lg) var(--space-md);
+    border-radius: 0 var(--radius-xl) var(--radius-xl) var(--radius-xl);
   }
 
   .bts-card--design {
@@ -367,8 +362,10 @@ figmaEmbedUrl.searchParams.set('embed-host', 'max-pinkert-portfolio');
     height: auto;
     aspect-ratio: 484 / 317;
     border: 0;
+    border-radius: var(--radius-lg);
   }
 
+  .bts-card__preview,
   .bts-doc {
     display: grid;
     width: 100%;
@@ -382,6 +379,7 @@ figmaEmbedUrl.searchParams.set('embed-host', 'max-pinkert-portfolio');
     padding: var(--space-sm);
     overflow: auto;
     background-color: var(--color-neutral-100);
+    border-radius: var(--radius-lg);
     scrollbar-color: var(--color-lemon-100) transparent;
     scrollbar-width: thin;
   }
@@ -482,18 +480,23 @@ figmaEmbedUrl.searchParams.set('embed-host', 'max-pinkert-portfolio');
 
   .bts__credits {
     display: grid;
-    grid-template-columns: minmax(0, 643fr) minmax(0, 310fr);
+    grid-template-columns: minmax(0, 1fr) 310px;
     align-items: start;
     gap: 135px;
+    padding: var(--space-xl);
+    background-color: var(--color-neutral-100);
+    border-radius: var(--radius-xl) 0 var(--radius-xl) var(--radius-xl);
   }
 
   .bts__credits > h2 {
     grid-column: 2;
     grid-row: 1;
+    text-align: right;
   }
 
   .bts-credits__body {
     display: grid;
+    min-inline-size: 0;
     grid-column: 1;
     grid-row: 1;
     gap: var(--space-md);
@@ -533,19 +536,35 @@ figmaEmbedUrl.searchParams.set('embed-host', 'max-pinkert-portfolio');
     border-radius: var(--radius-full);
   }
 
-  @media (max-width: 48rem) {
+  /* Stack padded surfaces before the fixed title and gap crowd their body. */
+  @media (max-width: 64rem) {
     .bts__hero,
-    .bts__cards,
     .bts__credits,
     .bts-releases__header {
       grid-template-columns: minmax(0, 1fr);
       gap: var(--space-md);
     }
 
+    .bts__hero,
+    .bts__credits,
+    .bts-releases__header {
+      padding: var(--space-md);
+    }
+
+    .bts__title {
+      font-size: var(--font-size-3xl);
+    }
+
     .bts__credits > h2,
     .bts-credits__body {
       grid-column: auto;
       grid-row: auto;
+    }
+  }
+
+  @media (max-width: 48rem) {
+    .bts__cards {
+      grid-template-columns: minmax(0, 1fr);
     }
 
     .bts-card__intro {
