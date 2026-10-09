@@ -194,6 +194,13 @@ page-component type errors or the résumé icon build error are resolved.
 | `additionalUrl` | URL                     | no          | Anything else — a demo, a write-up, a video.          |
 | `match`         | object of four id lists | No          | What the /home questionnaire matches this entry on.   |
 
+Playground entries are placed automatically; adding a card needs no coordinates
+or layout changes. The desktop canvas uses three intrinsic columns and staggered
+rows with 96px gaps. A larger card widens its column or increases its row height,
+so adjacent cards remain separate. Mobile and no-JavaScript views use one column.
+Each filename still supplies the `/playground#<slug>` target; collection order is
+preserved, with no new ordering field.
+
 ## inspiration
 
 | Field       | Type                    | Required    | Purpose                                                |

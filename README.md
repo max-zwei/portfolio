@@ -117,16 +117,16 @@ ever be wanted."
   `/playground#<slug>` destinations. A playground fragment focuses and brings
   the matching card wrapper into view without flipping it or activating its
   external links.
-- On desktop, `/projects` and `/playground` support horizontal and vertical
-  wheel or trackpad panning, plus arrow-key panning while the canvas is focused.
-  Focusing a card brings it into view. Mobile and no-JavaScript navigation use
-  native scrolling instead.
-- `/playground` keeps its staggered desktop card arrangement with an extra
-  `--space-2xl` offset per column and row. Mobile and no-JavaScript card grids
-  use the same 96px token for their gaps; card dimensions are unchanged.
-- The `/playground` handshake choice wraps within its available width. Its
-  container grows vertically with the label in both expanded and collapsed
-  chat states, including narrow screens and the no-JavaScript layout.
+- On desktop, `/playground` supports horizontal and vertical wheel or trackpad
+  panning, plus arrow-key panning while the canvas is focused. Focusing a card
+  brings it into view. Mobile and no-JavaScript navigation use native scrolling.
+- Playground cards use an intrinsic three-column grid inside the desktop
+  canvas. The first card sits above the staggered rows; new CMS entries extend
+  those rows instead of reusing coordinates. Tracks grow with their cards and
+  retain 96px gaps. Mobile and no-JavaScript layouts use one column.
+- The expanded introduction reserves space in the grid. Collapsing it to the
+  quote does not move the cards. The former handshake-agreement choice is
+  removed; the introduction and quote remain.
 
 ## Note to myself: How to add content?
 
