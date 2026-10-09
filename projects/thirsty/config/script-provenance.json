@@ -1,0 +1,467 @@
+{
+  "format_version": 1,
+  "script": "config/script.json",
+  "status": "Visitor copy revised to the owner brief; rendered review and final approval pending",
+  "source_boundary": {
+    "recording": "experiment/capture/",
+    "protocol": "pocketplan-one-agent-v2",
+    "recording_readme": "experiment/README.md",
+    "transcript": "experiment/capture/transcript.txt",
+    "timed_events": "experiment/capture/timed-events.jsonl",
+    "final_message": "experiment/capture/final-message.txt",
+    "metadata": "experiment/capture/run-metadata.json",
+    "selection": "Only visible agent_message events and command_execution tool activity/outcomes are used for recorded build copy. No exposed reasoning summaries are used. The source experiment is read-only and was not run for this adaptation.",
+    "event_reference": "Source keys below are item.id values in event.type=item.completed. received_at_utc is the recorder receipt timestamp, not a measured execution start or feature completion time.",
+    "requested_model": "gpt-6.1-sol",
+    "requested_reasoning_effort": "medium",
+    "resolved_model_snapshot": null,
+    "started_at_utc": "2026-10-09T06:22:55.028718+00:00",
+    "finished_at_utc": "2026-10-09T06:36:15.493831+00:00",
+    "recorded_elapsed_seconds": 800.2354248329939,
+    "recorded_elapsed_field": "experiment/capture/run-metadata.json:elapsed_seconds",
+    "recorded_exit_code": 0,
+    "interpretation": "The recorder reports about 800 seconds (13 minutes 20 seconds), not 120 seconds. Its successful CLI exit is not proof of browser, native, physical installation or security acceptance. Recorded outcomes have not been rerun here. No token-to-water measurement is inferred."
+  },
+  "adaptation": {
+    "language": "en",
+    "quotation_policy": "All visitor messages are authored or editorially adapted, not literal agent quotations. Exact historical source excerpts remain in sources for traceability; short retained error phrases do not make a whole row verbatim.",
+    "voice": "Owner-requested immersive build narrative without visitor-facing recording disclosures. Mobile App is the only visitor-facing app name; the submitted idea supplies its description. The sequence is fixed and adapted from historical workflow, not a live coding agent. No app is generated, installed, tested or published for the visitor by this script.",
+    "privacy": "Visitor copy and source excerpts omit personal home directories, account identifiers, recorder thread identifiers and temporary browser-profile paths. Source event IDs and UTC receipt timestamps are retained for traceability. No launch commands, installation codes or account credentials are offered.",
+    "safe_idea": "The literal {idea} placeholder supplies the app description in recording-intro and summary-features. These two substitutions do not alter the fixed workflow. The controller owns the user/body row; QML must render substituted visitor text as plain text, not markup. No user-role rows are authored in this script.",
+    "timing": {
+      "method": "Authored exhibition pacing, not proportional timestamp scaling",
+      "active_duration_ms": 120000,
+      "pause_time_excluded": true,
+      "cumulative_insertions_ms": [
+        0, 4000, 10000, 16000, 23000, 31000, 39000, 46000, 52000, 58000, 64000,
+        72000, 80000, 88000, 96000, 104000, 112000, 120000
+      ],
+      "semantics": "Each delay_ms is active time before that row is inserted. Final-summary rows follow the last progress row. Sensor/water pauses do not consume staged active time. Physical drainage tuning is pending.",
+      "editing": "An output/body row opens with an authored numbered plan. Task/body rows for scope, editors, logic tests, DOM coverage and final checks alternate with action outcomes and failures throughout. Historical feature names are generalized, not evidence that arbitrary visitor ideas were implemented. Dependency compatibility is grouped before the first tests/export recap, although the original passing tests/export preceded its successful recheck. Test outcomes are grouped into subsequent action rows. All original IDs and delays are retained."
+    }
+  },
+  "sources": {
+    "item_0": {
+      "kind": "agent_message",
+      "received_at_utc": "2026-10-09T06:23:02.142722+00:00",
+      "transcript_lines": "123-128",
+      "quote": "I’ll build the five-screen Expo app with local persistence, then test the planning rules, run type checking and a web build, and use browser automation if it’s available. I’ll save command logs and an acceptance report that distinguishes web checks from native verification."
+    },
+    "item_10": {
+      "kind": "agent_message",
+      "received_at_utc": "2026-10-09T06:24:15.589216+00:00",
+      "transcript_lines": "754-759",
+      "quote": "The data layer now uses local calendar dates, and reopening a task clears its completion date so progress stays consistent.",
+      "additional_quote": "Expo’s dependency installer hit a sandbox restriction while creating its user cache; I’ll redirect that cache into the project and retry."
+    },
+    "item_12": {
+      "kind": "command_execution",
+      "received_at_utc": "2026-10-09T06:24:34.851962+00:00",
+      "exit_code": 1,
+      "quote": "Error: Cannot find module './utils/autoAddConfigPlugins.js'",
+      "note": "Project-local Expo cache was selected in this recorded install command. Personal paths in its output are omitted."
+    },
+    "item_13": {
+      "kind": "command_execution",
+      "received_at_utc": "2026-10-09T06:26:55.343126+00:00",
+      "exit_code": 0,
+      "quote_location": "command payload writing App.tsx",
+      "quote": "Today', 'Tasks', 'Projects', 'Progress', 'Settings'] as const;",
+      "note": "This is source-writing activity, not runtime or visual acceptance evidence."
+    },
+    "item_16": {
+      "kind": "agent_message",
+      "received_at_utc": "2026-10-09T06:27:07.944775+00:00",
+      "transcript_lines": "1158-1163",
+      "quote": "All five screens and both editors are implemented. They include validation, deletion confirmations, project colors, filters, and saved theme preferences.",
+      "additional_quote": "Expo selected SDK-compatible dependencies, but the installer failed after npm changed the CLI files it was running; I’ll check the resulting dependency set and proceed with testing."
+    },
+    "item_18": {
+      "kind": "command_execution",
+      "received_at_utc": "2026-10-09T06:27:52.355158+00:00",
+      "exit_code": 0,
+      "quote": "ℹ tests 8\nℹ suites 0\nℹ pass 8\nℹ fail 0",
+      "coverage_quotes": [
+        "today and overdue use date-only boundaries, preserving completed items for reopening",
+        "complete, reopen and recomplete update totals and completion calendar day",
+        "project deletion removes only assignment and preserves all tasks and their completion",
+        "progress excludes completions older than seven days and future completions from chart",
+        "persistence seeds once, roundtrips edits, completion, project deletion and theme across instances"
+      ]
+    },
+    "item_20": {
+      "kind": "command_execution",
+      "received_at_utc": "2026-10-09T06:27:52.512690+00:00",
+      "exit_code": 0,
+      "quote": "> tsc --noEmit"
+    },
+    "item_21": {
+      "kind": "command_execution",
+      "received_at_utc": "2026-10-09T06:27:52.539431+00:00",
+      "exit_code": 1,
+      "quote": "@types/react@19.3.0 - expected version: ~19.2.10"
+    },
+    "item_22": {
+      "kind": "command_execution",
+      "received_at_utc": "2026-10-09T06:27:59.004363+00:00",
+      "exit_code": 0,
+      "quote_location": "command",
+      "quote": "npm install -D @types/react@~19.2.10"
+    },
+    "item_23": {
+      "kind": "command_execution",
+      "received_at_utc": "2026-10-09T06:28:05.220014+00:00",
+      "exit_code": 0,
+      "quote": "Exported: dist",
+      "note": "Successful Expo web export, not browser or native verification."
+    },
+    "item_26": {
+      "kind": "command_execution",
+      "received_at_utc": "2026-10-09T06:29:09.509415+00:00",
+      "exit_code": 0,
+      "quote": "Dependencies are up to date"
+    },
+    "item_29": {
+      "kind": "agent_message",
+      "received_at_utc": "2026-10-09T06:29:40.819441+00:00",
+      "transcript_lines": "2757-2762",
+      "quote": "The eight automated tests, type checking, dependency compatibility check, and Expo web build pass.",
+      "additional_quote": "The browser smoke test could not start: system Chrome aborted with `SIGABRT` under the sandbox."
+    },
+    "item_34": {
+      "kind": "agent_message",
+      "received_at_utc": "2026-10-09T06:30:22.683495+00:00",
+      "transcript_lines": "2948-2953",
+      "quote": "The local headless browser also failed, with an explicit macOS sandbox error: `bootstrap_check_in … Permission denied (1100)`. Browser interaction checks and screenshots remain unverified. I’ll test the exported web app in a DOM harness to check its controls and persistence, while keeping that evidence separate from a real browser check.",
+      "note": "The ellipsis is present in the visible source message, not a redacted reasoning summary."
+    },
+    "item_37": {
+      "kind": "command_execution",
+      "received_at_utc": "2026-10-09T06:31:34.346450+00:00",
+      "exit_code": 0,
+      "quote": "Web Bundled 469ms index.ts (219 modules)",
+      "additional_quote": "Exported: dist"
+    },
+    "item_40": {
+      "kind": "command_execution",
+      "received_at_utc": "2026-10-09T06:31:53.990144+00:00",
+      "exit_code": 1,
+      "quote": "Error: Could not find default container"
+    },
+    "item_42": {
+      "kind": "command_execution",
+      "received_at_utc": "2026-10-09T06:32:04.242398+00:00",
+      "exit_code": 0,
+      "quote_location": "aggregated_output following test harness repair",
+      "quote": "PASS (DOM): task/project creation and edits, validation, completion and theme preserved on remount using real AsyncStorage web adapter.",
+      "additional_quote": "DOM integration passed. No browser rendering, screenshots, device or simulator verification is claimed."
+    },
+    "item_44": {
+      "kind": "agent_message",
+      "received_at_utc": "2026-10-09T06:32:28.638137+00:00",
+      "transcript_lines": "3423-3428",
+      "quote": "The DOM integration test passed against the actual Expo web export. It exercised task and project CRUD, validation, combined filters, confirmations, reopening, reset, and persistence through the real web storage adapter across an app remount.",
+      "additional_quote": "Browser rendering, screenshots, and native execution remain unverified because of the environment limits."
+    },
+    "item_46": {
+      "kind": "command_execution",
+      "received_at_utc": "2026-10-09T06:32:34.866330+00:00",
+      "exit_code": 1,
+      "quote": "tool 'xcodebuild' requires Xcode"
+    },
+    "item_47": {
+      "kind": "command_execution",
+      "received_at_utc": "2026-10-09T06:32:34.927497+00:00",
+      "exit_code": 72,
+      "quote": "xcrun: error: unable to find utility \"simctl\", not a developer tool or in PATH"
+    },
+    "item_48": {
+      "kind": "command_execution",
+      "received_at_utc": "2026-10-09T06:32:34.975704+00:00",
+      "exit_code": 1,
+      "quote_location": "command",
+      "quote": "command -v adb",
+      "note": "No stdout; failed command lookup corroborates the final message's unavailable adb limitation."
+    },
+    "item_45": {
+      "kind": "command_execution",
+      "received_at_utc": "2026-10-09T06:32:38.878150+00:00",
+      "exit_code": 0,
+      "command_summary": "npm ci",
+      "quote": "added 663 packages, and audited 664 packages in 5s",
+      "additional_quote": "32 vulnerabilities (11 moderate, 21 high)",
+      "note": "Clean install success does not imply a passing security audit; recorded dependency warnings remain visible in the adaptation."
+    },
+    "item_50": {
+      "kind": "command_execution",
+      "received_at_utc": "2026-10-09T06:33:42.142960+00:00",
+      "exit_code": 0,
+      "quote_location": "command payload writing README.md",
+      "quote": "A modest local personal planner built with Expo, React Native and TypeScript. One codebase targets iOS, Android and web. It has five tabs: Today, Tasks, Projects, Progress and Settings. No backend, account or API keys are needed.",
+      "note": "Implementation description, not proof of all target platforms running."
+    },
+    "item_56": {
+      "kind": "command_execution",
+      "received_at_utc": "2026-10-09T06:34:25.386932+00:00",
+      "exit_code": 0,
+      "quote": "ℹ tests 8\nℹ suites 0\nℹ pass 8\nℹ fail 0"
+    },
+    "item_55": {
+      "kind": "command_execution",
+      "received_at_utc": "2026-10-09T06:34:25.460382+00:00",
+      "exit_code": 0,
+      "quote": "> tsc --noEmit"
+    },
+    "item_57": {
+      "kind": "command_execution",
+      "received_at_utc": "2026-10-09T06:34:25.712456+00:00",
+      "exit_code": 0,
+      "quote": "Dependencies are up to date"
+    },
+    "item_58": {
+      "kind": "command_execution",
+      "received_at_utc": "2026-10-09T06:34:26.983245+00:00",
+      "exit_code": 0,
+      "quote": "PASS (DOM): combined filters, task deletion/cancel, confirmed reset, system/light/dark preferences.",
+      "additional_quote": "PASS (DOM): unreadable storage shows recovery controls, preserves data until confirmed reset.",
+      "limitation_quote": "DOM integration passed. No browser rendering, screenshots, device or simulator verification is claimed."
+    },
+    "item_61": {
+      "kind": "command_execution",
+      "received_at_utc": "2026-10-09T06:35:48.260499+00:00",
+      "exit_code": 0,
+      "quote_location": "command payload writing artifacts/acceptance-report.txt",
+      "quote": "No manual visual browser inspection was possible. No screenshots were produced.",
+      "additional_quote": "One agent implemented the app locally with Expo SDK 55, React Native and TypeScript."
+    },
+    "item_62": {
+      "kind": "agent_message",
+      "received_at_utc": "2026-10-09T06:36:14.653168+00:00",
+      "transcript_lines": "4449-4458",
+      "also_in": "experiment/capture/final-message.txt:1-5",
+      "quote": "Implemented PocketPlan with all five screens, task/project CRUD, filters, local persistence, progress tracking, and saved themes.",
+      "additional_quote": "Verified: clean lockfile install, type checking, eight automated tests, exported-web DOM integration, and a successful Expo web build.",
+      "limitation_quote": "Real browser checks and screenshots were blocked by macOS sandbox permissions. Native execution was unverified because Xcode/simulator tools and `adb` were unavailable.",
+      "omitted": "Local launch instructions and personally identifying absolute links are not visitor copy."
+    }
+  },
+  "message_mapping": [
+    {
+      "id": "recording-intro",
+      "source_ids": ["item_0", "item_62"],
+      "treatment": "Authored output/body numbered plan adapted from historical workflow; Mobile App and {idea} are owner-requested framing, not source quotations or a new build promise in the internal evidence record."
+    },
+    {
+      "id": "idea-acknowledgement",
+      "source_ids": ["item_0", "item_50"],
+      "treatment": "Authored scope task using local-data and no-account constraints; legacy ID retained, no idea echo in this row."
+    },
+    {
+      "id": "five-screen-plan",
+      "source_ids": ["item_0", "item_13", "item_50"],
+      "treatment": "Authored planning task generalizing the five-screen scope; no historical app name or fixed screen-name inventory."
+    },
+    {
+      "id": "local-calendar-data",
+      "source_ids": ["item_10"],
+      "treatment": "Condensed visible progress report."
+    },
+    {
+      "id": "dependency-install-obstacles",
+      "source_ids": ["item_10", "item_12", "item_16"],
+      "treatment": "Adapted cache and CLI failures in narrative present tense; personal paths removed. No installation runs during the visit."
+    },
+    {
+      "id": "screens-and-editors",
+      "source_ids": ["item_16", "item_44", "item_62"],
+      "treatment": "Historical feature recap rewritten as a task/body instruction with generic editable content."
+    },
+    {
+      "id": "dependency-compatibility",
+      "source_ids": ["item_21", "item_22", "item_26"],
+      "treatment": "Adapted repair outcome, editorially grouped before the tests/export recap."
+    },
+    {
+      "id": "planning-tests",
+      "source_ids": ["item_18", "item_20", "item_29"],
+      "treatment": "Historical test coverage rewritten as a task/body instruction; passing outcome appears in web-export. No checks run by this installation."
+    },
+    {
+      "id": "web-export",
+      "source_ids": [
+        "item_18",
+        "item_20",
+        "item_23",
+        "item_29",
+        "item_37",
+        "item_62"
+      ],
+      "treatment": "Authored combined action recap of historical logic, type and export success, not current checks."
+    },
+    {
+      "id": "system-browser-blocked",
+      "source_ids": ["item_29"],
+      "treatment": "Adapted visible report, preserving failure and absent screenshot."
+    },
+    {
+      "id": "headless-browser-blocked",
+      "source_ids": ["item_34", "item_44"],
+      "treatment": "Condensed failure and change of verification method. Permission denied (1100) is an exact source phrase, not a new runtime error."
+    },
+    {
+      "id": "dom-harness-repair",
+      "source_ids": ["item_40", "item_42"],
+      "treatment": "Adapted recorded failed first test and repair. Could not find default container is an exact tool-output phrase."
+    },
+    {
+      "id": "dom-integration",
+      "source_ids": ["item_42", "item_44", "item_58"],
+      "treatment": "Historical DOM coverage adapted as a task/body instruction with generic editable content; outcome appears in clean-install-and-audit."
+    },
+    {
+      "id": "native-unverified",
+      "source_ids": ["item_46", "item_47", "item_48", "item_62"],
+      "treatment": "Adapted unavailable-tool evidence and final limitation; no target-device claim."
+    },
+    {
+      "id": "clean-install-and-audit",
+      "source_ids": ["item_42", "item_44", "item_45"],
+      "treatment": "Authored combined historical DOM and install outcome with unresolved vulnerability counts; not current verification or security clearance."
+    },
+    {
+      "id": "final-recorded-checks",
+      "source_ids": ["item_56", "item_55", "item_57", "item_58"],
+      "treatment": "Historical final-check scope rewritten as a task/body instruction, including storage recovery; outcome appears in recorded-report."
+    },
+    {
+      "id": "recorded-report",
+      "source_ids": [
+        "item_0",
+        "item_50",
+        "item_55",
+        "item_56",
+        "item_57",
+        "item_58",
+        "item_61",
+        "item_62"
+      ],
+      "treatment": "Authored action recap combining historical final check outcomes and documentation handoff. No checks run or new files written during the visit."
+    },
+    {
+      "id": "recording-close",
+      "source_ids": ["item_62"],
+      "treatment": "Authored transition to the handoff summary using the generic Mobile App name. No disclosure in visitor copy; internal evidence remains historical and the installation generates no app."
+    },
+    {
+      "id": "water-pause",
+      "source_ids": [],
+      "treatment": "Authored physical interaction copy from PRODUCT.md/README.md; not an event in the PocketPlan recording. Below the lowest sensor is not a claim that the tank is completely empty."
+    },
+    {
+      "id": "water-resume",
+      "source_ids": [],
+      "treatment": "Authored stable-reading recovery copy from PRODUCT.md; avoids hardcoding configurable hold duration or sensor threshold."
+    },
+    {
+      "id": "sensor-pause",
+      "source_ids": [],
+      "treatment": "Authored unknown/fault interaction copy from PRODUCT.md; not a recorded build error or evidence of tested hardware."
+    },
+    {
+      "id": "summary-title",
+      "source_ids": [],
+      "treatment": "Owner-requested generic Mobile App title."
+    },
+    {
+      "id": "summary-features",
+      "source_ids": ["item_13", "item_18", "item_58", "item_62"],
+      "treatment": "Authored {idea} description and generalized historical feature inventory. The visitor's idea does not change the implementation; no new app is generated."
+    },
+    {
+      "id": "summary-checks",
+      "source_ids": [
+        "item_45",
+        "item_56",
+        "item_55",
+        "item_58",
+        "item_37",
+        "item_62"
+      ],
+      "treatment": "Adapted historical successful outcomes without visitor-facing recording labels; not current installation checks."
+    },
+    {
+      "id": "summary-limitations",
+      "source_ids": ["item_34", "item_44", "item_45", "item_62"],
+      "treatment": "Condensed historical browser/native limitations plus preserved dependency vulnerability warning."
+    },
+    {
+      "id": "summary-handoff",
+      "source_ids": [],
+      "treatment": "Authored instruction to open the owner-approved app-repository address, not a verified downloadable app. Redirect configuration, destination and QR scan remain unverified."
+    }
+  ],
+  "screen_copy": {
+    "basis": "Authored complete installation instructions, not quotes from the PocketPlan recording. The Start heading is the design interaction anchor required by the owner.",
+    "start_title": {
+      "treatment": "Preserved owner-required design anchor",
+      "text": "##### FREE AI CREDITS #####"
+    },
+    "start_body": {
+      "source_ids": [],
+      "treatment": "Authored owner-requested immersive introduction, not a recorded agent quotation. Invites an app description and explains the real-water refill interaction without a recording disclosure. Rendering and final approval remain pending.",
+      "text": "Describe the mobile app you want to make.\nKeep the water flowing while I work on your idea.\nWhen progress pauses, refill the upper tank to continue."
+    },
+    "start_prompt": {
+      "treatment": "Authored installation instruction, not a recorded agent quote",
+      "text": "Press ENTER to begin."
+    },
+    "authored_fields": [
+      "start_body",
+      "start_prompt",
+      "input_title",
+      "input_prompt",
+      "input_placeholder",
+      "input_submit_label",
+      "empty_input_error",
+      "long_input_error",
+      "running_title",
+      "finished_prompt",
+      "repository_label",
+      "water_label",
+      "sensor_unknown_label",
+      "sensor_fault_label"
+    ],
+    "heading_rendering": "Task/output H1 text omits a leading Markdown # because AgentMessage supplies the marker. Start's source heading is a separate screen-copy field.",
+    "water_rendering": "First line of water-pause is the warning headline; remaining line is the body.",
+    "approval": "Pending final owner copy approval; no visitor readability or physical installation acceptance is claimed."
+  },
+  "handoff": {
+    "repository_url": "https://zwei.berlin/app-repo",
+    "authority": "Owner-provided URL in the current assignment, not inferred from recorded personal links",
+    "url_selected": true,
+    "redirect_configured": false,
+    "redirect_verified": false,
+    "url_probed": false,
+    "phone_qr_scan_verified": false,
+    "output_directory": "output/app/",
+    "output_policy": "Empty directory only. No .gitkeep, generated app, copied experiment app, placeholder, installation code or invented download. Git does not preserve empty directories by itself."
+  },
+  "validation_boundary": {
+    "schema_reference": "app/config.py:ScreenCopy, ScriptConfig and app/contracts.py:MESSAGE_VARIANTS",
+    "checks_run_for_this_content_change": [],
+    "parent_checks_requested": [
+      "Load production script with the native schema",
+      "Check global row IDs, roles and both exact {idea} substitutions",
+      "Check opening output/body numbered plan and task/action mixture",
+      "Check delay sum against authored 120000 ms timeline",
+      "Compare source IDs/timestamps/quotes with recording",
+      "Check plain-text visitor rendering and final summary layout"
+    ],
+    "release_gates": [
+      "Final owner copy approval",
+      "Owner configures redirect and verifies app-repository destination",
+      "QR scan verification on installed display",
+      "Physical water/drainage timing and installation acceptance"
+    ]
+  }
+}

@@ -1,7 +1,7 @@
 ---
 version: alpha
 name: thirsty
-description: 'Visual specification and QML implementation contract for a staged app-building agent and water-dependent artwork. Implementation pending.'
+description: 'Visual specification and QML implementation contract for a staged app-building agent and water-dependent artwork. Native implementation complete; installed display acceptance pending.'
 colors:
   primary: '#000000'
   surface: '#FFFFFF'
@@ -19,13 +19,13 @@ typography:
     fontFamily: JetBrains Mono
     fontSize: '{size.l}'
     fontWeight: 400
-    lineHeight: 1.6
+    lineHeight: 1.2
     letterSpacing: 0em
   task:
     fontFamily: JetBrains Mono
     fontSize: '{size.l}'
     fontWeight: 400
-    lineHeight: 1.6
+    lineHeight: 1.2
     letterSpacing: 0em
   warning:
     fontFamily: JetBrains Mono
@@ -110,7 +110,7 @@ thirsty is an artwork presented as an app-building chat agent connected to a fak
 
 **Interface source:** [Figma · Interface, page 0:1](https://www.figma.com/design/Vly8oZbSYachZu9ecP58h8/thirsty?node-id=0-1) supplies the Start (`2:7`), Input (`2:16`), and Running (`2:31`) 1280 × 720 screen compositions. The component sheet supplies reusable defaults; Interface instances may override layout dimensions as scoped below.
 
-**Implementation contract:** this YAML is the canonical token authority. The selected interface is native Qt Quick / QML through Python / PySide6, running fullscreen on an HDMI screen with Bluetooth keyboard input. Map tokens into the planned `app/ui/Theme.qml` and reusable QML components; behavior and sensor decisions live in [PRODUCT.md](PRODUCT.md). TH-04 owns theme/components, TH-07 owns screens, and TH-11 verifies the installed result. Application paths are planned, not existing implementation.
+**Implementation contract:** this YAML is the canonical token authority. The implemented interface is native Qt Quick / QML through Python / PySide6, running fullscreen with keyboard input. `app/ui/Theme.qml` provides the full token mapping consumed by reusable QML components; there is no `tokens.css` because this is not a browser application. Behavior and sensor decisions live in [PRODUCT.md](PRODUCT.md). TH-04 owns theme/components, TH-07 owns screens, and TH-11 verifies the installed result. Workstation validation compared 98 runtime Theme values with DESIGN; this does not establish Pi rendering or physical display acceptance.
 
 The visual language is sparse and terminal-like: monospaced text, square edges, pixel-based symbols, `{colors.primary}` outlines, `{colors.water}` water, `{colors.error}` interruption, and a `{colors.action}` submission button. Preserve the distinction between italic simulated work and regular-weight output.
 
@@ -132,15 +132,19 @@ The visual language is sparse and terminal-like: monospaced text, square edges, 
 | Role                   | Family / style              | Size | Line height |
 | ---------------------- | --------------------------- | ---- | ----------- |
 | `{typography.heading}` | JetBrains Mono Regular, 400 | 40px | Auto        |
-| `{typography.body}`    | JetBrains Mono Regular, 400 | 16px | 160%        |
-| `{typography.task}`    | JetBrains Mono Italic, 400  | 16px | 160%        |
+| `{typography.body}`    | JetBrains Mono Regular, 400 | 16px | 120%        |
+| `{typography.task}`    | JetBrains Mono Italic, 400  | 16px | 120%        |
 | `{typography.warning}` | JetBrains Mono Regular, 400 | 20px | Auto        |
 
 All text uses zero letter spacing. Auto line heights are intentionally omitted from the numeric frontmatter; do not reinterpret them as a measured pixel value.
 
 The `H1` variant name in `agent_messages` does **not** mean `{typography.heading}` display text: task headings use `{typography.task}` and output headings use `{typography.body}`, both with a leading `#`. Task headings and task/action bodies use the italic style defined by `{components.agent-task.fontStyle}` and `{components.agent-action.fontStyle}`; output headings and bodies are regular. The water-error headline uses `{typography.warning}` and `{colors.error}`, with `{typography.body}` and `{colors.primary}` supporting text. Do not introduce bold weights absent from the source.
 
-**QML implementation:** bundle JetBrains Mono regular and italic faces under the planned `app/assets/fonts/`, with their license notices; load locally at weight 400 and retain a monospace fallback. Use explicit pixel sizes from the tokens. Preserve 1.6 proportional line height for body/task text and natural font metrics for Auto line heights. Italic comes from component `fontStyle`. TH-04 verifies font provenance and distribution permission; TH-11 verifies actual screen rendering.
+**QML implementation:** JetBrains Mono regular and italic faces are bundled locally under `app/assets/fonts/`, with their license notices, and loaded at weight 400 with a monospace fallback. Explicit pixel sizes preserve the tokens, with 1.2 proportional line height for body/task text and natural font metrics for Auto line heights. Italic comes from component `fontStyle`. Original Figma artwork is retained rather than replaced by unrelated icons. Workstation asset/font provenance is recorded; TH-11 still requires actual installed-screen rendering acceptance.
+
+Asset sources, export hashes and font versions are recorded in `app/assets/provenance.json`; script source provenance is separate in `config/script-provenance.json`. The bundled fonts carry their SIL Open Font License notices. Original Figma artwork provenance is not a grant of redistribution rights; no project/artwork license has been supplied.
+
+**User-supplied asset feedback:** use the nine supplied original SVG assets and retain their provenance. Water SVG artwork is 96 × 96; the shared component's implicit dimensions remain `{components.water_level.width}` × `{components.water_level.height}` (94 × 94), with Running's explicit 96 × 96 instance override. Supplied artwork does not change the canonical token values.
 
 ## Layout
 
@@ -158,7 +162,7 @@ Observed bindings: message-heading gaps use `{size.m}`; the water-error vertical
 
 **Default screen layout:** a 1280 × 720 reference canvas, 16:9, with `{size.xxl}` padding by default. Prefer 1280 × 720 HDMI output. If the screen requires another mode, scale uniformly and letterbox; do not stretch or independently reflow the composition. Validate pixel geometry, font rendering and QR scanning at the installed resolution.
 
-**Scoped Interface exceptions:** Running's transcript begins at y0, so its top padding is 0 rather than the default `{size.xxl}`; the fixed water indicator remains at x1088/y96. That instance is 96 × 96, overriding the component-sheet 94 × 94 default. Input's field is 1026px wide, overriding the 931px component default; its button remains 46px wide, with a 16px gap for 1088px combined width. Apply these instance dimensions in the relevant QML screen, never by changing frontmatter defaults or shared theme values. Reference-frame coordinates and transcript geometry are screen layout, not additions to the five-value size scale; the canvas surface and shared visual treatments still use canonical tokens.
+**Scoped Interface exceptions and user feedback:** Running's transcript begins at x96/y96 using `{size.xxl}` for both insets, and its viewport ends 96px above the reference canvas bottom. The fixed water indicator remains at x1088/y96. That instance is 96 × 96, overriding the component-sheet 94 × 94 default. Input's field is 1026px wide, overriding the 931px component default; its button remains 46px wide, with a 16px gap for 1088px combined width. Apply these instance dimensions in the relevant QML screen, never by changing frontmatter defaults or shared theme values. Reference-frame coordinates and transcript geometry are screen layout, not additions to the five-value size scale; the canvas surface and shared visual treatments still use canonical tokens.
 
 ## Elevation & Depth
 
@@ -176,7 +180,7 @@ Names and variants below match Figma. Frontmatter component keys such as `agent-
 
 ### QML component mapping
 
-| Figma source     | Planned QML component               | Responsibility                                         |
+| Figma source     | Implemented QML component           | Responsibility                                         |
 | ---------------- | ----------------------------------- | ------------------------------------------------------ |
 | `water_level`    | `WaterLevel.qml`                    | Levels 0–5 plus explicit unknown/fault fallback        |
 | `agent_icon`     | `AgentIcon.qml`                     | Source running/error pixel patterns                    |
@@ -185,9 +189,10 @@ Names and variants below match Figma. Frontmatter component keys such as `agent-
 | `user_messages`  | `UserInput.qml`, `SubmitButton.qml` | Styled text entry, validation and keyboard focus       |
 | `qr_code`        | `RepositoryHandoff.qml`             | Locally generated QR and readable repository URL       |
 
-- `Theme.qml`: manually map every YAML token to a named QML property; record the source token beside it, including resolved aliases.
+- `Theme.qml`: every YAML token maps to a named QML property with its source token recorded, including resolved aliases; 98 runtime values were checked for parity.
 - Convert `px` values to numeric reference-canvas pixels; preserve exact colors, weights and spacing. YAML stays the visual authority.
 - Screen-specific geometry belongs in `Start.qml`, `Input.qml` and `Running.qml`; component defaults remain shared.
+- User feedback: Start's H1 uses `{colors.action}`; its body retains `{colors.primary}`.
 - Running: clipped, vertically scrolling transcript; auto-scroll on insertion; water indicator outside the scrolling container at x1088/y96.
 - Keep long messages wrapped within transcript width; preserve the 96px gap below its reference viewport.
 - Compare 1280 × 720 captures to Figma; check fonts, line wraps, fixed indicator and all water/error states.
@@ -202,7 +207,7 @@ Five passive switches are the working hardware assumption. The controller normal
 
 ### Agent icon — `agent_icon` (`9:469`)
 
-Variants `State=running` (`9:468`) and `State=error` (`9:467`), both `{components.agent_icon.width}` × `{components.agent_icon.height}`. Running is a simulation of 3 active dots colored `{colors.primary}` and 5 inactive dots `{colors.secondary}`; error is `{colors.error}`. Preserve the pixel patterns, not just a color swap. Pair icons with status text. Default: use the source static running pattern; no animation behavior is established by Figma. Water/sensor pauses use the error pattern alongside the relevant status message.
+Variants `State=running` (`9:468`) and `State=error` (`9:467`), both `{components.agent_icon.width}` × `{components.agent_icon.height}`. Running uses 3 active dots colored `{colors.primary}` and 5 inactive dots `{colors.secondary}` from the supplied SVG; error is `{colors.error}`. Preserve the pixel patterns, not just a color swap. Pair icons with status text. User feedback supersedes the static Figma running pattern: advance the three active cells clockwise around the eight perimeter cells in discrete 100ms steps, without interpolation. Water/sensor pauses use the error pattern alongside the relevant status message.
 
 ### Agent messages — `agent_messages` (`9:558`)
 
@@ -235,7 +240,7 @@ A `{components.avatar.width}` × `{components.avatar.height}` pixel-wave motif i
 
 QR artwork in `{colors.primary}` and `{colors.surface}` at `{components.qr_code.width}` × `{components.qr_code.height}`. This draft does not verify its encoded destination. The final QR must lead to the approved app repository, not be copied as an arbitrary decorative image.
 
-**QML implementation:** generate the QR locally from the configured, owner-approved repository URL and display it with a readable link. Keep square modules and a four-module quiet zone within the reserved footprint; use integer module sizes and centered whitespace rather than interpolation. TH-09 owns generation; TH-11 verifies phone scanning on the HDMI screen. Repository selection remains open; the staged agent does not generate repositories.
+**QML implementation:** the QR is generated locally from `config/script.json`'s chosen `https://zwei.berlin/app-repo` URL and displayed with a readable link. It uses square modules and a four-module quiet zone within the reserved footprint, with integer module sizes and centered whitespace rather than interpolation. TH-09 owns generation; TH-11 verifies phone scanning on the HDMI screen. Redirect publication and destination content remain pending (`output/app/` is empty); selection is not proof of a working destination. The staged agent does not generate repositories.
 
 ## Do's and Don'ts
 
