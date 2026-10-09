@@ -1,0 +1,198 @@
+{
+  "copy": {
+    "start_title": "##### FREE AI CREDITS #####",
+    "start_body": "Describe the mobile app you want to make.\nKeep the water flowing while I work on your idea.\nWhen progress pauses, refill the upper tank to continue.",
+    "start_prompt": "Press ENTER to begin.",
+    "input_title": "What would you like to make?",
+    "input_prompt": "Describe your mobile app and what it should do.",
+    "input_placeholder": "Describe your app idea",
+    "input_submit_label": "Submit app idea",
+    "empty_input_error": "Enter an app idea before continuing.",
+    "long_input_error": "Your idea is too long. Shorten it and try again.",
+    "running_title": "Mobile App",
+    "finished_prompt": "Press ENTER for the next visitor. This session also resets automatically.",
+    "repository_label": "App repository",
+    "water_label": "Water level",
+    "sensor_unknown_label": "Waiting for a water reading",
+    "sensor_fault_label": "Water sensor unavailable"
+  },
+  "progress": [
+    {
+      "id": "recording-intro",
+      "type": "output",
+      "variant": "body",
+      "text": "I'll build Mobile App: {idea}\n\n1. Plan the screens and core interactions.\n2. Set up Expo, React Native and TypeScript.\n3. Build the data layer, screens and editors.\n4. Check the app logic, types and web export.\n5. Exercise the controls and saved data.\n6. Prepare the summary and repository handoff.",
+      "delay_ms": 0
+    },
+    {
+      "id": "idea-acknowledgement",
+      "type": "task",
+      "variant": "body",
+      "text": "Define the core interactions and keep the first version focused: local data, clear navigation and no account requirement.",
+      "delay_ms": 4000
+    },
+    {
+      "id": "five-screen-plan",
+      "type": "task",
+      "variant": "body",
+      "text": "Plan five connected screens with reusable controls, editable content, filters, progress and settings.",
+      "delay_ms": 6000
+    },
+    {
+      "id": "local-calendar-data",
+      "type": "action",
+      "variant": "running",
+      "text": "Building the local data layer. Dates follow the local calendar; reopening a task clears its completion date so progress stays consistent.",
+      "delay_ms": 6000
+    },
+    {
+      "id": "dependency-install-obstacles",
+      "type": "action",
+      "variant": "error",
+      "text": "Expo's user cache is blocked by the sandbox. Moving the cache into the project got further, but the installer then lost a CLI module during dependency changes.",
+      "delay_ms": 7000
+    },
+    {
+      "id": "screens-and-editors",
+      "type": "task",
+      "variant": "body",
+      "text": "Build the screens and editors with creation, editing and deletion, input validation, deletion confirmations, colors, filters and saved themes.",
+      "delay_ms": 8000
+    },
+    {
+      "id": "dependency-compatibility",
+      "type": "action",
+      "variant": "running",
+      "text": "The dependency check found a React type-version mismatch. Adjusting that dependency resolved the compatibility check.",
+      "delay_ms": 8000
+    },
+    {
+      "id": "planning-tests",
+      "type": "task",
+      "variant": "body",
+      "text": "Check calendar boundaries, completion and reopening, seven-day progress, deletion without data loss and local persistence. Run TypeScript checking alongside the logic tests.",
+      "delay_ms": 7000
+    },
+    {
+      "id": "web-export",
+      "type": "action",
+      "variant": "running",
+      "text": "Eight logic tests and TypeScript checking passed. The Expo web export also succeeded. Next, check the controls and saved data.",
+      "delay_ms": 6000
+    },
+    {
+      "id": "system-browser-blocked",
+      "type": "action",
+      "variant": "error",
+      "text": "The real-browser smoke test could not start. System Chrome aborted under the macOS sandbox; no screenshot was captured.",
+      "delay_ms": 6000
+    },
+    {
+      "id": "headless-browser-blocked",
+      "type": "action",
+      "variant": "error",
+      "text": "The project-local headless browser also failed with Permission denied (1100). Browser rendering and screenshots remain unverified; switching to a DOM test harness to exercise the controls.",
+      "delay_ms": 6000
+    },
+    {
+      "id": "dom-harness-repair",
+      "type": "action",
+      "variant": "error",
+      "text": "The first DOM test failed: Could not find default container. Repairing the test harness before trying again.",
+      "delay_ms": 8000
+    },
+    {
+      "id": "dom-integration",
+      "type": "task",
+      "variant": "body",
+      "text": "Exercise creation, editing, deletion, validation, combined filters, confirmations, reopening, reset and themes in the exported-web DOM harness. Remount the app to check that local data persists.",
+      "delay_ms": 8000
+    },
+    {
+      "id": "native-unverified",
+      "type": "action",
+      "variant": "error",
+      "text": "Native execution remains unverified: Xcode, simulator tools and adb are unavailable. No iOS or Android device check could run.",
+      "delay_ms": 8000
+    },
+    {
+      "id": "clean-install-and-audit",
+      "type": "action",
+      "variant": "running",
+      "text": "The DOM integration checks and clean lockfile install passed. npm reported 32 dependency vulnerabilities: 11 moderate and 21 high. These security issues remain unresolved.",
+      "delay_ms": 8000
+    },
+    {
+      "id": "final-recorded-checks",
+      "type": "task",
+      "variant": "body",
+      "text": "Run the final logic, type, dependency and DOM checks, including recovery controls for unreadable storage. Keep browser, native and security limitations visible in the handoff.",
+      "delay_ms": 8000
+    },
+    {
+      "id": "recorded-report",
+      "type": "action",
+      "variant": "running",
+      "text": "Final checks passed: eight tests, type checking, dependency compatibility and exported-web DOM integration. Preparing the README, command logs and acceptance report.",
+      "delay_ms": 8000
+    },
+    {
+      "id": "recording-close",
+      "type": "output",
+      "variant": "body",
+      "text": "Mobile App is ready for the handoff summary. Review the completed checks and remaining limitations below.",
+      "delay_ms": 8000
+    }
+  ],
+  "water": {
+    "id": "water-pause",
+    "type": "error",
+    "variant": "water_level",
+    "text": "I need water.\nThe water is below the lowest sensor. Refill the upper tank to continue from this point."
+  },
+  "refill": {
+    "id": "water-resume",
+    "type": "action",
+    "variant": "running",
+    "text": "The water reading is stable again. Continuing from where we paused."
+  },
+  "fault": {
+    "id": "sensor-pause",
+    "type": "action",
+    "variant": "error",
+    "text": "I cannot get a reliable water reading. Progress is paused. Please ask the exhibition team to check the sensors."
+  },
+  "final_summary": [
+    {
+      "id": "summary-title",
+      "type": "output",
+      "variant": "H1",
+      "text": "Mobile App"
+    },
+    {
+      "id": "summary-features",
+      "type": "output",
+      "variant": "body",
+      "text": "{idea}\n\nFive connected screens, editable content, filters, local persistence, progress tracking and saved system/light/dark themes."
+    },
+    {
+      "id": "summary-checks",
+      "type": "output",
+      "variant": "body",
+      "text": "Completed checks: clean lockfile install, eight automated tests, TypeScript checking, exported-web DOM integration and Expo web export."
+    },
+    {
+      "id": "summary-limitations",
+      "type": "output",
+      "variant": "body",
+      "text": "Browser rendering and screenshots remain unverified because of sandbox restrictions. Native execution is also unverified. The dependency audit reported 32 vulnerabilities requiring attention."
+    },
+    {
+      "id": "summary-handoff",
+      "type": "output",
+      "variant": "body",
+      "text": "Scan the QR code to open the app-repository address."
+    }
+  ],
+  "repository_url": "https://zwei.berlin/app-repo"
+}

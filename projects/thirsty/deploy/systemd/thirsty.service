@@ -1,0 +1,66 @@
+[Unit]
+Description=Thirsty dedicated kiosk seat (explicit backend and sensor mode)
+After=systemd-user-sessions.service systemd-logind.service bluetooth.service
+Wants=bluetooth.service
+Conflicts=getty@tty7.service
+StartLimitIntervalSec=120
+StartLimitBurst=4
+
+[Service]
+Type=simple
+User=thirsty
+Group=thirsty
+SupplementaryGroups=video render input
+PAMName=thirsty
+WorkingDirectory=/opt/thirsty
+RuntimeDirectory=thirsty
+RuntimeDirectoryMode=0700
+Environment=XDG_RUNTIME_DIR=/run/thirsty
+Environment=XDG_SESSION_TYPE=tty
+Environment=XDG_SEAT=seat0
+Environment=XDG_VTNR=7
+Environment=PYTHONDONTWRITEBYTECODE=1
+Environment=QML_DISABLE_DISK_CACHE=1
+Environment=MESA_SHADER_CACHE_DISABLE=true
+Environment=HOME=/var/lib/thirsty
+Environment=XDG_CACHE_HOME=/run/thirsty/cache
+Environment=XDG_CONFIG_HOME=/etc/thirsty
+UnsetEnvironment=PYTHONPATH PYTHONHOME
+TTYPath=/dev/tty7
+StandardInput=tty
+TTYReset=yes
+TTYVHangup=yes
+TTYVTDisallocate=yes
+# Privileged VT activation only; application/compositor remain non-root.
+ExecStartPre=+/usr/bin/chvt 7
+ExecStart=/usr/bin/python3 /usr/local/lib/thirsty/run.py
+Restart=on-failure
+RestartSec=5
+TimeoutStartSec=120
+TimeoutStopSec=25
+KillMode=mixed
+KillSignal=SIGTERM
+SendSIGKILL=yes
+StandardOutput=journal
+StandardError=journal
+LogNamespace=thirsty
+SyslogIdentifier=thirsty
+LogRateLimitIntervalSec=30s
+LogRateLimitBurst=100
+UMask=0077
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+ReadOnlyPaths=/opt/thirsty /etc/thirsty
+ReadWritePaths=/run/thirsty
+PrivateTmp=yes
+# PrivateDevices would hide GPIO, DRM and evdev: deliberately not enabled.
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectControlGroups=yes
+RestrictAddressFamilies=AF_UNIX AF_NETLINK
+LockPersonality=yes
+LimitCORE=0
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,7 @@
+# System service opens a session only; this is not an interactive login policy.
+auth required pam_deny.so
+account required pam_unix.so
+session required pam_loginuid.so
+session required pam_limits.so
+session required pam_unix.so
+session required pam_systemd.so

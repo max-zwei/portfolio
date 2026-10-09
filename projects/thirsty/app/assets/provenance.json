@@ -1,0 +1,157 @@
+{
+  "schemaVersion": 1,
+  "pathBase": "app/assets",
+  "artwork": [
+    {
+      "path": "icons/avatar.svg",
+      "source": "/Users/max/Downloads/avatar.svg",
+      "acquisition": "User-supplied SVG; original bytes unmodified",
+      "width": "208",
+      "height": "149",
+      "viewBox": "0 0 208 149",
+      "sha256": "3cddcd8c0f5a49dc387db0977e3ee5c7fc0875e6e3c2daf8b952fecc8981a5df",
+      "sizeBytes": 3098,
+      "license": null,
+      "licenseNote": "No artwork copyright or license grant accompanied the user-supplied file."
+    },
+    {
+      "path": "icons/agent-running.svg",
+      "source": "/Users/max/Downloads/State=running.svg",
+      "acquisition": "User-supplied SVG; original bytes unmodified",
+      "width": "16",
+      "height": "16",
+      "viewBox": "0 0 16 16",
+      "sha256": "cd5110a2f75084cc4f8bd7b087aed24d4b552b2ef2ca8aac95802c764f20284d",
+      "sizeBytes": 515,
+      "license": null,
+      "licenseNote": "No artwork copyright or license grant accompanied the user-supplied file."
+    },
+    {
+      "path": "icons/agent-error.svg",
+      "source": "/Users/max/Downloads/State=error.svg",
+      "acquisition": "User-supplied SVG; original bytes unmodified",
+      "width": "16",
+      "height": "16",
+      "viewBox": "0 0 16 16",
+      "sha256": "211fdf8c727950a5d0a06664befe1c57b95460e9393534b62bde5e6237c09ea1",
+      "sizeBytes": 521,
+      "license": null,
+      "licenseNote": "No artwork copyright or license grant accompanied the user-supplied file."
+    },
+    {
+      "path": "icons/water-level-0.svg",
+      "source": "/Users/max/Downloads/Level=0.svg",
+      "acquisition": "User-supplied SVG; original bytes unmodified",
+      "width": "96",
+      "height": "96",
+      "viewBox": "0 0 96 96",
+      "sha256": "127bba01ae3ec1bff2f8ed610b9814881713c04d703e9bb2ef56fdfda3d8e5a7",
+      "sizeBytes": 1668,
+      "license": null,
+      "licenseNote": "No artwork copyright or license grant accompanied the user-supplied file."
+    },
+    {
+      "path": "icons/water-level-1.svg",
+      "source": "/Users/max/Downloads/Level=1.svg",
+      "acquisition": "User-supplied SVG; original bytes unmodified",
+      "width": "96",
+      "height": "96",
+      "viewBox": "0 0 96 96",
+      "sha256": "530ef7410874b5b3d13688bb63e9ebbe7ea1147db07bbb295a4f2e7c2570a91b",
+      "sizeBytes": 1628,
+      "license": null,
+      "licenseNote": "No artwork copyright or license grant accompanied the user-supplied file."
+    },
+    {
+      "path": "icons/water-level-2.svg",
+      "source": "/Users/max/Downloads/Level=2.svg",
+      "acquisition": "User-supplied SVG; original bytes unmodified",
+      "width": "96",
+      "height": "96",
+      "viewBox": "0 0 96 96",
+      "sha256": "75df02bf69197ce52a57ca2d792451a730167288740f46356ae65c63283a333d",
+      "sizeBytes": 1638,
+      "license": null,
+      "licenseNote": "No artwork copyright or license grant accompanied the user-supplied file."
+    },
+    {
+      "path": "icons/water-level-3.svg",
+      "source": "/Users/max/Downloads/Level=3.svg",
+      "acquisition": "User-supplied SVG; original bytes unmodified",
+      "width": "96",
+      "height": "96",
+      "viewBox": "0 0 96 96",
+      "sha256": "021b1e5870389d32a0bac1ede0ae2f483927f0a943b3c8f2dd3a3b25fb2d3c3a",
+      "sizeBytes": 1648,
+      "license": null,
+      "licenseNote": "No artwork copyright or license grant accompanied the user-supplied file."
+    },
+    {
+      "path": "icons/water-level-4.svg",
+      "source": "/Users/max/Downloads/Level=4.svg",
+      "acquisition": "User-supplied SVG; original bytes unmodified",
+      "width": "96",
+      "height": "96",
+      "viewBox": "0 0 96 96",
+      "sha256": "1a570ffa0ad8bcd9ce02e2dab32cd9ebcb8fc00c113f9b5859d50d478671eab1",
+      "sizeBytes": 1658,
+      "license": null,
+      "licenseNote": "No artwork copyright or license grant accompanied the user-supplied file."
+    },
+    {
+      "path": "icons/water-level-5.svg",
+      "source": "/Users/max/Downloads/Level=5.svg",
+      "acquisition": "User-supplied SVG; original bytes unmodified",
+      "width": "96",
+      "height": "96",
+      "viewBox": "0 0 96 96",
+      "sha256": "1666ad92355860afbe540014ab5ae78ae56d26ccb9445a14ac692f175883c5b2",
+      "sizeBytes": 1668,
+      "license": null,
+      "licenseNote": "No artwork copyright or license grant accompanied the user-supplied file."
+    }
+  ],
+  "fontDistribution": {
+    "family": "JetBrains Mono",
+    "version": "2.304",
+    "repository": "https://github.com/JetBrains/JetBrainsMono",
+    "ref": "v2.304",
+    "license": "OFL-1.1",
+    "licenseFile": "fonts/OFL.txt",
+    "authorsFile": "fonts/AUTHORS.txt",
+    "copyright": "Copyright 2020 The JetBrains Mono Project Authors (https://github.com/JetBrains/JetBrainsMono)",
+    "modifications": null,
+    "files": [
+      {
+        "path": "fonts/JetBrainsMono-Regular.ttf",
+        "source": "https://raw.githubusercontent.com/JetBrains/JetBrainsMono/v2.304/fonts/ttf/JetBrainsMono-Regular.ttf",
+        "sha256": "a0bf60ef0f83c5ed4d7a75d45838548b1f6873372dfac88f71804491898d138f",
+        "sizeBytes": 273900,
+        "weight": 400,
+        "style": "Regular",
+        "gitBlobSha1": "dff66cc50702c75abd025dcf49f62a4dcc2d72de"
+      },
+      {
+        "path": "fonts/JetBrainsMono-Italic.ttf",
+        "source": "https://raw.githubusercontent.com/JetBrains/JetBrainsMono/v2.304/fonts/ttf/JetBrainsMono-Italic.ttf",
+        "sha256": "9d0a1f7a708e6af183f1193b7e81d40da294f5c67682c085d8401c60aac8ded4",
+        "sizeBytes": 276840,
+        "weight": 400,
+        "style": "Italic",
+        "gitBlobSha1": "ccc9d6a5bc15ffbcce66f923bf3d7999c73ede84"
+      },
+      {
+        "path": "fonts/OFL.txt",
+        "source": "https://raw.githubusercontent.com/JetBrains/JetBrainsMono/v2.304/OFL.txt",
+        "sha256": "30f0c136e3c88e422d0791acd97238870f9054a9729bc34cf2ff0d4ed8cac4ad",
+        "sizeBytes": 4399
+      },
+      {
+        "path": "fonts/AUTHORS.txt",
+        "source": "https://raw.githubusercontent.com/JetBrains/JetBrainsMono/v2.304/AUTHORS.txt",
+        "sha256": "33f99c94ef0a0909d7584a5d4bde1fb9b1630daa620f5a788c28c43327e79412",
+        "sizeBytes": 350
+      }
+    ]
+  }
+}

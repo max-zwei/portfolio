@@ -1,8 +1,8 @@
 # thirsty — Implementation plan
 
-- Status: architecture selected; implementation not started.
-- Scope: Raspberry Pi setup, sensors, Bluetooth keyboard, HDMI screen, staged interaction.
-- This backlog plans implementation; no application files have been created.
+- Status: native kiosk software implemented; workstation evidence recorded in [docs/validation.md](docs/validation.md). Installation release remains blocked on physical acceptance and owner approval.
+- Scope: native Qt interaction, sensors, Raspberry Pi deployment tooling, Bluetooth keyboard and HDMI installation.
+- The application is runnable, not a shell or contract stub. No physical Pi was available; software completion is not hardware acceptance.
 - Sources: [README.md](README.md), [DESIGN.md](DESIGN.md), [Figma Interface](https://www.figma.com/design/Vly8oZbSYachZu9ecP58h8/thirsty?node-id=0-1).
 - Labels: **selected** = agreed direction; **default** = working choice; **verify** = needs physical evidence or owner input.
 
@@ -32,7 +32,7 @@ Data flow: `switches → sensor adapter → controller ↔ QML interface ← Blu
 
 ## 2. Shared contracts and file ownership
 
-All paths below are planned and relative to this directory. TH-01 establishes the interfaces before parallel implementation.
+All paths below are implemented and relative to this directory. The contracts are shared across mock and live modes.
 
 | Path                                                                 | Responsibility / contract                                                                                                  | Owner issue                                                 |
 | -------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------- |
@@ -118,66 +118,68 @@ Normalized patterns, bottom → top:
 
 ### TH-01 — Application foundation and contracts
 
-- Status: TODO | Depends: none | Execution: workstation
+- Status: DONE (software) | Depends: none | Execution: workstation
 - Files: foundation paths in §2; `tests/test_config.py`; shared contract definitions.
-- Deliver: runnable Qt shell, validated JSON schemas/defaults, Qt-facing contract stub, mock/live mode selection, one launch command, dependency list.
-- Done: shell launches with fixtures; config errors are explicit; mock mode works without GPIO packages/hardware; shared interfaces documented before delegation.
+- Delivered: runnable native application, validated configuration/defaults, concrete Qt-facing controller, mock/live selection, launch command and dependencies.
+- Evidence: included in the 364-test workstation suite; explicit configuration errors and mock operation without GPIO hardware. See [validation](docs/validation.md).
 
 ### TH-02 — Pi, HDMI and Bluetooth baseline
 
-- Status: TODO | Depends: TH-01 | Execution: physical Pi
+- Status: BLOCKED (physical); deployment tooling implemented | Depends: TH-01 | Execution: physical Pi
 - Files: `deploy/` excluding `deploy/systemd/`; `docs/device.md`; hardware fields in `config/device.json`.
 - Deliver: 32-bit Lite setup, packaged Qt/GPIO dependencies, validated graphics backend, fullscreen HDMI output, keyboard pairing/trust/reconnect, keyboard layout, GPIO permissions and pin map.
-- Done: shell types and renders at 1280 × 720; keyboard works after reboot and sleep/wake; no network needed; screen blanking disabled; record OS/packages and idle/typing memory use on 512 MB.
+- Acceptance pending: application types and renders at 1280 × 720; keyboard works after reboot and sleep/wake; no network needed; screen blanking disabled; record OS/packages and idle/typing memory use on 512 MB. No Pi, HDMI or Bluetooth device acceptance has been performed.
 - Gate: verify passive contacts before wiring; record provisional polarity explicitly; unresolved package/graphics/memory problems block device deployment, not mock development.
 
 ### TH-03 — Sensor adapter
 
-- Status: TODO | Depends: TH-01 | Execution: workstation; physical follow-up in TH-10
+- Status: DONE (software); physical calibration remains TH-10 | Depends: TH-01 | Execution: workstation
 - Files: `app/sensors.py`, `tests/test_sensors.py`.
 - Deliver: mock and GPIO adapters implementing §4; configurable polarity/order; timestamps, stabilization, fault reporting and clean shutdown.
 - Done: tests cover all 32 normalized patterns, inverted polarity, bounce, startup, read failure and stale data; accepted readings reach the Qt thread without blocking UI.
 
 ### TH-04 — Theme, assets and reusable QML components
 
-- Status: TODO | Depends: TH-01 | Execution: workstation
+- Status: DONE (software) | Depends: TH-01 | Execution: workstation
 - Files: theme/components/assets paths in §2.
 - Deliver: complete token mapping, local JetBrains Mono regular/italic and notices, Figma avatar/icons, six water levels, message variants, keyboard-focusable controls.
 - Done: compare component captures with Figma; preserve regular vs italic and 400 weight; no default native-control styling; verify font/asset provenance; retain component defaults separately from screen overrides.
+- User-feedback visual direction: use the nine supplied original SVG assets with truthful provenance; animate the running icon's three active perimeter cells clockwise at 100ms intervals. Start H1 uses the action token; Running's transcript starts at the 96px top/left tokens and preserves 96px below its viewport, without moving the fixed water indicator.
 
 ### TH-05 — Complete script, copy and repository handoff content
 
-- Status: TODO | Depends: TH-01 | Execution: workstation + owner review
+- Status: DONE (software); owner copy review pending | Depends: TH-01 | Execution: workstation + owner review
 - Files: `config/script.json`.
 - Deliver: final Start/Input copy; complete staged app-development sequence with messages and delays; water/refill/fault copy; final summary; readable repository link.
 - Done: no filler text; stable message IDs; summary matches staged steps; one shared sequence with safe idea substitution; complete copy ready for review; pending owner approval/URL recorded in §7 for the release gate.
-- Default: approximately 120 seconds of active progress, excluding pauses; tune to physical drainage in TH-10. An unchosen URL blocks release, not fixture-based implementation.
+- User-feedback copy direction: use the submitted idea as the app description, with “Mobile App” as the only generic app name; remove PocketPlan branding and visitor-facing fake/staged disclosure. The first progress output is an app plan, followed by mixed task/action messages. Internal provenance and architecture remain explicitly staged; no real app generation is implied by this presentation change.
+- Default: 120 seconds of active progress, excluding pauses; tune to physical drainage in TH-10. Chosen destination is `https://zwei.berlin/app-repo`; redirect publication and app content remain release blockers (`output/app/` is empty).
 
 ### TH-06 — Experience controller
 
-- Status: TODO | Depends: TH-01 | Execution: workstation
+- Status: DONE (software) | Depends: TH-01 | Execution: workstation
 - Files: `app/controller.py`, `tests/test_controller.py`.
-- Deliver: §3 state transitions, Qt transcript model, timers, remaining-delay tracking, reset and inactivity handling; use script fixtures until TH-05 lands.
+- Delivered: §3 state transitions, Qt transcript model, timers, remaining-delay tracking, reset and inactivity handling, integrated with the complete configured script.
 - Done: tests with a fake clock interrupt every script stage, including just before completion; repeated refill cycles never skip/duplicate work; dry/unknown starts stay paused; faults, reset and duplicate ENTER are covered.
 
 ### TH-07 — Three Figma screens
 
-- Status: TODO | Depends: TH-01, TH-04 | Execution: workstation
+- Status: DONE (software) | Depends: TH-01, TH-04 | Execution: workstation
 - Files: `app/ui/Main.qml`, `app/ui/screens/`.
-- Deliver: Start/Input/Running against the contract stub; Bluetooth-compatible standard key events; anchored water display; auto-scrolling transcript; finished summary and QR placement.
+- Delivered: Start/Input/Running bound to the real controller; standard key events; anchored water display; auto-scrolling transcript; finished summary and QR placement.
 - Done: 1280 × 720 screen captures match scoped DESIGN dimensions; long input/messages remain contained; keyboard focus and validation work; errors and completion reuse Running; no horizontal transcript scrolling.
 - Display rule: prefer physical 1280 × 720; otherwise preserve 16:9 with uniform scaling/letterboxing; verify pixel assets and QR on the actual screen in TH-11.
 
 ### TH-08 — Boot and process recovery
 
-- Status: TODO | Depends: TH-01, TH-02 | Execution: physical Pi
+- Status: BLOCKED (physical); systemd and backend tooling implemented | Depends: TH-01, TH-02 | Execution: physical Pi
 - Files: `deploy/systemd/`.
 - Deliver: application/display startup for TH-02's selected backend; dedicated non-root user with required device permissions; restart-on-failure; bounded volatile logs; operator stop/restart commands.
 - Done: cold boot opens fullscreen; killed process restarts to Start; missing keyboard does not crash/block launch and reconnect restores typing; launch works with Wi-Fi off and Bluetooth on; no desktop dialogs cover the UI.
 
 ### TH-09 — Integration and local QR generation
 
-- Status: TODO | Depends: TH-03, TH-05, TH-06, TH-07 | Execution: workstation; live checks in TH-10/11
+- Status: DONE (software); final native entry-point QR smoke passed | Depends: TH-03, TH-05, TH-06, TH-07 | Execution: workstation; live checks in TH-10/11
 - Files: `app/main.py`, `app/handoff.py`, dependency manifest if needed, `tests/test_integration.py`.
 - Deliver: wire sensors/controller/UI/config together; generate QR locally from the configured repository URL; include its quiet zone and readable URL; validate complete application settings.
 - Done: full journey works offline with mock input; live adapter uses the same contract; QR is created once per URL, not per frame; transcript resets between visitors; no visitor ideas in persistent logs; missing URL is an operator configuration error, never a fabricated handoff.
@@ -185,24 +187,25 @@ Normalized patterns, bottom → top:
 
 ### TH-10 — Calibration and operator runbook
 
-- Status: TODO | Depends: TH-02, TH-03, TH-08, TH-09 | Execution: physical installation
+- Status: BLOCKED (physical); calibration tooling and operator runbook implemented | Depends: TH-02, TH-03, TH-08, TH-09 | Execution: physical installation
 - Files: `docs/operator.md`; tested settings in `config/device.json`; timing changes in `config/script.json` coordinated with TH-05 owner.
 - Deliver: measured wet/dry polarity, height/order and wiring table; drainage/refill tuning; Bluetooth re-pairing/reconnect steps; next-visitor reset; service stop/restart; shutdown/update and backup-image procedure.
 - Done: fill/drain through all six levels; confirm filtering and resume threshold; operator can recover from a sleeping keyboard, sensor fault and restarted process; record power supply/display power arrangement and physical test evidence.
 
 ### TH-11 — Installation acceptance
 
-- Status: TODO | Depends: TH-09, TH-10; owner-approved copy and URL | Execution: physical installation
+- Status: BLOCKED (physical/owner); mock acceptance work complete | Depends: TH-09, TH-10; owner-approved copy and published destination | Execution: workstation evidence + physical installation
 - Files: `docs/validation.md`; orchestrator updates documentation status.
-- Deliver: test report with hardware/OS/package versions, screenshots, memory observations and remaining defects.
-- Done: eight-hour run; at least 100 automated mock sessions plus three physical drain/refill cycles; no crash, OOM, sustained swapping or increasing memory trend; responsive typing and scrolling; boot/recovery and Bluetooth sleep/reconnect pass; phone scans final QR from HDMI screen.
+- Delivered: workstation evidence report with versions, screenshots, 100 accelerated actual-QML/controller/mock sessions and measured workstation RSS; see [docs/validation.md](docs/validation.md).
+- Acceptance pending: eight-hour run; three physical drain/refill cycles; no crash, OOM or sustained swapping and assessment of long-run memory; responsive typing and scrolling on Pi; boot/recovery and Bluetooth sleep/reconnect; phone scans final QR from HDMI screen.
+- Evidence boundary: 100 accelerated sessions do not establish eight-hour stability or Pi memory fit. RSS rose slightly across samples; neither bounded memory nor absence of leaks is established.
 - Release gate: unresolved functional/hardware failures remain open; simulated results never count as physical verification.
 
 ## 6. Dispatch rules
 
 | Wave | Assignments                                                                                           |
 | ---- | ----------------------------------------------------------------------------------------------------- |
-| 1    | TH-01: establish contracts and runnable shell                                                         |
+| 1    | TH-01: establish contracts and runnable native application                                           |
 | 2    | TH-02, TH-03, TH-04, TH-05, TH-06 can run independently after TH-01; respect available agent capacity |
 | 3    | TH-07 after TH-04; TH-08 after TH-02                                                                  |
 | 4    | TH-09 integration                                                                                     |
@@ -215,3 +218,20 @@ Normalized patterns, bottom → top:
 - If hardware is unavailable, mark only physical work blocked and continue independent mock work.
 
 Technical references: [Pi 3 A+ specifications](https://datasheets.raspberrypi.com/rpi3/raspberry-pi-3-a-plus-product-brief.pdf), [Raspberry Pi OS Lite](https://www.raspberrypi.com/software/operating-systems/), [Qt embedded display backends](https://doc.qt.io/qt-6.8/embedded-linux.html), [PySide6 Qt Quick package](https://packages.debian.org/trixie/python3-pyside6.qtquick).
+
+## 7. Approval and installation release checklist
+
+Software work proceeds without further user confirmation. The following are explicit release gates, not reasons to leave independent software unfinished:
+
+- [x] Native application, complete script, theme/assets, controller, sensor adapters and deployment/calibration tooling implemented.
+- [x] Workstation suite: 364 tests; 98 runtime Theme values match DESIGN; 28 source events and 43 provenance quotes checked. Five deployment-review defects corrected with portable regression coverage, not Pi acceptance.
+- [x] Native pause/refill/finish/reset/scaling captures and real QTimer refill-hold smoke; 100 accelerated actual-QML/controller/mock sessions.
+- [x] Final integrated native entry-point smoke: real timers/mock-file sensing, all 18 stages, rendered QR independently decoded to the chosen URL; reset and clean exit.
+- [ ] Owner reviews and approves complete visitor-facing copy.
+- [ ] Publish the chosen `https://zwei.berlin/app-repo` redirect and its intended pre-existing app destination; `output/app/` currently contains no app.
+- [ ] Confirm passive switch contacts before wiring; measure polarity/order and approve final pin map. Provisional/unverified pins must not be represented as tested.
+- [ ] Complete TH-02 hardware baseline and TH-08 cold-boot/restart/offline/Bluetooth acceptance on the actual Pi.
+- [ ] Complete TH-10 physical calibration, drainage timing and operator recovery.
+- [ ] Complete TH-11 eight-hour soak, Pi memory assessment, three physical drain/refill cycles and phone scan from installed HDMI display.
+
+See [operator procedures](docs/operator.md), [device setup](docs/device.md) and [validation evidence](docs/validation.md). No physical installation checks have been performed.

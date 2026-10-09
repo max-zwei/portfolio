@@ -1,0 +1,36 @@
+# Raspberry Pi OS Lite Trixie, armhf. See docs/device.md for sources and limits.
+# One package per line; backend-specific packages are added by setup-device.sh.
+# Use the OS interpreter, not pip wheels or a private Qt build.
+python3
+python3-pyside6.qtcore
+python3-pyside6.qtgui
+python3-pyside6.qtqml
+python3-pyside6.qtquick
+python3-pyside6.qtsvg
+qml6-module-qtqml
+qml6-module-qtqml-models
+qml6-module-qtqml-workerscript
+qml6-module-qtquick
+qml6-module-qtquick-window
+qml6-module-qtquick-layouts
+qml6-module-qtquick-controls
+qml6-module-qtquick-templates
+libqt6gui6
+libqt6svg6
+qt6-svg-plugins
+libegl1
+libegl-mesa0
+libgles2
+libgbm1
+libgl1-mesa-dri
+python3-segno
+# Raspberry Pi repository supplies GPIO Zero 2.x and lgpio; Debian alone does not.
+python3-gpiozero
+python3-lgpio
+bluez
+rfkill
+keyboard-configuration
+console-setup
+xkb-data
+procps
+util-linux
