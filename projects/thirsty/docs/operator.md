@@ -12,22 +12,22 @@ The artwork replays the existing recorded PocketPlan sequence. It does not creat
 
 Fill a private record with date, operator, instrument/tool, observed value, pass/fail and evidence reference for each row. Never replace “unmeasured” with a default, manufacturer rating or inventory flag. Do not commit passwords, Bluetooth addresses, Wi-Fi credentials or visitor text.
 
-| Required evidence | Current status / release consequence |
-| --- | --- |
-| Actual board model, RAM, userspace and interpreter architecture | **Unmeasured / blocked.** Required: Raspberry Pi 3 Model A+, 512 MB, Raspberry Pi OS Lite Trixie, 32-bit armhf userspace and interpreter. A 64-bit kernel alone does not disqualify or prove this. |
-| Exact official image filename, release, URL, published/calculated SHA-256, flash verification, card and project revision | **Unrecorded / blocked.** Follow `device.md`; never substitute another image's checksum. |
-| Installed package versions, graphics plugin availability and non-root permissions | **Untested / blocked.** Attach target preflight evidence; packaged availability is not a render test. |
-| Chosen EGLFS/KMS or Weston/Wayland route, DRM card/connector, active VT/seat, GPU renderer and actual 1280 × 720 output | **Unverified / blocked.** Neither route is approved. |
-| Display model, power arrangement, blanking and monitor sleep | **Unmeasured / blocked.** Record how both Pi and screen receive power and the idle trial duration. |
-| Pi supply, cable, loaded voltage/power behavior, temperature and throttling | **Unmeasured / blocked.** 5 V / 2.5 A is the Pi supply specification, not a measured result and never a GPIO voltage. |
-| All five passive contacts, isolation, rail voltage, BCM/header map, wet/dry polarity, heights and cable behavior | **Unmeasured / blocked.** See the five-switch record below. |
-| Drainage time, refill quantity/height, bounce/filter response and resume hold | **Unmeasured / blocked.** JSON timing values are working defaults only. |
-| Bluetooth pairing, layout, sleep/wake, power-cycle and absent-at-boot recovery | **Untested / blocked.** Keep a wired/local recovery console. |
-| Offline cold boot, service recovery, GPIO cleanup and safe shutdown | **Untested / blocked.** Wi-Fi off must not turn Bluetooth off. |
-| Idle/typing/scrolling memory, swap, eight-hour run and three physical drain/refill cycles | **Unmeasured / blocked.** 512 MB acceptance requires actual observations; do not call a workstation run a Pi pass. |
-| Final owner copy approval | **Pending / blocked for release.** Record approval of the installed `config/script.json` revision. |
-| `https://zwei.berlin/app-repo` redirect, intended existing repository and phone QR scan from HDMI | **Owner redirect pending; destination and scan unverified / blocked for release.** Local QR rendering does not establish any of these. |
-| Recoverable full-card backup and spare-card restore trial | **Not performed / blocked for unattended operation.** Record image hash and restore result privately. |
+| Required evidence                                                                                                        | Current status / release consequence                                                                                                                                                               |
+| ------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Actual board model, RAM, userspace and interpreter architecture                                                          | **Unmeasured / blocked.** Required: Raspberry Pi 3 Model A+, 512 MB, Raspberry Pi OS Lite Trixie, 32-bit armhf userspace and interpreter. A 64-bit kernel alone does not disqualify or prove this. |
+| Exact official image filename, release, URL, published/calculated SHA-256, flash verification, card and project revision | **Unrecorded / blocked.** Follow `device.md`; never substitute another image's checksum.                                                                                                           |
+| Installed package versions, graphics plugin availability and non-root permissions                                        | **Untested / blocked.** Attach target preflight evidence; packaged availability is not a render test.                                                                                              |
+| Chosen EGLFS/KMS or Weston/Wayland route, DRM card/connector, active VT/seat, GPU renderer and actual 1280 × 720 output  | **Unverified / blocked.** Neither route is approved.                                                                                                                                               |
+| Display model, power arrangement, blanking and monitor sleep                                                             | **Unmeasured / blocked.** Record how both Pi and screen receive power and the idle trial duration.                                                                                                 |
+| Pi supply, cable, loaded voltage/power behavior, temperature and throttling                                              | **Unmeasured / blocked.** 5 V / 2.5 A is the Pi supply specification, not a measured result and never a GPIO voltage.                                                                              |
+| All five passive contacts, isolation, rail voltage, BCM/header map, wet/dry polarity, heights and cable behavior         | **Unmeasured / blocked.** See the five-switch record below.                                                                                                                                        |
+| Drainage time, refill quantity/height, bounce/filter response and resume hold                                            | **Unmeasured / blocked.** JSON timing values are working defaults only.                                                                                                                            |
+| Bluetooth pairing, layout, sleep/wake, power-cycle and absent-at-boot recovery                                           | **Untested / blocked.** Keep a wired/local recovery console.                                                                                                                                       |
+| Offline cold boot, service recovery, GPIO cleanup and safe shutdown                                                      | **Untested / blocked.** Wi-Fi off must not turn Bluetooth off.                                                                                                                                     |
+| Idle/typing/scrolling memory, swap, eight-hour run and three physical drain/refill cycles                                | **Unmeasured / blocked.** 512 MB acceptance requires actual observations; do not call a workstation run a Pi pass.                                                                                 |
+| Final owner copy approval                                                                                                | **Pending / blocked for release.** Record approval of the installed `config/script.json` revision.                                                                                                 |
+| `https://zwei.berlin/app-repo` redirect, intended existing repository and phone QR scan from HDMI                        | **Owner redirect pending; destination and scan unverified / blocked for release.** Local QR rendering does not establish any of these.                                                             |
+| Recoverable full-card backup and spare-card restore trial                                                                | **Not performed / blocked for unattended operation.** Record image hash and restore result privately.                                                                                              |
 
 Repository `config/device.json` intentionally has five null `sensors.pins`, five null `physical_pins`, `pin_factory: null` and `hardware_verified: false`. Keep unresolved values that way. Its five `wet_values: 1` entries are provisional, not measurements. Do not set approval flags simply to make a refused launch proceed.
 
@@ -44,6 +44,7 @@ Repository `config/device.json` intentionally has five null `sensors.pins`, five
    ```
 
    Review the simulated plan before `--apply`; apt asks for confirmation. Choose a new output filename for every preflight: it refuses overwrites. Run preflight as a non-root user and again as the final kiosk identity/session. Archive the reviewed report privately before shutdown; `/tmp` and the kiosk journal are not evidence archives. A wrong board/architecture, missing package/plugin, OOM or sustained swapping blocks deployment; do not solve it with arbitrary repositories, pip Qt wheels or a software-renderer fallback.
+
 3. Trial the chosen display with **explicit mock sensors**, following `device.md`, on the actual screen and an active local non-root VT. EGLFS is conditional on the installed official build providing both EGLFS and KMS integration plugins; the documented stock Trixie packages do not establish that route. Wayland must be explicitly chosen and installed, not used as an automatic fallback. Do not run both display owners, use root Qt/Weston, grant `chmod 666` device access or enable a competing getty on VT7.
 4. Observe the actual DRM card, backend-reported connector, active seat, keyboard layout, GPU renderer and physical scanout. Prove 1280 × 720, local font/SVG/QR rendering, responsive synthetic typing, prolonged idle without blanking and the monitor's own sleep policy. App width/height are not proof of HDMI mode. Record any physical 16:9 scaling/letterboxing exception; do not invent a connector or accept llvmpipe just because an image appears.
 5. Prepare the private approval JSON required by `deploy/systemd/install.py`: `backend`, `drm_card`, `connector`, `keyboard_layout`, `record`, and `graphics_verified`, `seat_verified`, `permissions_verified`, `blanking_verified`. The four booleans become true **only after the corresponding physical trials**. Follow the exact EGLFS JSON or Weston INI format in the lifecycle document. Example source locations below are `/root/thirsty-maintenance/approval.json` and `/root/thirsty-maintenance/weston.ini`; these are operator-created files, not supplied approvals.
@@ -77,13 +78,13 @@ Only a competent installer may commission the circuit. Remove visitors, close/co
 
 Measure heights in millimetres from one recorded fixed tank datum, at the installed orientation. Record both rising-water actuation and falling-water release, not an assumed uniform spacing. Use private evidence references for detailed continuity/voltage readings and cable results.
 
-| Switch / array index | Physical order | BCM `pins` | Header `physical_pins` | Dry contact / raw bit | Wet contact / raw bit | `wet_values` | Actuation / release height | Cable behavior / evidence |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| S1 / 0 | Lowest | null — unverified | null — unverified | Unmeasured | Unmeasured | 1 provisional | Unmeasured | Untested / blocked |
-| S2 / 1 | Second | null — unverified | null — unverified | Unmeasured | Unmeasured | 1 provisional | Unmeasured | Untested / blocked |
-| S3 / 2 | Middle | null — unverified | null — unverified | Unmeasured | Unmeasured | 1 provisional | Unmeasured | Untested / blocked |
-| S4 / 3 | Fourth | null — unverified | null — unverified | Unmeasured | Unmeasured | 1 provisional | Unmeasured | Untested / blocked |
-| S5 / 4 | Highest | null — unverified | null — unverified | Unmeasured | Unmeasured | 1 provisional | Unmeasured | Untested / blocked |
+| Switch / array index | Physical order | BCM `pins`        | Header `physical_pins` | Dry contact / raw bit | Wet contact / raw bit | `wet_values`  | Actuation / release height | Cable behavior / evidence |
+| -------------------- | -------------- | ----------------- | ---------------------- | --------------------- | --------------------- | ------------- | -------------------------- | ------------------------- |
+| S1 / 0               | Lowest         | null — unverified | null — unverified      | Unmeasured            | Unmeasured            | 1 provisional | Unmeasured                 | Untested / blocked        |
+| S2 / 1               | Second         | null — unverified | null — unverified      | Unmeasured            | Unmeasured            | 1 provisional | Unmeasured                 | Untested / blocked        |
+| S3 / 2               | Middle         | null — unverified | null — unverified      | Unmeasured            | Unmeasured            | 1 provisional | Unmeasured                 | Untested / blocked        |
+| S4 / 3               | Fourth         | null — unverified | null — unverified      | Unmeasured            | Unmeasured            | 1 provisional | Unmeasured                 | Untested / blocked        |
+| S5 / 4               | Highest        | null — unverified | null — unverified      | Unmeasured            | Unmeasured            | 1 provisional | Unmeasured                 | Untested / blocked        |
 
 In the specified circuit, closed is electrically raw 1 and open raw 0. **Wet is not necessarily closed.** Set each `wet_values[i]` to that switch's actually observed wet raw value. If wet opens the contact, use 0 for that entry; confirm its dry raw value is 1. Reordering a cable requires rechecking all corresponding array entries, not just swapping one polarity. Operational level is not a volume measurement: level 0 is below S1 and may leave residual water; level 5 means S5 wet, not permission to fill above a safe maximum.
 
@@ -162,28 +163,28 @@ Record starting water height, safe maximum fill mark, catch-container free capac
 
 ### Defaults to measure, not claimed calibrated values
 
-| Setting | Current working value | Meaning |
-| --- | --- | --- |
-| `sensors.poll_interval_ms` | 50 ms | Input polling cadence |
-| `sensors.stable_for_ms` | 200 ms | Five-bit pattern must remain unchanged before accepted level change |
-| `sensors.stale_after_ms` | 1000 ms | Old successful readings become unknown; steady unchanged water still gets fresh polls |
-| `interaction.resume_level` | 1 | Minimum valid level for recovery |
-| `interaction.refill_hold_ms` | 2000 ms | Continuous valid recovery hold after stabilization |
-| `interaction.input_inactivity_ms` | 120000 ms | Abandoned Input returns to Start |
-| `interaction.finished_timeout_ms` | 60000 ms | Finished session returns to Start |
+| Setting                              | Current working value             | Meaning                                                                                     |
+| ------------------------------------ | --------------------------------- | ------------------------------------------------------------------------------------------- |
+| `sensors.poll_interval_ms`           | 50 ms                             | Input polling cadence                                                                       |
+| `sensors.stable_for_ms`              | 200 ms                            | Five-bit pattern must remain unchanged before accepted level change                         |
+| `sensors.stale_after_ms`             | 1000 ms                           | Old successful readings become unknown; steady unchanged water still gets fresh polls       |
+| `interaction.resume_level`           | 1                                 | Minimum valid level for recovery                                                            |
+| `interaction.refill_hold_ms`         | 2000 ms                           | Continuous valid recovery hold after stabilization                                          |
+| `interaction.input_inactivity_ms`    | 120000 ms                         | Abandoned Input returns to Start                                                            |
+| `interaction.finished_timeout_ms`    | 60000 ms                          | Finished session returns to Start                                                           |
 | `config/script.json` progress delays | 120 seconds total active progress | Authored exhibition pacing, not the recording's actual duration; pauses extend elapsed time |
 
 1. Begin below S1. Allow stabilization and verify level 0. Enter a synthetic idea and submit while dry: Running must show the refill interruption **before any progress**, not pretend water exists. Test unknown/fault entry separately with a safely controlled diagnostic condition; do not yank powered wires to create it.
 2. Fill slowly past one switch at a time, pausing long enough for stable readings at each height. Record the observed indication against this **normalized wet** table; raw bits may differ because of inversion:
 
-   | Wet pattern, S1 → S5 | Expected level |
-   | --- | --- |
-   | `00000` | 0 |
-   | `10000` | 1 |
-   | `11000` | 2 |
-   | `11100` | 3 |
-   | `11110` | 4 |
-   | `11111` | 5 |
+   | Wet pattern, S1 → S5     | Expected level                                                  |
+   | ------------------------ | --------------------------------------------------------------- |
+   | `00000`                  | 0                                                               |
+   | `10000`                  | 1                                                               |
+   | `11000`                  | 2                                                               |
+   | `11100`                  | 3                                                               |
+   | `11110`                  | 4                                                               |
+   | `11111`                  | 5                                                               |
    | Any other stable pattern | Sensor fault, no valid level; never count isolated wet contacts |
 
 3. Verify that crossing S1 briefly and dropping back does not resume an interrupted session. Hold at or above the configured `resume_level`, with valid stable sensing continuously for the configured hold. Observe automatic resume at the **same script position and remaining delay**, with no duplicated/skipped task or early summary/QR. With current defaults, the 200 ms stabilization precedes the 2-second recovery hold; polling/scheduling add latency, so record observed times rather than claiming exactly 2.200 seconds.
@@ -271,16 +272,16 @@ sudo systemctl stop thirsty.service
 
 Logs are bounded and volatile in the **thirsty namespace**; a reboot may remove them. Save only necessary, reviewed operator diagnostics privately before reboot, never visitor text, input traces, broad environment dumps or visitor screenshots. Do not enable verbose Qt input logging during exhibition use.
 
-| Symptom | Recovery action and return-to-service condition |
-| --- | --- |
-| Refill warning at level 0 | Inspect actual water/catch capacity, refill safely above the approved threshold, then wait for stabilization plus the recovery hold. Do not restart merely to skip the warning. |
+| Symptom                                                                            | Recovery action and return-to-service condition                                                                                                                                                                                                                                                          |
+| ---------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Refill warning at level 0                                                          | Inspect actual water/catch capacity, refill safely above the approved threshold, then wait for stabilization plus the recovery hold. Do not restart merely to skip the warning.                                                                                                                          |
 | Sensor fault/unknown, impossible level, or water indication inconsistent with tank | Stop the session/service. For physical inspection use safe shutdown and remove power before touching connectors. Recheck S1–S5 order, polarity, cable continuity, dry protection and measurements. Restore valid readings and verify a full recovery; plausible values alone do not prove wiring intact. |
-| Sleeping/disconnected keyboard | Follow §5; app startup must not depend on a connected keyboard. Restarting the app is not pairing. |
-| Black/blank screen or repeated display failure | Use recovery console, stop service, inspect namespace logs, HDMI power/mode, active seat/VT, approval/config and competing display/getty. Fix the recorded route; never switch backend, software renderer or root permissions silently. |
-| Repeated service restart / start limit | Read the failure first and stop. Fix invalid config, missing packages, permissions or hardware cause. Then `sudo systemctl reset-failed thirsty.service` and `sudo systemctl start thirsty.service`. Do not repeatedly clear the limit to conceal a fault. |
-| Process failure or power restoration | Expected behavior is a new Start, not a restored transcript. If this does not occur, stop admission and diagnose. A manual `systemctl stop` intentionally stays stopped. |
-| Configuration/URL error | Restore the reviewed complete local JSON or correct the actual field named by the error. Never insert a sample URL, force full water, loosen validation or copy a fixture into production. |
-| OOM, sustained swapping, thermal/voltage warning or sluggish typing | Stop admission and collect target resource/power evidence through `device.md`. Fix supply/cooling/package/display issues; a 512 MB Pi must pass measured resource acceptance before reopening. |
+| Sleeping/disconnected keyboard                                                     | Follow §5; app startup must not depend on a connected keyboard. Restarting the app is not pairing.                                                                                                                                                                                                       |
+| Black/blank screen or repeated display failure                                     | Use recovery console, stop service, inspect namespace logs, HDMI power/mode, active seat/VT, approval/config and competing display/getty. Fix the recorded route; never switch backend, software renderer or root permissions silently.                                                                  |
+| Repeated service restart / start limit                                             | Read the failure first and stop. Fix invalid config, missing packages, permissions or hardware cause. Then `sudo systemctl reset-failed thirsty.service` and `sudo systemctl start thirsty.service`. Do not repeatedly clear the limit to conceal a fault.                                               |
+| Process failure or power restoration                                               | Expected behavior is a new Start, not a restored transcript. If this does not occur, stop admission and diagnose. A manual `systemctl stop` intentionally stays stopped.                                                                                                                                 |
+| Configuration/URL error                                                            | Restore the reviewed complete local JSON or correct the actual field named by the error. Never insert a sample URL, force full water, loosen validation or copy a fixture into production.                                                                                                               |
+| OOM, sustained swapping, thermal/voltage warning or sluggish typing                | Stop admission and collect target resource/power evidence through `device.md`. Fix supply/cooling/package/display issues; a 512 MB Pi must pass measured resource acceptance before reopening.                                                                                                           |
 
 The service bounds repeated failure (four starts in 120 seconds, five-second restart spacing). Only resume after the underlying cause is corrected and a supervised synthetic journey passes. Explicit stop permits orderly app/GPIO cleanup; do not habitually use `kill -9`, pull the SD card or yank power as recovery.
 
@@ -321,6 +322,7 @@ A copy of the application alone does not preserve the approved OS/packages, boot
    ```
 
    Verify the whole-card device against the physical card twice; it must not be the maintenance computer's system disk. Unmount each listed card partition with `sudo umount` followed by its actual partition path. Do not unmount unrelated disks. The backup command below uses GNU/Linux `dd`, not macOS/BSD options.
+
 2. Set shell variable `CARD` to the observed **whole-card block-device path**, not a partition, and `IMAGE` to a **new absolute image filename** on separate trusted storage with at least the card's capacity free. No device name is supplied here because guessing one risks the wrong disk. Set these variables in the same maintenance shell before the commands:
 
    ```sh

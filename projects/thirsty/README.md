@@ -79,16 +79,16 @@ This changes file visibility flags only inside the virtual environment; it does 
 
 ## Technology and architecture
 
-| Part        | Selected direction                                                                |
-| ----------- | --------------------------------------------------------------------------------- |
-| OS          | Raspberry Pi OS Lite, 32-bit                                                      |
-| Application | One Python 3 process; Qt event loop                                               |
-| Interface   | PySide6 / Qt Quick / QML; fullscreen HDMI; three Figma screens                    |
-| Sensors     | GPIO Zero; five digital inputs; normalized water levels 0–5                       |
-| Input       | Bluetooth keyboard; OS pairing/trust and physical reconnect acceptance pending |
-| Content     | Local JSON messages, timings, settings and repository URL                         |
+| Part        | Selected direction                                                                                        |
+| ----------- | --------------------------------------------------------------------------------------------------------- |
+| OS          | Raspberry Pi OS Lite, 32-bit                                                                              |
+| Application | One Python 3 process; Qt event loop                                                                       |
+| Interface   | PySide6 / Qt Quick / QML; fullscreen HDMI; three Figma screens                                            |
+| Sensors     | GPIO Zero; five digital inputs; normalized water levels 0–5                                               |
+| Input       | Bluetooth keyboard; OS pairing/trust and physical reconnect acceptance pending                            |
+| Content     | Local JSON messages, timings, settings and repository URL                                                 |
 | Design      | Full DESIGN token mapping in `Theme.qml` (not CSS); local JetBrains Mono fonts and original Figma artwork |
-| Startup     | systemd autostart and restart-on-failure                                          |
+| Startup     | systemd autostart and restart-on-failure                                                                  |
 
 - Sensor reader → experience controller → interface; keyboard actions return to the controller.
 - Prefer Qt's direct fullscreen display backend; verify compatibility and memory use on the 512 MB Pi before deployment.

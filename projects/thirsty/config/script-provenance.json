@@ -32,7 +32,10 @@
       "method": "Authored exhibition pacing, not proportional timestamp scaling",
       "active_duration_ms": 120000,
       "pause_time_excluded": true,
-      "cumulative_insertions_ms": [0, 4000, 10000, 16000, 23000, 31000, 39000, 46000, 52000, 58000, 64000, 72000, 80000, 88000, 96000, 104000, 112000, 120000],
+      "cumulative_insertions_ms": [
+        0, 4000, 10000, 16000, 23000, 31000, 39000, 46000, 52000, 58000, 64000,
+        72000, 80000, 88000, 96000, 104000, 112000, 120000
+      ],
       "semantics": "Each delay_ms is active time before that row is inserted. Final-summary rows follow the last progress row. Sensor/water pauses do not consume staged active time. Physical drainage tuning is pending.",
       "editing": "An output/body row opens with an authored numbered plan. Task/body rows for scope, editors, logic tests, DOM coverage and final checks alternate with action outcomes and failures throughout. Historical feature names are generalized, not evidence that arbitrary visitor ideas were implemented. Dependency compatibility is grouped before the first tests/export recap, although the original passing tests/export preceded its successful recheck. Test outcomes are grouped into subsequent action rows. All original IDs and delays are retained."
     }
@@ -243,39 +246,191 @@
     }
   },
   "message_mapping": [
-    {"id": "recording-intro", "source_ids": ["item_0", "item_62"], "treatment": "Authored output/body numbered plan adapted from historical workflow; Mobile App and {idea} are owner-requested framing, not source quotations or a new build promise in the internal evidence record."},
-    {"id": "idea-acknowledgement", "source_ids": ["item_0", "item_50"], "treatment": "Authored scope task using local-data and no-account constraints; legacy ID retained, no idea echo in this row."},
-    {"id": "five-screen-plan", "source_ids": ["item_0", "item_13", "item_50"], "treatment": "Authored planning task generalizing the five-screen scope; no historical app name or fixed screen-name inventory."},
-    {"id": "local-calendar-data", "source_ids": ["item_10"], "treatment": "Condensed visible progress report."},
-    {"id": "dependency-install-obstacles", "source_ids": ["item_10", "item_12", "item_16"], "treatment": "Adapted cache and CLI failures in narrative present tense; personal paths removed. No installation runs during the visit."},
-    {"id": "screens-and-editors", "source_ids": ["item_16", "item_44", "item_62"], "treatment": "Historical feature recap rewritten as a task/body instruction with generic editable content."},
-    {"id": "dependency-compatibility", "source_ids": ["item_21", "item_22", "item_26"], "treatment": "Adapted repair outcome, editorially grouped before the tests/export recap."},
-    {"id": "planning-tests", "source_ids": ["item_18", "item_20", "item_29"], "treatment": "Historical test coverage rewritten as a task/body instruction; passing outcome appears in web-export. No checks run by this installation."},
-    {"id": "web-export", "source_ids": ["item_18", "item_20", "item_23", "item_29", "item_37", "item_62"], "treatment": "Authored combined action recap of historical logic, type and export success, not current checks."},
-    {"id": "system-browser-blocked", "source_ids": ["item_29"], "treatment": "Adapted visible report, preserving failure and absent screenshot."},
-    {"id": "headless-browser-blocked", "source_ids": ["item_34", "item_44"], "treatment": "Condensed failure and change of verification method. Permission denied (1100) is an exact source phrase, not a new runtime error."},
-    {"id": "dom-harness-repair", "source_ids": ["item_40", "item_42"], "treatment": "Adapted recorded failed first test and repair. Could not find default container is an exact tool-output phrase."},
-    {"id": "dom-integration", "source_ids": ["item_42", "item_44", "item_58"], "treatment": "Historical DOM coverage adapted as a task/body instruction with generic editable content; outcome appears in clean-install-and-audit."},
-    {"id": "native-unverified", "source_ids": ["item_46", "item_47", "item_48", "item_62"], "treatment": "Adapted unavailable-tool evidence and final limitation; no target-device claim."},
-    {"id": "clean-install-and-audit", "source_ids": ["item_42", "item_44", "item_45"], "treatment": "Authored combined historical DOM and install outcome with unresolved vulnerability counts; not current verification or security clearance."},
-    {"id": "final-recorded-checks", "source_ids": ["item_56", "item_55", "item_57", "item_58"], "treatment": "Historical final-check scope rewritten as a task/body instruction, including storage recovery; outcome appears in recorded-report."},
-    {"id": "recorded-report", "source_ids": ["item_0", "item_50", "item_55", "item_56", "item_57", "item_58", "item_61", "item_62"], "treatment": "Authored action recap combining historical final check outcomes and documentation handoff. No checks run or new files written during the visit."},
-    {"id": "recording-close", "source_ids": ["item_62"], "treatment": "Authored transition to the handoff summary using the generic Mobile App name. No disclosure in visitor copy; internal evidence remains historical and the installation generates no app."},
-    {"id": "water-pause", "source_ids": [], "treatment": "Authored physical interaction copy from PRODUCT.md/README.md; not an event in the PocketPlan recording. Below the lowest sensor is not a claim that the tank is completely empty."},
-    {"id": "water-resume", "source_ids": [], "treatment": "Authored stable-reading recovery copy from PRODUCT.md; avoids hardcoding configurable hold duration or sensor threshold."},
-    {"id": "sensor-pause", "source_ids": [], "treatment": "Authored unknown/fault interaction copy from PRODUCT.md; not a recorded build error or evidence of tested hardware."},
-    {"id": "summary-title", "source_ids": [], "treatment": "Owner-requested generic Mobile App title."},
-    {"id": "summary-features", "source_ids": ["item_13", "item_18", "item_58", "item_62"], "treatment": "Authored {idea} description and generalized historical feature inventory. The visitor's idea does not change the implementation; no new app is generated."},
-    {"id": "summary-checks", "source_ids": ["item_45", "item_56", "item_55", "item_58", "item_37", "item_62"], "treatment": "Adapted historical successful outcomes without visitor-facing recording labels; not current installation checks."},
-    {"id": "summary-limitations", "source_ids": ["item_34", "item_44", "item_45", "item_62"], "treatment": "Condensed historical browser/native limitations plus preserved dependency vulnerability warning."},
-    {"id": "summary-handoff", "source_ids": [], "treatment": "Authored instruction to open the owner-approved app-repository address, not a verified downloadable app. Redirect configuration, destination and QR scan remain unverified."}
+    {
+      "id": "recording-intro",
+      "source_ids": ["item_0", "item_62"],
+      "treatment": "Authored output/body numbered plan adapted from historical workflow; Mobile App and {idea} are owner-requested framing, not source quotations or a new build promise in the internal evidence record."
+    },
+    {
+      "id": "idea-acknowledgement",
+      "source_ids": ["item_0", "item_50"],
+      "treatment": "Authored scope task using local-data and no-account constraints; legacy ID retained, no idea echo in this row."
+    },
+    {
+      "id": "five-screen-plan",
+      "source_ids": ["item_0", "item_13", "item_50"],
+      "treatment": "Authored planning task generalizing the five-screen scope; no historical app name or fixed screen-name inventory."
+    },
+    {
+      "id": "local-calendar-data",
+      "source_ids": ["item_10"],
+      "treatment": "Condensed visible progress report."
+    },
+    {
+      "id": "dependency-install-obstacles",
+      "source_ids": ["item_10", "item_12", "item_16"],
+      "treatment": "Adapted cache and CLI failures in narrative present tense; personal paths removed. No installation runs during the visit."
+    },
+    {
+      "id": "screens-and-editors",
+      "source_ids": ["item_16", "item_44", "item_62"],
+      "treatment": "Historical feature recap rewritten as a task/body instruction with generic editable content."
+    },
+    {
+      "id": "dependency-compatibility",
+      "source_ids": ["item_21", "item_22", "item_26"],
+      "treatment": "Adapted repair outcome, editorially grouped before the tests/export recap."
+    },
+    {
+      "id": "planning-tests",
+      "source_ids": ["item_18", "item_20", "item_29"],
+      "treatment": "Historical test coverage rewritten as a task/body instruction; passing outcome appears in web-export. No checks run by this installation."
+    },
+    {
+      "id": "web-export",
+      "source_ids": [
+        "item_18",
+        "item_20",
+        "item_23",
+        "item_29",
+        "item_37",
+        "item_62"
+      ],
+      "treatment": "Authored combined action recap of historical logic, type and export success, not current checks."
+    },
+    {
+      "id": "system-browser-blocked",
+      "source_ids": ["item_29"],
+      "treatment": "Adapted visible report, preserving failure and absent screenshot."
+    },
+    {
+      "id": "headless-browser-blocked",
+      "source_ids": ["item_34", "item_44"],
+      "treatment": "Condensed failure and change of verification method. Permission denied (1100) is an exact source phrase, not a new runtime error."
+    },
+    {
+      "id": "dom-harness-repair",
+      "source_ids": ["item_40", "item_42"],
+      "treatment": "Adapted recorded failed first test and repair. Could not find default container is an exact tool-output phrase."
+    },
+    {
+      "id": "dom-integration",
+      "source_ids": ["item_42", "item_44", "item_58"],
+      "treatment": "Historical DOM coverage adapted as a task/body instruction with generic editable content; outcome appears in clean-install-and-audit."
+    },
+    {
+      "id": "native-unverified",
+      "source_ids": ["item_46", "item_47", "item_48", "item_62"],
+      "treatment": "Adapted unavailable-tool evidence and final limitation; no target-device claim."
+    },
+    {
+      "id": "clean-install-and-audit",
+      "source_ids": ["item_42", "item_44", "item_45"],
+      "treatment": "Authored combined historical DOM and install outcome with unresolved vulnerability counts; not current verification or security clearance."
+    },
+    {
+      "id": "final-recorded-checks",
+      "source_ids": ["item_56", "item_55", "item_57", "item_58"],
+      "treatment": "Historical final-check scope rewritten as a task/body instruction, including storage recovery; outcome appears in recorded-report."
+    },
+    {
+      "id": "recorded-report",
+      "source_ids": [
+        "item_0",
+        "item_50",
+        "item_55",
+        "item_56",
+        "item_57",
+        "item_58",
+        "item_61",
+        "item_62"
+      ],
+      "treatment": "Authored action recap combining historical final check outcomes and documentation handoff. No checks run or new files written during the visit."
+    },
+    {
+      "id": "recording-close",
+      "source_ids": ["item_62"],
+      "treatment": "Authored transition to the handoff summary using the generic Mobile App name. No disclosure in visitor copy; internal evidence remains historical and the installation generates no app."
+    },
+    {
+      "id": "water-pause",
+      "source_ids": [],
+      "treatment": "Authored physical interaction copy from PRODUCT.md/README.md; not an event in the PocketPlan recording. Below the lowest sensor is not a claim that the tank is completely empty."
+    },
+    {
+      "id": "water-resume",
+      "source_ids": [],
+      "treatment": "Authored stable-reading recovery copy from PRODUCT.md; avoids hardcoding configurable hold duration or sensor threshold."
+    },
+    {
+      "id": "sensor-pause",
+      "source_ids": [],
+      "treatment": "Authored unknown/fault interaction copy from PRODUCT.md; not a recorded build error or evidence of tested hardware."
+    },
+    {
+      "id": "summary-title",
+      "source_ids": [],
+      "treatment": "Owner-requested generic Mobile App title."
+    },
+    {
+      "id": "summary-features",
+      "source_ids": ["item_13", "item_18", "item_58", "item_62"],
+      "treatment": "Authored {idea} description and generalized historical feature inventory. The visitor's idea does not change the implementation; no new app is generated."
+    },
+    {
+      "id": "summary-checks",
+      "source_ids": [
+        "item_45",
+        "item_56",
+        "item_55",
+        "item_58",
+        "item_37",
+        "item_62"
+      ],
+      "treatment": "Adapted historical successful outcomes without visitor-facing recording labels; not current installation checks."
+    },
+    {
+      "id": "summary-limitations",
+      "source_ids": ["item_34", "item_44", "item_45", "item_62"],
+      "treatment": "Condensed historical browser/native limitations plus preserved dependency vulnerability warning."
+    },
+    {
+      "id": "summary-handoff",
+      "source_ids": [],
+      "treatment": "Authored instruction to open the owner-approved app-repository address, not a verified downloadable app. Redirect configuration, destination and QR scan remain unverified."
+    }
   ],
   "screen_copy": {
     "basis": "Authored complete installation instructions, not quotes from the PocketPlan recording. The Start heading is the design interaction anchor required by the owner.",
-    "start_title": {"treatment": "Preserved owner-required design anchor", "text": "##### FREE AI CREDITS #####"},
-    "start_body": {"source_ids": [], "treatment": "Authored owner-requested immersive introduction, not a recorded agent quotation. Invites an app description and explains the real-water refill interaction without a recording disclosure. Rendering and final approval remain pending.", "text": "Describe the mobile app you want to make.\nKeep the water flowing while I work on your idea.\nWhen progress pauses, refill the upper tank to continue."},
-    "start_prompt": {"treatment": "Authored installation instruction, not a recorded agent quote", "text": "Press ENTER to begin."},
-    "authored_fields": ["start_body", "start_prompt", "input_title", "input_prompt", "input_placeholder", "input_submit_label", "empty_input_error", "long_input_error", "running_title", "finished_prompt", "repository_label", "water_label", "sensor_unknown_label", "sensor_fault_label"],
+    "start_title": {
+      "treatment": "Preserved owner-required design anchor",
+      "text": "##### FREE AI CREDITS #####"
+    },
+    "start_body": {
+      "source_ids": [],
+      "treatment": "Authored owner-requested immersive introduction, not a recorded agent quotation. Invites an app description and explains the real-water refill interaction without a recording disclosure. Rendering and final approval remain pending.",
+      "text": "Describe the mobile app you want to make.\nKeep the water flowing while I work on your idea.\nWhen progress pauses, refill the upper tank to continue."
+    },
+    "start_prompt": {
+      "treatment": "Authored installation instruction, not a recorded agent quote",
+      "text": "Press ENTER to begin."
+    },
+    "authored_fields": [
+      "start_body",
+      "start_prompt",
+      "input_title",
+      "input_prompt",
+      "input_placeholder",
+      "input_submit_label",
+      "empty_input_error",
+      "long_input_error",
+      "running_title",
+      "finished_prompt",
+      "repository_label",
+      "water_label",
+      "sensor_unknown_label",
+      "sensor_fault_label"
+    ],
     "heading_rendering": "Task/output H1 text omits a leading Markdown # because AgentMessage supplies the marker. Start's source heading is a separate screen-copy field.",
     "water_rendering": "First line of water-pause is the warning headline; remaining line is the body.",
     "approval": "Pending final owner copy approval; no visitor readability or physical installation acceptance is claimed."
@@ -294,7 +449,19 @@
   "validation_boundary": {
     "schema_reference": "app/config.py:ScreenCopy, ScriptConfig and app/contracts.py:MESSAGE_VARIANTS",
     "checks_run_for_this_content_change": [],
-    "parent_checks_requested": ["Load production script with the native schema", "Check global row IDs, roles and both exact {idea} substitutions", "Check opening output/body numbered plan and task/action mixture", "Check delay sum against authored 120000 ms timeline", "Compare source IDs/timestamps/quotes with recording", "Check plain-text visitor rendering and final summary layout"],
-    "release_gates": ["Final owner copy approval", "Owner configures redirect and verifies app-repository destination", "QR scan verification on installed display", "Physical water/drainage timing and installation acceptance"]
+    "parent_checks_requested": [
+      "Load production script with the native schema",
+      "Check global row IDs, roles and both exact {idea} substitutions",
+      "Check opening output/body numbered plan and task/action mixture",
+      "Check delay sum against authored 120000 ms timeline",
+      "Compare source IDs/timestamps/quotes with recording",
+      "Check plain-text visitor rendering and final summary layout"
+    ],
+    "release_gates": [
+      "Final owner copy approval",
+      "Owner configures redirect and verifies app-repository destination",
+      "QR scan verification on installed display",
+      "Physical water/drainage timing and installation acceptance"
+    ]
   }
 }

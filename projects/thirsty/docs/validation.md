@@ -6,12 +6,12 @@ Native Python/PySide6/Qt Quick kiosk software is implemented. This report record
 
 ## Workstation environment
 
-| Item | Observed version |
-| --- | --- |
-| OS / architecture | macOS 27, arm64 |
-| Python | 3.14.8 |
-| Qt / PySide6 | 6.12.0 |
-| segno | 1.6.6 |
+| Item              | Observed version |
+| ----------------- | ---------------- |
+| OS / architecture | macOS 27, arm64  |
+| Python            | 3.14.8           |
+| Qt / PySide6      | 6.12.0           |
+| segno             | 1.6.6            |
 
 These are workstation observations, not an approved Pi image or package baseline.
 
@@ -63,12 +63,12 @@ Before the user-feedback changes, the integration owner exercised the actual QML
 - This is accelerated simulated time, not a real-time soak.
 
 | Completed sessions | Workstation RSS (KiB) |
-| --- | ---: |
-| 20 | 168,544 |
-| 40 | 169,776 |
-| 60 | 170,256 |
-| 80 | 171,072 |
-| 100 | 171,600 |
+| ------------------ | --------------------: |
+| 20                 |               168,544 |
+| 40                 |               169,776 |
+| 60                 |               170,256 |
+| 80                 |               171,072 |
+| 100                |               171,600 |
 
 RSS rose by 3,056 KiB between the first and last recorded samples. This is a small observed rise, **not proof of bounded memory or absence of leaks**. There was no eight-hour soak and no Pi memory measurement. These workstation values do not establish compatibility with the Pi 3 Model A+'s 512 MB RAM.
 
@@ -76,14 +76,14 @@ RSS rose by 3,056 KiB between the first and last recorded samples. This is a sma
 
 The integration owner supplied updated native captures for the user-feedback verification. Start, Input, water-paused and finished replace the earlier captures; plan and actions are additional views:
 
-| State | Capture |
-| --- | --- |
-| Start | [start.png](validation/start.png) |
-| Input | [input.png](validation/input.png) |
-| Output plan / visitor idea | [plan.png](validation/plan.png) |
-| Mixed tasks / actions | [actions.png](validation/actions.png) |
-| Water paused | [water-paused.png](validation/water-paused.png) |
-| Finished / QR | [finished.png](validation/finished.png) |
+| State                      | Capture                                         |
+| -------------------------- | ----------------------------------------------- |
+| Start                      | [start.png](validation/start.png)               |
+| Input                      | [input.png](validation/input.png)               |
+| Output plan / visitor idea | [plan.png](validation/plan.png)                 |
+| Mixed tasks / actions      | [actions.png](validation/actions.png)           |
+| Water paused               | [water-paused.png](validation/water-paused.png) |
+| Finished / QR              | [finished.png](validation/finished.png)         |
 
 Workstation screenshots do not replace installed-screen checks, pixel/QR readability at the actual display mode or a phone scan.
 

@@ -205,7 +205,7 @@ Normalized patterns, bottom → top:
 
 | Wave | Assignments                                                                                           |
 | ---- | ----------------------------------------------------------------------------------------------------- |
-| 1    | TH-01: establish contracts and runnable native application                                           |
+| 1    | TH-01: establish contracts and runnable native application                                            |
 | 2    | TH-02, TH-03, TH-04, TH-05, TH-06 can run independently after TH-01; respect available agent capacity |
 | 3    | TH-07 after TH-04; TH-08 after TH-02                                                                  |
 | 4    | TH-09 integration                                                                                     |
