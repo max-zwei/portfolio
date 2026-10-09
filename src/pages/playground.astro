@@ -5,16 +5,8 @@ import ChatBubble from '../components/ChatBubble.astro';
 import FlipCard from '../components/FlipCard.astro';
 import NavBar from '../components/NavBar.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { withBase } from '../config/site';
 
 const entries = await getCollection('playground');
-const positions = [
-  { x: 986, y: 32, column: 1, row: 0 },
-  { x: 430, y: 332, column: 0, row: 1 },
-  { x: 763, y: 406, column: 1, row: 1 },
-  { x: 1101, y: 482, column: 2, row: 1 },
-] as const;
-const handshakeHref = withBase('/handshake');
 ---
 
 <BaseLayout title="Playground">
@@ -38,54 +30,42 @@ const handshakeHref = withBase('/handshake');
       <div class="playground__chat" data-playground-chat>
         <div class="playground__chat-state">
           <Avatar user="max" class="playground__avatar" />
-          <div class="playground__agreement">
-            <div class="playground__message-stack">
-              <ChatBubble
-                user="talking-head"
-                state="default"
-                class="playground__bubble playground__message--expanded"
-              >
-                <p>
-                  I’m always up for a challenge, if you have an upcoming project
-                  and are limited regarding your resources, check out my
-                  handshake agreement. I basically offer free-of-charge support
-                  with the prerequisite of using the work in my portfolio.
-                </p>
-              </ChatBubble>
-              <ChatBubble
-                user="talking-head"
-                state="default"
-                class="playground__bubble playground__message--collapsed"
-              >
-                <p>“Do one portrait, now do 200 more!”</p>
-                <p>- Brian Chesky</p>
-              </ChatBubble>
-            </div>
+          <div class="playground__message-stack">
             <ChatBubble
-              user="visitor"
+              user="talking-head"
               state="default"
-              href={handshakeHref}
-              class="playground__selection"
+              class="playground__bubble playground__message--expanded"
             >
-              Tell me more about this handshake agreement
+              <p>
+                I’m always up for a challenge, if you have an upcoming project
+                and are limited regarding your resources, check out my handshake
+                agreement. I basically offer free-of-charge support with the
+                prerequisite of using the work in my portfolio.
+              </p>
+            </ChatBubble>
+            <ChatBubble
+              user="talking-head"
+              state="default"
+              class="playground__bubble playground__message--collapsed"
+            >
+              <p>“Do one portrait, now do 200 more!”</p>
+              <p>- Brian Chesky</p>
             </ChatBubble>
           </div>
         </div>
       </div>
 
-      <div class="playground__world" data-world>
+      <div
+        class="playground__world"
+        data-world
+        data-has-cards={entries.length > 0 ? '' : undefined}
+      >
         <span class="playground__sentinel" data-canvas-sentinel></span>
         {
-          entries.map((entry, index) => {
-            const position = positions[index % positions.length];
+          entries.map((entry) => {
             const slug = entry.id.replace(/\.md$/, '');
             return (
-              <div
-                id={slug}
-                class="playground__card"
-                tabindex="-1"
-                style={`--card-x: calc(${position.x}px + ${position.column} * var(--space-2xl)); --card-y: calc(${position.y}px + ${position.row} * var(--space-2xl))`}
-              >
+              <div id={slug} class="playground__card" tabindex="-1">
                 <FlipCard
                   id={`playground-${slug}`}
                   state="front"
@@ -124,8 +104,16 @@ const handshakeHref = withBase('/handshake');
 
   .playground__world {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    grid-template-columns: max-content;
     gap: var(--space-2xl);
+    align-content: start;
+    align-items: start;
+    justify-content: start;
+  }
+
+  .playground__card {
+    inline-size: max-content;
+    justify-self: start;
   }
 
   .playground__sentinel {
@@ -143,17 +131,11 @@ const handshakeHref = withBase('/handshake');
     gap: var(--space-md);
   }
 
-  .playground__agreement {
+  .playground__message-stack {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
     justify-items: start;
-    gap: var(--space-xs);
     min-inline-size: 0;
-  }
-
-  .playground__message-stack {
-    display: grid;
-    justify-items: start;
   }
 
   .playground__message-stack :global(.playground__message--collapsed) {
@@ -166,11 +148,6 @@ const handshakeHref = withBase('/handshake');
 
   .playground__chat :global(.playground__bubble) p {
     max-width: none;
-  }
-
-  .playground__chat :global(.playground__selection) {
-    max-inline-size: min(100%, var(--size-chat-choice));
-    white-space: normal;
   }
 
   :global(html.js) .playground__viewport {
@@ -187,11 +164,22 @@ const handshakeHref = withBase('/handshake');
   :global(html.js) .playground__world {
     position: absolute;
     inset: 0;
-    display: block;
+    grid-template-columns: repeat(3, max-content);
+    padding-block-start: calc(var(--space-lg) + var(--space-2xs));
+    padding-inline-start: var(--grid-margin);
     inline-size: 100%;
     block-size: 100%;
     transform-origin: left top;
     will-change: transform;
+  }
+
+  :global(html.js) .playground__world[data-has-cards]::before {
+    content: '';
+    grid-column: 1 / span 2;
+    grid-row: 1;
+    min-inline-size: var(--chat-inline-size, 0);
+    block-size: var(--chat-block-size, 0);
+    pointer-events: none;
   }
 
   :global(html.js) .playground__sentinel {
@@ -204,10 +192,17 @@ const handshakeHref = withBase('/handshake');
     opacity: 0;
   }
 
-  :global(html.js) .playground__card {
-    position: absolute;
-    inset-block-start: var(--card-y);
-    inset-inline-start: var(--card-x);
+  :global(html.js) .playground__card:nth-child(1 of .playground__card) {
+    grid-column: 3;
+    grid-row: 1;
+  }
+
+  :global(html.js) .playground__card:nth-child(3n of .playground__card) {
+    margin-block-start: var(--space-xl);
+  }
+
+  :global(html.js) .playground__card:nth-child(3n + 4 of .playground__card) {
+    margin-block-start: calc(2 * var(--space-xl));
   }
 
   :global(html.js) .playground__chat {
@@ -222,7 +217,7 @@ const handshakeHref = withBase('/handshake');
     display: none;
   }
 
-  .playground__chat[data-collapsed] .playground__agreement {
+  .playground__chat[data-collapsed] .playground__message-stack {
     inline-size: max-content;
     max-inline-size: min(
       100%,
@@ -230,22 +225,10 @@ const handshakeHref = withBase('/handshake');
     );
   }
 
-  .playground__chat[data-collapsed] .playground__message-stack {
-    inline-size: auto;
-    justify-self: stretch;
-  }
-
   .playground__chat[data-collapsed] :global(.playground__message--collapsed) {
     display: block;
     inline-size: auto;
     justify-self: stretch;
-  }
-
-  .playground__chat[data-collapsed] :global(.playground__selection) {
-    inline-size: 100%;
-    max-inline-size: none;
-    min-inline-size: 0;
-    contain: inline-size;
   }
 
   @media (max-width: 48rem) {
@@ -260,8 +243,20 @@ const handshakeHref = withBase('/handshake');
     :global(html.js) .playground__world {
       position: static;
       display: grid;
-      grid-template-columns: 1fr;
+      grid-template-columns: max-content;
+      block-size: auto;
+      padding: 0;
       transform: none !important;
+    }
+
+    :global(html.js) .playground__world[data-has-cards]::before {
+      display: none;
+    }
+
+    :global(html.js) .playground__world .playground__card {
+      grid-column: auto;
+      grid-row: auto;
+      margin-block-start: 0;
     }
 
     :global(html.js) .playground__card,
@@ -317,6 +312,91 @@ const handshakeHref = withBase('/handshake');
       render();
     };
 
+    let focusedCard: HTMLElement | null = null;
+    let focusedLeft = 0;
+    let focusedTop = 0;
+    let focusedWidth = 0;
+    let focusedHeight = 0;
+    const rememberFocusedCard = (card: HTMLElement): void => {
+      focusedCard = card;
+      focusedLeft = card.offsetLeft;
+      focusedTop = card.offsetTop;
+      focusedWidth = card.offsetWidth;
+      focusedHeight = card.offsetHeight;
+    };
+
+    const revealCard = (card: HTMLElement): void => {
+      if (smallViewport.matches) {
+        card.scrollIntoView({
+          block: 'nearest',
+          inline: 'nearest',
+          behavior: 'instant' as ScrollBehavior,
+        });
+      } else {
+        bringCardIntoView(card);
+      }
+      rememberFocusedCard(card);
+    };
+
+    let chatWidth = 0;
+    let chatHeight = 0;
+    const reserveChat = (): void => {
+      if (
+        !chat ||
+        smallViewport.matches ||
+        !world.hasAttribute('data-has-cards') ||
+        chat.hasAttribute('data-collapsed')
+      )
+        return;
+
+      // The grid padding and chat insets share an origin. Retain the expanded
+      // rectangle after collapse, including on resize, rather than measuring
+      // hidden content or letting a pan change the grid's tracks.
+      const bounds = chat.getBoundingClientRect();
+      if (bounds.width !== chatWidth) {
+        chatWidth = bounds.width;
+        world.style.setProperty('--chat-inline-size', `${chatWidth}px`);
+      }
+      if (bounds.height !== chatHeight) {
+        chatHeight = bounds.height;
+        world.style.setProperty('--chat-block-size', `${chatHeight}px`);
+      }
+    };
+
+    let resizeFrame = 0;
+    const scheduleLayout = (): void => {
+      if (resizeFrame) return;
+      resizeFrame = requestAnimationFrame(() => {
+        resizeFrame = 0;
+        reserveChat();
+        const card = focusedCard;
+        if (!card || !card.contains(document.activeElement)) return;
+
+        // Offset geometry excludes canvas transforms and native scrolling.
+        // Only a real relayout may maintain focus visibility; the URL is not
+        // a persistent anchor and observer delivery alone must not undo a pan.
+        if (
+          card.offsetLeft !== focusedLeft ||
+          card.offsetTop !== focusedTop ||
+          card.offsetWidth !== focusedWidth ||
+          card.offsetHeight !== focusedHeight
+        )
+          revealCard(card);
+      });
+    };
+
+    if ('ResizeObserver' in window) {
+      const resizeObserver = new ResizeObserver(scheduleLayout);
+      if (chat) resizeObserver.observe(chat);
+      world
+        .querySelectorAll<HTMLElement>('.playground__card')
+        .forEach((card) => {
+          resizeObserver.observe(card);
+        });
+    }
+    window.addEventListener('resize', scheduleLayout);
+    document.fonts.ready.then(scheduleLayout);
+
     const revealHashTarget = (): void => {
       if (!location.hash) return;
 
@@ -335,15 +415,7 @@ const handshakeHref = withBase('/handshake');
       )
         return;
 
-      if (smallViewport.matches) {
-        target.scrollIntoView({
-          block: 'nearest',
-          inline: 'nearest',
-          behavior: 'instant' as ScrollBehavior,
-        });
-      } else {
-        bringCardIntoView(target);
-      }
+      revealCard(target);
       target.focus({ preventScroll: true });
     };
 
@@ -376,12 +448,11 @@ const handshakeHref = withBase('/handshake');
     });
 
     viewport.addEventListener('focusin', (event) => {
-      if (smallViewport.matches) return;
       const card = (event.target as Element).closest<HTMLElement>(
         '.playground__card',
       );
       if (!card) return;
-      bringCardIntoView(card);
+      revealCard(card);
     });
 
     const syncMode = () => {
@@ -401,9 +472,11 @@ const handshakeHref = withBase('/handshake');
     window.addEventListener('hashchange', revealHashTarget);
     smallViewport.addEventListener('change', () => {
       syncMode();
+      reserveChat();
       requestAnimationFrame(() => requestAnimationFrame(revealHashTarget));
     });
     syncMode();
+    reserveChat();
     revealHashTarget();
   }
 
