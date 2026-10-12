@@ -1,0 +1,16 @@
+POCKETPLAN TOKEN USAGE
+Status: reported_totals_available
+
+input_tokens: 1557517
+cached_input_tokens: 1493888
+output_tokens: 27251
+reasoning_output_tokens: 4030
+input_plus_output_tokens: 1584768
+uncached_input_tokens_derived: 63629
+
+Only usage on turn.completed events is aggregated. Raw fields are preserved.
+Cached input is a subset of input; it is not added again.
+Reasoning output is reported separately when available and is not added again to output.
+Missing counters are null, never estimated or silently replaced with zero.
+Interrupted/failed runs may omit usage. Reported usage is not an independent billing audit.
+Input/output totals describe token activity, not electricity or water consumption.

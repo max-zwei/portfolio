@@ -1,0 +1,110 @@
+{
+  "protocol": "pocketplan-one-agent-v2",
+  "started_at_utc": "2026-10-09T06:22:55.028718+00:00",
+  "requested_model": "gpt-6.1-sol",
+  "requested_reasoning_effort": "medium",
+  "model_preflight": {
+    "check": "local_cached_catalog_only",
+    "model": "gpt-6.1-sol",
+    "display_name": "GPT-6.1-Sol",
+    "reasoning_effort": "medium",
+    "catalog_fetched_at": "2026-10-09T06:22:49.737166Z",
+    "catalog_client_version": "0.160.1",
+    "live_model_access_verified": false
+  },
+  "resolved_model_snapshot": null,
+  "command": [
+    "/opt/homebrew/bin/codex",
+    "--ask-for-approval",
+    "never",
+    "exec",
+    "--ignore-user-config",
+    "--model",
+    "gpt-6.1-sol",
+    "--config",
+    "model_reasoning_effort=\"medium\"",
+    "--config",
+    "model_reasoning_summary=\"auto\"",
+    "--config",
+    "hide_agent_reasoning=false",
+    "--config",
+    "features.multi_agent=false",
+    "--config",
+    "features.memories=false",
+    "--config",
+    "sandbox_workspace_write.network_access=true",
+    "--sandbox",
+    "workspace-write",
+    "--cd",
+    "/Users/max/Documents/Codex/2026-10-08/i-x20/outputs/pocketplan_experiment/runs/20261009T062255Z-b31cee9e/app",
+    "--color",
+    "never",
+    "--json",
+    "--output-last-message",
+    "/Users/max/Documents/Codex/2026-10-08/i-x20/outputs/pocketplan_experiment/runs/20261009T062255Z-b31cee9e/capture/final-message.txt",
+    "-"
+  ],
+  "platform": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+  "prompt_sha256": "f4d068be2c9408077d8b74d60f2088726cd2bc13a427c4fb7d3bbb2301ce35f6",
+  "versions": [
+    {
+      "command": [
+        "/opt/homebrew/bin/codex",
+        "--version"
+      ],
+      "exit_code": 0,
+      "stdout": "codex-cli 0.159.3",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "node",
+        "--version"
+      ],
+      "exit_code": 0,
+      "stdout": "v26.10.0",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "npm",
+        "--version"
+      ],
+      "exit_code": 0,
+      "stdout": "11.19.1",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "--version"
+      ],
+      "exit_code": 0,
+      "stdout": "git version 2.54.0 (Apple Git-157)",
+      "stderr": ""
+    }
+  ],
+  "initial_state": "Empty local Git repository plus recorder-supplied .gitignore",
+  "user_config_loaded": false,
+  "existing_policy_rules_retained": true,
+  "single_agent": true,
+  "codex_sessions_started_by_recorder": 1,
+  "notes": [
+    "One codex exec session makes multiple internal model calls.",
+    "The requested model alias is recorded; an immutable backend snapshot is not assumed.",
+    "System/project instructions, provider behavior and tool-output limits can affect reproduction.",
+    "Trace capture is external. Saving full build/test logs adds a small amount of work."
+  ],
+  "thread_id": "01a11f54-37a2-7c71-9053-03854c96f826",
+  "finished_at_utc": "2026-10-09T06:36:15.493831+00:00",
+  "elapsed_seconds": 800.2354248329939,
+  "interrupted": false,
+  "codex_exit_code": 0,
+  "reported_errors": [],
+  "snapshot": {
+    "manifest_files": 47,
+    "git_status_exit": 0,
+    "git_intent_to_add_exit": 0,
+    "git_diff_exit": 0
+  }
+}

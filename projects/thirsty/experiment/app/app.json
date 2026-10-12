@@ -1,0 +1,12 @@
+{
+  "expo": {
+    "name": "PocketPlan",
+    "slug": "pocketplan",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic",
+    "ios": { "supportsTablet": true, "bundleIdentifier": "com.pocketplan.app" },
+    "android": { "package": "com.pocketplan.app" },
+    "web": { "bundler": "metro", "name": "PocketPlan" }
+  }
+}

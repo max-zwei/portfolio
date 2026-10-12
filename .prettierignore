@@ -24,3 +24,6 @@ src/components/feedback.md
 # Challenge solutions are a record of what was written at the time, not repo
 # code to be tidied up afterwards. The folder README explains this.
 coding/
+
+# Recorded experiment inputs, source snapshots and transcripts stay verbatim.
+projects/thirsty/experiment/

@@ -28,3 +28,8 @@ pnpm-debug.log*
 projects/**/data/**
 !projects/**/data/.gitkeep
 !projects/**/data/*.ipynb
+
+# Generated Python bytecode.
+__pycache__/
+*.py[cod]
+.pytest_cache/
