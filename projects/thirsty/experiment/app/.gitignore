@@ -1,0 +1,12 @@
+node_modules/
+.expo/
+.npm-cache/
+.cache/
+dist/
+build/
+artifacts/
+.env
+.env.*
+!.env.example
+
+.expo-user/
