@@ -68,12 +68,12 @@ _data vis elements for trends over time_
 1990s: 2        (24px)
 2000s: 15       (183px)
 2010s: 25       (305px)
-2020s: 41       (520px)
+2020s: 41       (520px) 
 
 ## ha_842 over time
 1990s: 2        (72px)
 2000s: 9        (321px)
-2010s: 14       (520px)
+2010s: 14       (520px) / (860px)
 2020s: 7        (250px)
 
 
