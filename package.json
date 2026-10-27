@@ -24,7 +24,7 @@
     "@astrojs/markdown-satteri": "0.4.1",
     "@astrojs/sitemap": "^3.7.3",
     "@fontsource-variable/jetbrains-mono": "^5.3.0",
-    "astro": "^7.2.6",
+    "astro": "^7.3.3",
     "zod": "^4.4.3"
   },
   "devDependencies": {
