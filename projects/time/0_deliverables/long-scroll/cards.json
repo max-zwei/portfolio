@@ -1,0 +1,460 @@
+[
+  {
+    "id": "233:1579",
+    "x": 11.0,
+    "y": 0.00048828125,
+    "width": 283.8990173339844,
+    "height": 348.8589172363281,
+    "src": "./assets/cards/card-decades-01_4x.webp",
+    "alt": "1990s activity ranking: wash body; visitors/visiting; household chat; going out; cleaning/tidying up."
+  },
+  {
+    "id": "233:1908",
+    "x": 82.0,
+    "y": 388.859375,
+    "width": 131.0,
+    "height": 28.0,
+    "text": "1990s",
+    "trimmed": true
+  },
+  {
+    "id": "233:1615",
+    "x": 0.0,
+    "y": 456.859375,
+    "width": 284.0,
+    "height": 348.0,
+    "src": "./assets/cards/card-decades-02_4x.webp",
+    "alt": "Visits peaked at an average of 39 minutes a day. The doorbell was the notiﬁcation. Ignoring it meant hiding quietly behind the sofa."
+  },
+  {
+    "id": "233:1645",
+    "x": 40.0,
+    "y": 924.859375,
+    "width": 307.286865234375,
+    "height": 201.34295654296875,
+    "src": "./assets/cards/card-decades-03_4x.webp",
+    "alt": "ASCII-art cows: Cow; Cow laden with milk; Same cow after milking; Cow who drank Jolt; Cow who ate psychedelic mushrooms; Cow who used Jolt to wash down psychedelic mushrooms."
+  },
+  {
+    "id": "233:1654",
+    "x": 11.0,
+    "y": 1246.202392578125,
+    "width": 284.0,
+    "height": 348.0,
+    "src": "./assets/cards/card-decades-04_4x.webp",
+    "alt": "RealityTV@home! In-person house- hold chats peaked at 39 minutes a day on average in the 2000s. An unpaid cast. Stay tuned!"
+  },
+  {
+    "id": "233:1909",
+    "x": 75.0,
+    "y": 1634.202392578125,
+    "width": 146.0,
+    "height": 28.0,
+    "text": "2000s",
+    "trimmed": true
+  },
+  {
+    "id": "233:1685",
+    "x": 0.0,
+    "y": 1702.202392578125,
+    "width": 283.8995361328125,
+    "height": 348.8589172363281,
+    "src": "./assets/cards/card-decades-05_4x.webp",
+    "alt": "2000s activity ranking: household chat; wash body; homework; travel time for social life; going out."
+  },
+  {
+    "id": "233:1721",
+    "x": -47.0,
+    "y": 2171.061279296875,
+    "width": 248.1155548095703,
+    "height": 164.0,
+    "src": "./assets/cards/card-decades-06_4x.webp",
+    "alt": "You made a mixtape instead of talking. Six hours to say “I like you.”"
+  },
+  {
+    "id": "233:1733",
+    "x": 11.0,
+    "y": 2455.0,
+    "width": 284.0,
+    "height": 349.0,
+    "src": "./assets/cards/card-decades-07_4x.webp",
+    "alt": "Local shopping (9) and resting (10) both peaked in the 2010s. That can't be a coincidence. Luckily we'evolved to sitting on the sofa while shopping."
+  },
+  {
+    "id": "233:1910",
+    "x": 81.0,
+    "y": 2844.0,
+    "width": 133.0,
+    "height": 28.0,
+    "text": "2010s",
+    "trimmed": true
+  },
+  {
+    "id": "233:1761",
+    "x": 0.0,
+    "y": 2912.0,
+    "width": 284.0,
+    "height": 348.0,
+    "src": "./assets/cards/card-decades-08_4x.webp",
+    "alt": "PC/Smartphone use averaged 33 minutes a day in the 2010s. “use” meaning throwing your keyboard after Moving a picture in Word."
+  },
+  {
+    "id": "233:1791",
+    "x": 9.0,
+    "y": 3300.0,
+    "width": 285.5898742675781,
+    "height": 348.8589172363281,
+    "src": "./assets/cards/card-decades-09_4x.webp",
+    "alt": "2010s activity ranking: wash body; household chat; gaming (PC/Notebook); local shopping; resting."
+  },
+  {
+    "id": "233:1827",
+    "x": 92.0,
+    "y": 3768.85888671875,
+    "width": 271.0,
+    "height": 247.13595581054688,
+    "src": "./assets/cards/card-decades-10_4x.webp",
+    "alt": "Finally got on the Internet. Mum needs to call someone."
+  },
+  {
+    "id": "233:1839",
+    "x": 0.0,
+    "y": 4135.9951171875,
+    "width": 283.899169921875,
+    "height": 348.8589172363281,
+    "src": "./assets/cards/card-decades-11_4x.webp",
+    "alt": "2020s activity ranking: wash body; gaming (PC/Notebook); visitors/visiting; social media; courses prep/follow-up."
+  },
+  {
+    "id": "240:5576",
+    "x": 76.0,
+    "y": 4524.85400390625,
+    "width": 144.0,
+    "height": 28.0,
+    "text": "2020s",
+    "trimmed": true
+  },
+  {
+    "id": "233:1876",
+    "x": 11.0,
+    "y": 4592.85400390625,
+    "width": 284.0,
+    "height": 349.0,
+    "src": "./assets/cards/card-decades-12_4x.webp",
+    "alt": "social media entered at 8th: 19 min a day, adding up to nearly ﬁve days a year. Just a quick look? More like you should pack underwear."
+  },
+  {
+    "id": "233:1899",
+    "x": -42.0,
+    "y": 5066.7626953125,
+    "width": 236.62185668945312,
+    "height": 179.17640686035156,
+    "src": "./assets/cards/card-decades-13_4x.webp",
+    "alt": "Einstein laughing meme: “Neffur maik fun of somwon dat speeks broken Inglis. It means they know another language.”"
+  },
+  {
+    "id": "233:1913",
+    "x": 76.00003051757812,
+    "y": 5366.0,
+    "width": 144.0,
+    "height": 168.0,
+    "text": "1990s\nvs\n2020s"
+  },
+  {
+    "id": "233:1914",
+    "x": 0.0,
+    "y": 5654.0,
+    "width": 283.900146484375,
+    "height": 348.13763427734375,
+    "src": "./assets/cards/cards-trends-01_4x.webp",
+    "alt": "An image that never really suited us 24. 45. 75. 93. Probably never the medium for the youth, ﬂipping through a newspaper, sipping a coffee and being under 30 can only be sold by Philipp Amthor."
+  },
+  {
+    "id": "233:1958",
+    "x": 85.0,
+    "y": 6122.1376953125,
+    "width": 257.6051025390625,
+    "height": 158.69140625,
+    "src": "./assets/cards/cards-trends-02_4x.webp",
+    "alt": "Laughing man on the telephone meme: “You can’t hear a picture.” The picture:"
+  },
+  {
+    "id": "233:1967",
+    "x": 11.0,
+    "y": 6400.8291015625,
+    "width": 283.8995056152344,
+    "height": 348.13763427734375,
+    "src": "./assets/cards/cards-trends-03_4x.webp",
+    "alt": "Call it a comeback for heavy-duty DIY? 96. 45. 83. 106. Building a house! Or at least renovating your home has probably thanks to more time at home, #covid, gained some ranks."
+  },
+  {
+    "id": "233:2008",
+    "x": -43.0,
+    "y": 6868.966796875,
+    "width": 258.76239013671875,
+    "height": 165.8282012939453,
+    "src": "./assets/cards/cards-trends-04_4x.webp",
+    "alt": "Confused child meme: “When the class argues about the answer being 12 or 13, but you got 374.”"
+  },
+  {
+    "id": "233:2017",
+    "x": 0.0,
+    "y": 7154.794921875,
+    "width": 284.917724609375,
+    "height": 348.8589172363281,
+    "src": "./assets/cards/cards-trends-05_4x.webp",
+    "alt": "1990s 2000s 2010s 2020s Skyrocketing, and it all started with Minesweeper and Tetris. The only discussion that remains if you're a PC, console or phone gamer."
+  },
+  {
+    "id": "233:2052",
+    "x": 112.0,
+    "y": 7623.65380859375,
+    "width": 231.382568359375,
+    "height": 171.02745056152344,
+    "src": "./assets/cards/cards-trends-06_4x.webp",
+    "alt": "Four-panel drawing-program rage comic: “la la drawing”; “#A09298”; “bucket time”; “wait a second”. Filling with the paint bucket floods the drawing."
+  },
+  {
+    "id": "233:2061",
+    "x": 11.0,
+    "y": 7914.68115234375,
+    "width": 283.8990173339844,
+    "height": 348.13763427734375,
+    "src": "./assets/cards/cards-trends-07_4x.webp",
+    "alt": "Eat this PISA, we do still read books! 43. 28. 30. 41. Might help that reading books electronically also counts towards this activ ity. Nonetheless, reading books remains an activity we enjoy."
+  },
+  {
+    "id": "233:2106",
+    "x": -49.0,
+    "y": 8382.81884765625,
+    "width": 228.784912109375,
+    "height": 173.0081329345703,
+    "src": "./assets/cards/cards-trends-08_4x.webp",
+    "alt": "Mum says I've done nothing all weekend. I'VE RAISED THREE GENERATIONS OF SIMS."
+  },
+  {
+    "id": "233:2121",
+    "x": 0.0,
+    "y": 8675.8271484375,
+    "width": 282.975341796875,
+    "height": 343.00042724609375,
+    "src": "./assets/cards/cards-trends-09_4x.webp",
+    "alt": "More time eating, less time talking. Perhaps “don’t talk with your mouth full” was the most effective communication policy ever. eating & drinking household chats Change shown: household chats −16; eating and drinking +16."
+  },
+  {
+    "id": "233:2152",
+    "x": 118.0,
+    "y": 9138.82763671875,
+    "width": 225.621826171875,
+    "height": 296.43896484375,
+    "src": "./assets/cards/cards-trends-10_4x.webp",
+    "alt": "I decided to not use an image Moving an image in Word"
+  },
+  {
+    "id": "233:2167",
+    "x": -45.0,
+    "y": 9555.2666015625,
+    "width": 246.0,
+    "height": 187.81954956054688,
+    "src": "./assets/cards/cards-trends-11_4x.webp",
+    "alt": "Toy Story meme: “Harlem Shake. Harlem Shake everywhere.”"
+  },
+  {
+    "id": "233:2176",
+    "x": 0.0,
+    "y": 9863.0859375,
+    "width": 294.9999694824219,
+    "height": 362.4992980957031,
+    "src": "./assets/cards/cards-trends-12_4x.webp",
+    "alt": "After sleep and work our biggest constant: Watching a screen displaying about 60 images/s. TV, streaming, whatever your medium is. 1990s 2000s 2010s 2020s"
+  },
+  {
+    "id": "233:2211",
+    "x": 0.0,
+    "y": 10345.5849609375,
+    "width": 282.975341796875,
+    "height": 343.00042724609375,
+    "src": "./assets/cards/cards-trends-13_4x.webp",
+    "alt": "More exercising, less time reading the newspapers. Or seems like we found a way to cope with the current and future world events. reading newspaper ﬁtness & gymnastics Change shown: reading newspaper −4; fitness and gymnastics +4."
+  },
+  {
+    "id": "233:2242",
+    "x": -49.0,
+    "y": 10808.5849609375,
+    "width": 247.413818359375,
+    "height": 345.5567626953125,
+    "src": "./assets/cards/cards-trends-14_4x.webp",
+    "alt": "Reply immediately Wait three hours Marry someone else so you don't seem too keen. Wait ten minutes"
+  },
+  {
+    "id": "233:2264",
+    "x": 0.0,
+    "y": 11274.0,
+    "width": 295.0,
+    "height": 363.0,
+    "src": "./assets/cards/cards-trends-15_4x.webp",
+    "alt": "+ 32 From '90s to '20s, sleep gained 32 min a day on average. Somewhere between the alarm clock and phone alarm, snoozing got an extension."
+  },
+  {
+    "id": "233:2287",
+    "x": 111.0,
+    "y": 11771.421875,
+    "width": 237.132568359375,
+    "height": 226.25917053222656,
+    "src": "./assets/cards/cards-trends-16_4x.webp",
+    "alt": "Me at 2 a.m. Forensic investigation into the 2nd \"y\" in \"heyy\" Going to bed"
+  },
+  {
+    "id": "233:2306",
+    "x": 0.0,
+    "y": 12117.6806640625,
+    "width": 283.898681640625,
+    "height": 348.13763427734375,
+    "src": "./assets/cards/cards-trends-17_4x.webp",
+    "alt": "We found a way back to museums and art! 123. 72. 103. 121. To be fair, never was really up there, but it seems like we found a way back to enjoying the craft of ofﬂine museums and art."
+  },
+  {
+    "id": "233:2350",
+    "x": 127.0,
+    "y": 12585.818359375,
+    "width": 220.94529724121094,
+    "height": 148.375,
+    "src": "./assets/cards/cards-trends-18_4x.webp",
+    "alt": "I made a playlist for every mood. Which mood am I in?"
+  },
+  {
+    "id": "233:2362",
+    "x": -62.0,
+    "y": 12854.193359375,
+    "width": 255.6831817626953,
+    "height": 171.28125,
+    "src": "./assets/cards/cards-trends-19_4x.webp",
+    "alt": "school night going to bed one more game?"
+  },
+  {
+    "id": "233:2380",
+    "x": 11.0,
+    "y": 13176.0,
+    "width": 284.0,
+    "height": 349.0,
+    "src": "./assets/cards/cards-trends-20_4x.webp",
+    "alt": "- 15 Travel for social contact fell by 15 min a day on average from the '90s to the '20s. Replaced by snaps from the convenience of the toilet?"
+  },
+  {
+    "id": "233:2403",
+    "x": 127.0,
+    "y": 13645.140625,
+    "width": 214.89352416992188,
+    "height": 289.71685791015625,
+    "src": "./assets/cards/cards-trends-21_4x.webp",
+    "alt": "Two-panel COVID-19 meme: “My dear plans, it is time…” “My plans for 2020.” COVID-19 interrupts: “To… wait until next year.”"
+  },
+  {
+    "id": "233:2412",
+    "x": -49.0,
+    "y": 14054.857421875,
+    "width": 197.39183044433594,
+    "height": 199.60546875,
+    "src": "./assets/cards/cards-trends-22_4x.webp",
+    "alt": "A black-and-white collage of internet memes, reaction faces and animals, including “Reconnecting…” panels."
+  },
+  {
+    "id": "233:2421",
+    "x": 0.0,
+    "y": 14374.462890625,
+    "width": 283.898681640625,
+    "height": 348.8589172363281,
+    "src": "./assets/cards/cards-trends-23_4x.webp",
+    "alt": "kino.to? Wikipedia? Using the browser at all? Seems like we reached the browsing peak in the 2010s. Metaverse? Or what's next? 1990s 2000s 2010s 2020s"
+  },
+  {
+    "id": "233:2456",
+    "x": -58.0,
+    "y": 14843.322265625,
+    "width": 217.100830078125,
+    "height": 287.0038146972656,
+    "src": "./assets/cards/cards-trends-24_4x.webp",
+    "alt": "AI can do my job AI can do my job AI can do my job"
+  },
+  {
+    "id": "233:2473",
+    "x": 114.0,
+    "y": 15250.326171875,
+    "width": 229.465087890625,
+    "height": 226.93016052246094,
+    "src": "./assets/cards/cards-trends-25_4x.webp",
+    "alt": "sending “us” under a TikTok of two raccoons committing a felony telling a friend i miss them"
+  },
+  {
+    "id": "233:2492",
+    "x": 12.0,
+    "y": 15597.255859375,
+    "width": 282.975341796875,
+    "height": 343.00042724609375,
+    "src": "./assets/cards/cards-trends-26_4x.webp",
+    "alt": "More time for theme parks, less time reading. Perhaps we still enjoy a good story. We just want it to last 90s and turn us upside down. reading theme parks, circus & fairs Change shown: reading −8; theme parks, circus and fairs +8."
+  },
+  {
+    "id": "233:2522",
+    "x": -49.0,
+    "y": 16060.255859375,
+    "width": 263.7155456542969,
+    "height": 107.763671875,
+    "src": "./assets/cards/cards-trends-27_4x.webp",
+    "alt": "Two-panel vocabulary meme: “Skibidi, rizz, gyatt, sigma and fanum tax.” “What happened to LOL?”"
+  },
+  {
+    "id": "233:2530",
+    "x": 121.0,
+    "y": 16288.01953125,
+    "width": 227.10073852539062,
+    "height": 232.978515625,
+    "src": "./assets/cards/cards-trends-28_4x.webp",
+    "alt": "Types of Headaches meme: Migraine, Hypertension, Stress, and “6 7”, with the last silhouette entirely black."
+  },
+  {
+    "id": "233:2538",
+    "x": 0.0,
+    "y": 16640.998046875,
+    "width": 286.0,
+    "height": 349.0,
+    "src": "./assets/cards/cards-trends-29_4x.webp",
+    "alt": "- 12 Going out fell by 12 min a day on average from the '90s to the '20s. Disco wants to discuss its reduced role. Could have been an email."
+  },
+  {
+    "id": "233:2561",
+    "x": -47.0,
+    "y": 17120.556640625,
+    "width": 229.01768493652344,
+    "height": 221.67176818847656,
+    "src": "./assets/cards/cards-trends-30_4x.webp",
+    "alt": "Boromir meme: “One does not simply sign up to a module on Fuxam.”"
+  },
+  {
+    "id": "233:2569",
+    "x": 1.0,
+    "y": 17462.228515625,
+    "width": 293.6941223144531,
+    "height": 356.934814453125,
+    "src": "./assets/cards/cards-trends-31_4x.webp",
+    "alt": "More time commuting, less time baking. So much for the homeofﬁce sourdough fantasy. Trends suggest the starter has been abandoned. travel time to work baking Change shown: travel time to work +7; baking −7."
+  },
+  {
+    "id": "233:2599",
+    "x": 0.0,
+    "y": 17967.0,
+    "width": 284.0,
+    "height": 349.0,
+    "src": "./assets/cards/cards-trends-32_4x.webp",
+    "alt": "- 11 DIY and repairs fell by 11 min a day on average from the '90s to the '20s. “I made this.”, “I found this.” Both look good on the feed."
+  },
+  {
+    "id": "233:2622",
+    "x": 110.0,
+    "y": 18435.677734375,
+    "width": 232.747802734375,
+    "height": 130.4521942138672,
+    "src": "./assets/cards/cards-trends-33_4x.webp",
+    "alt": "Two-panel meme contrasting a smiling woman labeled “Entrepreneur” with a serious smoking man labeled “Industry”."
+  }
+]

@@ -25,9 +25,9 @@ pnpm-debug.log*
 # private source datasets — visible as an empty folder, contents never
 # published. .gitkeep keeps the folder itself tracked; the analysis notebooks
 # are our own work and stay tracked alongside the data they read.
-projects/**/data/**
-!projects/**/data/.gitkeep
-!projects/**/data/*.ipynb
+projects/**/code/**
+!projects/**/code/.gitkeep
+!projects/**/code/*.ipynb
 
 # Generated Python bytecode.
 __pycache__/
