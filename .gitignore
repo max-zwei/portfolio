@@ -21,14 +21,6 @@ pnpm-debug.log*
 !.vscode/extensions.json
 .idea/
 
-# projects/: personal code-reference workspace. Folders named "data" hold
-# private source datasets — visible as an empty folder, contents never
-# published. .gitkeep keeps the folder itself tracked; the analysis notebooks
-# are our own work and stay tracked alongside the data they read.
-projects/**/code/**
-!projects/**/code/.gitkeep
-!projects/**/code/*.ipynb
-
 # Generated Python bytecode.
 __pycache__/
 *.py[cod]
