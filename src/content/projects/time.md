@@ -46,22 +46,22 @@ exploration:
 
     Having found these starting points, I spent a good amount of time in a Jupyter notebook to map activity codes from the four decades of time-use surveys, using descriptive statistics to understand time use among the age group of 15-29 years old and using data analytics to identify relevant trends and peaks.
 
-    If you're interested, visit my GitHub repository to find out more: https://github.com/max-zwei/time/blob/main/code/data.ipynb
+    If you're interested, visit my GitHub repository to find out more: [Analysis Notebook](https://github.com/max-zwei/time/blob/main/code/data.ipynb)
   keyPoints:
     - >-
       Research Data Centres of the Statistical Offices of the Federation and the Federal States: "Time-use surveys" (Germany, 1990s to 2020s)
     - >-
-      Houts, P. S., Bachrach, R., Witmer, J. T., Tringali, C. A., Bucher, J. A., & Localio, R. A. (1998): "Using pictographs to enhance recall of spoken medical instructions" (https://doi.org/10.1016/S0738-3991(98)00065-2)
+      Houts, P. S., Bachrach, R., Witmer, J. T., Tringali, C. A., Bucher, J. A., & Localio, R. A. (1998): "[Using pictographs to enhance recall of spoken medical instructions](<https://doi.org/10.1016/S0738-3991(98)00065-2>)"
     - >-
-      Thorpe, S., Fize, D., & Marlot, C. (1996): "Speed of processing in the human visual system." (https://doi.org/10.1038/381520a0)
+      Thorpe, S., Fize, D., & Marlot, C. (1996): "[Speed of processing in the human visual system.](https://doi.org/10.1038/381520a0)"
     - >-
-      Bateman, S., Mandryk, R. L., Gutwin, C., Genest, A., McDine, D., & Brooks, C. (2010): "Useful junk?: The effects of visual embellishment on comprehension and memorability of charts" (https://doi.org/10.1145/1753326.1753716)
+      Bateman, S., Mandryk, R. L., Gutwin, C., Genest, A., McDine, D., & Brooks, C. (2010): "[Useful junk?: The effects of visual embellishment on comprehension and memorability of charts](https://doi.org/10.1145/1753326.1753716)"
     - >-
-      Brysbaert, M. (2019): "How many words do we read per minute? A review and meta-analysis of reading rate." (https://doi.org/10.1016/j.jml.2019.104047)
+      Brysbaert, M. (2019): "[How many words do we read per minute? A review and meta-analysis of reading rate.](https://doi.org/10.1016/j.jml.2019.104047)"
 
 definition:
   summary: |
-    Taking my findings of the data analysis and the research on infographics, it became clear that the data itself would be too plain and the trends to marginal to create a captivating infographic. Therefore I decided to use the tricks of social media design on itself to say. Meaning for example to acknowledge the attention span caused by social media by combining data points with the randomness of memes. Allowing me to combine the visual and text depiction that according to the found research improves the recollection of the information. In simple terms: Seeing Mr Bean next to the number 39, will help you remember the 39 better and for longer compared to only seeing the number 39. More details for defining my infographics in the design brief: https://github.com/max-zwei/time/blob/main/BRIEF.md
+    Taking my findings of the data analysis and the research on infographics, it became clear that the data itself would be too plain and the trends to marginal to create a captivating infographic. Therefore I decided to use the tricks of social media design on itself to say. Meaning for example to acknowledge the attention span caused by social media by combining data points with the randomness of memes. Allowing me to combine the visual and text depiction that according to the found research improves the recollection of the information. In simple terms: Seeing Mr Bean next to the number 39, will help you remember the 39 better and for longer compared to only seeing the number 39. More details for defining my infographics in the design brief: [Design Brief](https://github.com/max-zwei/time/blob/main/BRIEF.md)
 
 development:
   summary: |
@@ -75,15 +75,15 @@ development:
     Regarding the style of the infograpghic I was quick to decide for a neon color palette, a bold slabby funky typography for the numbers and title and a subtle typography for the text. I probably didn't mention this already but the infographic was supposed to be delivered both for digital and print. I don't know about you, but have you ever tried to print "neon" colours. So that as a major upset for me, once I switch to CMYK in Affinity and realised I have to tweak the CMYK to get closest to neon but had to go with a compromise.
   keyPoints:
     - >-
-      Moodboard: https://www.figma.com/design/OHP8oQ0OKuzeLuRvRGcd3t/DS_12-Infographics?node-id=1-3
+      [Moodboard](https://www.figma.com/design/OHP8oQ0OKuzeLuRvRGcd3t/DS_12-Infographics?node-id=1-3)
     - >-
-      Evaluation: https://www.figma.com/design/OHP8oQ0OKuzeLuRvRGcd3t/DS_12-Infographics?node-id=1-4
+      [Evaluation](https://www.figma.com/design/OHP8oQ0OKuzeLuRvRGcd3t/DS_12-Infographics?node-id=1-4)
     - >-
-      Digital designs: https://www.figma.com/design/OHP8oQ0OKuzeLuRvRGcd3t/DS_12-Infographics?node-id=1-7
+      [Digital Designs](https://www.figma.com/design/OHP8oQ0OKuzeLuRvRGcd3t/DS_12-Infographics?node-id=1-7)
     - >-
-      Print designs: https://github.com/max-zwei/time/blob/main/0_deliverables/time_plaque.pdf, https://github.com/max-zwei/time/blob/main/0_deliverables/time_poster.pdf
+      Print designs: [Print Plaque](https://github.com/max-zwei/time/blob/main/0_deliverables/time_plaque.pdf), [Print Poster](https://github.com/max-zwei/time/blob/main/0_deliverables/time_poster.pdf)
     - >-
-      Endless scroll: https://time-scroll.netlify.app/
+      [Endless Scroll](https://time-scroll.netlify.app/)
 
 learning:
   summary: |
@@ -93,5 +93,5 @@ learning:
 
     MESS! The intention of the design style was to create an absolute mess of attention hooks to kind of imitate the design style of social media. I feel like I have achieved that, yet this also means that composition and layout and hierarchy went out of the window.
 
-    For my assessment in the module, I dove deeper into my learning and self-assessment: https://github.com/max-zwei/time/blob/main/0_deliverables/time_self-reflection.md
+    For my assessment in the module, I dove deeper into my learning and self-assessment: [Self-Assessment](https://github.com/max-zwei/time/blob/main/0_deliverables/time_self-reflection.md)
 ---

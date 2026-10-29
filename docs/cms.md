@@ -108,6 +108,12 @@ on dots, so automatic error-focus navigation can fail for these fields.
 | `keyPoints` | string[]        | no                    | Takeaways in bullets; defaults to `[]`. |
 
 The section summary is rich text, unlike the short top-level metadata `summary`.
+Each `keyPoints` item is also rendered as Markdown inside its list item. Use
+descriptive links such as `[Design Brief](https://example.com/brief)` rather than
+displaying raw URLs. For destinations containing parentheses, wrap the URL in
+angle brackets: `[Paper title](<https://doi.org/10.1016/S0738-3991(98)00065-2>)`.
+The field remains a list of strings; plain-text items continue to work.
+
 The CMS retains the established optional-object pattern: `required: false` on
 the object and its child controls, with a hint explaining the schema-enforced
 summary requirement. This is deliberate:

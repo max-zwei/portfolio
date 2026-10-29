@@ -89,6 +89,11 @@ const sections = await Promise.all(
     html: candidate.section
       ? await renderFrontmatterMarkdown(candidate.section.summary)
       : '',
+    keyPointsHtml: await Promise.all(
+      (candidate.section?.keyPoints ?? []).map((point) =>
+        renderFrontmatterMarkdown(point),
+      ),
+    ),
   })),
 );
 const projectsHref = withBase('/projects');
@@ -338,14 +343,13 @@ const hasArtwork =
                         set:html={section.html}
                       />
                     )}
-                    {section.section &&
-                      section.section.keyPoints.length > 0 && (
-                        <ul class="project-details__points">
-                          {section.section.keyPoints.map((point) => (
-                            <li>{point}</li>
-                          ))}
-                        </ul>
-                      )}
+                    {section.keyPointsHtml.length > 0 && (
+                      <ul class="project-details__points">
+                        {section.keyPointsHtml.map((pointHtml) => (
+                          <li set:html={pointHtml} />
+                        ))}
+                      </ul>
+                    )}
                     {section.key === 'behind-the-scenes' && hasSourceLinks && (
                       <nav
                         class="project-details__sources"
@@ -689,7 +693,8 @@ const hasArtwork =
     overflow-wrap: anywhere;
   }
 
-  .project-details__prose :global(p) {
+  .project-details__prose :global(p),
+  .project-details__points :global(p) {
     max-inline-size: none;
   }
 

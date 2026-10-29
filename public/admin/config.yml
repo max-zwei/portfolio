@@ -259,7 +259,10 @@ collections:
             name: keyPoints
             widget: list
             required: false
-            hint: The section in bullets — what a reader in a hurry should take away.
+            hint: >-
+              The section in bullets — what a reader in a hurry should take away.
+              Markdown links are supported; use [Design Brief](https://example.com/brief)
+              for descriptive clickable text.
 
       - label: Definition
         name: definition
